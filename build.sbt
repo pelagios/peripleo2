@@ -9,7 +9,8 @@ scalaVersion := "2.11.7"
 libraryDependencies ++= Seq(
   jdbc,
   cache,
-  ws,
+
+  "com.sksamuel.elastic4s" %% "elastic4s-streams" % "2.4.0",
+  
   "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test
 )
-
