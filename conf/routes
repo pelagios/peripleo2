@@ -1,5 +1,20 @@
-# An example controller showing a sample home page
-GET     /                           controllers.HomeController.index
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Static resources
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-# Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+GET     /assets/*file                                controllers.Assets.versioned(path="/public", file: Asset)
+GET     /favicon.ico                                 controllers.Assets.at(path="/public", file="/images/favicon.png")
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Login & Logout
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+GET     /login                                       controllers.admin.LoginLogoutController.showLoginForm(destination: Option[String] ?= None)
+POST    /login                                       controllers.admin.LoginLogoutController.processLogin
+GET     /logout                                      controllers.admin.LoginLogoutController.logout
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Application root (TODO temporarily directs to login)
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+GET     /                                            controllers.admin.GazetteerAdminController.index

@@ -1,0 +1,11 @@
+{
+  "user": {
+    "properties": {
+      "username": { "type": "string", "index": "not_analyzed" },
+      "email": { "type": "string", "index": "not_analyzed" },
+      "password_hash": { "type": "string", "index": "not_analyzed" },
+      "salt": { "type": "string", "index": "not_analyzed" },
+      "created_at": { "type": "date", "format": "yyyy-MM-dd'T'HH:mm:ssZ" }
+    }
+  }
+}
