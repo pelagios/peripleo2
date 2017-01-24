@@ -58,6 +58,8 @@ play.modules {
   # explicitly below.
   # If there are any built-in modules that you want to disable, you can list them here.
   #enabled += my.application.Module
+  
+  enabled += services.ESModule
 
   # If there are any built-in modules that you want to disable, you can list them here.
   #disabled += ""
@@ -67,8 +69,8 @@ play.modules {
 # https://www.playframework.com/documentation/latest/IDE
 # ~~~~~
 # Depending on your IDE, you can add a hyperlink for errors that will jump you
-# directly to the code location in the IDE in dev mode. The following line makes 
-# use of the IntelliJ IDEA REST interface: 
+# directly to the code location in the IDE in dev mode. The following line makes
+# use of the IntelliJ IDEA REST interface:
 #play.editor="http://localhost:63342/api/file/?file=%s&line=%s"
 
 ## Internationalisation

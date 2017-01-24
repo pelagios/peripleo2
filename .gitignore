@@ -3,6 +3,7 @@ target
 .cache-*
 /bin
 /conf/application.conf
+/index
 /.idea
 /.idea_modules
 /.classpath
