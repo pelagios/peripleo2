@@ -1,5 +1,6 @@
 logs
 target
+.cache-*
 /bin
 /conf/application.conf
 /.idea
