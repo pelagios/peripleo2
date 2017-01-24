@@ -33,6 +33,7 @@ object ES extends ElasticSearchSanitizer {
 
   // Mapping type names
   val PLACE              = "place"
+  val USER               = "user"
 
   // Maximum response size in ES
   val MAX_SIZE           = 2147483647
