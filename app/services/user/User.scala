@@ -10,14 +10,14 @@ object Role {
 
   sealed trait Role 
 
-  case object Admin extends Role
-  case object Partner extends Role
+  case object ADMIN extends Role
+  case object PARTNER extends Role
   
   implicit val roleFormat: Format[Role] =
     Format(
       JsPath.read[JsString].map { _.toString match {
-        case "ADMIN" => Admin
-        case "PARTNER" => Partner
+        case "ADMIN" => ADMIN
+        case "PARTNER" => PARTNER
       }},
       
       Writes[Role] { role => Json.toJson(role.toString) }

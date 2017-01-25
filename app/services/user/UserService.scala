@@ -11,6 +11,7 @@ import play.api.Logger
 import play.api.libs.json.Json
 import services.ES
 import scala.concurrent.{ ExecutionContext, Future }
+import scala.language.{ postfixOps, reflectiveCalls }
 import sun.security.provider.SecureRandom
 import org.joda.time.DateTime
 
@@ -53,7 +54,7 @@ class UserService @Inject() (implicit val es: ES, val ctx: ExecutionContext) {
   /** Creates a new user from a username and password **/
   def createUser(username: String, email: String, password: String): Future[Option[User]] = {
     val salt = randomSalt()
-    val user = new User(username, email, computeHash(salt + password), salt, AccessLevel(Role.Admin), new DateTime())
+    val user = new User(username, email, computeHash(salt + password), salt, AccessLevel(Role.ADMIN), new DateTime())
     insertOrUpdateUser(user).map { 
       case true => Some(user)
       case false => None
@@ -92,7 +93,7 @@ class UserService @Inject() (implicit val es: ES, val ctx: ExecutionContext) {
             termQuery("username", username),  
             
             // Case-insensitive search
-            nestedQuery("username").query {
+            nestedQuery("username") query {
               termQuery("username.lowercase", username.toLowerCase)
             }
           )

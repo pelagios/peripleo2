@@ -13,7 +13,7 @@ class GazetteerAdminController @Inject() (
   val users: UserService
 ) extends BaseController with AuthElement {
 
-  def index = StackAction(AuthorityKey -> Role.Admin) { implicit request =>
+  def index = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>
     Ok(views.html.admin.gazetteers())
   }
 

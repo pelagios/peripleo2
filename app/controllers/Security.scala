@@ -39,8 +39,8 @@ trait Security extends AuthConfig { self: HasConfig with HasUserService =>
 
   def authorize(user: User, authority: Authority)(implicit ctx: ExecutionContext): Future[Boolean] = Future.successful {
     authority match {
-      case Role.Admin => true
-      case Role.Partner => false
+      case Role.ADMIN => user.accessLevel.role == Role.ADMIN
+      case Role.PARTNER => true // Currently the minimal level
     }
   }
 
