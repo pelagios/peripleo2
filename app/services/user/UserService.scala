@@ -53,7 +53,7 @@ class UserService @Inject() (implicit val es: ES, val ctx: ExecutionContext) {
   /** Creates a new user from a username and password **/
   def createUser(username: String, email: String, password: String): Future[Option[User]] = {
     val salt = randomSalt()
-    val user = new User(username, email, computeHash(salt + password), salt, new DateTime())
+    val user = new User(username, email, computeHash(salt + password), salt, AccessLevel(Role.Admin), new DateTime())
     insertOrUpdateUser(user).map { 
       case true => Some(user)
       case false => None
