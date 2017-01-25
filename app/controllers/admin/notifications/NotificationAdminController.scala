@@ -1,4 +1,4 @@
-package controllers.admin.log
+package controllers.admin.notifications
 
 import controllers.BaseController
 import javax.inject.{ Inject, Singleton }
@@ -8,13 +8,13 @@ import play.api.mvc.Action
 import services.user.{ Role, UserService }
 
 @Singleton
-class LogAdminController @Inject() (
+class NotificationAdminController @Inject() (
   val config: Configuration,
   val users: UserService
 ) extends BaseController with AuthElement {
 
   def index = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>
-    Ok(views.html.admin.log.index())
+    Ok(views.html.admin.notifications.index())
   }
 
 }

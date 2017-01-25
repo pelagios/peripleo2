@@ -17,7 +17,7 @@ GET     /admin/authorities/periods                   controllers.admin.authoriti
 
 GET     /admin/analytics                             controllers.admin.analytics.AnalyticsAdminController.index
 
-GET     /admin/log                                   controllers.admin.log.LogAdminController.index
+GET     /admin/notifications                         controllers.admin.notifications.NotificationAdminController.index
 
 GET     /admin/authorities                           controllers.admin.AdminController.authorities
 GET     /admin                                       controllers.admin.AdminController.index
