@@ -6,6 +6,23 @@ GET     /assets/*file                                controllers.Assets.versione
 GET     /favicon.ico                                 controllers.Assets.at(path="/public", file="/images/favicon.png")
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Admin
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+GET     /admin/datasets                              controllers.admin.datasets.DatasetAdminController.index
+
+GET     /admin/authorities/gazetteers                controllers.admin.authorities.GazetteerAdminController.index
+GET     /admin/authorities/people                    controllers.admin.authorities.PeopleAdminController.index
+GET     /admin/authorities/periods                   controllers.admin.authorities.PeriodAdminController.index
+
+GET     /admin/analytics                             controllers.admin.analytics.AnalyticsAdminController.index
+
+GET     /admin/log                                   controllers.admin.log.LogAdminController.index
+
+GET     /admin/authorities                           controllers.admin.AdminController.authorities
+GET     /admin                                       controllers.admin.AdminController.index
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Login & Logout
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -17,4 +34,4 @@ GET     /logout                                      controllers.admin.LoginLogo
 # Application root (TODO temporarily directs to login)
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-GET     /                                            controllers.admin.GazetteerAdminController.index
+# GET     /                                            controllers.admin.GazetteerAdminController.index

@@ -24,7 +24,7 @@ trait Security extends AuthConfig { self: HasConfig with HasUserService =>
     self.users.findByUsername(id)
 
   def loginSucceeded(request: RequestHeader)(implicit ctx: ExecutionContext): Future[Result] = {
-    val destination = request.session.get("access_uri").getOrElse(controllers.admin.routes.GazetteerAdminController.index.toString)
+    val destination = request.session.get("access_uri").getOrElse(controllers.admin.routes.AdminController.index.toString)
     Future.successful(Results.Redirect(destination).withSession(request.session - "access_uri"))
   }
 

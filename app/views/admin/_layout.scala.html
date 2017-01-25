@@ -1,0 +1,65 @@
+@(
+  title: String,
+  activeTab: String
+)(content: Html)(implicit request: RequestHeader)
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>@title | Peripleo</title>
+    <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/admin/index.css")"/>
+  </head>
+  <body>
+    <div class="sidebar">
+
+      <ul class="menu">
+        <li @if(activeTab == "datasets") { class="active" }>
+          <a href="@controllers.admin.datasets.routes.DatasetAdminController.index">
+            <span class="icon">&#xf02d;</span> <span class="label">Datasets</span>
+          </a>
+        </li>
+
+        <li @if(activeTab == "authorities") { class="active" }>
+          <a href="@controllers.admin.routes.AdminController.authorities">
+            <span class="icon">&#xf234;</span> <span class="label">Authorities</span>
+          </a>
+
+          <ul>
+            <li @if(activeTab == "gazetteers") { class="active" }>
+              <a href="@controllers.admin.authorities.routes.GazetteerAdminController.index">
+                <span class="icon"></span> <span class="label">Gazetteers</span>
+              </a>
+            </li>
+
+            <li @if(activeTab == "people") { class="active" }>
+              <a href="@controllers.admin.authorities.routes.PeopleAdminController.index">
+                <span class="icon"></span> <span class="label">People</span>
+              </a>
+            </li>
+
+            <li @if(activeTab == "periods") { class="active" }>
+              <a href="@controllers.admin.authorities.routes.PeriodAdminController.index">
+                <span class="icon"></span> <span class="label">Time Periods</span>
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <li @if(activeTab == "analytics") { class="active" }>
+          <a href="@controllers.admin.analytics.routes.AnalyticsAdminController.index">
+            <span class="icon">&#xf1da;</span> <span class="label">Analytics</span>
+          </a>
+        </li>
+
+        <li @if(activeTab == "log") { class="active" }>
+          <a href="@controllers.admin.log.routes.LogAdminController.index">
+            <span class="icon">&#xf0c7;</span> <span class="label">Event Log</span>
+          </a>
+        </li>
+      </ul>
+    </div> <!-- .sidebar -->
+
+    <div class="content">
+      @content
+    </div>
+  </body>
+</html>

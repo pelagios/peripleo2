@@ -8,13 +8,17 @@ import play.api.mvc.Action
 import services.user.{ Role, UserService }
 
 @Singleton
-class GazetteerAdminController @Inject() (
+class AdminController @Inject() (
   val config: Configuration,
   val users: UserService
 ) extends BaseController with AuthElement {
 
   def index = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>
-    Ok(views.html.admin.gazetteers())
+    Redirect(controllers.admin.datasets.routes.DatasetAdminController.index)
   }
 
+  def authorities = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>
+    Redirect(controllers.admin.authorities.routes.GazetteerAdminController.index)
+  }
+  
 }
