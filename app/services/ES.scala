@@ -13,6 +13,7 @@ import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.util.{ Try, Success, Failure }
 import scala.concurrent.Await
+import services.user.UserService
 
 /** Binding ES as eager singleton, so we can start & stop properly **/
 class ESModule extends AbstractModule {
@@ -92,7 +93,7 @@ class ES @Inject() (config: Configuration, lifecycle: ApplicationLifecycle) {
   def start() = {
     implicit val timeout = 60.seconds
     val response = client.execute { index exists(ES.PERIPLEO) }.await
-
+    
     if (response.isExists()) {
       // Index exists - create missing mappings as needed
       val list = client.admin.indices().prepareGetMappings()
@@ -115,9 +116,9 @@ class ES @Inject() (config: Configuration, lifecycle: ApplicationLifecycle) {
         Logger.info("Create mapping - " + name)
         create.addMapping(name, json)
       }}
-
+      
       create.execute().actionGet()
-    }
+    }   
   }
 
   def flushIndex =

@@ -23,5 +23,5 @@ object User extends HasDate {
     (JsPath \ "salt").format[String] and
     (JsPath \ "created_at").format[DateTime]
   )(User.apply, unlift(User.unapply))
-  
+    
 }

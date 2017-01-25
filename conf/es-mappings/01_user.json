@@ -1,7 +1,13 @@
 {
   "user": {
     "properties": {
-      "username": { "type": "string", "index": "not_analyzed" },
+      "username": {
+         "type": "string",
+         "index": "not_analyzed",
+         "fields": {
+           "lowercase": { "type": "string", "analyzer": "lowercase_keyword" }
+         }
+      },
       "email": { "type": "string", "index": "not_analyzed" },
       "password_hash": { "type": "string", "index": "not_analyzed" },
       "salt": { "type": "string", "index": "not_analyzed" },
