@@ -1,12 +1,19 @@
 package controllers.admin
 
+import controllers.BaseController
 import javax.inject.{ Inject, Singleton }
-import play.api.mvc.{ Action, Controller }
+import jp.t2v.lab.play2.auth.AuthElement
+import play.api.Configuration
+import play.api.mvc.Action
+import services.user.{ Role, UserService }
 
 @Singleton
-class GazetteerAdminController @Inject() extends Controller {
+class GazetteerAdminController @Inject() (
+  val config: Configuration,
+  val users: UserService
+) extends BaseController with AuthElement {
 
-  def index = Action {
+  def index = StackAction(AuthorityKey -> Role.Admin) { implicit request =>
     Ok(views.html.admin.gazetteers())
   }
 

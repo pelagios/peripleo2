@@ -1,19 +1,21 @@
 package controllers
 
 import jp.t2v.lab.play2.auth.{ AsyncIdContainer, AuthConfig, CookieTokenAccessor, CookieIdContainer }
-import scala.concurrent.{ ExecutionContext, Future }
-import scala.reflect.{ ClassTag, classTag }
 import play.api.Play
 import play.api.cache.CacheApi
 import play.api.mvc.{ Result, Results, RequestHeader }
-import javax.inject.Inject
+import scala.concurrent.{ ExecutionContext, Future }
+import scala.reflect.{ ClassTag, classTag }
+import services.user.Role
 
 trait Security extends AuthConfig { self: HasConfig with HasUserService =>
 
   type Id = String
 
   type User = services.user.User
-
+  
+  type Authority = Role.Role
+  
   val idTag: ClassTag[Id] = classTag[Id]
 
   val sessionTimeoutInSeconds: Int = 3600
@@ -37,7 +39,8 @@ trait Security extends AuthConfig { self: HasConfig with HasUserService =>
 
   def authorize(user: User, authority: Authority)(implicit ctx: ExecutionContext): Future[Boolean] = Future.successful {
     authority match {
-      case _ => true // We're not using authority levels at this time
+      case Role.Admin => true
+      case Role.Partner => false
     }
   }
 
