@@ -1,0 +1,140 @@
+.error-msg {
+  color:@red-type;
+  font-size:15px;
+  padding:10px 0 0 0;
+}
+
+dl, dd {
+  padding:0;
+  margin:0;
+}
+
+dd.error {
+  color:@red-type;
+  font-size:15px;
+  margin-top:-5px;
+  padding-bottom:5px;
+}
+
+dd.info {
+  color:@lightblue-type;
+}
+
+input, textarea, select {
+  border:0;
+  outline:none;
+  font-size:17px;
+}
+
+input, textarea {
+  -webkit-appearance:none;
+}
+
+input[type=text], input[type=password], textarea, select {
+  box-sizing:border-box;
+  color:@form-type;
+  background-color:#fff;
+  font-family:PTSansNarrow;
+  letter-spacing:1px;
+  border:1px solid @form-grey-border;
+}
+
+input[type=text]:focus, input[type=password]:focus, textarea:focus, select:focus {
+  border-color:@form-blue-border;
+  box-shadow:0 0 4px 0 @form-blue-glow;
+}
+
+input[type=checkbox] { display:none; }
+
+label { .noselect(); }
+
+input[type=checkbox] + label:before {
+  .noselect();
+  cursor:pointer;
+  font-family:FontAwesome;
+  font-size:16px;
+  display:inline-block;
+  content:'\f096';
+  width:20px;
+  text-align:left;
+}
+
+input[type=checkbox]:checked + label:before {
+  content:'\f046';
+}
+
+input[type=checkbox][disabled] + label,
+input[type=checkbox][disabled] + label:before {
+  color:lighten(@lightblue-type, 12%);
+}
+
+input:-webkit-autofill {
+  -webkit-box-shadow:0 0 0px 1000px white inset;
+  -webkit-text-fill-color:#525252 !important;
+}
+
+button.search.icon {
+  color:lighten(@lightblue-type, 10%);
+  background:none;
+  border:none;
+  outline:none;
+  font-size:16px;
+}
+
+.flash-message {
+  padding:8px 15px;
+  font-size:16px;
+
+  .icon {
+    font-size:14px;
+    padding-right:3px;
+  }
+
+}
+
+.flash-message.success {
+  color:@success-msg-type;
+  background-color:@success-msg-bg;
+  border-bottom:1px solid @success-msg-border;
+}
+
+.flash-message.error {
+  color:@error-msg-type;
+  background-color:@error-msg-bg;
+  border-bottom:1px solid @error-msg-border;
+}
+
+/** Typical CRUD-style forms, appearing at various areas throughout Recogito **/
+
+form.crud {
+
+  dt, dd {
+    display:inline-block;
+  }
+
+  dt {
+    width:110px;
+    text-align:right;
+  }
+
+  input[type=text], input[type=password], textarea, select {
+    padding:5px 6px;
+    margin:7px 10px;
+    width:320px;
+    font-size:16px;
+  }
+
+  textarea {
+    display:inline-block;
+    vertical-align:middle;
+    height:80px;
+  }
+
+  button {
+    margin:7px 10px;
+    padding:5px;
+    width:320px;
+    box-sizing:border-box;
+  }
+
+}
