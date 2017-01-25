@@ -15,7 +15,7 @@ object Role {
   
   implicit val roleFormat: Format[Role] =
     Format(
-      JsPath.read[JsString].map { _.toString match {
+      JsPath.read[JsString].map { _.value match {
         case "ADMIN" => ADMIN
         case "PARTNER" => PARTNER
       }},

@@ -37,7 +37,7 @@ trait Security extends AuthConfig { self: HasConfig with HasUserService =>
   override def authorizationFailed(request: RequestHeader, user: User, authority: Option[Authority])(implicit context: ExecutionContext): Future[Result] =
     Future.successful(Results.Forbidden("Forbidden"))
 
-  def authorize(user: User, authority: Authority)(implicit ctx: ExecutionContext): Future[Boolean] = Future.successful {
+  def authorize(user: User, authority: Authority)(implicit ctx: ExecutionContext): Future[Boolean] = Future.successful { 
     authority match {
       case Role.ADMIN => user.accessLevel.role == Role.ADMIN
       case Role.PARTNER => true // Currently the minimal level
