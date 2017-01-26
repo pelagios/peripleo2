@@ -29,25 +29,25 @@
   li {
     padding:0;
     margin:10px 0;
-    border-left:3px solid transparent;
 
     a {
       display:block;
       padding:15px 35px;
       color:@sidebar-type;
       text-decoration:none;
+      border-left:3px solid transparent;
     }
 
-  }
+    a.active {
+      background-color:@sidebar-grey-active !important;
+      border-color:@sidebar-hilight !important;
+    }
 
-  li.active {
-    background-color:@sidebar-grey-active !important;
-    border-color:@sidebar-hilight !important;
-  }
+    a:hover:not(.active) {
+      background-color:fade(@sidebar-grey-active, 45%);
+      border-color:fade(@sidebar-hilight, 45%);
+    }
 
-  li:hover:not(.no-hover) {
-    background-color:fade(@sidebar-grey-active, 45%);
-    border-color:fade(@sidebar-hilight, 45%);
   }
 
   ul.submenu {
@@ -57,8 +57,7 @@
       margin:0;
 
       a {
-        padding:20px 0;
-        margin:0 45px 0 90px;
+        padding:20px 45px 20px 90px;
       }
 
     }
