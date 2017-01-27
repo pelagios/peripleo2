@@ -14,11 +14,15 @@ class AdminController @Inject() (
 ) extends BaseController with AuthElement {
 
   def index = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>
-    Redirect(controllers.admin.datasets.routes.DatasetAdminController.index)
+    Redirect(controllers.admin.datasets.routes.GeodataAdminController.index)
+  }
+
+  def datasets = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>
+    Redirect(controllers.admin.datasets.routes.GeodataAdminController.index)
   }
 
   def authorities = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>
     Redirect(controllers.admin.authorities.routes.GazetteerAdminController.index)
   }
-  
+
 }

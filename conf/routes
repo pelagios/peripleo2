@@ -9,7 +9,9 @@ GET     /favicon.ico                                 controllers.Assets.at(path=
 # Admin
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-GET     /admin/datasets                              controllers.admin.datasets.DatasetAdminController.index
+GET     /admin/datasets/annotations                  controllers.admin.datasets.AnnotationsAdminController.index
+GET     /admin/datasets/geodata                      controllers.admin.datasets.GeodataAdminController.index
+GET     /admin/datasets/statistics                   controllers.admin.datasets.StatisticsAdminController.index
 
 GET     /admin/authorities/gazetteers                controllers.admin.authorities.GazetteerAdminController.index
 GET     /admin/authorities/people                    controllers.admin.authorities.PeopleAdminController.index
@@ -19,6 +21,7 @@ GET     /admin/analytics                             controllers.admin.analytics
 
 GET     /admin/notifications                         controllers.admin.notifications.NotificationAdminController.index
 
+GET     /admin/datasets                              controllers.admin.AdminController.datasets
 GET     /admin/authorities                           controllers.admin.AdminController.authorities
 GET     /admin                                       controllers.admin.AdminController.index
 

@@ -8,13 +8,13 @@ import play.api.mvc.Action
 import services.user.{ Role, UserService }
 
 @Singleton
-class DatasetAdminController @Inject() (
+class AnnotationsAdminController @Inject() (
   val config: Configuration,
   val users: UserService
 ) extends BaseController with AuthElement {
 
   def index = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>
-    Ok(views.html.admin.datasets.index())
+    Ok(views.html.admin.datasets.annotations())
   }
 
 }

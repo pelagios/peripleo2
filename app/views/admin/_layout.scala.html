@@ -12,7 +12,7 @@
     <div class="sidebar">
       <ul class="menu">
         <li>
-          <a  @if(activeTab == "datasets") { class="active" } href="@controllers.admin.datasets.routes.DatasetAdminController.index">
+          <a  @if(activeTab == "datasets") { class="active" } href="@controllers.admin.routes.AdminController.datasets">
             <span class="icon">&#xe617;</span><span class="label">Datasets</span>
           </a>
 
@@ -26,6 +26,12 @@
             <li>
               <a @if(activeTab == "annotations") { class="active" } href="#">
                 <span class="label">Annotations</span>
+              </a>
+            </li>
+
+            <li>
+              <a @if(activeTab == "statistics") { class="active" } href="#">
+                <span class="label">Statistics</span>
               </a>
             </li>
           </ul>
