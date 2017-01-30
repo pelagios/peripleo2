@@ -4,8 +4,13 @@ import akka.stream.{ ActorAttributes, ClosedShape, Materializer, Supervision }
 import akka.stream.scaladsl._
 import akka.util.ByteString
 import java.io.InputStream
+import scala.concurrent.Await
+import scala.concurrent.duration._
+import services.task.{ TaskService, TaskStatus }
+import services.HasBatchImport
+import services.HasBatchImport
 
-class BaseStreamImporter(implicit materializer: Materializer) {
+class StreamImporter(taskService: TaskService, implicit val materializer: Materializer) {
 
   private val BATCH_SIZE = 200
 
@@ -15,7 +20,10 @@ class BaseStreamImporter(implicit materializer: Materializer) {
       Supervision.Stop
   }
 
-  def importRecords[T](is: InputStream, crosswalk: String => Option[T]) = {
+  def importRecords[T](is: InputStream, crosswalk: String => Option[T], service : HasBatchImport[T], username: String) = {
+    
+    val taskId = Await.result(taskService.insertTask(service.taskType, service.getClass.getName, username), 10.seconds)
+    taskService.updateStatus(taskId, TaskStatus.RUNNING)
 
     val source = StreamConverters.fromInputStream(() => is, 1024)
       .via(Framing.delimiter(ByteString("\n"), maximumFrameLength = Int.MaxValue, allowTruncation = false))
@@ -27,11 +35,8 @@ class BaseStreamImporter(implicit materializer: Materializer) {
 
     val importer = Sink.foreach[Seq[Option[T]]] { records =>
       val toImport = records.flatten
-      
-      // TODO Import
-
-      // TODO Write progress update
-
+      service.importBatch(toImport)
+      // TODO how to best compute total progress?
     }
 
     val graph = RunnableGraph.fromGraph(GraphDSL.create() { implicit builder =>
@@ -44,6 +49,8 @@ class BaseStreamImporter(implicit materializer: Materializer) {
     }).withAttributes(ActorAttributes.supervisionStrategy(decider))
 
     graph.run()
+    
+    // TODO how do we know the service is finished?
   }
 
 }
