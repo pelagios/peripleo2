@@ -11,6 +11,7 @@ import play.api.libs.json.Json
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.language.postfixOps
 import services.ES
+import org.joda.time.DateTime
 
 @Singleton
 class TaskService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
@@ -23,88 +24,84 @@ class TaskService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
     override def as(hit: RichSearchHit): Task =
       Json.fromJson[Task](Json.parse(hit.sourceAsString)).get
   }
-  
-  private def insertOrUpdateTask(task: Task): Future[Boolean] =
+      
+  def findById(uuid: UUID): Future[Option[Task]] =
     es.client execute {
-      update id task.id in ES.PERIPLEO / ES.TASK source task docAsUpsert
-    } map { _ => 
-      true
-    } recover { case t: Throwable =>
-      Logger.error(s"Error creating task record: " + t.getMessage)
-      t.printStackTrace
-      false
+      get id uuid.toString from ES.PERIPLEO / ES.TASK
+    } map { response => 
+      if (response.isExists) {
+        val source = Json.parse(response.sourceAsString)
+        Some(Json.fromJson[Task](source).get)        
+      } else {
+        None
+      }
     }
     
-  /*
-  def updateProgress(uuid: UUID, progress: Int): Future[Unit] = db.withTransaction { sql => 
-    sql.update(TASK)
-      .set[Integer](TASK.PROGRESS, progress)
-      .where(TASK.ID.equal(uuid))
-      .execute()
-  }
+  private def updateFields(uuid: UUID, fields: Seq[(String, Any)]): Future[Boolean] =
+    es.client execute {
+      update id uuid.toString in ES.PERIPLEO / ES.TASK doc fields    
+    } map { _ => true 
+    } recover { case t: Throwable => false }
     
-  def updateStatus(uuid: UUID, status: TaskStatus.Value): Future[Unit] = db.withTransaction { sql => 
-    sql.update(TASK)
-      .set(TASK.STATUS, status.toString)
-      .where(TASK.ID.equal(uuid))
-      .execute()
-  }
-  
-  def updateStatusAndProgress(uuid: UUID, status: TaskStatus.Value, progress: Int): Future[Unit] = db.withTransaction { sql =>
-    sql.update(TASK)
-      .set(TASK.STATUS, status.toString)
-      .set[Integer](TASK.PROGRESS, progress)
-      .where(TASK.ID.equal(uuid))
-      .execute()
-  }
-  
-  def setCompleted(uuid: UUID, completedWith: Option[String] = None): Future[Unit] = db.withTransaction { sql =>
-    sql.update(TASK)
-      .set(TASK.STATUS, TaskStatus.COMPLETED.toString)
-      .set(TASK.STOPPED_AT, new Timestamp(System.currentTimeMillis))
-      .set(TASK.STOPPED_WITH, optString(completedWith))
-      .set[Integer](TASK.PROGRESS, 100)
-      .where(TASK.ID.equal(uuid))
-      .execute()
-  }
-  
-  def setFailed(uuid: UUID, failedWith: Option[String] = None): Future[Unit] = db.withTransaction { sql =>
-    sql.update(TASK)
-      .set(TASK.STATUS, TaskStatus.FAILED.toString)
-      .set(TASK.STOPPED_AT, new Timestamp(System.currentTimeMillis))
-      .set(TASK.STOPPED_WITH, optString(failedWith))
-      .where(TASK.ID.equal(uuid))
-      .execute()
-  }
-  
-  def insertTask(
-      taskType: TaskType,
-      className: String,
-      documentId: Option[String],
-      filepartId: Option[UUID],
-      spawnedBy: Option[String]
-    ): Future[UUID] = db.withTransaction { sql =>
-      
-    val uuid = UUID.randomUUID
-    
-    val taskRecord = new TaskRecord(
-      uuid,
-      taskType.toString,
-      className,
-      optString(documentId),
-      filepartId.getOrElse(null),
-      optString(spawnedBy),
-      new Timestamp(System.currentTimeMillis),
-      null, // stopped_at
-      null, // stopped_with
-      TaskStatus.PENDING.toString,
-      0
-    )
-    
-    sql.insertInto(TASK).set(taskRecord).execute()
-    
-    uuid
-  }
-  */
+  def updateProgress(uuid: UUID, progress: Int): Future[Boolean] =
+    updateFields(uuid, Seq("progress" -> progress))
 
+  def updateStatus(uuid: UUID, status: TaskStatus.Value): Future[Boolean] =
+    updateFields(uuid, Seq("status" -> status.toString))
+  
+  def updateStatusAndProgress(uuid: UUID, status: TaskStatus.Value, progress: Int): Future[Boolean] =
+    updateFields(uuid, Seq(
+        "status" -> status.toString,
+        "progress" -> progress
+      ))    
+  
+  def setCompleted(uuid: UUID, completedWith: Option[String] = None): Future[Boolean] =
+    completedWith match {
+      case Some(message) => updateFields(uuid, Seq(
+          "status" -> TaskStatus.COMPLETED.toString,
+          "stopped_at" -> DateTime.now(),
+          "stopped_with" -> message,
+          "progress" -> 100
+        ))
+        
+      case None => updateFields(uuid, Seq(
+          "status" -> TaskStatus.COMPLETED.toString,
+          "stopped_at" -> DateTime.now(),
+          "progress" -> 100
+        ))
+    }
+
+  def setFailed(uuid: UUID, failedWith: Option[String] = None): Future[Boolean] =
+    failedWith match {
+      case Some(message) => updateFields(uuid, Seq(
+          "status" -> TaskStatus.FAILED.toString,
+          "stopped_at" -> DateTime.now(),
+          "stopped_with" -> message
+        ))
+        
+      case None => updateFields(uuid, Seq(
+          "status" -> TaskStatus.FAILED.toString,
+          "stopped_at" -> DateTime.now()
+        ))
+    }
+  
+  def insertTask(taskType: TaskType, classname: String, spawnedBy: String): Future[UUID] = {
+    val task = Task(
+      UUID.randomUUID(),
+      taskType,
+      classname,
+      spawnedBy,
+      DateTime.now(),
+      None,
+      None,
+      TaskStatus.PENDING,
+      0)
+      
+    es.client execute {
+      update id task.id in ES.PERIPLEO / ES.TASK source task docAsUpsert
+    } map { _ =>
+      task.id      
+    }
+  }
+  
 }
