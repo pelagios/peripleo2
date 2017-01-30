@@ -16,7 +16,7 @@ import sun.security.provider.SecureRandom
 import org.joda.time.DateTime
 
 @Singleton
-class UserService @Inject() (implicit val es: ES, val ctx: ExecutionContext) {
+class UserService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
   
   countUsers.map { count =>
     if (count == 0) {

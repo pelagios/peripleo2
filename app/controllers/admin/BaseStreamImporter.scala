@@ -27,8 +27,10 @@ class BaseStreamImporter(implicit materializer: Materializer) {
 
     val importer = Sink.foreach[Seq[Option[T]]] { records =>
       val toImport = records.flatten
+      
+      // TODO Import
 
-      // TODO import via appropriate service
+      // TODO Write progress update
 
     }
 
