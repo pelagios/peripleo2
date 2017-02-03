@@ -1,57 +1,36 @@
 {
-  "identifier": "",
-  "item_type": "PLACE|OBJECT|PERSON|DATASET",
-  "categories": [ "Archaeology", "Numismatics", "http://getty.aat.com/term" ],
-  "title": "",
-  "descriptions": [{
-    "description": "...",
-    "language": "..."
+  "identifier": "http://numismatics.org/collection/1991.60.36",
+  "item_type": "OBJECT",
+  "categories": [{
+    "label": "Archaeology",
+    "uri": "http://vocab.getty.edu/aat/300054328"
+  },{
+    "label": "Numismatics",
+    "uri": "http://vocab.getty.edu/aat/300054419"
   }],
-  "homepage": "",
-  "depictions": [{
-    "url": "",
-    "thumbnail_url": "",
-    "caption": "",
-    "creator": "",
-    "created_at": "",
-    "license": ""
-  }],
-  "bbox": [],
-  "geometry": {},
-  "representative_point": [],
-  "temporal_bounds": {
-    "from": "",
-    "to": ""
+  "title": "Silver 4 drachm (tetradrachm), Cnossus, 200 BC - 67 BC. 1991.60.36",
+  "is_in_dataset": [
+    "ecbd9773-b60f-4dc1-bd86-f2cceb6548a1",
+    "ecbd9773-b60f-4dc1-bd86-f2cceb6548a1.d6fdd35c-08b6-495b-ad4e-3f9256d30665"
+  ],
+  "homepage": "http://numismatics.org/collection/1991.60.36",
+  "geometry": {
+    "type": "Point",
+    "coordinates": [ 25.163156, 35.297961 ]
   },
-  "fulltext": "",
-  "source_dataset": "array of paths?",
-  "is_part_of": "array of paths?",
-  "languages": [],
+  "representative_point": [ 25.163156, 35.297961 ],
+  "temporal_bounds": { "from": -200, "to": 67 },
   "links": {
-    "places": [],
-    "time_periods": [],
-    "people": []
+    "places": [ "http://pleiades.stoa.org/places/589872" ],
+    "people": [ "http://collection.britishmuseum.org/resource?uri=http://collection.britishmuseum.org/id/person-institution/56988" ]
   },
-  "is_conflation_of": [{
-    "uri": "...",
-    "source_gazetteer": "...",
-    "last_sync_at": "...",
-    "last_changed_at": "...",
-    "title": "...",
-    "descriptions": [{
-      "description": "...",
-      "language": "..."
-    }],
-    "names": [{
-      "name": "...",
-      "language": "..."
-    }],
-    "temporal_bounds": {
-      "from": "",
-      "to": ""
-    },
-    "place_types": [],
-    "close_matches": [],
-    "exact_matches": []
+  "depictions": [{
+    "url": "http://numismatics.org/collectionimages/19501999/1991/1991.60.36.obv.width350.jpg",
+    "thumbnail": "http://numismatics.org/collectionimages/19501999/1991/1991.60.36.obv.width175.jpg",
+    "caption": "Obverse: Head of Apollo laureate"
+  }, {
+    "url": "http://numismatics.org/collectionimages/19501999/1991/1991.60.36.rev.width350.jpg",
+    "thumbnail": "http://numismatics.org/collectionimages/19501999/1991/1991.60.36.obv.width175.jpg",
+    "caption": "Reverse: Circular Labyrinth"
   }]
 }
