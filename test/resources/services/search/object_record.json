@@ -1,0 +1,57 @@
+{
+  "identifier": "",
+  "item_type": "PLACE|OBJECT|PERSON|DATASET",
+  "categories": [ "Archaeology", "Numismatics", "http://getty.aat.com/term" ],
+  "title": "",
+  "descriptions": [{
+    "description": "...",
+    "language": "..."
+  }],
+  "homepage": "",
+  "depictions": [{
+    "url": "",
+    "thumbnail_url": "",
+    "caption": "",
+    "creator": "",
+    "created_at": "",
+    "license": ""
+  }],
+  "bbox": [],
+  "geometry": {},
+  "representative_point": [],
+  "temporal_bounds": {
+    "from": "",
+    "to": ""
+  },
+  "fulltext": "",
+  "source_dataset": "array of paths?",
+  "is_part_of": "array of paths?",
+  "languages": [],
+  "links": {
+    "places": [],
+    "time_periods": [],
+    "people": []
+  },
+  "is_conflation_of": [{
+    "uri": "...",
+    "source_gazetteer": "...",
+    "last_sync_at": "...",
+    "last_changed_at": "...",
+    "title": "...",
+    "descriptions": [{
+      "description": "...",
+      "language": "..."
+    }],
+    "names": [{
+      "name": "...",
+      "language": "..."
+    }],
+    "temporal_bounds": {
+      "from": "",
+      "to": ""
+    },
+    "place_types": [],
+    "close_matches": [],
+    "exact_matches": []
+  }]
+}
