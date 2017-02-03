@@ -1,4 +1,4 @@
-package services.place
+package services.search
 
 import org.joda.time.{ DateTime, DateTimeZone }
 import org.joda.time.format.DateTimeFormat

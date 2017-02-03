@@ -6,6 +6,7 @@ import org.joda.time.DateTime
 import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
+import services.search.{ Description, TemporalBounds }
 
 case class GazetteerRecord (
 
@@ -136,17 +137,6 @@ object Gazetteer {
       Writes[Gazetteer](t => JsString(t.name))
     )
    
-}
-
-case class Description(description: String, language: Option[String] = None)
-
-object Description {
-
-  implicit val descriptionFormat: Format[Description] = (
-    (JsPath \ "description").format[String] and
-    (JsPath \ "language").formatNullable[String]
-  )(Description.apply, unlift(Description.unapply))
-
 }
 
 case class Name(name: String, language: Option[String] = None, isTransliterated: Boolean = false, isHistoric: Boolean = false)

@@ -1,3 +1,5 @@
+# TODO linking relations?
+
 {
   "record": {
     "properties": {
@@ -38,14 +40,9 @@
           "to": { "type": "date", "format": "yyyy-MM-dd" }
         }
       },
-      "links": {
-        "type": "object",
-        "properties": {
-          "places": { "type": "string", "index": "not_analyzed" },
-          "time_periods": { "type": "string", "index": "not_analyzed" },
-          "people": { "type": "string", "index": "not_analyzed" }
-        }
-      },
+      "places": { "type": "string", "index": "not_analyzed" },
+      "people": { "type": "string", "index": "not_analyzed" },
+      "periods": { "type": "string", "index": "not_analyzed" },
       "depictions": {
         "type": "nested",
         "properties": {
