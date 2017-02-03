@@ -1,6 +1,9 @@
 {
-  "identifier": "http://numismatics.org/collection/1991.60.36",
-  "item_type": "OBJECT",
+  "identifiers": [
+    "7beabb84-37f1-4f18-8a74-b02143890bb7",
+    "http://numismatics.org/collection/1991.60.36"
+  ],
+  "record_type": "OBJECT",
   "categories": [{
     "label": "Archaeology",
     "uri": "http://vocab.getty.edu/aat/300054328"
