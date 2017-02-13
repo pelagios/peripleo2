@@ -6,9 +6,6 @@
   ],
   "item_type": "PLACE",
   "title": "Ad Mauros/Marinianio, Eferding",
-  "descriptions": [{
-    "description": "An ancient place, cited: BAtlas 12 H4 Ad Mauros"
-  }],
   "languages": [ "LA" ],
   "temporal_bounds": { "from": -30, "to": 640 },
   "is_conflation_of": [

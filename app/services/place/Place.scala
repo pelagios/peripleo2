@@ -1,81 +1,80 @@
 package services.place
 
 import com.vividsolutions.jts.geom.{ Coordinate, Geometry }
-import services.{ HasDate, HasGeometry }
 import org.joda.time.{ DateTime, DateTimeZone }
 import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
-import services.search.TemporalBounds
+import services.{ HasDate, HasGeometry, HasNullableSeq }
+import services.search.{ ItemType, Language, TemporalBounds }
 
-case class Place (
-    
-  /** The ID equals the URI of the gazetteer record added first **/
-  id: String,
-    
-  /** A representative geometry - e.g. that of a 'preferred gazetteer', or a union **/ 
-  representativeGeometry: Option[Geometry],
-    
-  /** A representative point **/
-  representativePoint: Option[Coordinate],
+case class Place (isConflationOf: Seq[GazetteerRecord]) {
   
-  /** Union of the temporal bounds of all gazetteer records **/
-  temporalBoundsUnion: Option[TemporalBounds],
-  
-  /** The gazetteer records that define that place **/
-  isConflationOf: Seq[GazetteerRecord]
-  
-) {
-  
-  /** URIs of all gazetteer records that define that place **/
   lazy val uris: Seq[String] = isConflationOf.map(_.uri)
 
-  /** List of the gazetteers that define that place **/
   lazy val sourceGazetteers: Seq[Gazetteer] = isConflationOf.map(_.sourceGazetteer)
-  
-  /** List of titles **/   
+
   lazy val titles: Seq[String] = isConflationOf.map(_.title)
+  
+  lazy val languages: Seq[Language] = isConflationOf.flatMap(_.names.flatMap(_.language)).distinct
+  
+  lazy val temporalBoundsUnion: Option[TemporalBounds] = {
+    val bounds = isConflationOf.flatMap(_.temporalBounds)
+    if (bounds.isEmpty)
+      None
+    else
+      Some(TemporalBounds.computeUnion(bounds))
+  }
       
-  /** Descriptions assigned to this place as Map[description -> list of gazetteers including the description] **/
+  // Descriptions as Map[description -> list of gazetteers including the description]
   lazy val descriptions =
     isConflationOf
       .flatMap(g => g.descriptions.map((_, g.sourceGazetteer)))
       .groupBy(_._1)
       .map { case (description, s) => (description -> s.map(_._2)) }.toMap
       
-  /** Names assigned to this place as Map[name -> list of gazetteers including the name] **/
-  lazy val names=
+  // Names as Map[name -> list of gazetteers including the name]
+  lazy val names =
     isConflationOf
       .flatMap(g => g.names.map((_, g.sourceGazetteer)))
       .groupBy(_._1)
       .map { case (name, s) => (name -> s.map(_._2)) }.toMap
 
-  /** Place types assigned to this place as Map[placeType -> list of gazetteers including the type] **/
+  // Place types as Map[placeType -> list of gazetteers including the type]
   lazy val placeTypes =
     isConflationOf
       .flatMap(g => g.placeTypes.map((_, g.sourceGazetteer)))
       .groupBy(_._1)
       .map { case (placeType, s) => (placeType -> s.map(_._2)) }.toMap
       
-  /** All close matches assigned to this place by source gazetteers **/
   lazy val closeMatches = isConflationOf.flatMap(_.closeMatches)
   
-  /** All exact matches assigned to this place by source gazetteers **/
   lazy val exactMatches = isConflationOf.flatMap(_.exactMatches)
   
-  /** For covenience **/
+  // For covenience
   lazy val allMatches: Seq[String] = closeMatches ++ exactMatches
   
 }
 
-object Place extends HasGeometry {
+object Place extends HasGeometry with HasNullableSeq {
   
-  implicit val placeFormat: Format[Place] = (
-    (JsPath \ "id").format[String] and
-    (JsPath \ "representative_geometry").formatNullable[Geometry] and
-    (JsPath \ "representative_point").formatNullable[Coordinate] and
-    (JsPath \ "temporal_bounds_union").formatNullable[TemporalBounds] and
-    (JsPath \ "is_conflation_of").format[Seq[GazetteerRecord]]
-  )(Place.apply, unlift(Place.unapply))
+  // A serialized place is also a serialized item, therefore reading and writing needs to be 'asymmetric' 
+  implicit val placeReads: Reads[Place] = JsPath.read[Seq[GazetteerRecord]].map(Place(_))
+        
+  implicit val placeWrites: Writes[Place] = (
+    (JsPath \ "identifiers").write[Seq[String]] and
+    (JsPath \ "item_type").write[ItemType.Value] and
+    (JsPath \ "title").write[String] and
+    (JsPath \ "languages").writeNullable[Seq[Language]] and
+    (JsPath \ "temporal_bounds").writeNullable[TemporalBounds] and
+    (JsPath \ "is_conflation_of").write[Seq[GazetteerRecord]]
+  )(place => (
+      place.uris,
+      ItemType.PLACE,
+      place.titles.head,
+      toOptSeq(place.languages),
+      place.temporalBoundsUnion,
+      place.isConflationOf)
+  )
   
 }

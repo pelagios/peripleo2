@@ -1,7 +1,7 @@
 package services.place
 
 import com.vividsolutions.jts.geom.{ Coordinate, Geometry }
-import services.{ HasDate, HasGeometry, HasNullableSeq, HasNullableBoolean }
+import services.{ HasDate, HasGeometry, HasNullableSeq }
 import org.joda.time.DateTime
 import play.api.libs.json._
 import play.api.libs.json.Reads._
@@ -17,7 +17,7 @@ case class GazetteerRecord (
   sourceGazetteer: Gazetteer,
 
   /** Time the record was last synchronized from a current gazetteer dump **/
-  lastSyncAt: DateTime,
+  lastSyncedAt: DateTime,
 
   /** Time the record was last changed, according to the gazetteer **/ 
   lastChangedAt: Option[DateTime],
@@ -43,12 +43,21 @@ case class GazetteerRecord (
   /** Place types assigned by the gazetteer **/
   placeTypes: Seq[String],
   
-  /** An optional ISO country code **/
-  countryCode: Option[CountryCode],
   
-  /** An optional population count - potentially useful for sorting **/
-  population: Option[Long],
+  
+  // An optional ISO country code 
+  // TODO countryCode: Option[CountryCode],
+  
+  // An optional population count - potentially useful for sorting
+  // TODO population: Option[Long],
+  
+  // TODO region names?
 
+  // TODO isPartOf
+  
+  
+  
+  
   /** closeMatch URIs **/
   closeMatches: Seq[String],
 
@@ -71,10 +80,6 @@ case class GazetteerRecord (
     allMatches.contains(other.uri) ||
     other.allMatches.contains(uri) ||
     allMatches.exists(matchURI => other.allMatches.contains(matchURI))
-
-  /** An 'equals' method that ignores the lastChangedAt property **/
-  def equalsIgnoreLastChanged(other: GazetteerRecord): Boolean =
-    throw new Exception("Implement me!")
 
 }
 
@@ -105,7 +110,7 @@ object GazetteerRecord extends HasDate with HasGeometry with HasNullableSeq {
   implicit val gazetteerRecordFormat: Format[GazetteerRecord] = (
     (JsPath \ "uri").format[String] and
     (JsPath \ "source_gazetteer").format[Gazetteer] and
-    (JsPath \ "last_sync_at").format[DateTime] and
+    (JsPath \ "last_synced_at").format[DateTime] and
     (JsPath \ "last_changed_at").formatNullable[DateTime] and
     (JsPath \ "title").format[String] and
     (JsPath \ "descriptions").formatNullable[Seq[Description]]
@@ -117,8 +122,10 @@ object GazetteerRecord extends HasDate with HasGeometry with HasNullableSeq {
     (JsPath \ "temporal_bounds").formatNullable[TemporalBounds] and
     (JsPath \ "place_types").formatNullable[Seq[String]]
       .inmap[Seq[String]](fromOptSeq[String], toOptSeq[String]) and
-    (JsPath \ "country_code").formatNullable[CountryCode] and
-    (JsPath \ "population").formatNullable[Long] and
+      
+    // TODO (JsPath \ "country_code").formatNullable[CountryCode] and
+    // TODO (JsPath \ "population").formatNullable[Long] and
+      
     (JsPath \ "close_matches").formatNullable[Seq[String]]
       .inmap[Seq[String]](fromOptSeq[String], toOptSeq[String]) and
     (JsPath \ "exact_matches").formatNullable[Seq[String]]
@@ -127,33 +134,7 @@ object GazetteerRecord extends HasDate with HasGeometry with HasNullableSeq {
 
 }
 
-case class Gazetteer(name: String)
-
-object Gazetteer {
-
-  implicit val gazetteerFormat: Format[Gazetteer] =
-    Format(
-      JsPath.read[String].map(Gazetteer(_)),
-      Writes[Gazetteer](t => JsString(t.name))
-    )
-   
-}
-
-case class Name(name: String, language: Option[String] = None, isTransliterated: Boolean = false, isHistoric: Boolean = false)
-
-object Name extends HasNullableBoolean {
-
-  implicit val literalFormat: Format[Name] = (
-    (JsPath \ "name").format[String] and
-    (JsPath \ "language").formatNullable[String] and
-    (JsPath \ "is_romanized").formatNullable[Boolean]
-      .inmap[Boolean](fromOptBool, toOptBool) and
-    (JsPath \ "is_historic").formatNullable[Boolean]
-      .inmap[Boolean](fromOptBool, toOptBool)
-  )(Name.apply, unlift(Name.unapply))
-
-}
-
+/*
 case class CountryCode(code: String) {
   
   require(code.size == 2, s"Invalid country code: $code (must be two characters)")
@@ -170,3 +151,4 @@ object CountryCode {
     )
    
 }
+*/
