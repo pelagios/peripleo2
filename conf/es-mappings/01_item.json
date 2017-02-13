@@ -1,10 +1,8 @@
-# TODO linking relations?
-
 {
-  "record": {
+  "item": {
     "properties": {
       "identifiers": { "type": "string", "index": "not_analyzed" },
-      "record_type": { "type": "string", "index": "not_analyzed" },
+      "item_type": { "type": "string", "index": "not_analyzed" },
       "last_synced_at": { "type": "date", "format": "yyyy-MM-dd'T'HH:mm:ssZ" },
       "last_changed_at": { "type": "date", "format": "yyyy-MM-dd'T'HH:mm:ssZ" },
       "categories": {
@@ -31,8 +29,6 @@
       },
       "homepage": { "type": "string", "index": "no" },
       "languages": { "type": "string", "index": "not_analyzed" },
-      "geometry": { "type": "geo_shape", "tree": "geohash", "precision": "50m" },
-      "representative_point": { "type": "geo_point" },
       "temporal_bounds": {
         "type": "object",
         "properties": {
@@ -40,8 +36,6 @@
           "to": { "type": "date", "format": "yyyy-MM-dd" }
         }
       },
-      "places": { "type": "string", "index": "not_analyzed" },
-      "people": { "type": "string", "index": "not_analyzed" },
       "periods": { "type": "string", "index": "not_analyzed" },
       "depictions": {
         "type": "nested",
@@ -54,7 +48,6 @@
           "license": { "type": "string", "index": "not_analyzed" }
         }
       },
-      "fulltext": { "type": "string" },
       "is_conflation_of": {
         "type": "nested",
         "dynamic": "false",

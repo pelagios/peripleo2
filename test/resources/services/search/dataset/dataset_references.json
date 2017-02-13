@@ -1,20 +1,7 @@
-{
-  "identifiers": [ "http://opencontext.org/projects/4B5721E9-2BB3-423F-5D04-1B948FA65FAB" ],
-  "record_type": "DATASET",
-  "last_synced_at": "2017-02-03T11:18:21Z",
-  "last_changed_at": "2014-05-19",
-  "categories": [{
-    "label": "Archaeology",
-    "uri": "http://vocab.getty.edu/aat/300054328"
-  }],
-  "title": "Missouri Site Files",
-  "is_part_of": [
-    "http://opencontext.org/projects/"
-  ],
-  "descriptions": [{
-    "description": "Archaeological site information managed and maintained by the Missouri State Historical Preservation Office"
-  }],
-  "homepage": "http://opencontext.org/projects/4B5721E9-2BB3-423F-5D04-1B948FA65FAB",
+[{
+  "reference_type": "PLACE",
+  "relation": "COVERAGE",
+  "representative_point": [ -38.3203125, 37.16031654673677 ],
   "geometry": {
     "type": "GeometryCollection",
     "geometries": [{
@@ -131,7 +118,5 @@
         ]
       ]
     }]
-  },
-  "representative_point": [ -38.3203125, 37.16031654673677 ],
-  "temporal_bounds": { "from": -1500000, "to": 1500 }
-}
+  }
+}]

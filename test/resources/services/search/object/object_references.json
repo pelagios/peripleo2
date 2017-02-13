@@ -1,0 +1,14 @@
+[{
+  "reference_type": "PLACE",
+  "relation": "FINDSPOT",
+  "uri": "http://pleiades.stoa.org/places/589872",
+  "geometry": {
+    "type": "Point",
+    "coordinates": [ 25.163156, 35.297961 ]
+  },
+  "representative_point": [ 25.163156, 35.297961 ]
+},{
+  "reference_type": "PERSON",
+  "relation": "ATTESTATION",
+  "uri": "http://collection.britishmuseum.org/resource?uri=http://collection.britishmuseum.org/id/person-institution/56988"
+}]

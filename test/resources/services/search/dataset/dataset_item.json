@@ -1,0 +1,19 @@
+{
+  "identifiers": [ "http://opencontext.org/projects/4B5721E9-2BB3-423F-5D04-1B948FA65FAB" ],
+  "item_type": "DATASET",
+  "last_synced_at": "2017-02-03T11:18:21Z",
+  "last_changed_at": "2014-05-19",
+  "categories": [{
+    "label": "Archaeology",
+    "uri": "http://vocab.getty.edu/aat/300054328"
+  }],
+  "title": "Missouri Site Files",
+  "is_part_of": [
+    "http://opencontext.org/projects/"
+  ],
+  "descriptions": [{
+    "description": "An example dataset with dummy geographical coverage. Some metadata borrowed from OpenContext."
+  }],
+  "homepage": "http://opencontext.org/projects/4B5721E9-2BB3-423F-5D04-1B948FA65FAB",
+  "temporal_bounds": { "from": -1500000, "to": 1500 }
+}

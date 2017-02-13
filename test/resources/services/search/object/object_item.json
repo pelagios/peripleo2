@@ -3,7 +3,7 @@
     "7beabb84-37f1-4f18-8a74-b02143890bb7",
     "http://numismatics.org/collection/1991.60.36"
   ],
-  "record_type": "OBJECT",
+  "item_type": "OBJECT",
   "last_synced_at": "2017-02-03T11:18:21Z",
   "last_changed_at": "2016-10-01T12:00:00Z",
   "categories": [{
@@ -16,19 +16,13 @@
   "title": "Silver 4 drachm (tetradrachm), Cnossus, 200 BC - 67 BC. 1991.60.36",
   "is_in_dataset": [
     "ecbd9773-b60f-4dc1-bd86-f2cceb6548a1",
-    "ecbd9773-b60f-4dc1-bd86-f2cceb6548a1.d6fdd35c-08b6-495b-ad4e-3f9256d30665"
+    "d6fdd35c-08b6-495b-ad4e-3f9256d30665"
   ],
+  "descriptions": [{
+    "description": "An example object referencing one person and a findspot place."
+  }],
   "homepage": "http://numismatics.org/collection/1991.60.36",
-  "geometry": {
-    "type": "Point",
-    "coordinates": [ 25.163156, 35.297961 ]
-  },
-  "representative_point": [ 25.163156, 35.297961 ],
   "temporal_bounds": { "from": -200, "to": 67 },
-  "links": {
-    "places": [ "http://pleiades.stoa.org/places/589872" ],
-    "people": [ "http://collection.britishmuseum.org/resource?uri=http://collection.britishmuseum.org/id/person-institution/56988" ]
-  },
   "depictions": [{
     "url": "http://numismatics.org/collectionimages/19501999/1991/1991.60.36.obv.width350.jpg",
     "thumbnail": "http://numismatics.org/collectionimages/19501999/1991/1991.60.36.obv.width175.jpg",

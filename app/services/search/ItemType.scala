@@ -4,7 +4,7 @@ import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
 
-object RecordType extends Enumeration {
+object ItemType extends Enumeration {
 
   val DATASET = Value("DATASET")
 
@@ -14,12 +14,10 @@ object RecordType extends Enumeration {
   
   val PLACE   = Value("PLACE")
   
-  val PERIOD  = Value("PERIOD")
-  
-  implicit val recordTypeFormat: Format[RecordType.Value] =
+  implicit val itemTypeFormat: Format[ItemType.Value] =
     Format(
-      JsPath.read[JsString].map(json => RecordType.withName(json.value)),
-      Writes[RecordType.Value](r => Json.toJson(r.toString))
+      JsPath.read[JsString].map(json => ItemType.withName(json.value)),
+      Writes[ItemType.Value](r => Json.toJson(r.toString))
     )
 
 }
