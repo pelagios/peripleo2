@@ -12,6 +12,8 @@ trait TestHelpers {
   
   private val DATETIME_PATTERN = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ssZ")
   
+  protected val CURRENT_TIME = DateTime.now().withZone(DateTimeZone.UTC).withMillisOfSecond(0)
+  
   def loadJSON[T](relativePath: String)(implicit r: Reads[T]): T = {
     val path = new File(RESOURCES_PATH, relativePath)
     val json = Source.fromFile(path).getLines().mkString("\n")

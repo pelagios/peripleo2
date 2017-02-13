@@ -1,8 +1,10 @@
 package services.search
 
-import com.vividsolutions.jts.geom.Coordinate
+import com.vividsolutions.jts.geom.{ Coordinate, GeometryFactory }
+import java.util.UUID
 import org.joda.time.DateTimeField
 import org.scalatestplus.play._
+import play.api.libs.json.Json
 import play.api.test._
 import play.api.test.Helpers._
 import services.TestHelpers
@@ -114,6 +116,56 @@ class ItemSpec extends PlaySpec with TestHelpers {
        placeReferences.head.referenceType mustBe ReferenceType.PLACE
        placeReferences.head.relation mustBe Some(Relation.COVERAGE)
        placeReferences.head.representativePoint mustBe Some(new Coordinate(14.02358, 48.31058))
+    }
+    
+  }
+  
+  "JSON serialization/parsing roundtrip" should {
+    
+    "yield an equal item" in {
+      val source = Item(
+        Seq("7beabb84-37f1-4f18-8a74-b02143890bb7", "http://numismatics.org/collection/1991.60.36"),
+        ItemType.OBJECT,
+        Some(CURRENT_TIME),
+        Some(CURRENT_TIME),
+        Seq(Category("Archaeology", Some("http://vocab.getty.edu/aat/300054328"))),
+        "A dummy object",
+        Some(PathHierarchy(Seq(UUID.randomUUID.toString))),
+        None, // is_part_of
+        Seq(Description("Just a dummy object for the roundtrip test")),
+        Some("http://www.example.com"),
+        Seq.empty[Language],
+        Some(TemporalBounds.fromYears(-500, -250)),
+        Seq.empty[String], // periods
+        Seq(
+          Depiction("http://www.example.com/images/001.jpg", None, Some("Fig. 1"), None, None, None),
+          Depiction("http://www.example.com/images/002.jpg", None, Some("Fig. 2"), None, None, None)
+        )
+      )
+      
+      val serialized = Json.prettyPrint(Json.toJson(source))
+      
+      val parsed = Json.fromJson[Item](Json.parse(serialized))
+      parsed.isSuccess mustBe true
+      parsed.get mustBe source
+    }
+    
+    "yield an equal reference" in {
+      val geom = new GeometryFactory().createPoint(new Coordinate(14.02358, 48.31058))
+      val source = Reference(
+        ReferenceType.PLACE,
+        Some(Relation.COVERAGE),
+        Some("http://pleiades.stoa.org/places/118543"),
+        Some(geom),
+        Some(geom.getCoordinate),
+        None // context
+      )
+      
+      val serialized = Json.prettyPrint(Json.toJson(source))
+      
+      val parsed = Json.fromJson[Reference](Json.parse(serialized))
+      parsed.isSuccess mustBe true
+      parsed.get mustBe source
     }
     
   }
