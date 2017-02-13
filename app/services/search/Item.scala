@@ -59,7 +59,7 @@ object Item extends HasDate with HasNullableSeq {
     (JsPath \ "temporal_bounds").formatNullable[TemporalBounds] and
     (JsPath \ "periods").formatNullable[Seq[String]]
       .inmap[Seq[String]](fromOptSeq[String], toOptSeq[String]) and
-    (JsPath \ "depicitions").formatNullable[Seq[Depiction]]
+    (JsPath \ "depictions").formatNullable[Seq[Depiction]]
       .inmap[Seq[Depiction]](fromOptSeq[Depiction], toOptSeq[Depiction])
   )(Item.apply, unlift(Item.unapply))
   

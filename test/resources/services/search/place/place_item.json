@@ -1,6 +1,6 @@
 {
   "identifiers": [ "http://pleiades.stoa.org/places/118543" ],
-  "record_type": "PLACE",
+  "item_type": "PLACE",
   "languages": [ "LA" ],
   "temporal_bounds": { "from": -30, "to": 640 },
   "is_conflation_of": [
