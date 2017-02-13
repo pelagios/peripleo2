@@ -59,7 +59,7 @@ case class Place (isConflationOf: Seq[GazetteerRecord]) {
 object Place extends HasGeometry with HasNullableSeq {
   
   // A serialized place is also a serialized item, therefore reading and writing needs to be 'asymmetric' 
-  implicit val placeReads: Reads[Place] = JsPath.read[Seq[GazetteerRecord]].map(Place(_))
+  implicit val placeReads: Reads[Place] = (JsPath \ "is_conflation_of").read[Seq[GazetteerRecord]].map(Place(_))
         
   implicit val placeWrites: Writes[Place] = (
     (JsPath \ "identifiers").write[Seq[String]] and
