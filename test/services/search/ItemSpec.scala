@@ -1,20 +1,18 @@
 package services.search
 
+import com.vividsolutions.jts.geom.Coordinate
+import org.joda.time.DateTimeField
 import org.scalatestplus.play._
 import play.api.test._
 import play.api.test.Helpers._
 import services.TestHelpers
-import org.joda.time.DateTimeField
-import com.vividsolutions.jts.geom.Coordinate
 
 class ItemSpec extends PlaySpec with TestHelpers {
   
   "Sample Dataset item" should {
     
     "be properly created from JSON" in {
-      val datasetItem = loadJSON[Item]("services/search/dataset/dataset_item.json")
-      val datasetReferences = loadJSON[Seq[Reference]]("services/search/dataset/dataset_references.json")
-      
+      val datasetItem = loadJSON[Item]("services/search/dataset/dataset_item.json")      
       datasetItem.identifiers mustBe Seq("http://opencontext.org/projects/4B5721E9-2BB3-423F-5D04-1B948FA65FAB")
       datasetItem.itemType mustBe ItemType.DATASET
       datasetItem.lastSyncedAt mustBe toDateTime("2017-02-03T11:18:21Z")
@@ -26,6 +24,7 @@ class ItemSpec extends PlaySpec with TestHelpers {
       datasetItem.homepage mustBe Some("http://opencontext.org/projects/4B5721E9-2BB3-423F-5D04-1B948FA65FAB")
       datasetItem.temporalBounds mustBe Some(TemporalBounds(toDateTime("-1500000-01-01T00:00:00Z"), toDateTime("1500-01-01T00:00:00Z")))
       
+      val datasetReferences = loadJSON[Seq[Reference]]("services/search/dataset/dataset_references.json")
       datasetReferences.size mustBe 1
       datasetReferences.head.referenceType mustBe ReferenceType.PLACE
       datasetReferences.head.relation mustBe Some(Relation.COVERAGE)
@@ -38,9 +37,7 @@ class ItemSpec extends PlaySpec with TestHelpers {
   "Sample Object item" should {
     
     "be properly created from JSON" in {
-      val objectItem = loadJSON[Item]("services/search/object/object_item.json")
-      val objectReferences = loadJSON[Seq[Reference]]("services/search/object/object_references.json")
-       
+      val objectItem = loadJSON[Item]("services/search/object/object_item.json")       
       objectItem.identifiers mustBe Seq("7beabb84-37f1-4f18-8a74-b02143890bb7", "http://numismatics.org/collection/1991.60.36")
       objectItem.itemType mustBe ItemType.OBJECT
       objectItem.lastSyncedAt mustBe toDateTime("2017-02-03T11:18:21Z")
@@ -66,6 +63,7 @@ class ItemSpec extends PlaySpec with TestHelpers {
           None, None, None)
       )
       
+      val objectReferences = loadJSON[Seq[Reference]]("services/search/object/object_references.json")
       objectReferences.size mustBe 2
       
       val placeReference = objectReferences(0)      
@@ -86,7 +84,6 @@ class ItemSpec extends PlaySpec with TestHelpers {
     
     "be properly created from JSON" in {
       val personItem = loadJSON[Item]("services/search/person/person_item.json")
-      
       personItem.identifiers mustBe Seq("http://collection.britishmuseum.org/id/person-institution/56988")
       personItem.itemType mustBe ItemType.PERSON
       personItem.lastSyncedAt mustBe toDateTime("2017-02-03T11:18:21Z")
