@@ -11,7 +11,7 @@ import services.TestHelpers
 
 class ItemSpec extends PlaySpec with TestHelpers {
   
-  "Sample Dataset item" should {
+  "Sample dataset Item" should {
     
     "be properly created from JSON" in {
       val datasetItem = loadJSON[Item]("services/search/dataset/dataset_item.json")      
@@ -36,7 +36,7 @@ class ItemSpec extends PlaySpec with TestHelpers {
     
   }
   
-  "Sample Object item" should {
+  "Sample object Item" should {
     
     "be properly created from JSON" in {
       val objectItem = loadJSON[Item]("services/search/object/object_item.json")       
@@ -82,7 +82,7 @@ class ItemSpec extends PlaySpec with TestHelpers {
     
   }
   
-  "Sample Person item" should {
+  "Sample person Item" should {
     
     "be properly created from JSON" in {
       val personItem = loadJSON[Item]("services/search/person/person_item.json")
@@ -96,7 +96,7 @@ class ItemSpec extends PlaySpec with TestHelpers {
     
   }
   
-  "Sample Place item" should {
+  "Sample place Item" should {
     
     "be properly created from JSON" in {
        val placeItem = loadJSON[Item]("services/search/place/place_item.json")

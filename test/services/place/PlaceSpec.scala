@@ -20,4 +20,24 @@ class PlaceSpec extends PlaySpec with TestHelpers {
     
   }
   
+  "JSON serialization/parsing roundtrip" should {
+    
+    "yield an equal Place" in {
+      
+      // TODO
+      
+    }
+    
+  }
+  
+  "A serialized Place" should {
+    
+    "also satisfy the schema requirements for Items" in {
+      
+      // TODO
+      
+    }
+    
+  }
+  
 }
