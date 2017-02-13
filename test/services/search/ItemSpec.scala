@@ -15,7 +15,7 @@ class ItemSpec extends PlaySpec with TestHelpers {
       val datasetItem = loadJSON[Item]("services/search/dataset/dataset_item.json")      
       datasetItem.identifiers mustBe Seq("http://opencontext.org/projects/4B5721E9-2BB3-423F-5D04-1B948FA65FAB")
       datasetItem.itemType mustBe ItemType.DATASET
-      datasetItem.lastSyncedAt mustBe toDateTime("2017-02-03T11:18:21Z")
+      datasetItem.lastSyncedAt mustBe Some(toDateTime("2017-02-03T11:18:21Z"))
       datasetItem.lastChangedAt mustBe Some(toDateTime("2014-05-19T12:00:00Z"))
       datasetItem.categories mustBe Seq(Category("Archaeology", Some("http://vocab.getty.edu/aat/300054328")))
       datasetItem.title mustBe "Missouri Site Files"
@@ -40,7 +40,7 @@ class ItemSpec extends PlaySpec with TestHelpers {
       val objectItem = loadJSON[Item]("services/search/object/object_item.json")       
       objectItem.identifiers mustBe Seq("7beabb84-37f1-4f18-8a74-b02143890bb7", "http://numismatics.org/collection/1991.60.36")
       objectItem.itemType mustBe ItemType.OBJECT
-      objectItem.lastSyncedAt mustBe toDateTime("2017-02-03T11:18:21Z")
+      objectItem.lastSyncedAt mustBe Some(toDateTime("2017-02-03T11:18:21Z"))
       objectItem.lastChangedAt mustBe Some(toDateTime("2016-10-01T12:00:00Z"))
       objectItem.categories mustBe Seq(
         Category("Archaeology", Some("http://vocab.getty.edu/aat/300054328")),
@@ -86,7 +86,7 @@ class ItemSpec extends PlaySpec with TestHelpers {
       val personItem = loadJSON[Item]("services/search/person/person_item.json")
       personItem.identifiers mustBe Seq("http://collection.britishmuseum.org/id/person-institution/56988")
       personItem.itemType mustBe ItemType.PERSON
-      personItem.lastSyncedAt mustBe toDateTime("2017-02-03T11:18:21Z")
+      personItem.lastSyncedAt mustBe Some(toDateTime("2017-02-03T11:18:21Z"))
       personItem.lastChangedAt mustBe Some(toDateTime("2016-10-01T12:00:00Z"))
       personItem.title mustBe "Apollo"
       personItem.isInDataset mustBe Some(PathHierarchy(Seq("d5e8e113-1552-4f47-9c06-1bb733c8e5be")))
@@ -97,8 +97,23 @@ class ItemSpec extends PlaySpec with TestHelpers {
   "Sample Place item" should {
     
     "be properly created from JSON" in {
-       // val placeItem = loadJSON[Item]("services/search/place/place_item.json")
-       // val placeReferences = loadJSON[Seq[Reference]]("services/search/place/place_references.json")
+       val placeItem = loadJSON[Item]("services/search/place/place_item.json")
+       placeItem.identifiers mustBe Seq(
+         "http://pleiades.stoa.org/places/118543",
+         "http://dare.ht.lu.se/places/10778",
+         "http://www.trismegistos.org/place/35191"
+       )
+       placeItem.itemType mustBe ItemType.PLACE
+       placeItem.title mustBe "Ad Mauros/Marinianio, Eferding"
+       placeItem.descriptions mustBe Seq(Description("An ancient place, cited: BAtlas 12 H4 Ad Mauros"))
+       placeItem.languages mustBe Seq(Language("LA"))
+       placeItem.temporalBounds mustBe Some(TemporalBounds(toDateTime("-30-01-01T00:00:00Z"), toDateTime("640-01-01T00:00:00Z")))
+       
+       val placeReferences = loadJSON[Seq[Reference]]("services/search/place/place_references.json")
+       placeReferences.size mustBe 1
+       placeReferences.head.referenceType mustBe ReferenceType.PLACE
+       placeReferences.head.relation mustBe Some(Relation.COVERAGE)
+       placeReferences.head.representativePoint mustBe Some(new Coordinate(14.02358, 48.31058))
     }
     
   }

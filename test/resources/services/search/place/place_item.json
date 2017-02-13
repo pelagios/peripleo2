@@ -1,6 +1,14 @@
 {
-  "identifiers": [ "http://pleiades.stoa.org/places/118543" ],
+  "identifiers": [
+    "http://pleiades.stoa.org/places/118543",
+    "http://dare.ht.lu.se/places/10778",
+    "http://www.trismegistos.org/place/35191"
+  ],
   "item_type": "PLACE",
+  "title": "Ad Mauros/Marinianio, Eferding",
+  "descriptions": [{
+    "description": "An ancient place, cited: BAtlas 12 H4 Ad Mauros"
+  }],
   "languages": [ "LA" ],
   "temporal_bounds": { "from": -30, "to": 640 },
   "is_conflation_of": [

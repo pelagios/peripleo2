@@ -13,7 +13,7 @@ case class Item(
   
   itemType: ItemType.Value,
   
-  lastSyncedAt: DateTime,
+  lastSyncedAt: Option[DateTime],
 
   lastChangedAt: Option[DateTime],
   
@@ -44,7 +44,7 @@ object Item extends HasDate with HasNullableSeq {
   implicit val itemFormat: Format[Item] = (
     (JsPath \ "identifiers").format[Seq[String]] and
     (JsPath \ "item_type").format[ItemType.Value] and
-    (JsPath \ "last_synced_at").format[DateTime] and
+    (JsPath \ "last_synced_at").formatNullable[DateTime] and
     (JsPath \ "last_changed_at").formatNullable[DateTime] and
     (JsPath \ "categories").formatNullable[Seq[Category]]
       .inmap[Seq[Category]](fromOptSeq[Category], toOptSeq[Category]) and
