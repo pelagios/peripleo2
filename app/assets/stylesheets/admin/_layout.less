@@ -6,8 +6,8 @@
   box-sizing:border-box;
   padding:25px 0;
   min-height:100%;
-  background-color:@sidebar-grey;
-  color:@sidebar-type;
+  background-color:@stone;
+  color:@stone-type;
   font-family:OpenSans;
   font-size:14px;
 
@@ -33,19 +33,19 @@
     a {
       display:block;
       padding:15px 35px;
-      color:@sidebar-type;
+      color:@stone-type;
       text-decoration:none;
       border-left:3px solid transparent;
     }
 
     a.active {
-      background-color:@sidebar-grey-active !important;
-      border-color:@sidebar-hilight !important;
+      background-color:@stone-dark !important;
+      border-color:@turquoise !important;
     }
 
     a:hover:not(.active) {
-      background-color:fade(@sidebar-grey-active, 45%);
-      border-color:fade(@sidebar-hilight, 45%);
+      background-color:fade(@stone-dark, 55%);
+      border-color:fade(@turquoise, 55%);
     }
 
   }
