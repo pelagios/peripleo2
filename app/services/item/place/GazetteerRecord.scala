@@ -1,4 +1,4 @@
-package services.place
+package services.item.place
 
 import com.vividsolutions.jts.geom.{ Coordinate, Geometry }
 import services.{ HasDate, HasGeometry, HasNullableSeq }
@@ -6,7 +6,7 @@ import org.joda.time.DateTime
 import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
-import services.search.{ Description, TemporalBounds }
+import services.item.{ Description, TemporalBounds }
 
 case class GazetteerRecord (
 

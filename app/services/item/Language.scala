@@ -1,4 +1,4 @@
-package services.search
+package services.item
 
 import play.api.libs.json._
 import play.api.libs.json.Reads._

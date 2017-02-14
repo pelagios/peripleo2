@@ -1,4 +1,4 @@
-package services.search
+package services.item
 
 import com.vividsolutions.jts.geom.{ Coordinate, Geometry }
 import play.api.libs.json._

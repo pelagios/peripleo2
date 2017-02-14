@@ -1,10 +1,10 @@
-package services.place
+package services.item.place
 
 import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
 import services.HasNullableBoolean
-import services.search.Language
+import services.item.Language
 
 case class Name(name: String, language: Option[Language] = None, isTransliterated: Boolean = false, isHistoric: Boolean = false)
 

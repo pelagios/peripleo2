@@ -1,4 +1,4 @@
-package services.search
+package services.item
 
 import org.joda.time.DateTime
 import play.api.libs.json._

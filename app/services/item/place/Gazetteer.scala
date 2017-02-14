@@ -1,4 +1,4 @@
-package services.place
+package services.item.place
 
 import play.api.libs.json._
 import play.api.libs.json.Reads._

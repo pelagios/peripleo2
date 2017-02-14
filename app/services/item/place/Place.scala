@@ -1,4 +1,4 @@
-package services.place
+package services.item.place
 
 import com.vividsolutions.jts.geom.{ Coordinate, Geometry }
 import org.joda.time.{ DateTime, DateTimeZone }
@@ -6,7 +6,7 @@ import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
 import services.{ HasDate, HasGeometry, HasNullableSeq }
-import services.search.{ ItemType, Language, TemporalBounds }
+import services.item.{ ItemType, Language, TemporalBounds }
 
 case class Place (isConflationOf: Seq[GazetteerRecord]) {
   

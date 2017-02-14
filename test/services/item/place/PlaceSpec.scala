@@ -1,4 +1,4 @@
-package services.place
+package services.item.place
 
 import org.scalatestplus.play._
 import play.api.test._
