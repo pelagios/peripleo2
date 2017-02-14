@@ -27,10 +27,8 @@ class GazetteerAdminController @Inject() (
   def importGazetteer = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>
     request.body.asMultipartFormData.flatMap(_.file("file")) match {
       case Some(formData) => {
-        
         Logger.info("Importing gazetteer from " + formData.filename)
   
-        
         /** TEMPORARY HACK **/
         if (formData.filename.contains(".ttl")) {
           Logger.info("Importing Pelagios RDF/TTL dump")
@@ -49,9 +47,6 @@ class GazetteerAdminController @Inject() (
 
         /** TEMPORARY HACK **/
         
-          
-          
-          
         Redirect(routes.GazetteerAdminController.index)
       }
         
