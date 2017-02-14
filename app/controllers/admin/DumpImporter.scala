@@ -28,11 +28,13 @@ class DumpImporter(taskService: TaskService) {
         records.grouped(batchSize).toSeq
       }
     
+    /*
     def importBatch(batch: Seq[T], service: HasBatchImport[T]) = batch.foldLeft(Future.successful(Seq.empty[T])) { case (f, record) =>
       f.flatMap { failedRecords =>
         service.importBatch(batch)
       }
     }
+    */
       
     val taskId = Await.result(taskService.insertTask(service.taskType, service.getClass.getName, username), 10.seconds)
     taskService.updateStatus(taskId, TaskStatus.RUNNING)
@@ -49,9 +51,7 @@ class DumpImporter(taskService: TaskService) {
           f.flatMap { unrecoverable =>
             service.importBatch(batch).flatMap { failed =>
               val progress = Math.ceil((idx + 1) * increment).toInt
-              taskService.updateProgress(taskId, progress).map { _ =>
-                unrecoverable ++ failed       
-              }
+              taskService.updateProgress(taskId, progress).map(_ => unrecoverable ++ failed)
             }
           }
         }
