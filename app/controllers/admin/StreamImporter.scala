@@ -6,9 +6,9 @@ import akka.util.ByteString
 import java.io.InputStream
 import scala.concurrent.Await
 import scala.concurrent.duration._
+import services.HasBatchImport
 import services.task.{ TaskService, TaskStatus }
-import services.HasBatchImport
-import services.HasBatchImport
+
 
 class StreamImporter(taskService: TaskService, implicit val materializer: Materializer) {
 

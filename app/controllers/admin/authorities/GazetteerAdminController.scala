@@ -8,16 +8,20 @@ import javax.inject.{ Inject, Singleton }
 import jp.t2v.lab.play2.auth.AuthElement
 import play.api.{ Configuration, Logger }
 import play.api.mvc.Action
+import scala.concurrent.ExecutionContext
 import services.task.TaskService
 import services.user.{ Role, UserService }
 import services.item.place.crosswalks.PelagiosRDFCrosswalk
+import services.item.place.PlaceService
 
 @Singleton
 class GazetteerAdminController @Inject() (
   val config: Configuration,
   val users: UserService,
+  val placeService: PlaceService,
   val taskService: TaskService,
   val materializer: Materializer,
+  implicit val ctx: ExecutionContext,
   implicit val webjars: WebJarAssets
 ) extends BaseController with AuthElement {
 
@@ -34,7 +38,7 @@ class GazetteerAdminController @Inject() (
         if (formData.filename.contains(".ttl")) {
           Logger.info("Importing Pelagios RDF/TTL dump")
           val importer = new DumpImporter(taskService) 
-          importer.importDump(formData.ref.file, formData.filename, PelagiosRDFCrosswalk.fromRDF(formData.filename), null, loggedIn.username)
+          importer.importDump(formData.ref.file, formData.filename, PelagiosRDFCrosswalk.fromRDF(formData.filename), placeService, loggedIn.username)
         } else if (formData.filename.toLowerCase.contains("pleiades")) {
           Logger.info("Using Pleiades crosswalk")
           val importer = new StreamImporter(taskService, materializer)

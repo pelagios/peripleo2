@@ -6,15 +6,15 @@ import com.sksamuel.elastic4s.source.Indexable
 import javax.inject.{ Inject, Singleton }
 import java.sql.Timestamp
 import java.util.UUID
+import org.joda.time.DateTime
 import play.api.Logger
 import play.api.libs.json.Json
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.language.postfixOps
-import services.ES
-import org.joda.time.DateTime
+import services.{ ES, HasDate }
 
 @Singleton
-class TaskService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
+class TaskService @Inject() (val es: ES, implicit val ctx: ExecutionContext) extends HasDate {
   
   implicit object TaskIndexable extends Indexable[Task] {
     override def json(t: Task): String = Json.stringify(Json.toJson(t))
@@ -37,52 +37,52 @@ class TaskService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
       }
     }
     
-  private def updateFields(uuid: UUID, fields: Seq[(String, Any)]): Future[Boolean] =
+  private def updateFields(uuid: UUID, fields: (String, Any)*): Future[Boolean] =
     es.client execute {
-      update id uuid.toString in ES.PERIPLEO / ES.TASK doc fields    
+      update id uuid.toString in ES.PERIPLEO / ES.TASK docAsUpsert fields  
     } map { _ => true 
     } recover { case t: Throwable => false }
     
   def updateProgress(uuid: UUID, progress: Int): Future[Boolean] =
-    updateFields(uuid, Seq("progress" -> progress))
+    updateFields(uuid, "progress" -> progress)
 
   def updateStatus(uuid: UUID, status: TaskStatus.Value): Future[Boolean] =
-    updateFields(uuid, Seq("status" -> status.toString))
+    updateFields(uuid, "status" -> status.toString)
   
   def updateStatusAndProgress(uuid: UUID, status: TaskStatus.Value, progress: Int): Future[Boolean] =
-    updateFields(uuid, Seq(
+    updateFields(uuid,
         "status" -> status.toString,
         "progress" -> progress
-      ))    
+      )
   
   def setCompleted(uuid: UUID, completedWith: Option[String] = None): Future[Boolean] =
     completedWith match {
-      case Some(message) => updateFields(uuid, Seq(
+      case Some(message) => updateFields(uuid,
           "status" -> TaskStatus.COMPLETED.toString,
-          "stopped_at" -> DateTime.now(),
+          "stopped_at" -> formatDate(DateTime.now()),
           "stopped_with" -> message,
           "progress" -> 100
-        ))
+        )
         
-      case None => updateFields(uuid, Seq(
+      case None => updateFields(uuid,
           "status" -> TaskStatus.COMPLETED.toString,
-          "stopped_at" -> DateTime.now(),
+          "stopped_at" -> formatDate(DateTime.now()),
           "progress" -> 100
-        ))
+        )
     }
 
   def setFailed(uuid: UUID, failedWith: Option[String] = None): Future[Boolean] =
     failedWith match {
-      case Some(message) => updateFields(uuid, Seq(
+      case Some(message) => updateFields(uuid,
           "status" -> TaskStatus.FAILED.toString,
-          "stopped_at" -> DateTime.now(),
+          "stopped_at" -> formatDate(DateTime.now()),
           "stopped_with" -> message
-        ))
+        )
         
-      case None => updateFields(uuid, Seq(
+      case None => updateFields(uuid,
           "status" -> TaskStatus.FAILED.toString,
-          "stopped_at" -> DateTime.now()
-        ))
+          "stopped_at" -> formatDate(DateTime.now())
+        )
     }
   
   def insertTask(taskType: TaskType, classname: String, spawnedBy: String): Future[UUID] = {
