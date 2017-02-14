@@ -2,7 +2,7 @@ package controllers.admin.authorities
 
 import akka.stream.Materializer
 import controllers.{ BaseController, WebJarAssets }
-import controllers.admin.StreamImporter
+import controllers.admin.{ DumpImporter, StreamImporter }
 import java.io.FileInputStream
 import javax.inject.{ Inject, Singleton }
 import jp.t2v.lab.play2.auth.AuthElement
@@ -10,6 +10,7 @@ import play.api.{ Configuration, Logger }
 import play.api.mvc.Action
 import services.task.TaskService
 import services.user.{ Role, UserService }
+import services.item.place.crosswalks.PelagiosRDFCrosswalk
 
 @Singleton
 class GazetteerAdminController @Inject() (
@@ -32,8 +33,8 @@ class GazetteerAdminController @Inject() (
         /** TEMPORARY HACK **/
         if (formData.filename.contains(".ttl")) {
           Logger.info("Importing Pelagios RDF/TTL dump")
-          // val importer = new DumpImporter()          
-          // importer.importDump(formData.ref.file, formData.filename, PelagiosRDFCrosswalk.fromRDF(formData.filename))(places, ctx)
+          val importer = new DumpImporter(taskService) 
+          importer.importDump(formData.ref.file, formData.filename, PelagiosRDFCrosswalk.fromRDF(formData.filename), null, loggedIn.username)
         } else if (formData.filename.toLowerCase.contains("pleiades")) {
           Logger.info("Using Pleiades crosswalk")
           val importer = new StreamImporter(taskService, materializer)
