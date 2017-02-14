@@ -9,8 +9,8 @@
   .rounded-corners(2px);
   display:inline-block;
   color:#fff;
-  background-color:@sidebar-grey;
-  border:none;
+  background-color:@stone;
+  border:1px solid @stone-dark;
   outline:none;
   text-shadow:0 -1px 0 rgba(0,0,0,0.1);
   text-decoration:none;
@@ -18,8 +18,7 @@
 }
 
 .btn:hover {
-  // border-color:@shore-hover;
-  // background-color:@shore-hover;
+  background-color:lighten(@stone, 5%);
 }
 
 .btn:disabled, .btn.disabled {
