@@ -1,5 +1,6 @@
 package services
 
+import com.vividsolutions.jts.geom.{ Coordinate, GeometryFactory }
 import java.io.File
 import org.joda.time.{ DateTime, DateTimeZone } 
 import org.joda.time.format.DateTimeFormat
@@ -28,5 +29,8 @@ trait TestHelpers {
   def toDateTime(isoDate: String) = {
     DateTime.parse(isoDate, DATETIME_PATTERN).withZone(DateTimeZone.UTC)
   }
+  
+  def createPoint(lon: Double, lat: Double) =
+    new GeometryFactory().createPoint(new Coordinate(14.02358, 48.31058))
   
 }

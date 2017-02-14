@@ -1,6 +1,6 @@
 package services.item
 
-import com.vividsolutions.jts.geom.{ Coordinate, GeometryFactory }
+import com.vividsolutions.jts.geom.Coordinate
 import java.util.UUID
 import org.joda.time.DateTimeField
 import org.scalatestplus.play._
@@ -164,13 +164,13 @@ class ItemSpec extends PlaySpec with TestHelpers {
     }
     
     "yield an equal reference" in {
-      val geom = new GeometryFactory().createPoint(new Coordinate(14.02358, 48.31058))
+      val point = createPoint(14.02358, 48.31058)
       val source = Reference(
         ReferenceType.PLACE,
         Some(Relation.COVERAGE),
         Some("http://pleiades.stoa.org/places/118543"),
-        Some(geom),
-        Some(geom.getCoordinate),
+        Some(point),
+        Some(point.getCoordinate),
         None // context
       )
       

@@ -3,10 +3,45 @@ package services.item.place
 import org.scalatestplus.play._
 import play.api.test._
 import play.api.test.Helpers._
+import play.api.libs.json.Json
 import services.TestHelpers
-import services.item.Language
+import services.item._
 
 class PlaceSpec extends PlaySpec with TestHelpers {
+  
+  private val EXAMPLE_PLACE = Place(Seq(
+    GazetteerRecord(
+      "http://pleiades.stoa.org/places/118543",
+      Gazetteer("Pleiades"),
+      toDateTime("2016-04-03T11:23:00Z"),
+      None, // last_changed_at
+      "Ad Mauros",
+      Seq.empty[Description],
+      Seq(Name("Ad Mauros")),
+      Some(createPoint(14.02358, 48.31058)),
+      Some(createPoint(14.02358, 48.31058).getCoordinate),
+      Some(TemporalBounds.fromYears(0, 640)),
+      Seq("fort", "tower"),
+      Seq.empty[String],
+      Seq.empty[String]
+    ),
+    
+    GazetteerRecord(
+      "http://dare.ht.lu.se/places/10778",
+      Gazetteer("DARE"),
+      toDateTime("2016-04-03T11:23:00Z"),
+      None, // last_changed_at
+      "Ad Mauros/Marinianio, Eferding",
+      Seq.empty[Description],
+      Seq(Name("Ad Mauros/Marinianio, Eferding", Some(Language("LA")))),
+      Some(createPoint(14.02358, 48.31058)),
+      Some(createPoint(14.02358, 48.31058).getCoordinate),
+      Some(TemporalBounds.fromYears(-30, 0)),
+      Seq.empty[String],
+      Seq("http://sws.geonames.org/2780394", "http://www.wikidata.org/entity/Q2739862", "http://de.wikipedia.org/wiki/Kastell_Eferding"),
+      Seq.empty[String]  
+    )
+  ))
   
   "Sample Place" should {
         
@@ -41,9 +76,10 @@ class PlaceSpec extends PlaySpec with TestHelpers {
   "JSON serialization/parsing roundtrip" should {
     
     "yield an equal Place" in {
-      
-      // TODO
-      
+      val serialized = Json.prettyPrint(Json.toJson(EXAMPLE_PLACE))
+      val parsed = Json.fromJson[Place](Json.parse(serialized))
+      parsed.isSuccess mustBe true
+      parsed.get mustBe EXAMPLE_PLACE
     }
     
   }
@@ -51,9 +87,16 @@ class PlaceSpec extends PlaySpec with TestHelpers {
   "A serialized Place" should {
     
     "also satisfy the schema requirements for Items" in {
+      val serialized = Json.prettyPrint(Json.toJson(EXAMPLE_PLACE))
+      val parsed = Json.fromJson[Item](Json.parse(serialized))
+      parsed.isSuccess mustBe true
       
-      // TODO
-      
+      val placeItem = parsed.get
+      placeItem.identifiers mustBe Seq("http://pleiades.stoa.org/places/118543", "http://dare.ht.lu.se/places/10778")
+      placeItem.itemType mustBe ItemType.PLACE
+      placeItem.title mustBe "Ad Mauros"
+      placeItem.languages mustBe Seq(Language("LA"))
+      placeItem.temporalBounds mustBe Some(TemporalBounds.fromYears(-30, 640))
     }
     
   }
