@@ -14,7 +14,7 @@ class ItemSpec extends PlaySpec with TestHelpers {
   "Sample dataset Item" should {
     
     "be properly created from JSON" in {
-      val datasetItem = loadJSON[Item]("services/search/dataset/dataset_item.json")      
+      val datasetItem = loadJSON[Item]("services/item/dataset/dataset_item.json")      
       datasetItem.identifiers mustBe Seq("http://opencontext.org/projects/4B5721E9-2BB3-423F-5D04-1B948FA65FAB")
       datasetItem.itemType mustBe ItemType.DATASET
       datasetItem.lastSyncedAt mustBe Some(toDateTime("2017-02-03T11:18:21Z"))
@@ -26,7 +26,7 @@ class ItemSpec extends PlaySpec with TestHelpers {
       datasetItem.homepage mustBe Some("http://opencontext.org/projects/4B5721E9-2BB3-423F-5D04-1B948FA65FAB")
       datasetItem.temporalBounds mustBe Some(TemporalBounds(toDateTime("-1500000-01-01T00:00:00Z"), toDateTime("1500-01-01T00:00:00Z")))
       
-      val datasetReferences = loadJSON[Seq[Reference]]("services/search/dataset/dataset_references.json")
+      val datasetReferences = loadJSON[Seq[Reference]]("services/item/dataset/dataset_references.json")
       datasetReferences.size mustBe 1
       datasetReferences.head.referenceType mustBe ReferenceType.PLACE
       datasetReferences.head.relation mustBe Some(Relation.COVERAGE)
@@ -39,7 +39,7 @@ class ItemSpec extends PlaySpec with TestHelpers {
   "Sample object Item" should {
     
     "be properly created from JSON" in {
-      val objectItem = loadJSON[Item]("services/search/object/object_item.json")       
+      val objectItem = loadJSON[Item]("services/item/object/object_item.json")       
       objectItem.identifiers mustBe Seq("7beabb84-37f1-4f18-8a74-b02143890bb7", "http://numismatics.org/collection/1991.60.36")
       objectItem.itemType mustBe ItemType.OBJECT
       objectItem.lastSyncedAt mustBe Some(toDateTime("2017-02-03T11:18:21Z"))
@@ -65,7 +65,7 @@ class ItemSpec extends PlaySpec with TestHelpers {
           None, None, None)
       )
       
-      val objectReferences = loadJSON[Seq[Reference]]("services/search/object/object_references.json")
+      val objectReferences = loadJSON[Seq[Reference]]("services/item/object/object_references.json")
       objectReferences.size mustBe 2
       
       val placeReference = objectReferences(0)      
@@ -82,10 +82,24 @@ class ItemSpec extends PlaySpec with TestHelpers {
     
   }
   
+  "Sample period Item" should {
+    
+    "be properly created from JSON" in {
+      val periodItem = loadJSON[Item]("services/item/period/period_item.json")
+      periodItem.identifiers mustBe Seq("http://n2t.net/ark:/99152/p0z5nvh24r6")
+      periodItem.itemType mustBe ItemType.PERIOD
+      periodItem.lastSyncedAt mustBe Some(toDateTime("2017-02-14T07:49:00Z"))
+      periodItem.title mustBe "Aegean Bronze Age"
+      periodItem.descriptions mustBe Seq(Description("In collection: Stokstad, Marilyn, 1929-. Art history. 2005."))
+      periodItem.temporalBounds mustBe Some(TemporalBounds.fromYears(-2999, -1999))
+    }
+    
+  }
+  
   "Sample person Item" should {
     
     "be properly created from JSON" in {
-      val personItem = loadJSON[Item]("services/search/person/person_item.json")
+      val personItem = loadJSON[Item]("services/item/person/person_item.json")
       personItem.identifiers mustBe Seq("http://collection.britishmuseum.org/id/person-institution/56988")
       personItem.itemType mustBe ItemType.PERSON
       personItem.lastSyncedAt mustBe Some(toDateTime("2017-02-03T11:18:21Z"))
@@ -99,7 +113,7 @@ class ItemSpec extends PlaySpec with TestHelpers {
   "Sample place Item" should {
     
     "be properly created from JSON" in {
-       val placeItem = loadJSON[Item]("services/search/place/place_item.json")
+       val placeItem = loadJSON[Item]("services/item/place/place_item.json")
        placeItem.identifiers mustBe Seq(
          "http://pleiades.stoa.org/places/118543",
          "http://dare.ht.lu.se/places/10778",
@@ -107,11 +121,10 @@ class ItemSpec extends PlaySpec with TestHelpers {
        )
        placeItem.itemType mustBe ItemType.PLACE
        placeItem.title mustBe "Ad Mauros/Marinianio, Eferding"
-       placeItem.descriptions mustBe Seq(Description("An ancient place, cited: BAtlas 12 H4 Ad Mauros"))
        placeItem.languages mustBe Seq(Language("LA"))
        placeItem.temporalBounds mustBe Some(TemporalBounds(toDateTime("-30-01-01T00:00:00Z"), toDateTime("640-01-01T00:00:00Z")))
        
-       val placeReferences = loadJSON[Seq[Reference]]("services/search/place/place_references.json")
+       val placeReferences = loadJSON[Seq[Reference]]("services/item/place/place_references.json")
        placeReferences.size mustBe 1
        placeReferences.head.referenceType mustBe ReferenceType.PLACE
        placeReferences.head.relation mustBe Some(Relation.COVERAGE)

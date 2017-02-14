@@ -12,7 +12,7 @@ class PlaceSpec extends PlaySpec with TestHelpers {
     // Places are also items - most of the parsing is tested in the ItemSpec already
         
     "be properly created from JSON" in {
-      val place = loadJSON[Place]("services/search/place/place_item.json")
+      val place = loadJSON[Place]("services/item/place/place_item.json")
        
       // TODO
       

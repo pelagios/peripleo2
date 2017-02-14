@@ -1,0 +1,10 @@
+{
+  "identifiers": [ "http://n2t.net/ark:/99152/p0z5nvh24r6" ],
+  "item_type": "PERIOD",
+  "last_synced_at": "2017-02-14T07:49:00Z",
+  "title": "Aegean Bronze Age",
+  "descriptions": [{
+    "description": "In collection: Stokstad, Marilyn, 1929-. Art history. 2005."
+  }],
+  "temporal_bounds": { "from": -2999, "to": -1999 }
+}

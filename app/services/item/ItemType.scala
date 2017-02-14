@@ -10,6 +10,8 @@ object ItemType extends Enumeration {
 
   val OBJECT  = Value("OBJECT")
   
+  val PERIOD  = Value("PERIOD")
+  
   val PERSON  = Value("PERSON")
   
   val PLACE   = Value("PLACE")
