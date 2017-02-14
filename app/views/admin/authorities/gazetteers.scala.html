@@ -1,8 +1,14 @@
-@()(implicit request: RequestHeader)
+@()(implicit request: RequestHeader, webjars: WebJarAssets)
 
 @views.html.admin._layout("Gazetteer Administration", "gazetteers") {
   <div class="card">
     0 Gazetteers
-    <a href="#" class="btn">Upload New</a>
+    <a href="#" class="btn upload" data-input="file">Upload New</a>
+
+    @helper.form(action = controllers.admin.authorities.routes.GazetteerAdminController.importGazetteer(), 'enctype -> "multipart/form-data") {
+      <input type="file" id="file" name="file">
+    }
   </div>
+
+  @views.html.admin.enableUploads()
 }

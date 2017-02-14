@@ -1,7 +1,7 @@
 package controllers.admin.authorities
 
 import akka.stream.Materializer
-import controllers.BaseController
+import controllers.{ BaseController, WebJarAssets }
 import controllers.admin.StreamImporter
 import java.io.FileInputStream
 import javax.inject.{ Inject, Singleton }
@@ -16,7 +16,8 @@ class GazetteerAdminController @Inject() (
   val config: Configuration,
   val users: UserService,
   val taskService: TaskService,
-  val materializer: Materializer
+  val materializer: Materializer,
+  implicit val webjars: WebJarAssets
 ) extends BaseController with AuthElement {
 
   def index = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>

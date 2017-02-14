@@ -3,6 +3,7 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 GET     /assets/*file                                controllers.Assets.versioned(path="/public", file: Asset)
+GET     /webjars/*file                               controllers.WebJarAssets.at(file)
 GET     /favicon.ico                                 controllers.Assets.at(path="/public", file="/images/favicon.png")
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -14,6 +15,7 @@ GET     /admin/datasets/attributes                   controllers.admin.datasets.
 GET     /admin/datasets/geodata                      controllers.admin.datasets.GeodataAdminController.index
 
 GET     /admin/authorities/gazetteers                controllers.admin.authorities.GazetteerAdminController.index
+POST    /admin/authorities/gazetteers                controllers.admin.authorities.GazetteerAdminController.importGazetteer
 GET     /admin/authorities/people                    controllers.admin.authorities.PeopleAdminController.index
 GET     /admin/authorities/periods                   controllers.admin.authorities.PeriodAdminController.index
 

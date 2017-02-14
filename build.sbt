@@ -16,6 +16,9 @@ libraryDependencies ++= Seq(
   "com.vividsolutions" % "jts" % "1.13",
   "jp.t2v" %% "play2-auth" % "0.14.1",
   "org.geotools" % "gt-geojson" % "14.3",
+  "org.webjars" %% "webjars-play" % "2.5.0",
+
+  "org.webjars" % "jquery" % "1.12.0",
 
   "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test
 )
