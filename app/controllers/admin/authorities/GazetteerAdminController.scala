@@ -1,5 +1,6 @@
 package controllers.admin.authorities
 
+import akka.actor.ActorSystem
 import akka.stream.Materializer
 import controllers.{ BaseController, WebJarAssets }
 import controllers.admin.{ DumpImporter, StreamImporter }
@@ -22,6 +23,7 @@ class GazetteerAdminController @Inject() (
   val taskService: TaskService,
   val materializer: Materializer,
   implicit val ctx: ExecutionContext,
+  implicit val system: ActorSystem,
   implicit val webjars: WebJarAssets
 ) extends BaseController with AuthElement {
 

@@ -85,6 +85,12 @@ class TaskService @Inject() (val es: ES, implicit val ctx: ExecutionContext) ext
         )
     }
   
+  def deleteById(uuid: UUID): Future[Boolean] =
+    es.client execute {
+      delete id uuid.toString from ES.PERIPLEO / ES.TASK
+    } map { _.isFound 
+    } recover { case t: Throwable => false }
+  
   def insertTask(taskType: TaskType, classname: String, spawnedBy: String): Future[UUID] = {
     val task = Task(
       UUID.randomUUID(),
