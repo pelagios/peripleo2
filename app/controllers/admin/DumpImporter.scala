@@ -28,7 +28,6 @@ class DumpImporter(taskService: TaskService) {
       records.grouped(batchSize).toSeq
     }
 
-  
   def importDump[T](file: File, filename: String, crosswalk: InputStream => Seq[T], 
       service : HasBatchImport[T], username: String)(implicit ctx: ExecutionContext, system: ActorSystem): Future[Boolean] = {
     
@@ -58,7 +57,6 @@ class DumpImporter(taskService: TaskService) {
       records <- fConvert
       unrecoverable <- fImport(records)
     } yield unrecoverable
-
     
     val fSuccess = f.flatMap { unrecoverable =>
       val message = if (unrecoverable.isEmpty) None else Some("Failed to import " + unrecoverable.size + " records")
