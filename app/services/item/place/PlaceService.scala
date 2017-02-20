@@ -32,7 +32,15 @@ class PlaceService @Inject() (val es: ES, implicit val ctx: ExecutionContext) ex
       false
     }
     
-  def deletePlace(rootUri: String): Future[Boolean] = ???
+  def deletePlace(rootUri: String): Future[Boolean] =
+    es.client execute {
+      delete id rootUri from ES.PERIPLEO / ES.ITEM
+    } map { _.isFound 
+    } recover { case t: Throwable =>
+      Logger.error("Error deleting place " + rootUri + ": " + t.getMessage)
+      // t.printStackTrace
+      false
+    }
   
   def findByPlaceOrMatchURIs(uris: Seq[String]): Future[Seq[Place]] =
     es.client execute {
