@@ -48,6 +48,7 @@
           "license": { "type": "string", "index": "not_analyzed" }
         }
       },
+      "root_uri": { "type": "string", "index": "not_analyzed" },
       "is_conflation_of": {
         "type": "nested",
         "dynamic": "false",

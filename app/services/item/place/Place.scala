@@ -8,7 +8,7 @@ import play.api.libs.functional.syntax._
 import services.{ HasDate, HasGeometry, HasNullableSeq }
 import services.item.{ ItemType, Language, TemporalBounds }
 
-case class Place (isConflationOf: Seq[GazetteerRecord]) {
+case class Place (rootUri: String, isConflationOf: Seq[GazetteerRecord]) {
   
   lazy val uris: Seq[String] = isConflationOf.map(_.uri)
 
@@ -59,9 +59,13 @@ case class Place (isConflationOf: Seq[GazetteerRecord]) {
 object Place extends HasGeometry with HasNullableSeq {
   
   // A serialized place is also a serialized item, therefore reading and writing needs to be 'asymmetric' 
-  implicit val placeReads: Reads[Place] = (JsPath \ "is_conflation_of").read[Seq[GazetteerRecord]].map(Place(_))
+  implicit val placeReads: Reads[Place] = (
+    (JsPath \ "root_uri").read[String] and
+    (JsPath \ "is_conflation_of").read[Seq[GazetteerRecord]]
+  )(Place.apply _)
         
   implicit val placeWrites: Writes[Place] = (
+    (JsPath \ "root_uri").write[String] and
     (JsPath \ "identifiers").write[Seq[String]] and
     (JsPath \ "item_type").write[ItemType.Value] and
     (JsPath \ "title").write[String] and
@@ -69,6 +73,7 @@ object Place extends HasGeometry with HasNullableSeq {
     (JsPath \ "temporal_bounds").writeNullable[TemporalBounds] and
     (JsPath \ "is_conflation_of").write[Seq[GazetteerRecord]]
   )(place => (
+      place.rootUri,
       place.uris,
       ItemType.PLACE,
       place.titles.head,
