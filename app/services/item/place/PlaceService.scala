@@ -7,7 +7,7 @@ import javax.inject.{ Inject, Singleton }
 import play.api.Logger
 import play.api.libs.json.Json
 import scala.concurrent.{ ExecutionContext, Future }
-import scala.language.postfixOps
+import scala.language.{ postfixOps, reflectiveCalls }
 import services.ES
 
 @Singleton
@@ -32,6 +32,19 @@ class PlaceService @Inject() (val es: ES, implicit val ctx: ExecutionContext) ex
       false
     }
   
-  def findByPlaceOrMatchURIs(uris: Seq[String]): Future[Seq[(Place, Long)]] = ???
-  
+  def findByPlaceOrMatchURIs(uris: Seq[String]): Future[Seq[Place]] =
+    es.client execute {
+      search in ES.PERIPLEO / ES.ITEM query {
+        nestedQuery("is_conflation_of").query {
+          bool {
+            should {
+              uris.map(uri => termQuery("is_conflation_of.uri" -> uri)) ++
+              uris.map(uri => termQuery("is_conflation_of.close_matches" -> uri)) ++
+              uris.map(uri => termQuery("is_conflation_of.exact_matches" -> uri))
+            }
+          }
+        }
+      } limit 100 // TODO filter by type?
+    } map { _.as[Place].toSeq }
+    
 }
