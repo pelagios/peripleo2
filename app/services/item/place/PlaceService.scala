@@ -31,6 +31,8 @@ class PlaceService @Inject() (val es: ES, implicit val ctx: ExecutionContext) ex
       // t.printStackTrace
       false
     }
+    
+  def deletePlace(rootUri: String): Future[Boolean] = ???
   
   def findByPlaceOrMatchURIs(uris: Seq[String]): Future[Seq[Place]] =
     es.client execute {

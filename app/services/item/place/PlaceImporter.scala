@@ -1,10 +1,9 @@
 package services.item.place
 
 import play.api.Logger
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.Future
 import services.HasBatchImport
 import services.task.TaskType
-import services.item.TemporalBounds
 
 trait PlaceImporter extends HasBatchImport[GazetteerRecord] { self: PlaceService =>
   
@@ -14,7 +13,7 @@ trait PlaceImporter extends HasBatchImport[GazetteerRecord] { self: PlaceService
   
   private def MAX_RETRIES = 5 // Max times an update will be retried in case of failure
   
-  private def getAffectedPlaces(normalizedRecord: GazetteerRecord)(implicit context: ExecutionContext): Future[Seq[Place]] = {
+  private def getAffectedPlaces(normalizedRecord: GazetteerRecord): Future[Seq[Place]] = {
     // We need to query for this record's URI as well as all close/exactMatchURIs
     val uris = normalizedRecord.uri +: normalizedRecord.allMatches
 
@@ -53,7 +52,56 @@ trait PlaceImporter extends HasBatchImport[GazetteerRecord] { self: PlaceService
     }
   }
   
-  private def importRecord(record: GazetteerRecord): Future[Boolean] = ???
+  private def importRecord(record: GazetteerRecord): Future[Boolean] = {
+
+    // Fetches affected places from the store and computes the new conflation
+    def conflateAffectedPlaces(normalizedRecord: GazetteerRecord): Future[(Seq[Place], Seq[Place])] = {
+      getAffectedPlaces(normalizedRecord).map(p => {
+        // Sorted affected places by no. of gazetteer records
+        val affectedPlaces = p.sortBy(- _.isConflationOf.size)
+
+        val affectedRecords = affectedPlaces
+          .flatMap(_.isConflationOf) // all gazetteer records contained in the affected places
+          .filter(_.uri != record.uri) // This record might update an existing record!
+
+        val conflated = conflate(affectedRecords :+ normalizedRecord)
+
+        // Pass back places before and after conflation
+        (affectedPlaces, conflated)
+      })
+    }
+
+    // Stores the newly conflated places to the store
+    def storeUpdatedPlaces(placesAfter: Seq[Place]): Future[Seq[Place]] =
+      Future.sequence {
+        placesAfter.map(place => insertOrUpdatePlace(place).map((place, _)))
+      } map { _.filter(!_._2).map(_._1) }
+
+    // Deletes the places that no longer exist after the conflation from the store
+    def deleteMergedPlaces(placesBefore: Seq[Place], placesAfter: Seq[Place]): Future[Seq[String]] =
+      Future.sequence {
+        // List of associations (Record URI -> Parent Place RootURI) before conflation
+        val recordToParentMappingBefore = placesBefore.flatMap(p =>
+          p.isConflationOf.map(record => (record.uri, p.rootUri)))
+
+        // List of associations (Record URI -> Parent Place RootURI) after conflation
+        val recordToParentMappingAfter = placesAfter.flatMap(p =>
+          p.isConflationOf.map(record => (record.uri, p.rootUri)))
+
+        // We need to delete all places that appear before, but not after the conflation
+        val placeRootURIsBefore = recordToParentMappingBefore.map(_._2).distinct
+        val placeRootURIsAfter = recordToParentMappingAfter.map(_._2).distinct
+
+        val toDelete = placeRootURIsBefore diff placeRootURIsAfter
+        toDelete.map(rootURI => deletePlace(rootURI).map(success => (rootURI, success)))
+      } map { _.filter(!_._2).map(_._1) }
+
+    for {
+      (placesBefore, placesAfter) <- conflateAffectedPlaces(GazetteerRecord.normalize(record))
+      failedUpdates <- storeUpdatedPlaces(placesAfter)
+      failedDeletes <- if (failedUpdates.isEmpty) deleteMergedPlaces(placesBefore, placesAfter) else Future.successful(Seq.empty[String])
+    } yield failedUpdates.isEmpty && failedDeletes.isEmpty
+  }
   
   private def importRecords(records: Seq[GazetteerRecord], retries: Int = MAX_RETRIES): Future[Seq[GazetteerRecord]] =
     records.foldLeft(Future.successful(Seq.empty[GazetteerRecord])) { case (f, record) =>
