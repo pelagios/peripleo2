@@ -25,7 +25,15 @@ trait PlaceImporter extends HasBatchImport[GazetteerRecord] { self: PlaceService
     findByPlaceOrMatchURIs(uris)
   }
   
-  private def join(normalizedRecord: GazetteerRecord, places: Seq[Place]): Place = ???
+  private def join(normalizedRecord: GazetteerRecord, places: Seq[Place]): Place = {
+    // The general rule is that the "biggest place" (with highest number of gazetteer records) determines
+    // ID and title of the conflated places
+    val affectedPlacesSorted = places.sortBy(- _.isConflationOf.size)
+    val rootUri = affectedPlacesSorted.headOption.map(_.rootUri)
+    val allRecords = places.flatMap(_.isConflationOf) :+ normalizedRecord
+    
+    Place(rootUri.getOrElse(normalizedRecord.uri), allRecords)
+  }
   
   /** Conflates a list of M gazetteer records into N places (with N <= M) **/
   private def conflate(normalizedRecords: Seq[GazetteerRecord], places: Seq[Place] = Seq.empty[Place]): Seq[Place] = {
