@@ -9,7 +9,7 @@ import services.item._
 
 class PlaceSpec extends PlaySpec with TestHelpers {
   
-  private val EXAMPLE_PLACE = Place(Seq(
+  private val EXAMPLE_PLACE = Place("http://pleiades.stoa.org/places/118543", Seq(
     GazetteerRecord(
       "http://pleiades.stoa.org/places/118543",
       Gazetteer("Pleiades"),

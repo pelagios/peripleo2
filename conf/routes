@@ -36,6 +36,12 @@ POST    /login                                       controllers.admin.LoginLogo
 GET     /logout                                      controllers.admin.LoginLogoutController.logout
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# JSON API
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+GET     /api/search                                  controllers.api.SearchAPIController.search
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Application root (TODO temporarily directs to login)
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
