@@ -49,7 +49,7 @@ class GazetteerAdminController @Inject() (
         } else if (formData.filename.toLowerCase.contains("geonames")) {
           Logger.info("Using GeoNames crosswalk")
           val importer = new StreamImporter(taskService, materializer)
-          importer.importRecords(new FileInputStream(formData.ref.file), GeoNamesCrosswalk.fromJson, placeService, loggedIn.username)
+          importer.importRecords(formData.ref.file, formData.filename, GeoNamesCrosswalk.fromJson, placeService, loggedIn.username)
         }
 
         /** TEMPORARY HACK **/

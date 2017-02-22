@@ -9,15 +9,9 @@ import scala.concurrent.duration._
 import services.HasBatchImport
 import services.task.{ TaskService, TaskStatus }
 
-class DumpImporter(taskService: TaskService) {
+class DumpImporter(taskService: TaskService) extends BaseImporter {
 
   private val MAX_BATCHES = 20
-
-  private def getStream(file: File, filename: String) =
-    if (filename.endsWith(".gz"))
-      new GZIPInputStream(new FileInputStream(file))
-    else
-      new FileInputStream(file)
   
   private def split[T](records: Seq[T], n: Int): Seq[Seq[T]] =
     if (records.size <= n) {

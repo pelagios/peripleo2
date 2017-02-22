@@ -5,13 +5,13 @@ import akka.actor.ActorSystem
 import akka.stream.{ ActorAttributes, ClosedShape, Materializer, Supervision }
 import akka.stream.scaladsl._
 import akka.util.ByteString
-import java.io.InputStream
+import java.io.{ File, InputStream }
 import scala.concurrent.{ Await, ExecutionContext, Future }
 import scala.concurrent.duration._
 import services.HasBatchImport
 import services.task.{ TaskService, TaskStatus }
 
-class StreamImporter(taskService: TaskService, implicit val materializer: Materializer) {
+class StreamImporter(taskService: TaskService, implicit val materializer: Materializer) extends BaseImporter {
 
   private val BATCH_SIZE = 200
 
@@ -21,13 +21,19 @@ class StreamImporter(taskService: TaskService, implicit val materializer: Materi
       Supervision.Stop
   }
   
-  def importRecords[T](is: InputStream, crosswalk: String => Option[T], service : HasBatchImport[T],
+  private def countLines(file: File) =
+    scala.io.Source.fromFile(file).getLines.size
+ 
+  def importRecords[T](file: File, filename: String, crosswalk: String => Option[T], service : HasBatchImport[T],
       username: String)(implicit ctx: ExecutionContext, system: ActorSystem) = {
+    
+    val totalLines = countLines(file)
+    var processedLines = 0
     
     val taskId = Await.result(taskService.insertTask(service.taskType, service.getClass.getName, username), 10.seconds)
     taskService.updateStatus(taskId, TaskStatus.RUNNING)
 
-    val source = StreamConverters.fromInputStream(() => is, 1024)
+    val source = StreamConverters.fromInputStream(() => getStream(file, filename), 1024)
       .via(Framing.delimiter(ByteString("\n"), maximumFrameLength = Int.MaxValue, allowTruncation = false))
       .map(_.utf8String)
 
@@ -39,8 +45,9 @@ class StreamImporter(taskService: TaskService, implicit val materializer: Materi
       val toImport = records.flatten
       Await.result(service.importBatch(toImport), 10.minutes)
       
-      // TODO how to best compute total progress?
-      
+      processedLines += records.size
+      val progress = Math.ceil(100 * processedLines.toDouble / totalLines).toInt
+      taskService.updateProgress(taskId, progress)      
     }
 
     val graph = RunnableGraph.fromGraph(GraphDSL.create(importer) { implicit builder => sink =>
