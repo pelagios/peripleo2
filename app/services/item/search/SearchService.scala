@@ -42,6 +42,11 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
           size 20,
           
         aggregation
+          terms "by_language"
+          field "languages"
+          size 20,
+          
+        aggregation
           histogram "by_decade"
           script histogramScript(10)
           interval 10,
@@ -54,13 +59,13 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
     } map { response =>
       val items = response.as[Item].toSeq
 
-      val byCentury = Aggregation.parseHistogram(response.aggregations.get("by_century"), "time")
-      val byDecade = Aggregation.parseHistogram(response.aggregations.get("by_decade"), "time")
-      val preferredTimeHistogram = if (byCentury.buckets.size >= 20) byCentury else byDecade
+      val byCentury = Aggregation.parseHistogram(response.aggregations.get("by_century"), "by_time")
+      val byDecade = Aggregation.parseHistogram(response.aggregations.get("by_decade"), "by_time")
       
       val aggregations = Seq(
         Aggregation.parseTerms(response.aggregations.get("by_type")),
-        preferredTimeHistogram
+        Aggregation.parseTerms(response.aggregations.get("by_language")),
+        if (byCentury.buckets.size >= 20) byCentury else byDecade
       )
       
       Page(response.tookInMillis, response.totalHits, args.offset, args.limit, items, aggregations)
