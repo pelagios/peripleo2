@@ -43,9 +43,8 @@ class GazetteerAdminController @Inject() (
           importer.importDump(formData.ref.file, formData.filename, PelagiosRDFCrosswalk.fromRDF(formData.filename), placeService, loggedIn.username)
         } else if (formData.filename.toLowerCase.contains("pleiades")) {
           Logger.info("Using Pleiades crosswalk")
-          // val importer = new StreamImporter(taskService, materializer)
-          // importer.importRecords(new FileInputStream(formData.ref.file), null, null, loggedIn.username)
-          // importer.importPlaces(new FileInputStream(formData.ref.file), PleiadesCrosswalk.fromJson)(places, ctx)
+          val importer = new StreamImporter(taskService, materializer)
+          importer.importRecords(formData.ref.file, formData.filename, PleiadesCrosswalk.fromJson, placeService, loggedIn.username)
         } else if (formData.filename.toLowerCase.contains("geonames")) {
           Logger.info("Using GeoNames crosswalk")
           val importer = new StreamImporter(taskService, materializer)
