@@ -1,8 +1,128 @@
 @import "../_globals.less";
-@import "_layout.less";
 
 body {
   background-color:@haze;
+}
+
+input[type=file] {
+  display:none;
+}
+
+.sidebar {
+  position:absolute;
+  top:0;
+  left:0;
+  width:270px;
+  box-sizing:border-box;
+  padding:25px 0;
+  min-height:100%;
+  background-color:@stone;
+  color:@stone-type;
+  font-family:OpenSans;
+  font-size:14px;
+
+  .icon {
+    display:inline-block;
+    width:40px;
+    font-family:Stroke7;
+    font-size:24px;
+    position:relative;
+    top:3px;
+  }
+
+  ul {
+    list-style-type:none;
+    margin:0;
+    padding:0;
+  }
+
+  li {
+    padding:0;
+    margin:0 0 30px 0;
+
+    a {
+      display:block;
+      padding:12px 35px;
+      color:@stone-type;
+      text-decoration:none;
+      border-left:3px solid transparent;
+    }
+
+    a.active {
+      background-color:@stone-dark !important;
+      border-color:@turquoise !important;
+    }
+
+    a:hover:not(.active) {
+      background-color:fade(@stone-dark, 55%);
+      border-color:fade(@turquoise, 55%);
+    }
+
+  }
+
+  ul.submenu {
+
+    li {
+      position:relative;
+      margin:0;
+
+      a {
+        padding:12px 45px 15px 90px;
+      }
+
+    }
+
+    li::before {
+      position:absolute;
+      left:60px;
+      top:12px;
+      content:'\e684';
+      font-family:Stroke7;
+      font-size:31px;
+    }
+
+  }
+
+}
+
+.content {
+  margin-left:270px;
+  padding:10px 20px;
+  max-width:1280px;
+
+  .row {
+    padding:20px;
+    position:relative;
+
+    .card {
+      box-sizing:border-box;
+      position:relative;
+      background-color:#fff;
+      .box-shadow(0, 4px, 30px, rgba(0, 0, 0, 0.15));
+
+      .inner {
+        padding:25px 40px;
+      }
+    }
+
+    .card.half {
+      position:absolute;
+    }
+
+    .card.half:nth-of-type(even) {
+      margin-right:20px;
+      left:20px;
+      right:50%;
+    }
+
+    .card.half:nth-of-type(odd) {
+      margin-left:20px;
+      left:50%;
+      right:20px;
+    }
+
+  }
+
 }
 
 .upload {
@@ -11,6 +131,8 @@ body {
   right:20px;
 }
 
-input[type=file] {
-  display:none;
+.current-uploads {
+  height:50px;
+  background-color:@haze;
+  border-top:1px solid @haze-dark;
 }

@@ -8,14 +8,16 @@ import scala.concurrent.ExecutionContext
 import services.item.search.{ SearchArgs, SearchService }
 
 @Singleton
-class SearchAPIController @Inject() (
+class GazetteerAPIController @Inject() (
   val searchService: SearchService,
   implicit val ctx: ExecutionContext
 ) extends Controller with HasPrettyPrintJSON {
-  
-  def search() = Action.async { implicit request =>
-    val args = SearchArgs.fromQueryString(request.queryString)
-    searchService.query(args).map(results => jsonOk(Json.toJson(results)))
+
+  def list() = Action {
+
+    // TODO implement
+    
+    Ok
   }
-  
+
 }

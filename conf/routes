@@ -39,6 +39,7 @@ GET     /logout                                      controllers.admin.LoginLogo
 # JSON API
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+GET     /api/gazetteers                              controllers.api.GazetteerAPIController.list
 GET     /api/search                                  controllers.api.SearchAPIController.search
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
