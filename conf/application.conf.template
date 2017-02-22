@@ -1,26 +1,8 @@
 # This is the main configuration file for the application.
 # https://www.playframework.com/documentation/latest/ConfigFile
-# ~~~~~
-# Play uses HOCON as its configuration file format.  HOCON has a number
-# of advantages over other config formats, but there are two things that
-# can be used when modifying settings.
-#
-# You can include other configuration files in this main application.conf file:
-#include "extra-config.conf"
-#
-# You can declare variables and substitute for them:
-#mykey = ${some.value}
-#
-# And if an environment variable exists when there is no other subsitution, then
-# HOCON will fall back to substituting environment variable:
-#mykey = ${JAVA_HOME}
 
 ## Akka
 # https://www.playframework.com/documentation/latest/ScalaAkka#Configuration
-# https://www.playframework.com/documentation/latest/JavaAkka#Configuration
-# ~~~~~
-# Play uses Akka internally and exposes Akka Streams and actors in Websockets and
-# other streaming HTTP responses.
 akka {
   # "akka.log-config-on-start" is extraordinarly useful because it log the complete
   # configuration at INFO level, including defaults and overrides, so it s worth
@@ -33,6 +15,7 @@ akka {
   # And then uncomment this line to debug the configuration.
   #
   #log-config-on-start = true
+  jvm-exit-on-fatal-error = off
 }
 
 ## Secret key
@@ -58,7 +41,7 @@ play.modules {
   # explicitly below.
   # If there are any built-in modules that you want to disable, you can list them here.
   #enabled += my.application.Module
-  
+
   enabled += services.ESModule
 
   # If there are any built-in modules that you want to disable, you can list them here.
@@ -156,6 +139,10 @@ play.http {
     # Sets the cookie to be accessed only by the server.
     #httpOnly = true
   }
+
+  ## Maximum size for file uploads
+  parser.maxDiskBuffer=200MB
+  
 }
 
 ## Netty Provider
@@ -290,66 +277,4 @@ play.filters {
     # Allow requests to example.com, its subdomains, and localhost:9000.
     #allowed = [".example.com", "localhost:9000"]
   }
-}
-
-## Evolutions
-# https://www.playframework.com/documentation/latest/Evolutions
-# ~~~~~
-# Evolutions allows database scripts to be automatically run on startup in dev mode
-# for database migrations. You must enable this by adding to build.sbt:
-#
-# libraryDependencies += evolutions
-#
-play.evolutions {
-  # You can disable evolutions for a specific datasource if necessary
-  #db.default.enabled = false
-}
-
-## Database Connection Pool
-# https://www.playframework.com/documentation/latest/SettingsJDBC
-# ~~~~~
-# Play doesn't require a JDBC database to run, but you can easily enable one.
-#
-# libraryDependencies += jdbc
-#
-play.db {
-  # The combination of these two settings results in "db.default" as the
-  # default JDBC pool:
-  #config = "db"
-  #default = "default"
-
-  # Play uses HikariCP as the default connection pool.  You can override
-  # settings by changing the prototype:
-  prototype {
-    # Sets a fixed JDBC connection pool size of 50
-    #hikaricp.minimumIdle = 50
-    #hikaricp.maximumPoolSize = 50
-  }
-}
-
-## JDBC Datasource
-# https://www.playframework.com/documentation/latest/JavaDatabase
-# https://www.playframework.com/documentation/latest/ScalaDatabase
-# ~~~~~
-# Once JDBC datasource is set up, you can work with several different
-# database options:
-#
-# Slick (Scala preferred option): https://www.playframework.com/documentation/latest/PlaySlick
-# JPA (Java preferred option): https://playframework.com/documentation/latest/JavaJPA
-# EBean: https://playframework.com/documentation/latest/JavaEbean
-# Anorm: https://www.playframework.com/documentation/latest/ScalaAnorm
-#
-db {
-  # You can declare as many datasources as you want.
-  # By convention, the default datasource is named `default`
-
-  # https://www.playframework.com/documentation/latest/Developing-with-the-H2-Database
-  #default.driver = org.h2.Driver
-  #default.url = "jdbc:h2:mem:play"
-  #default.username = sa
-  #default.password = ""
-
-  # You can turn on SQL logging for any datasource
-  # https://www.playframework.com/documentation/latest/Highlights25#Logging-SQL-statements
-  #default.logSql=true
 }
