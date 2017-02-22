@@ -1,6 +1,7 @@
 package controllers.admin
 
 import akka.Done
+import akka.actor.ActorSystem
 import akka.stream.{ ActorAttributes, ClosedShape, Materializer, Supervision }
 import akka.stream.scaladsl._
 import akka.util.ByteString
@@ -9,7 +10,6 @@ import scala.concurrent.{ Await, ExecutionContext, Future }
 import scala.concurrent.duration._
 import services.HasBatchImport
 import services.task.{ TaskService, TaskStatus }
-
 
 class StreamImporter(taskService: TaskService, implicit val materializer: Materializer) {
 
@@ -21,7 +21,8 @@ class StreamImporter(taskService: TaskService, implicit val materializer: Materi
       Supervision.Stop
   }
   
-  def importRecords[T](is: InputStream, crosswalk: String => Option[T], service : HasBatchImport[T], username: String)(implicit ctx: ExecutionContext) = {
+  def importRecords[T](is: InputStream, crosswalk: String => Option[T], service : HasBatchImport[T],
+      username: String)(implicit ctx: ExecutionContext, system: ActorSystem) = {
     
     val taskId = Await.result(taskService.insertTask(service.taskType, service.getClass.getName, username), 10.seconds)
     taskService.updateStatus(taskId, TaskStatus.RUNNING)
@@ -52,9 +53,11 @@ class StreamImporter(taskService: TaskService, implicit val materializer: Materi
     }).withAttributes(ActorAttributes.supervisionStrategy(decider))
  
     graph.run().map { _ =>
-      taskService.setCompleted(taskId)
+      taskService.setCompleted(taskId).map(_ =>
+        system.scheduler.scheduleOnce(1.minute)(taskService.deleteById(taskId)))
     } recoverWith { case t: Throwable =>
-      taskService.setFailed(taskId, Some(t.getMessage))
+      taskService.setFailed(taskId, Some(t.getMessage)).map(_ =>
+        system.scheduler.scheduleOnce(1.minute)(taskService.deleteById(taskId)))
     }    
   }
 

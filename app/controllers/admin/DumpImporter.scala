@@ -60,14 +60,17 @@ class DumpImporter(taskService: TaskService) {
     
     val fSuccess = f.flatMap { unrecoverable =>
       val message = if (unrecoverable.isEmpty) None else Some("Failed to import " + unrecoverable.size + " records")
-      taskService.setCompleted(taskId, message).map { _ => true }
+      taskService.setCompleted(taskId, message).map { _ =>
+        system.scheduler.scheduleOnce(1.minute)(taskService.deleteById(taskId))
+        true
+      }
     } recoverWith { case t: Throwable =>
-      taskService.setFailed(taskId, Some(t.getMessage)).map { _ => false }
+      taskService.setFailed(taskId, Some(t.getMessage)).map { _ =>
+        system.scheduler.scheduleOnce(1.minute)(taskService.deleteById(taskId))
+        false
+      }
     }
-        
-    system.scheduler.scheduleOnce(1.minute) {
-      taskService.deleteById(taskId) }
-    
+
     fSuccess
   }
 
