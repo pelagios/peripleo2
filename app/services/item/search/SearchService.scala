@@ -10,6 +10,14 @@ import services.item.Item
 
 @Singleton
 class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
+  
+  // TODO support open intervals
+  private val TIME_HISTOGRAM_SCRIPT = 
+    """
+    from = doc['temporal_bounds.from']
+    to = doc['temporal_bounds.to']
+    if (from.empty || to.empty) [] else (from.date.year..to.date.year)
+    """
 
   implicit object ItemHitAs extends HitAs[Item] {
     override def as(hit: RichSearchHit): Item =
@@ -29,14 +37,11 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
           terms "by_type"
           field "item_type"
           size 20,
-
+          
         aggregation
-          histogram "by_year"
-          interval 10
-          
-          // TODO this now generates matches at 1970 (0 in UNIX time) for items without temporal_bounds
-          
-          script "from = doc['temporal_bounds.from'].date.year; to = doc['temporal_bounds.to'].date.year; (from..to)"
+          histogram "by_century"
+          interval 100
+          script TIME_HISTOGRAM_SCRIPT
       )
     } map { response =>
 
