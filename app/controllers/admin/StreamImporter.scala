@@ -1,10 +1,11 @@
 package controllers.admin
 
+import akka.Done
 import akka.stream.{ ActorAttributes, ClosedShape, Materializer, Supervision }
 import akka.stream.scaladsl._
 import akka.util.ByteString
 import java.io.InputStream
-import scala.concurrent.Await
+import scala.concurrent.{ Await, ExecutionContext, Future }
 import scala.concurrent.duration._
 import services.HasBatchImport
 import services.task.{ TaskService, TaskStatus }
@@ -19,8 +20,8 @@ class StreamImporter(taskService: TaskService, implicit val materializer: Materi
       t.printStackTrace()
       Supervision.Stop
   }
-
-  def importRecords[T](is: InputStream, crosswalk: String => Option[T], service : HasBatchImport[T], username: String) = {
+  
+  def importRecords[T](is: InputStream, crosswalk: String => Option[T], service : HasBatchImport[T], username: String)(implicit ctx: ExecutionContext) = {
     
     val taskId = Await.result(taskService.insertTask(service.taskType, service.getClass.getName, username), 10.seconds)
     taskService.updateStatus(taskId, TaskStatus.RUNNING)
@@ -35,22 +36,26 @@ class StreamImporter(taskService: TaskService, implicit val materializer: Materi
 
     val importer = Sink.foreach[Seq[Option[T]]] { records =>
       val toImport = records.flatten
-      service.importBatch(toImport)
+      Await.result(service.importBatch(toImport), 10.minutes)
+      
       // TODO how to best compute total progress?
+      
     }
 
-    val graph = RunnableGraph.fromGraph(GraphDSL.create() { implicit builder =>
+    val graph = RunnableGraph.fromGraph(GraphDSL.create(importer) { implicit builder => sink =>
 
       import GraphDSL.Implicits._
 
-      source ~> parser ~> importer
+      source ~> parser ~> sink
 
       ClosedShape
     }).withAttributes(ActorAttributes.supervisionStrategy(decider))
-
-    graph.run()
-    
-    // TODO how do we know the service is finished?
+ 
+    graph.run().map { _ =>
+      taskService.setCompleted(taskId)
+    } recoverWith { case t: Throwable =>
+      taskService.setFailed(taskId, Some(t.getMessage))
+    }    
   }
 
 }
