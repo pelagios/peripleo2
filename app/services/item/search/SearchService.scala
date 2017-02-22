@@ -11,13 +11,15 @@ import services.item.Item
 @Singleton
 class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
   
-  // TODO support open intervals
-  private val TIME_HISTOGRAM_SCRIPT = 
-    """
-    from = doc['temporal_bounds.from']
-    to = doc['temporal_bounds.to']
-    if (from.empty || to.empty) [] else (from.date.year..to.date.year)
-    """
+  private def histogramScript(interval: Int) =
+    s"""
+     f = doc['temporal_bounds.from']
+     t = doc['temporal_bounds.to']
+     buckets = []
+     if (!(f.empty || t.empty))
+       for (i=f.date.year; i<t.date.year; i+= $interval) { buckets.add(i) }
+     buckets;
+     """
 
   implicit object ItemHitAs extends HitAs[Item] {
     override def as(hit: RichSearchHit): Item =
@@ -37,11 +39,17 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
           terms "by_type"
           field "item_type"
           size 20,
+
+        aggregation
+          histogram "by_decade"
+          script histogramScript(10)
+          interval 10,
           
         aggregation
           histogram "by_century"
-          interval 100
-          script TIME_HISTOGRAM_SCRIPT
+          field histogramScript(100)
+          interval 100 
+          
       )
     } map { response =>
 
