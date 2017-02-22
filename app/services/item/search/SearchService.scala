@@ -7,6 +7,7 @@ import play.api.libs.json.Json
 import scala.concurrent.{ Future, ExecutionContext }
 import services.{ ES, Page }
 import services.item.Item
+import org.elasticsearch.search.aggregations.bucket.histogram.InternalHistogram
 
 @Singleton
 class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
@@ -39,7 +40,7 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
           terms "by_type"
           field "item_type"
           size 20,
-
+          
         aggregation
           histogram "by_decade"
           script histogramScript(10)
@@ -47,17 +48,22 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
           
         aggregation
           histogram "by_century"
-          field histogramScript(100)
+          script histogramScript(100)
           interval 100 
-          
       )
     } map { response =>
-
-      // TODO parse & wrap aggregation results
-      play.api.Logger.info(response.toString)
-
       val items = response.as[Item].toSeq
-      Page(response.tookInMillis, response.totalHits, args.offset, args.limit, items)
+
+      val byCentury = Aggregation.parseHistogram(response.aggregations.get("by_century"), "time")
+      val byDecade = Aggregation.parseHistogram(response.aggregations.get("by_decade"), "time")
+      val preferredTimeHistogram = if (byCentury.buckets.size >= 20) byCentury else byDecade
+      
+      val aggregations = Seq(
+        Aggregation.parseTerms(response.aggregations.get("by_type")),
+        preferredTimeHistogram
+      )
+      
+      Page(response.tookInMillis, response.totalHits, args.offset, args.limit, items, aggregations)
     }
   }
 
