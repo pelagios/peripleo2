@@ -46,10 +46,12 @@ class PlaceService @Inject() (val es: ES, implicit val ctx: ExecutionContext) ex
   def deletePlace(rootUri: String): Future[Boolean] =
     es.client execute {
       bulk (
-        delete id rootUri from ES.PERIPLEO / ES.ITEM,
-        delete id rootUri from ES.PERIPLEO / ES.REFERENCE
+        delete id rootUri from ES.PERIPLEO / ES.REFERENCE parent rootUri,
+        delete id rootUri from ES.PERIPLEO / ES.ITEM
       )
-    } map { _ => true
+    } map { response =>
+      if (response.failures.size > 0) Logger.error(response.failureMessage)
+      response.failures.size == 0
     } recover { case t: Throwable =>
       Logger.error("Error deleting place " + rootUri + ": " + t.getMessage)
       // t.printStackTrace
