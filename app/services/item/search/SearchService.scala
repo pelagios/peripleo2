@@ -12,7 +12,7 @@ import org.elasticsearch.search.aggregations.bucket.histogram.InternalHistogram
 
 @Singleton
 class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
-  
+
   private def histogramScript(interval: Int) =
     s"""
      f = doc['temporal_bounds.from']
@@ -22,12 +22,12 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
        for (i=f.date.year; i<t.date.year; i+= $interval) { buckets.add(i) }
      buckets;
      """
-       
+
   implicit object ItemHitAs extends HitAs[Item] {
     override def as(hit: RichSearchHit): Item =
       Json.fromJson[Item](Json.parse(hit.sourceAsString)).get
   }
-       
+
   private def buildItemQuery(args: SearchArgs) =
     search in ES.PERIPLEO / ES.ITEM query {
       bool {
@@ -41,27 +41,23 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
         terms "by_type"
         field "item_type"
         size 20,
-        
+
       aggregation
         terms "by_language"
         field "languages"
         size 20,
-        
+
       aggregation
         histogram "by_decade"
         script histogramScript(10)
         interval 10,
-        
+
       aggregation
         histogram "by_century"
         script histogramScript(100)
-        interval 100    
+        interval 100
     )
-    
-  // TODO what about context snippets? first N inner_hits on item query?
-    
-  // TODO requestCache true doesn't seem to have much effect - can we get this to work better? should we cache ourselves?
-  
+
   private def buildPlaceQuery(args: SearchArgs) =
     search in ES.PERIPLEO / ES.REFERENCE query {
       bool {
@@ -74,26 +70,26 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
       aggregation
         terms "by_place"
         field "uri"
-        size 600  
+        size 600
     ) // TODO sub-aggregate places vs people vs periods etc. to places only
-    
+
   private def resolvePlaces(uris: Seq[String]) =
     es.client execute {
-      multiget ( uris.map(uri => get id uri from ES.PERIPLEO / ES.ITEM) ) 
+      multiget ( uris.map(uri => get id uri from ES.PERIPLEO / ES.ITEM) )
     } map { _.responses.flatMap { _.response.map(_.getSourceAsString).map { json =>
-      Json.fromJson[Place](Json.parse(json)).get    
+      Json.fromJson[Place](Json.parse(json)).get
     }}}
 
   def query(args: SearchArgs): Future[Page[Item]] = {
-    
+
     val startTime = System.currentTimeMillis
-    
+
     val fPlaceQuery = es.client execute {
       buildPlaceQuery(args)
     } map { response =>
       Aggregation.parseTerms(response.aggregations.get("by_place")).buckets
     }
-    
+
     val fItemQuery = es.client execute {
       buildItemQuery(args)
     } map { response =>
@@ -101,27 +97,27 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
 
       val byCentury = Aggregation.parseHistogram(response.aggregations.get("by_century"), "by_time")
       val byDecade = Aggregation.parseHistogram(response.aggregations.get("by_decade"), "by_time")
-      
+
       val aggregations = Seq(
         Aggregation.parseTerms(response.aggregations.get("by_type")),
         Aggregation.parseTerms(response.aggregations.get("by_language")),
         if (byCentury.buckets.size >= 20) byCentury else byDecade
       )
-      
+
       (response.totalHits, items, aggregations)
     }
-    
+
     val fResults = for {
       (totalHits, items, aggregations) <- fItemQuery
       placeCounts <- fPlaceQuery
       places <- resolvePlaces(placeCounts.map(_._1))
     } yield (totalHits, items, aggregations, placeCounts, places)
-    
+
     fResults.map { case (totalHits, items, aggregations, placeCounts, places) =>
       val topPlaces = TopPlaces.build(placeCounts, places)
-      
-      // play.api.Logger.info(topPlaces.toString)
-      
+
+      // TODO refactor Page class & add topPlaces, incl. JSON serialization
+
       Page(System.currentTimeMillis - startTime, totalHits, args.offset, args.limit, items, aggregations)
     }
   }
