@@ -9,6 +9,7 @@ import play.api.libs.json.Json
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.language.{ postfixOps, reflectiveCalls }
 import services.ES
+import services.item.{ Reference, ReferenceType, Relation }
 
 @Singleton
 class PlaceService @Inject() (val es: ES, implicit val ctx: ExecutionContext) extends PlaceImporter {
@@ -21,21 +22,34 @@ class PlaceService @Inject() (val es: ES, implicit val ctx: ExecutionContext) ex
     override def as(hit: RichSearchHit): Place =
       Json.fromJson[Place](Json.parse(hit.sourceAsString)).get
   }
+  
+  implicit object ReferenceIndexable extends Indexable[Reference] {
+    override def json(r: Reference): String = Json.stringify(Json.toJson(r))
+  }
 
-  def insertOrUpdatePlace(place: Place): Future[Boolean] =
+  def insertOrUpdatePlace(place: Place): Future[Boolean] = {
+    val ref = Reference(ReferenceType.PLACE, Some(Relation.COVERAGE), Some(place.rootUri), None)
+        
     es.client execute {
-      update id place.rootUri in ES.PERIPLEO/ ES.ITEM source place docAsUpsert
+      bulk (
+        update id place.rootUri in ES.PERIPLEO / ES.ITEM source place docAsUpsert,
+        update id place.rootUri in ES.PERIPLEO / ES.REFERENCE source ref parent place.rootUri docAsUpsert
+      )
     } map { _ => true
     } recover { case t: Throwable =>
       Logger.error("Error indexing place " + place.rootUri + ": " + t.getMessage)
       // t.printStackTrace
       false
     }
+  }
     
   def deletePlace(rootUri: String): Future[Boolean] =
     es.client execute {
-      delete id rootUri from ES.PERIPLEO / ES.ITEM
-    } map { _.isFound 
+      bulk (
+        delete id rootUri from ES.PERIPLEO / ES.ITEM,
+        delete id rootUri from ES.PERIPLEO / ES.REFERENCE
+      )
+    } map { _ => true
     } recover { case t: Throwable =>
       Logger.error("Error deleting place " + rootUri + ": " + t.getMessage)
       // t.printStackTrace

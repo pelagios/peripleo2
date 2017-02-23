@@ -24,14 +24,8 @@ class ItemSpec extends PlaySpec with TestHelpers {
       datasetItem.isPartOf mustBe Some(PathHierarchy(Seq("http://opencontext.org/projects/")))
       datasetItem.descriptions mustBe Seq(Description("An example dataset with dummy geographical coverage. Some metadata borrowed from OpenContext."))
       datasetItem.homepage mustBe Some("http://opencontext.org/projects/4B5721E9-2BB3-423F-5D04-1B948FA65FAB")
+      datasetItem.representativePoint mustBe Some(new Coordinate(-38.3203125, 37.16031654673677))
       datasetItem.temporalBounds mustBe Some(TemporalBounds(toDateTime("-1500000-01-01T00:00:00Z"), toDateTime("1500-01-01T00:00:00Z")))
-      
-      val datasetReferences = loadJSON[Seq[Reference]]("services/item/dataset/dataset_references.json")
-      datasetReferences.size mustBe 1
-      datasetReferences.head.referenceType mustBe ReferenceType.PLACE
-      datasetReferences.head.relation mustBe Some(Relation.COVERAGE)
-      datasetReferences.head.representativePoint mustBe Some(new Coordinate(-38.3203125, 37.16031654673677))
-      datasetReferences.head.context mustBe None
     }
     
   }
@@ -72,7 +66,6 @@ class ItemSpec extends PlaySpec with TestHelpers {
       placeReference.referenceType mustBe ReferenceType.PLACE
       placeReference.relation mustBe Some(Relation.FINDSPOT)
       placeReference.uri mustBe Some("http://pleiades.stoa.org/places/589872")
-      placeReference.representativePoint mustBe Some(new Coordinate(25.163156, 35.297961))
       
       val personReference = objectReferences(1)
       personReference.referenceType mustBe ReferenceType.PERSON
@@ -122,13 +115,13 @@ class ItemSpec extends PlaySpec with TestHelpers {
        placeItem.itemType mustBe ItemType.PLACE
        placeItem.title mustBe "Ad Mauros/Marinianio, Eferding"
        placeItem.languages mustBe Seq(Language("LA"))
+       placeItem.representativePoint mustBe Some(new Coordinate(14.02358, 48.31058))
        placeItem.temporalBounds mustBe Some(TemporalBounds(toDateTime("-30-01-01T00:00:00Z"), toDateTime("640-01-01T00:00:00Z")))
        
        val placeReferences = loadJSON[Seq[Reference]]("services/item/place/place_references.json")
        placeReferences.size mustBe 1
        placeReferences.head.referenceType mustBe ReferenceType.PLACE
        placeReferences.head.relation mustBe Some(Relation.COVERAGE)
-       placeReferences.head.representativePoint mustBe Some(new Coordinate(14.02358, 48.31058))
     }
     
   }
@@ -136,6 +129,8 @@ class ItemSpec extends PlaySpec with TestHelpers {
   "JSON serialization/parsing roundtrip" should {
     
     "yield an equal item" in {
+      val point = createPoint(14.02358, 48.31058)
+      
       val source = Item(
         Seq("7beabb84-37f1-4f18-8a74-b02143890bb7", "http://numismatics.org/collection/1991.60.36"),
         ItemType.OBJECT,
@@ -148,6 +143,8 @@ class ItemSpec extends PlaySpec with TestHelpers {
         Seq(Description("Just a dummy object for the roundtrip test")),
         Some("http://www.example.com"),
         Seq.empty[Language],
+        Some(point),
+        Some(point.getCoordinate),
         Some(TemporalBounds.fromYears(-500, -250)),
         Seq.empty[String], // periods
         Seq(
@@ -164,13 +161,11 @@ class ItemSpec extends PlaySpec with TestHelpers {
     }
     
     "yield an equal reference" in {
-      val point = createPoint(14.02358, 48.31058)
+
       val source = Reference(
         ReferenceType.PLACE,
         Some(Relation.COVERAGE),
         Some("http://pleiades.stoa.org/places/118543"),
-        Some(point),
-        Some(point.getCoordinate),
         None // context
       )
       

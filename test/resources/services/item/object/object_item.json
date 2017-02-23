@@ -22,6 +22,11 @@
     "description": "An example object referencing one person and a findspot place."
   }],
   "homepage": "http://numismatics.org/collection/1991.60.36",
+  "geometry": {
+    "type": "Point",
+    "coordinates": [ 25.163156, 35.297961 ]
+  },
+  "representative_point": [ 25.163156, 35.297961 ],
   "temporal_bounds": { "from": -200, "to": 67 },
   "depictions": [{
     "url": "http://numismatics.org/collectionimages/19501999/1991/1991.60.36.obv.width350.jpg",

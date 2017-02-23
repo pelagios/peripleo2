@@ -1,10 +1,5 @@
 [{
   "reference_type": "PLACE",
   "relation": "COVERAGE",
-  "uri": "http://pleiades.stoa.org/places/118543",
-  "geometry": {
-     "type": "Point",
-     "coordinates": [ 14.02358, 48.31058 ]
-   },
-  "representative_point": [ 14.02358, 48.31058 ]
+  "uri": "http://pleiades.stoa.org/places/118543"
 }]

@@ -40,7 +40,8 @@ trait TestHelpers {
   
   def createPoint(lon: Double, lat: Double) =
     new GeometryFactory().createPoint(new Coordinate(14.02358, 48.31058))
-    
+
+  /*
   def createEmbeddedES(indexName: String): (File, ElasticClient) = {
     
     def initIndex(client: ElasticClient) = {
@@ -57,6 +58,12 @@ trait TestHelpers {
       Settings.settingsBuilder()
         .put("http.enabled", true)
         .put("path.home", indexDir.getAbsolutePath)
+        .put ("script.inline", true)
+        .put ("script.engine.groovy.inline.mapping", true)
+        .put ("script.engine.groovy.inline.search", true)
+        .put ("script.engine.groovy.inline.update", true)
+        .put ("script.engine.groovy.inline.plugin", true)
+        .put ("script.engine.groovy.inline.aggs", true)
 
     val client = ElasticClient.local(settings.build)
     
@@ -66,5 +73,6 @@ trait TestHelpers {
     
     (indexDir, client)
   }
+  */
   
 }

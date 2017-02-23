@@ -1,11 +1,11 @@
 package services.item
 
+import com.vividsolutions.jts.geom.{ Coordinate, Geometry }
 import org.joda.time.DateTime
 import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
-import services.HasDate
-import services.HasNullableSeq
+import services.{ HasDate, HasGeometry, HasNullableSeq }
 
 case class Item(
     
@@ -30,6 +30,10 @@ case class Item(
   homepage: Option[String],
   
   languages: Seq[Language],
+  
+  geometry: Option[Geometry],
+  
+  representativePoint: Option[Coordinate],
     
   temporalBounds: Option[TemporalBounds],
     
@@ -39,7 +43,7 @@ case class Item(
   
 )
 
-object Item extends HasDate with HasNullableSeq {
+object Item extends HasDate with HasNullableSeq with HasGeometry {
   
   implicit val itemFormat: Format[Item] = (
     (JsPath \ "identifiers").format[Seq[String]] and
@@ -56,6 +60,8 @@ object Item extends HasDate with HasNullableSeq {
     (JsPath \ "homepage").formatNullable[String] and
     (JsPath \ "languages").formatNullable[Seq[Language]]
       .inmap[Seq[Language]](fromOptSeq[Language], toOptSeq[Language]) and
+    (JsPath \ "geometry").formatNullable[Geometry] and
+    (JsPath \ "representative_point").formatNullable[Coordinate] and
     (JsPath \ "temporal_bounds").formatNullable[TemporalBounds] and
     (JsPath \ "periods").formatNullable[Seq[String]]
       .inmap[Seq[String]](fromOptSeq[String], toOptSeq[String]) and

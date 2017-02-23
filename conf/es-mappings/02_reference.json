@@ -5,8 +5,6 @@
       "reference_type": { "type": "string", "index": "not_analyzed" },
       "relation": { "type": "string", "index": "not_analyzed" },
       "uri": { "type": "string", "index": "not_analyzed" },
-      "geometry": { "type": "geo_shape", "tree": "geohash", "precision": "50m" },
-      "representative_point": { "type": "geo_point" },
       "context": { "type": "string" }
     }
   }

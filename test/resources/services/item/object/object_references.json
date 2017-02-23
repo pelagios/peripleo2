@@ -1,12 +1,7 @@
 [{
   "reference_type": "PLACE",
   "relation": "FINDSPOT",
-  "uri": "http://pleiades.stoa.org/places/589872",
-  "geometry": {
-    "type": "Point",
-    "coordinates": [ 25.163156, 35.297961 ]
-  },
-  "representative_point": [ 25.163156, 35.297961 ]
+  "uri": "http://pleiades.stoa.org/places/589872"
 },{
   "reference_type": "PERSON",
   "relation": "ATTESTATION",

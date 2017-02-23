@@ -17,7 +17,7 @@ libraryDependencies ++= Seq(
   "jp.t2v" %% "play2-auth" % "0.14.1",
   "org.geotools" % "gt-geojson" % "14.3",
   "org.webjars" %% "webjars-play" % "2.5.0",
-  
+
   // Scalagios core + transient dependencies
   "org.pelagios" % "scalagios-core" % "2.0.1" from "https://github.com/pelagios/scalagios/releases/download/v2.0.1/scalagios-core.jar",
   "org.openrdf.sesame" % "sesame-rio-n3" % "2.7.5",
