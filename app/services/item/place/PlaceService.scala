@@ -73,11 +73,4 @@ class PlaceService @Inject() (val es: ES, implicit val ctx: ExecutionContext) ex
       } limit 100 // TODO filter by type?
     } map { _.as[Place].toSeq }
     
-  def findByRootUris(uris: Seq[String]) =
-    es.client execute {
-      multiget ( uris.map(uri => get id uri from ES.PERIPLEO / ES.ITEM) )
-    } map { _.responses.flatMap { _.response.map(_.getSourceAsString).map { json =>
-      Json.fromJson[Place](Json.parse(json)).get    
-    }}}
-    
 }

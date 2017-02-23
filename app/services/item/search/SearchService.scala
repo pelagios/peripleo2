@@ -7,11 +7,11 @@ import play.api.libs.json.Json
 import scala.concurrent.{ Future, ExecutionContext }
 import services.{ ES, Page }
 import services.item.Item
+import services.item.place.Place
 import org.elasticsearch.search.aggregations.bucket.histogram.InternalHistogram
-import services.item.place.PlaceService
 
 @Singleton
-class SearchService @Inject() (val es: ES, placeService: PlaceService, implicit val ctx: ExecutionContext) {
+class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
   
   private def histogramScript(interval: Int) =
     s"""
@@ -22,6 +22,11 @@ class SearchService @Inject() (val es: ES, placeService: PlaceService, implicit 
        for (i=f.date.year; i<t.date.year; i+= $interval) { buckets.add(i) }
      buckets;
      """
+       
+  implicit object ItemHitAs extends HitAs[Item] {
+    override def as(hit: RichSearchHit): Item =
+      Json.fromJson[Item](Json.parse(hit.sourceAsString)).get
+  }
        
   private def buildItemQuery(args: SearchArgs) =
     search in ES.PERIPLEO / ES.ITEM query {
@@ -67,11 +72,13 @@ class SearchService @Inject() (val es: ES, placeService: PlaceService, implicit 
         field "uri"
         size 600  
     ) // TODO sub-aggregate places vs people vs periods etc. to places only
-
-  implicit object ItemHitAs extends HitAs[Item] {
-    override def as(hit: RichSearchHit): Item =
-      Json.fromJson[Item](Json.parse(hit.sourceAsString)).get
-  }
+    
+  private def resolvePlaces(uris: Seq[String]) =
+    es.client execute {
+      multiget ( uris.map(uri => get id uri from ES.PERIPLEO / ES.ITEM) )
+    } map { _.responses.flatMap { _.response.map(_.getSourceAsString).map { json =>
+      Json.fromJson[Place](Json.parse(json)).get    
+    }}}
 
   def query(args: SearchArgs): Future[Page[Item]] = {
     
@@ -103,7 +110,7 @@ class SearchService @Inject() (val es: ES, placeService: PlaceService, implicit 
     val fResults = for {
       (totalHits, items, aggregations) <- fItemQuery
       topPlaceCounts <- fPlaceQuery
-      topPlaces <- placeService.findByRootUris(topPlaceCounts.buckets.map(_._1))
+      topPlaces <- resolvePlaces(topPlaceCounts.buckets.map(_._1))
     } yield (totalHits, items, aggregations, topPlaceCounts, topPlaces)
     
     fResults.map { case (totalHits, items, aggregations, topPlaceCounts, topPlaces) =>
