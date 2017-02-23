@@ -57,6 +57,10 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
         script histogramScript(100)
         interval 100    
     )
+    
+  // TODO what about context snippets? first N inner_hits on item query?
+    
+  // TODO requestCache true doesn't seem to have much effect - can we get this to work better? should we cache ourselves?
   
   private def buildPlaceQuery(args: SearchArgs) =
     search in ES.PERIPLEO / ES.REFERENCE query {
@@ -75,7 +79,7 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
     
   private def resolvePlaces(uris: Seq[String]) =
     es.client execute {
-      multiget ( uris.map(uri => get id uri from ES.PERIPLEO / ES.ITEM) )
+      multiget ( uris.map(uri => get id uri from ES.PERIPLEO / ES.ITEM) ) 
     } map { _.responses.flatMap { _.response.map(_.getSourceAsString).map { json =>
       Json.fromJson[Place](Json.parse(json)).get    
     }}}
@@ -87,7 +91,7 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
     val fPlaceQuery = es.client execute {
       buildPlaceQuery(args)
     } map { response =>
-      Aggregation.parseTerms(response.aggregations.get("by_place"))
+      Aggregation.parseTerms(response.aggregations.get("by_place")).buckets
     }
     
     val fItemQuery = es.client execute {
@@ -109,12 +113,15 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
     
     val fResults = for {
       (totalHits, items, aggregations) <- fItemQuery
-      topPlaceCounts <- fPlaceQuery
-      topPlaces <- resolvePlaces(topPlaceCounts.buckets.map(_._1))
-    } yield (totalHits, items, aggregations, topPlaceCounts, topPlaces)
+      placeCounts <- fPlaceQuery
+      places <- resolvePlaces(placeCounts.map(_._1))
+    } yield (totalHits, items, aggregations, placeCounts, places)
     
-    fResults.map { case (totalHits, items, aggregations, topPlaceCounts, topPlaces) =>
-      // TODO format top places
+    fResults.map { case (totalHits, items, aggregations, placeCounts, places) =>
+      val topPlaces = TopPlaces.build(placeCounts, places)
+      
+      // play.api.Logger.info(topPlaces.toString)
+      
       Page(System.currentTimeMillis - startTime, totalHits, args.offset, args.limit, items, aggregations)
     }
   }
