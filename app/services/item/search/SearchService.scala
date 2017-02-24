@@ -80,7 +80,7 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
       Json.fromJson[Place](Json.parse(json)).get
     }}}
 
-  def query(args: SearchArgs): Future[Page[Item]] = {
+  def query(args: SearchArgs): Future[RichResultPage] = {
 
     val startTime = System.currentTimeMillis
 
@@ -115,10 +115,7 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
 
     fResults.map { case (totalHits, items, aggregations, placeCounts, places) =>
       val topPlaces = TopPlaces.build(placeCounts, places)
-
-      // TODO refactor Page class & add topPlaces, incl. JSON serialization
-
-      Page(System.currentTimeMillis - startTime, totalHits, args.offset, args.limit, items, aggregations)
+      RichResultPage(System.currentTimeMillis - startTime, totalHits, args.offset, args.limit, items, aggregations, topPlaces)
     }
   }
 

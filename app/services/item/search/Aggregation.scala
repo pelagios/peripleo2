@@ -14,7 +14,7 @@ object Aggregation {
   implicit val bucketWrites =
     Writes[Tuple2[String, Long]](t => Json.obj(t._1 -> t._2))
   
-  implicit def aggregationWrites: Writes[Aggregation] = (
+  implicit val aggregationWrites: Writes[Aggregation] = (
     (JsPath \ "name").write[String] and
     (JsPath \ "buckets").write[Seq[(String, Long)]]
   )(unlift(Aggregation.unapply))

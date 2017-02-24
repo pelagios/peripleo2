@@ -1,7 +1,10 @@
 import javax.inject._
+
+import akka.stream.Materializer
 import play.api._
 import play.api.http.HttpFilters
 import play.api.mvc._
+import play.filters.gzip.GzipFilter
 
 /**
  * This class configures filters that run on every request. This
@@ -17,8 +20,13 @@ import play.api.mvc._
  * each response.
  */
 @Singleton
-class Filters @Inject() (env: Environment) extends HttpFilters {
+class Filters @Inject() (implicit materializer: Materializer) extends HttpFilters {
+  
+  private val gzipFilter = new GzipFilter(shouldGzip = (request, response) =>
+    response.body.contentType.exists { contentType => 
+      contentType.startsWith("application/json")
+    })
 
-  override val filters = Seq.empty
+  override val filters = Seq(gzipFilter)
 
 }

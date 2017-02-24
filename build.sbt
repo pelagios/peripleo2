@@ -9,8 +9,8 @@ scalaVersion := "2.11.7"
 scalacOptions ++= Seq("-feature")
 
 libraryDependencies ++= Seq(
-  jdbc,
   cache,
+  filters,
 
   "com.sksamuel.elastic4s" %% "elastic4s-streams" % "2.4.0",
   "com.vividsolutions" % "jts" % "1.13",
