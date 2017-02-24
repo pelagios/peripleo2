@@ -121,7 +121,7 @@ class ItemSpec extends PlaySpec with TestHelpers {
        val placeReferences = loadJSON[Seq[Reference]]("services/item/place/place_references.json")
        placeReferences.size mustBe 1
        placeReferences.head.referenceType mustBe ReferenceType.PLACE
-       placeReferences.head.relation mustBe Some(Relation.COVERAGE)
+       placeReferences.head.relation mustBe None
     }
     
   }
@@ -165,7 +165,7 @@ class ItemSpec extends PlaySpec with TestHelpers {
 
       val source = Reference(
         ReferenceType.PLACE,
-        Some(Relation.COVERAGE),
+        Some(Relation.ATTESTATION),
         Some("http://pleiades.stoa.org/places/118543"),
         None, // homepage
         None, // context
