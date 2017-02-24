@@ -69,6 +69,7 @@ object Place extends HasGeometry with HasNullableSeq {
     (JsPath \ "identifiers").write[Seq[String]] and
     (JsPath \ "item_type").write[ItemType.Value] and
     (JsPath \ "title").write[String] and
+    (JsPath \ "is_in_dataset").write[Seq[String]] and
     (JsPath \ "languages").writeNullable[Seq[Language]] and
     (JsPath \ "temporal_bounds").writeNullable[TemporalBounds] and
     (JsPath \ "is_conflation_of").write[Seq[GazetteerRecord]]
@@ -77,6 +78,7 @@ object Place extends HasGeometry with HasNullableSeq {
       place.uris,
       ItemType.PLACE,
       place.titles.head,
+      place.sourceGazetteers.map(_.name),
       toOptSeq(place.languages),
       place.temporalBoundsUnion,
       place.isConflationOf)
