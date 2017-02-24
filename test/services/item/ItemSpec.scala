@@ -142,6 +142,7 @@ class ItemSpec extends PlaySpec with TestHelpers {
         None, // is_part_of
         Seq(Description("Just a dummy object for the roundtrip test")),
         Some("http://www.example.com"),
+        None,
         Seq.empty[Language],
         Some(point),
         Some(point.getCoordinate),
@@ -166,7 +167,9 @@ class ItemSpec extends PlaySpec with TestHelpers {
         ReferenceType.PLACE,
         Some(Relation.COVERAGE),
         Some("http://pleiades.stoa.org/places/118543"),
-        None // context
+        None, // homepage
+        None, // context
+        None  // depiction 
       )
       
       val serialized = Json.prettyPrint(Json.toJson(source))

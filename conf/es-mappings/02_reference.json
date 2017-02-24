@@ -5,7 +5,15 @@
       "reference_type": { "type": "string", "index": "not_analyzed" },
       "relation": { "type": "string", "index": "not_analyzed" },
       "uri": { "type": "string", "index": "not_analyzed" },
-      "context": { "type": "string" }
-    }
+      "homepage": { "type": "string", "index": "not_analyzed" },
+      "context": { "type": "string" },
+      "depiction": {
+        "type": "nested",
+        "properties": {
+          "url": { "type": "string", "index": "not_analyzed" },
+          "thumbnail": { "type": "string", "index": "not_analyzed" }
+        }
+      }
+    },
   }
 }

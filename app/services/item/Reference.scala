@@ -12,7 +12,19 @@ case class Reference(
   
   uri: Option[String],
   
-  context: Option[String]
+  homepage: Option[String],
+  
+  context: Option[String],
+  
+  depiction: Option[ReferenceDepiction]
+    
+)
+
+case class ReferenceDepiction(
+    
+  url: String,
+  
+  thumbnail: Option[String]
     
 )
 
@@ -22,8 +34,21 @@ object Reference {
     (JsPath \ "reference_type").format[ReferenceType.Value] and
     (JsPath \ "relation").formatNullable[Relation.Value] and
     (JsPath \ "uri").formatNullable[String] and
-    (JsPath \ "context").formatNullable[String]
+    (JsPath \ "homepage").formatNullable[String] and
+    (JsPath \ "context").formatNullable[String] and
+    (JsPath \ "depiction").formatNullable[ReferenceDepiction]
   )(Reference.apply, unlift(Reference.unapply))
   
 }
+
+
+object ReferenceDepiction {
+  
+  implicit val referenceDepictionFormat: Format[ReferenceDepiction] = (
+    (JsPath \ "url").format[String] and
+    (JsPath \ "thumbnail").formatNullable[String]
+  )(ReferenceDepiction.apply, unlift(ReferenceDepiction.unapply))
+  
+}
+
 

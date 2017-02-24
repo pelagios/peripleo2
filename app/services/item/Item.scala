@@ -29,6 +29,8 @@ case class Item(
   
   homepage: Option[String],
   
+  license: Option[String],
+  
   languages: Seq[Language],
   
   geometry: Option[Geometry],
@@ -58,6 +60,7 @@ object Item extends HasDate with HasNullableSeq with HasGeometry {
     (JsPath \ "descriptions").formatNullable[Seq[Description]]
       .inmap[Seq[Description]](fromOptSeq[Description], toOptSeq[Description]) and
     (JsPath \ "homepage").formatNullable[String] and
+    (JsPath \ "license").formatNullable[String] and
     (JsPath \ "languages").formatNullable[Seq[Language]]
       .inmap[Seq[Language]](fromOptSeq[Language], toOptSeq[Language]) and
     (JsPath \ "geometry").formatNullable[Geometry] and
