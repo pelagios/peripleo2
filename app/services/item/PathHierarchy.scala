@@ -9,23 +9,38 @@ case class PathHierarchy(path: Seq[String])
 object PathHierarchy {
   
   private val SEPARATOR = 0x0007.toChar // Beep
-  
-  implicit val pathHierarchyFormat: Format[PathHierarchy] =
-    Format(
-      JsPath.read[JsArray].map { list => 
-        val longestPath = list.value // Just take longest and split by separator
-          .map(_.as[JsString].value)
-          .maxBy(_.size)
-    
-        PathHierarchy(longestPath.split(SEPARATOR)) 
-      },
+
+  def toHierarchy(maybeLevels: Option[Seq[String]]): Option[PathHierarchy] = 
+    maybeLevels.map(toPathHierarchies(_).head)
       
-      Writes[PathHierarchy] { hierarchy => 
-        val paths = hierarchy.path.zipWithIndex.map { case (_, idx) =>
-          hierarchy.path.take(idx + 1).mkString(SEPARATOR.toString) }
-        
-        Json.toJson(paths) 
-      }
-    )
+  def toHierarchies(maybeLevels: Option[Seq[String]]): Seq[PathHierarchy] =
+    maybeLevels.map(toPathHierarchies).getOrElse(Seq.empty[PathHierarchy])
+
+  def fromHierarchy(hierarchy: Option[PathHierarchy]): Option[Seq[String]] =
+    hierarchy.map(toList)
+
+  def fromHierarchies(hierarchies: Seq[PathHierarchy]): Option[Seq[String]] =
+    if (hierarchies.isEmpty) None
+    else Some(hierarchies.flatMap(toList))
   
+  /** Builds the 'levels' for the path. Example: the path
+    * 
+    *    [ "root", "middle", "leaf" ]
+    * 
+    * is translated to the levels
+    * 
+    *    [ "root", "root{SEPARATOR}middle", "root{SEPARATOR}middle{SEPARATOR}leaf" ] 
+    */
+  private def toList(hierarchy: PathHierarchy): Seq[String] =
+    hierarchy.path.zipWithIndex.map { case (_, idx) =>
+      hierarchy.path.take(idx + 1).mkString(SEPARATOR.toString) }
+  
+  private def toPathHierarchies(levels: Seq[String]): Seq[PathHierarchy] = {
+    val roots = levels.filterNot(_.contains(SEPARATOR))
+    
+    roots.map { root =>
+      val thisPath = levels.filter(_.startsWith(root)).maxBy(_.size)
+      PathHierarchy(thisPath.split(SEPARATOR)) }
+  }
+
 }

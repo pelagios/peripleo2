@@ -21,7 +21,7 @@ case class Item(
   
   title: String,
   
-  isInDataset: Option[PathHierarchy],
+  isInDataset: Seq[PathHierarchy],
   
   isPartOf: Option[PathHierarchy],
   
@@ -47,6 +47,8 @@ case class Item(
 
 object Item extends HasDate with HasNullableSeq with HasGeometry {
   
+  import PathHierarchy._
+  
   implicit val itemFormat: Format[Item] = (
     (JsPath \ "identifiers").format[Seq[String]] and
     (JsPath \ "item_type").format[ItemType.Value] and
@@ -55,8 +57,10 @@ object Item extends HasDate with HasNullableSeq with HasGeometry {
     (JsPath \ "categories").formatNullable[Seq[Category]]
       .inmap[Seq[Category]](fromOptSeq[Category], toOptSeq[Category]) and
     (JsPath \ "title").format[String] and
-    (JsPath \ "is_in_dataset").formatNullable[PathHierarchy] and
-    (JsPath \ "is_part_of").formatNullable[PathHierarchy] and
+    (JsPath \ "is_in_dataset").formatNullable[Seq[String]]
+      .inmap[Seq[PathHierarchy]](toHierarchies, fromHierarchies) and
+    (JsPath \ "is_part_of").formatNullable[Seq[String]]
+      .inmap[Option[PathHierarchy]](toHierarchy, fromHierarchy) and
     (JsPath \ "descriptions").formatNullable[Seq[Description]]
       .inmap[Seq[Description]](fromOptSeq[Description], toOptSeq[Description]) and
     (JsPath \ "homepage").formatNullable[String] and

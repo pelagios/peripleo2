@@ -138,7 +138,7 @@ class ItemSpec extends PlaySpec with TestHelpers {
         Some(CURRENT_TIME),
         Seq(Category("Archaeology", Some("http://vocab.getty.edu/aat/300054328"))),
         "A dummy object",
-        Some(PathHierarchy(Seq(UUID.randomUUID.toString))),
+        Seq(PathHierarchy(Seq(UUID.randomUUID.toString))),
         None, // is_part_of
         Seq(Description("Just a dummy object for the roundtrip test")),
         Some("http://www.example.com"),
