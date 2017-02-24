@@ -41,6 +41,12 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
         terms "by_type"
         field "item_type"
         size 20,
+        
+      // TODO for testing only
+      aggregation
+        terms "by_dataset"
+        field "is_in_dataset"
+        size 20,
 
       aggregation
         terms "by_language"
@@ -100,6 +106,7 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
 
       val aggregations = Seq(
         Aggregation.parseTerms(response.aggregations.get("by_type")),
+        Aggregation.parseTerms(response.aggregations.get("by_dataset")),
         Aggregation.parseTerms(response.aggregations.get("by_language")),
         if (byCentury.buckets.size >= 20) byCentury else byDecade
       )
