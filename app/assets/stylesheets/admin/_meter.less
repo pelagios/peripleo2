@@ -1,0 +1,41 @@
+.task-progress:first-child {
+  border-top:1px solid @haze-dark;
+}
+
+.task-progress {
+  background-color:@haze;
+  padding:25px 40px;
+
+  .meter {
+    height:21px;
+    width:100%;
+    margin:0 auto;
+    position:relative;
+    .rounded-corners(2px);
+    background-color:darken(@haze, 8%);
+
+    p.label {
+      font-size:15px;
+      line-height:21px;
+      margin:0;
+      padding:0;
+      position: absolute;
+      margin-left:auto;
+      margin-right:auto;
+      left:0;
+      right:0;
+      text-align:center;
+    }
+
+    .bar {
+      height:100%;
+      background-color:@turquoise;
+    }
+
+    .bar.rounded {
+      .rounded-corners(2px);
+    }
+
+  }
+
+}

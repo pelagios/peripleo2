@@ -12,7 +12,7 @@
         }
       </div>
 
-      <div class="inner current-uploads"></div>
+      <div class="current-uploads"></div>
     </div>
   </div>
 
@@ -28,4 +28,7 @@
 
   <script src="@routes.WebJarAssets.at(webjars.locate("require.min.js"))" data-main="@routes.Assets.versioned("javascripts/admin/authorities/gazetteers.js")"></script>
   @views.html.admin.enableUploads()
+  @helper.javascriptRouter("jsRoutes")(
+    controllers.api.admin.routes.javascript.TaskAPIController.list
+  )
 }
