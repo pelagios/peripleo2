@@ -11,7 +11,8 @@ import play.api.Logger
 import play.api.libs.json.Json
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.language.postfixOps
-import services.{ ES, HasDate }
+import services.{ ES, HasDate, Page }
+import com.sksamuel.elastic4s.FilteredQueryDefinition
 
 @Singleton
 class TaskService @Inject() (val es: ES, implicit val ctx: ExecutionContext) extends HasDate {
@@ -24,6 +25,20 @@ class TaskService @Inject() (val es: ES, implicit val ctx: ExecutionContext) ext
     override def as(hit: RichSearchHit): Task =
       Json.fromJson[Task](Json.parse(hit.sourceAsString)).get
   }
+  
+  def listAll(offset: Int = 0, limit: Int = 20): Future[Page[Task]] =
+    es.client execute {
+      search in ES.PERIPLEO / ES.TASK start offset limit limit
+    } map { response =>
+      Page(response.tookInMillis, response.totalHits, offset, limit, response.as[Task])
+    }
+    
+  def findByType(taskType: TaskType, offset: Int = 0, limit: Int = 20): Future[Page[Task]] =
+    es.client execute {
+      search in ES.PERIPLEO / ES.TASK query filter { termQuery("task_type" -> taskType.toString) }
+    } map { response =>
+      Page(response.tookInMillis, response.totalHits, offset, limit, response.as[Task])
+    }
       
   def findById(uuid: UUID): Future[Option[Task]] =
     es.client execute {
@@ -36,7 +51,7 @@ class TaskService @Inject() (val es: ES, implicit val ctx: ExecutionContext) ext
         None
       }
     }
-    
+        
   private def updateFields(uuid: UUID, fields: (String, Any)*): Future[Boolean] =
     es.client execute {
       update id uuid.toString in ES.PERIPLEO / ES.TASK docAsUpsert fields  

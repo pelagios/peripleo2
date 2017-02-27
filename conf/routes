@@ -36,11 +36,17 @@ POST    /login                                       controllers.admin.LoginLogo
 GET     /logout                                      controllers.admin.LoginLogoutController.logout
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# JSON API
+# Public JSON API
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 GET     /api/gazetteers                              controllers.api.GazetteerAPIController.list
 GET     /api/search                                  controllers.api.SearchAPIController.search
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Restricted JSON API
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+GET     /api/admin/tasks                             controllers.api.admin.TaskAPIController.list
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Application root (TODO temporarily directs to login)

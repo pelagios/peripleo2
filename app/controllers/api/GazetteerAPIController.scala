@@ -9,8 +9,6 @@ import services.item.search.{ SearchArgs, SearchService }
 
 @Singleton
 class GazetteerAPIController @Inject() (
-  val searchService: SearchService,
-  implicit val ctx: ExecutionContext
 ) extends Controller with HasPrettyPrintJSON {
 
   def list() = Action {
