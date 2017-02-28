@@ -103,10 +103,8 @@ object SearchArgs {
     val bbox = getArg("bbox", q).map(BoundingBox.fromString(_))
     val center = (getArg("lon", q), getArg("lat", q)) match {
       case (Some(lon), Some(lat)) => Some(new Coordinate(lon.toDouble, lat.toDouble))   
-      
       // Throw exception if only one arg is defined, but not the other
       case (Some(_), _) | (_, Some(_)) => throw new IllegalArgumentException
-   
       case _ => None
     }
     
