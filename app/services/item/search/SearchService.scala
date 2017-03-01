@@ -70,30 +70,32 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
     termAggregations ++ timeHistogramAggregations
   }
 
-  private def buildItemQuery(args: SearchArgs) = {
-    
+  private def buildItemQuery(args: SearchArgs) =
     search in ES.PERIPLEO / ES.ITEM query {
       bool {
-        should(
-          queryStringQuery(args.query.getOrElse("*")),
-          hasChildQuery("reference") query { termQuery("context", args.query.getOrElse("*")) }
-        )
-      } filter buildTermFilters(args)
+        must(
+          should(
+            queryStringQuery(args.query.getOrElse("*")),
+            hasChildQuery("reference") query { termQuery("context", args.query.getOrElse("*")) }
+          )
+        ) filter(buildTermFilters(args)) 
+      }
     } start args.offset limit args.limit aggregations buildAggregationDefinitions(args)
-  }
 
   private def buildPlaceQuery(args: SearchArgs) =
     search in ES.PERIPLEO / ES.REFERENCE query {
       bool {
-        should(
-          termQuery("context", args.query.getOrElse("*")),
-          hasParentQuery("item") query { queryStringQuery(args.query.getOrElse("*")) }
-        )
-      } filter {
-        bool {
-          must(
-            hasParentQuery("item") query buildTermFilters(args)
+        must (
+          should(
+            termQuery("context", args.query.getOrElse("*")),
+            hasParentQuery("item") query { queryStringQuery(args.query.getOrElse("*")) }
           )
+        ) filter {
+          bool {
+            must(
+              hasParentQuery("item") query buildTermFilters(args)
+            )
+          }
         }
       }
     } start 0 limit 0 aggregations (
@@ -114,7 +116,6 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
       }}}
 
   def query(args: SearchArgs): Future[RichResultPage] = {
-
     val startTime = System.currentTimeMillis
 
     val fPlaceQuery = es.client execute {
