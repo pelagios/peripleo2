@@ -127,19 +127,29 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
       buildItemQuery(args)
     } map { response =>
       val items = response.as[Item].toSeq
-
-      // val byCentury = Aggregation.parseHistogram(response.aggregations.get("by_century"), "by_time")
-      // val byDecade = Aggregation.parseHistogram(response.aggregations.get("by_decade"), "by_time")
+      
+      val aggregations = {
+        Option(response.aggregations) match {
+          case Some(aggs) =>
+            val histogram =
+              (Option(aggs.get("by_century")), Option(aggs.get("by_decade"))) match {
+                case (Some(_), Some(_)) =>
+                  val byCentury = Aggregation.parseHistogram(aggs.get("by_century"), "by_time")
+                  val byDecade = Aggregation.parseHistogram(aggs.get("by_decade"), "by_time")
+                  if (byCentury.buckets.size >= 20) Some(byCentury) else Some(byDecade)
+                  
+                case _ => None
+            }
             
-      val aggregations = Option(response.aggregations) match {
-        case Some(aggs) =>  Seq(
-            Option(response.aggregations.get("by_type")).map(Aggregation.parseTerms),
-            Option(response.aggregations.get("by_dataset")).map(Aggregation.parseTerms),
-            Option(response.aggregations.get("by_language")).map(Aggregation.parseTerms)
-            /* if (byCentury.buckets.size >= 20) byCentury else byDecade */
-          ).flatten
-          
-        case None => Seq.empty[Aggregation]
+            Seq(
+              Option(response.aggregations.get("by_type")).map(Aggregation.parseTerms),
+              Option(response.aggregations.get("by_dataset")).map(Aggregation.parseTerms),
+              Option(response.aggregations.get("by_language")).map(Aggregation.parseTerms),
+              histogram
+            ).flatten
+            
+          case None => Seq.empty[Aggregation]
+        }
       }
 
       (response.totalHits, items, aggregations)
