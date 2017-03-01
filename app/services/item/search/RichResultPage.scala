@@ -4,10 +4,27 @@ import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
 import services.item.Item
+import services.HasNullableSeq
 
-case class RichResultPage(took: Long, total: Long, offset: Int, limit: Long, items: Seq[Item], aggregations: Seq[Aggregation], topPlaces: TopPlaces)
+case class RichResultPage(
+    
+  took: Long,
+  
+  total: Long,
+  
+  offset: Int,
+  
+  limit: Long,
+  
+  items: Seq[Item],
+  
+  aggregations: Seq[Aggregation],
+  
+  topPlaces: Option[TopPlaces]
+  
+)
 
-object RichResultPage {
+object RichResultPage extends HasNullableSeq {
 
   /** JSON serialization **/
   implicit val richResultPageWrites: Writes[RichResultPage] = (
@@ -16,8 +33,9 @@ object RichResultPage {
     (JsPath \ "offset").write[Int] and
     (JsPath \ "limit").write[Long] and
     (JsPath \ "items").write[Seq[Item]] and
-    (JsPath \ "aggregations").write[Seq[Aggregation]] and
-    (JsPath \ "top_places").write[TopPlaces]
+    (JsPath \ "aggregations").writeNullable[Seq[Aggregation]]
+      .contramap[Seq[Aggregation]](toOptSeq) and
+    (JsPath \ "top_places").writeNullable[TopPlaces]
   )(unlift(RichResultPage.unapply))
   
 }
