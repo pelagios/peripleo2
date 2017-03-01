@@ -4,31 +4,32 @@
   <div class="row">
     <div class="card">
       <div class="inner">
-        0 Gazetteers
-        <a href="#" class="btn upload" data-input="file">Upload New</a>
+        <span class="gazetter-count">-</span> Gazetteers
+        <a href="#" class="btn new-upload" data-input="file">Upload New</a>
 
         @helper.form(action = controllers.admin.authorities.routes.GazetteerAdminController.importGazetteer(), 'enctype -> "multipart/form-data") {
           <input type="file" id="file" name="file">
         }
       </div>
 
-      <div class="current-uploads"></div>
+      <div class="uploads"></div>
     </div>
   </div>
 
   <div class="row">
-    <div class="card half gazetteer-list">
+    <div class="card half details">
       <div class="inner"></div>
     </div>
 
-    <div class="card half gazetteer-details">
-      <div class="inner"></div>
+    <div class="card half overview">
+      <table></table>
     </div>
   </div>
 
   <script src="@routes.WebJarAssets.at(webjars.locate("require.min.js"))" data-main="@routes.Assets.versioned("javascripts/admin/authorities/gazetteers.js")"></script>
   @views.html.admin.enableUploads()
   @helper.javascriptRouter("jsRoutes")(
+    controllers.api.routes.javascript.GazetteerAPIController.list,
     controllers.api.admin.routes.javascript.TaskAPIController.list
   )
 }
