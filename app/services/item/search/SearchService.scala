@@ -9,6 +9,7 @@ import services.{ ES, Page }
 import services.item.Item
 import services.item.place.Place
 import org.elasticsearch.search.aggregations.bucket.histogram.InternalHistogram
+import services.item.search.filters.TermFilter
 
 @Singleton
 class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
@@ -27,15 +28,36 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
     override def as(hit: RichSearchHit): Item =
       Json.fromJson[Item](Json.parse(hit.sourceAsString)).get
   }
+  
+  private def buildTermFilters(args: SearchArgs) = {
+    
+    def termFilterDefinition(field: String, filter: TermFilter) = {
+      val filters = filter.values.map(termQuery(field, _))
+      filter.setting match {
+        case TermFilter.ONLY => should(filters)
+        case TermFilter.EXCLUDE => not(filters)
+      }  
+    } 
+    
+    val filters = Seq(
+      args.filters.itemTypeFilter.map(termFilterDefinition("item_type", _)),
+      args.filters.categoryFilter.map(termFilterDefinition("category", _)),
+      // TODO dataset
+      args.filters.languageFilter.map(termFilterDefinition("languages", _))
+    ).flatten
+    
+    bool { must(filters) }
+  }
 
-  private def buildItemQuery(args: SearchArgs) =
+  private def buildItemQuery(args: SearchArgs) = {
+    
     search in ES.PERIPLEO / ES.ITEM query {
       bool {
         should(
           queryStringQuery(args.query.getOrElse("*")),
           hasChildQuery("reference") query { termQuery("context", args.query.getOrElse("*")) }
         )
-      }
+      } filter buildTermFilters(args)
     } start args.offset limit args.limit aggregations (
       aggregation
         terms "by_type"
@@ -63,6 +85,7 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
         script histogramScript(100)
         interval 100
     )
+  }
 
   private def buildPlaceQuery(args: SearchArgs) =
     search in ES.PERIPLEO / ES.REFERENCE query {
@@ -71,6 +94,12 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
           termQuery("context", args.query.getOrElse("*")),
           hasParentQuery("item") query { queryStringQuery(args.query.getOrElse("*")) }
         )
+      } filter {
+        bool {
+          must(
+            hasParentQuery("item") query buildTermFilters(args)
+          )
+        }
       }
     } start 0 limit 0 aggregations (
       aggregation
@@ -80,11 +109,14 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
     ) // TODO sub-aggregate places vs people vs periods etc. to places only
 
   private def resolvePlaces(uris: Seq[String]) =
-    es.client execute {
-      multiget ( uris.map(uri => get id uri from ES.PERIPLEO / ES.ITEM) )
-    } map { _.responses.flatMap { _.response.map(_.getSourceAsString).map { json =>
-      Json.fromJson[Place](Json.parse(json)).get
-    }}}
+    if (uris.isEmpty)
+      Future.successful(Seq.empty[Place])
+    else
+      es.client execute {
+        multiget ( uris.map(uri => get id uri from ES.PERIPLEO / ES.ITEM) )
+      } map { _.responses.flatMap { _.response.map(_.getSourceAsString).map { json =>
+        Json.fromJson[Place](Json.parse(json)).get
+      }}}
 
   def query(args: SearchArgs): Future[RichResultPage] = {
 
