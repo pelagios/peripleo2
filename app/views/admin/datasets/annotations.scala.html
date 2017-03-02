@@ -1,5 +1,34 @@
 @()(implicit request: RequestHeader, webjars: WebJarAssets)
 
-@views.html.admin._layout("Dataset Administration", "datasets") {
+@views.html.admin._layout("Dataset Administration | Annotations ", "annotations") {
+  <div class="row">
+    <div class="card">
+      <div class="inner">
+        <span class="dataset-count">-</span> Annotation Datasets
+        <a href="#" class="btn new-upload" data-input="file">Upload New</a>
 
+        @helper.form(action = controllers.admin.datasets.routes.AnnotationsAdminController.importAnnotations(), 'enctype -> "multipart/form-data") {
+          <input type="file" id="file" name="file">
+        }
+      </div>
+
+      <div class="uploads"></div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="card half details">
+      <div class="inner"></div>
+    </div>
+
+    <div class="card half overview">
+      <table></table>
+    </div>
+  </div>
+
+  <script src="@routes.WebJarAssets.at(webjars.locate("require.min.js"))" data-main="@routes.Assets.versioned("javascripts/admin/authorities/gazetteers.js")"></script>
+  @views.html.admin.enableUploads()
+  @helper.javascriptRouter("jsRoutes")(
+    controllers.api.admin.routes.javascript.TaskAPIController.list
+  )
 }

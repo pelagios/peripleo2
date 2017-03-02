@@ -11,7 +11,7 @@ GET     /favicon.ico                                 controllers.Assets.at(path=
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 GET     /admin/datasets/annotations                  controllers.admin.datasets.AnnotationsAdminController.index
-GET     /admin/datasets/attributes                   controllers.admin.datasets.AttributesAdminController.index
+POST    /admin/datasets/annotations                  controllers.admin.datasets.AnnotationsAdminController.importAnnotations
 GET     /admin/datasets/geodata                      controllers.admin.datasets.GeodataAdminController.index
 
 GET     /admin/authorities/gazetteers                controllers.admin.authorities.GazetteerAdminController.index

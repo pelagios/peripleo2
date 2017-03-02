@@ -30,10 +30,10 @@ class GazetteerAdminController @Inject() (
   implicit val system: ActorSystem,
   implicit val webjars: WebJarAssets
 ) extends BaseController with AuthElement {
-  
+
   private def upsertGazetteerMeta(filename: String) = {
     val name = filename.substring(0, filename.indexOf('.'))
-    
+
     val gazetteer = Item(
       Seq(name),
       ItemType.DATASET,
@@ -52,29 +52,29 @@ class GazetteerAdminController @Inject() (
       None, // temporalBounds
       Seq.empty[String], // periods
       Seq.empty[Depiction])
-      
+
     itemService.insertOrUpdateItem(gazetteer)
   }
 
   def index = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>
     Ok(views.html.admin.authorities.gazetteers())
   }
-  
+
   def importGazetteer = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>
     request.body.asMultipartFormData.flatMap(_.file("file")) match {
-      case Some(formData) => {
+      case Some(formData) =>
         Logger.info("Importing gazetteer from " + formData.filename)
-        
-        
+
+
         /** TEMPORARY HACK **/
-        
+
         upsertGazetteerMeta(formData.filename).map { success =>
-          
+
           if (success) {
-            
+
             if (formData.filename.contains(".ttl")) {
               Logger.info("Importing Pelagios RDF/TTL dump")
-              val importer = new DumpImporter(taskService) 
+              val importer = new DumpImporter(taskService)
               importer.importDump(formData.ref.file, formData.filename, PelagiosRDFCrosswalk.fromRDF(formData.filename), placeService, loggedIn.username)
             } else if (formData.filename.toLowerCase.contains("pleiades")) {
               Logger.info("Using Pleiades crosswalk")
@@ -85,18 +85,17 @@ class GazetteerAdminController @Inject() (
               val importer = new StreamImporter(taskService, materializer)
               importer.importRecords(formData.ref.file, formData.filename, GeoNamesCrosswalk.fromJson, placeService, loggedIn.username)
             }
-          
+
           }
-        
+
         }
 
         /** TEMPORARY HACK **/
-        
+
         Redirect(routes.GazetteerAdminController.index)
-      }
-        
+
       case None => BadRequest
-        
+
     }
   }
 

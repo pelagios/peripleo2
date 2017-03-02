@@ -19,20 +19,14 @@
 
           <ul class="submenu">
             <li>
-              <a @if(activeTab == "geodata") { class="active" } href="#">
-                <span class="label">Geodata</span>
-              </a>
-            </li>
-
-            <li>
-              <a @if(activeTab == "annotations") { class="active" } href="#">
+              <a @if(activeTab == "annotations") { class="active" } href="@controllers.admin.datasets.routes.AnnotationsAdminController.index">
                 <span class="label">Annotations</span>
               </a>
             </li>
 
             <li>
-              <a @if(activeTab == "attributes") { class="active" } href="#">
-                <span class="label">Attributes</span>
+              <a @if(activeTab == "geodata") { class="active" } href="@controllers.admin.datasets.routes.GeodataAdminController.index">
+                <span class="label">Geodata</span>
               </a>
             </li>
           </ul>
