@@ -8,11 +8,14 @@ import play.api.Logger
 import play.api.libs.json.Json
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.language.postfixOps 
-import services.ES
+import services.{ ES, HasBatchImport }
+import services.task.TaskType
 
 @Singleton
-class ItemService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
+class ItemService @Inject() (val es: ES, implicit val ctx: ExecutionContext) extends HasBatchImport[Item] {
 
+  override val taskType = TaskType("ITEM_IMPORT")
+  
   implicit object ItemIndexable extends Indexable[Item] {
     override def json(i: Item): String = Json.stringify(Json.toJson(i))
   }
@@ -31,5 +34,8 @@ class ItemService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
       // t.printStackTrace
       false
     }
+    
+    
+  override def importRecord(record: Item): Future[Boolean] = ???
   
 }

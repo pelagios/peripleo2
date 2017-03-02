@@ -1,19 +1,26 @@
 package controllers.admin.datasets
 
+import akka.actor.ActorSystem
 import controllers.{ BaseController, WebJarAssets }
 import controllers.admin.DumpImporter
 import javax.inject.{ Inject, Singleton }
 import jp.t2v.lab.play2.auth.AuthElement
 import play.api.{ Configuration, Logger }
 import play.api.mvc.Action
+import scala.concurrent.ExecutionContext
 import services.task.TaskService
 import services.user.{ Role, UserService }
+import services.item.ItemService
+import services.item.crosswalks.PelagiosAnnotationCrosswalk
 
 @Singleton
 class AnnotationsAdminController @Inject() (
   val config: Configuration,
+  val itemService: ItemService,
   val taskService: TaskService,
   val users: UserService,
+  implicit val ctx: ExecutionContext,
+  implicit val system: ActorSystem,
   implicit val webjars: WebJarAssets
 ) extends BaseController with AuthElement {
 
@@ -30,7 +37,7 @@ class AnnotationsAdminController @Inject() (
         if (formData.filename.contains(".rdf")) {
           Logger.info("Importing Pelagios RDF/XML dump")
           val importer = new DumpImporter(taskService)
-          // importer.importDump(formData.ref.file, formData.filename, PelagiosRDFCrosswalk.fromRDF(formData.filename), placeService, loggedIn.username)
+          importer.importDump(formData.ref.file, formData.filename, PelagiosAnnotationCrosswalk.fromRDF(formData.filename), itemService, loggedIn.username)
         }
 
         Redirect(routes.AnnotationsAdminController.index)

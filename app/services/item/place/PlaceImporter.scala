@@ -7,11 +7,9 @@ import services.task.TaskType
 
 trait PlaceImporter extends HasBatchImport[GazetteerRecord] { self: PlaceService =>
   
-  val taskType = TaskType("GAZETTEER_IMPORT")
+  override val taskType = TaskType("GAZETTEER_IMPORT")
   
   private def MAX_URIS_IN_QUERY = 100 // Max URIs we will concatenate to an OR query
-  
-  private def MAX_RETRIES = 5 // Max times an update will be retried in case of failure
   
   private def getAffectedPlaces(normalizedRecord: GazetteerRecord): Future[Seq[Place]] = {
     // We need to query for this record's URI as well as all close/exactMatchURIs
@@ -52,7 +50,7 @@ trait PlaceImporter extends HasBatchImport[GazetteerRecord] { self: PlaceService
     }
   }
   
-  private def importRecord(record: GazetteerRecord): Future[Boolean] = {
+  override def importRecord(record: GazetteerRecord): Future[Boolean] = {
 
     // Fetches affected places from the store and computes the new conflation
     def conflateAffectedPlaces(normalizedRecord: GazetteerRecord): Future[(Seq[Place], Seq[Place])] = {
@@ -102,27 +100,5 @@ trait PlaceImporter extends HasBatchImport[GazetteerRecord] { self: PlaceService
       failedDeletes <- if (failedUpdates.isEmpty) deleteMergedPlaces(placesBefore, placesAfter) else Future.successful(Seq.empty[String])
     } yield failedUpdates.isEmpty && failedDeletes.isEmpty
   }
-  
-  private def importRecords(records: Seq[GazetteerRecord], retries: Int = MAX_RETRIES): Future[Seq[GazetteerRecord]] =
-    records.foldLeft(Future.successful(Seq.empty[GazetteerRecord])) { case (f, record) =>
-      f.flatMap { failed =>
-        importRecord(record).map { success =>
-          if (success) failed
-          else record +: failed 
-        }
-      }
-    } flatMap { failedRecords =>
-      Logger.info("Imported " + (records.size - failedRecords.size) + " records") 
-      if (failedRecords.size > 0 && retries > 0) {
-        Logger.warn(failedRecords.size + " gazetteer records failed to import - retrying")
-        importRecords(failedRecords, retries - 1)
-      } else {
-        if (failedRecords.size > 0) Logger.error(failedRecords.size + " gazetteer records failed without recovery")
-        else Logger.info("No failed imports")
-        Future.successful(failedRecords)
-      }
-    }
-  
-  override def importBatch(batch: Seq[GazetteerRecord]) = importRecords(batch)
   
 }
