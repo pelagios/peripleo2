@@ -38,7 +38,7 @@ object PelagiosAnnotationCrosswalk {
           Reference(
             ReferenceType.PLACE,
             None, // TODO relation
-            Some(GazetteerRecord.normalizeURI(placeUri)),
+            GazetteerRecord.normalizeURI(placeUri),
             None, // homepage
             None, // context
             None  // depiction

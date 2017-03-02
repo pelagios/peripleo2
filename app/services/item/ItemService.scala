@@ -33,20 +33,45 @@ class ItemService @Inject() (val es: ES, implicit val ctx: ExecutionContext) ext
   
   // TODO how to handle IDs for references, so we can update properly?
   
-  // TODO where do we remove references that point to entities not know to Peripleo? (here, I guess)
-  
-  def insertOrUpdateItem(item: Item, references: Seq[Reference]): Future[Boolean] =
-    es.client execute {
-      bulk (
-         { update id item.identifiers.head in ES.PERIPLEO / ES.ITEM source item docAsUpsert } +: references.map{ ref =>
-           update id item.identifiers.head in ES.PERIPLEO / ES.REFERENCE source ref parent item.identifiers.head docAsUpsert }
-      )
-    } map { _ => true
-    } recover { case t: Throwable =>
+  /** Keeps only references that resolve to an entity in Peripleo **/
+  def filterResolvable(references: Seq[Reference]): Future[Seq[Reference]] =
+    if (references.isEmpty)
+      Future.successful(Seq.empty[Reference])
+    else
+      es.client execute {
+        multiget ( references.map(ref => get id ref.uri from ES.PERIPLEO / ES.ITEM) )
+      } map { result => 
+        val found = result.responses.map { r =>
+          val found = r.response.map(_.isExists).getOrElse(false)
+          (r.getId, found)
+        }.toMap
+        
+        references.filter(ref => found.get(ref.uri).get)
+      }
+
+  def insertOrUpdateItem(item: Item, references: Seq[Reference]): Future[Boolean] = {
+    val fFilterResolvable = filterResolvable(references)
+    
+    def fUpsert(resolvableReferences: Seq[Reference]) =
+      es.client execute {
+        bulk (
+          { update id item.identifiers.head in ES.PERIPLEO / ES.ITEM source item docAsUpsert } +: 
+            resolvableReferences.map{ ref =>
+              update id item.identifiers.head in ES.PERIPLEO / ES.REFERENCE source ref parent item.identifiers.head docAsUpsert }
+        )
+      } map { _ => true }
+      
+    val f = for {
+      resolvableReferences <- fFilterResolvable
+      success <- fUpsert(resolvableReferences)
+    } yield success
+    
+    f.recover { case t: Throwable =>
       Logger.error("Error indexing item " + item.identifiers.head + ": " + t.getMessage)
       // t.printStackTrace
       false
     }
+  }
     
   override def importRecord(tuple: (Item, Seq[Reference])): Future[Boolean] =
     insertOrUpdateItem(tuple._1, tuple._2)

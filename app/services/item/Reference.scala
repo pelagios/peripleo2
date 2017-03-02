@@ -10,7 +10,7 @@ case class Reference(
   
   relation: Option[Relation.Value],
   
-  uri: Option[String],
+  uri: String,
   
   homepage: Option[String],
   
@@ -33,7 +33,7 @@ object Reference {
   implicit val referenceFormat: Format[Reference] = (
     (JsPath \ "reference_type").format[ReferenceType.Value] and
     (JsPath \ "relation").formatNullable[Relation.Value] and
-    (JsPath \ "uri").formatNullable[String] and
+    (JsPath \ "uri").format[String] and
     (JsPath \ "homepage").formatNullable[String] and
     (JsPath \ "context").formatNullable[String] and
     (JsPath \ "depiction").formatNullable[ReferenceDepiction]
