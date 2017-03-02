@@ -101,9 +101,9 @@ object GazetteerRecord extends HasDate with HasGeometry with HasNullableSeq {
   /** Utility to create a cloned record, with all URIs normalized **/
   def normalize(r: GazetteerRecord) = 
     r.copy(
-     uri = normalizeURI(r.uri),
-     closeMatches = r.closeMatches.map(normalizeURI),
-     exactMatches = r.exactMatches.map(normalizeURI)
+      uri = normalizeURI(r.uri),
+      closeMatches = r.closeMatches.map(normalizeURI),
+      exactMatches = r.exactMatches.map(normalizeURI)
     )
 
   /** JSON (de)serialization **/

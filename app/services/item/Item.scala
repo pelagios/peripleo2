@@ -13,13 +13,13 @@ case class Item(
   
   itemType: ItemType.Value,
   
-  lastSyncedAt: Option[DateTime],
+  title: String,
+  
+  lastSyncedAt: Option[DateTime], // optional because there's no common sync time for places
 
   lastChangedAt: Option[DateTime],
   
   categories: Seq[Category],
-  
-  title: String,
   
   isInDataset: Seq[PathHierarchy],
   
@@ -52,11 +52,11 @@ object Item extends HasDate with HasNullableSeq with HasGeometry {
   implicit val itemFormat: Format[Item] = (
     (JsPath \ "identifiers").format[Seq[String]] and
     (JsPath \ "item_type").format[ItemType.Value] and
+    (JsPath \ "title").format[String] and
     (JsPath \ "last_synced_at").formatNullable[DateTime] and
     (JsPath \ "last_changed_at").formatNullable[DateTime] and
     (JsPath \ "categories").formatNullable[Seq[Category]]
       .inmap[Seq[Category]](fromOptSeq[Category], toOptSeq[Category]) and
-    (JsPath \ "title").format[String] and
     (JsPath \ "is_in_dataset").formatNullable[Seq[String]]
       .inmap[Seq[PathHierarchy]](toHierarchies, fromHierarchies) and
     (JsPath \ "is_part_of").formatNullable[Seq[String]]

@@ -12,7 +12,7 @@ import services.{ ES, HasBatchImport }
 import services.task.TaskType
 
 @Singleton
-class ItemService @Inject() (val es: ES, implicit val ctx: ExecutionContext) extends HasBatchImport[Item] {
+class ItemService @Inject() (val es: ES, implicit val ctx: ExecutionContext) extends HasBatchImport[(Item, Seq[Reference])] {
 
   override val taskType = TaskType("ITEM_IMPORT")
   
@@ -25,9 +25,22 @@ class ItemService @Inject() (val es: ES, implicit val ctx: ExecutionContext) ext
       Json.fromJson[Item](Json.parse(hit.sourceAsString)).get
   }
   
-  def insertOrUpdateItem(item: Item): Future[Boolean] =
+  // TODO this method is duplicate in ItemService and PlaceService - refactor
+  
+  implicit object ReferenceIndexable extends Indexable[Reference] {
+    override def json(r: Reference): String = Json.stringify(Json.toJson(r))
+  }
+  
+  // TODO how to handle IDs for references, so we can update properly?
+  
+  // TODO where do we remove references that point to entities not know to Peripleo? (here, I guess)
+  
+  def insertOrUpdateItem(item: Item, references: Seq[Reference]): Future[Boolean] =
     es.client execute {
-      update id item.identifiers.head in ES.PERIPLEO / ES.ITEM source item docAsUpsert
+      bulk (
+         { update id item.identifiers.head in ES.PERIPLEO / ES.ITEM source item docAsUpsert } +: references.map{ ref =>
+           update id item.identifiers.head in ES.PERIPLEO / ES.REFERENCE source ref parent item.identifiers.head docAsUpsert }
+      )
     } map { _ => true
     } recover { case t: Throwable =>
       Logger.error("Error indexing item " + item.identifiers.head + ": " + t.getMessage)
@@ -35,7 +48,7 @@ class ItemService @Inject() (val es: ES, implicit val ctx: ExecutionContext) ext
       false
     }
     
-    
-  override def importRecord(record: Item): Future[Boolean] = ???
+  override def importRecord(tuple: (Item, Seq[Reference])): Future[Boolean] =
+    insertOrUpdateItem(tuple._1, tuple._2)
   
 }

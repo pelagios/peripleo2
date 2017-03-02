@@ -37,10 +37,10 @@ class GazetteerAdminController @Inject() (
     val gazetteer = Item(
       Seq(name),
       ItemType.DATASET,
+      name,
       Some(DateTime.now),
       None, // lastChangedAt
       Seq.empty[Category],
-      name,
       Seq.empty[PathHierarchy], // isInDataset
       None, // isPartOf
       Seq.empty[Description],
@@ -53,7 +53,7 @@ class GazetteerAdminController @Inject() (
       Seq.empty[String], // periods
       Seq.empty[Depiction])
 
-    itemService.insertOrUpdateItem(gazetteer)
+    itemService.insertOrUpdateItem(gazetteer, Seq.empty[Reference])
   }
 
   def index = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>

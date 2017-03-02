@@ -4,6 +4,7 @@ import akka.actor.ActorSystem
 import java.io.{ File, FileInputStream, InputStream }
 import java.util.UUID
 import java.util.zip.GZIPInputStream
+import play.api.Logger
 import scala.concurrent.{ Await, ExecutionContext, Future }
 import scala.concurrent.duration._
 import services.HasBatchImport
@@ -30,10 +31,15 @@ class DumpImporter(taskService: TaskService) extends BaseImporter {
     
     val fConvert: Future[Seq[T]] = Future {
       // This is a long-running operation
-      scala.concurrent.blocking { crosswalk(getStream(file, filename)) }
+      scala.concurrent.blocking {
+        Logger.info("Loading dump file...")
+        crosswalk(getStream(file, filename)) 
+      }
     }
     
     def fImport(records: Seq[T]): Future[Seq[T]] = {
+      Logger.info("Importing " + records.size + " records")
+      
       val batches = split(records, MAX_BATCHES)
       val increment = 100.0 / batches.size
         
@@ -59,6 +65,7 @@ class DumpImporter(taskService: TaskService) extends BaseImporter {
         true
       }
     } recoverWith { case t: Throwable =>
+      t.printStackTrace
       taskService.setFailed(taskId, Some(t.getMessage)).map { _ =>
         system.scheduler.scheduleOnce(1.minute)(taskService.deleteById(taskId))
         false

@@ -128,7 +128,6 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
       buildItemQuery(args)
     } map { response =>
       val items = response.as[Item].toSeq
-      
       val aggregations = {
         Option(response.aggregations) match {
           case Some(aggs) =>
