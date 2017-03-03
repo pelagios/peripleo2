@@ -20,8 +20,22 @@ object PelagiosVoIDCrosswalk {
  
   def fromRDF(filename: String): InputStream => Seq[(Item, Seq[Reference])] = {
     
+    def findParents(dataset: Dataset, parentURIs: Seq[String] = Seq.empty[String]): Seq[String] = 
+      dataset.isSubsetOf match {
+        case Some(parent) => parent.uri +: findParents(parent)
+        case _ => parentURIs
+      }
+    
     def convertDataset(rootset: Dataset): Seq[(Item, Seq[Reference])] = {
+             
       val datasets = flattenHierarchy(rootset).map { d =>
+        
+        val parentHierarchy =  {
+          val parents = findParents(d).reverse
+          if (parents.isEmpty) None
+          else Some(PathHierarchy(parents))
+        }
+
         Item(
           Seq(d.uri),
           ItemType.DATASET,
@@ -29,8 +43,8 @@ object PelagiosVoIDCrosswalk {
           Some(DateTime.now().withZone(DateTimeZone.UTC)),
           None, // last_changed_at
           d.subjects.map(Category(_)),
-          Seq.empty[PathHierarchy], // TODO is_in_dataset
-          None, // TODO is_part_of
+          Seq.empty[PathHierarchy], // is_in_dataset
+          parentHierarchy,
           d.description.map(d => Seq(Description(d))).getOrElse(Seq.empty[Description]),
           d.homepage,
           d.license,
