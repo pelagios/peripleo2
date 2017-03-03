@@ -11,7 +11,7 @@ import scala.concurrent.ExecutionContext
 import services.task.TaskService
 import services.user.{ Role, UserService }
 import services.item.ItemService
-import services.item.crosswalks.PelagiosAnnotationCrosswalk
+import services.item.crosswalks._
 
 @Singleton
 class AnnotationsAdminController @Inject() (
@@ -26,6 +26,24 @@ class AnnotationsAdminController @Inject() (
 
   def index = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>
     Ok(views.html.admin.datasets.annotations())
+  }
+  
+  def importVoID = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>
+    
+    // DUMMY for testing only!
+    
+    request.body.asMultipartFormData.flatMap(_.file("file")) match {
+      case Some(formData) =>
+        if (formData.filename.contains(".rdf")) {
+          Logger.info("Importing Pelagios VoID")
+          val importer = new DumpImporter(taskService)
+          importer.importDump(formData.ref.file, formData.filename, PelagiosVoIDCrosswalk.fromRDF(formData.filename), itemService, loggedIn.username)
+        }
+        
+        Redirect(routes.AnnotationsAdminController.index)
+        
+      case None => BadRequest
+    }
   }
 
   def importAnnotations = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>
