@@ -35,7 +35,9 @@ case class SearchFilters(
   
   spatialFilter: Option[SpatialFilter],
   
-  hasDepictionFilter: Option[Boolean]
+  hasDepiction: Option[Boolean],
+  
+  rootOnly: Boolean // Exclude items that are part of another item
   
 )
 
@@ -123,7 +125,8 @@ object SearchArgs {
       getArg("places", q).map(uris => TermFilter(split(uris), TermFilter.ONLY)),
       buildDateRangeFilter(q),
       buildSpatialFilter(q),
-      getArg("has_images", q).map(_.toBoolean) 
+      getArg("has_images", q).map(_.toBoolean),
+      getArg("root_only", q).map(_.toBoolean).getOrElse(false)
     )
     
     val settings = ResponseSettings( 

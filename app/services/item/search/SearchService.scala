@@ -5,6 +5,7 @@ import com.sksamuel.elastic4s.{ AbstractAggregationDefinition, HitAs, RichSearch
 import javax.inject.{ Inject, Singleton }
 import play.api.libs.json.Json
 import scala.concurrent.{ Future, ExecutionContext }
+import scala.language.reflectiveCalls
 import services.{ ES, Page }
 import services.item.Item
 import services.item.place.Place
@@ -29,7 +30,7 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
       Json.fromJson[Item](Json.parse(hit.sourceAsString)).get
   }
   
-  private def buildTermFilters(args: SearchArgs) = {
+  private def buildFilters(args: SearchArgs) = {
     
     def termFilterDefinition(field: String, filter: TermFilter) = {
       val filters = filter.values.map(termQuery(field, _))
@@ -39,14 +40,25 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
       }  
     } 
     
-    val filters = Seq(
+    val filterClauses = Seq(
       args.filters.itemTypeFilter.map(termFilterDefinition("item_type", _)),
       args.filters.categoryFilter.map(termFilterDefinition("category", _)),
       // TODO dataset
-      args.filters.languageFilter.map(termFilterDefinition("languages", _))
+      args.filters.languageFilter.map(termFilterDefinition("languages", _)),
+      // Check for existing 'depictions' field iff hasDepictions is set to true
+      { if (args.filters.hasDepiction.getOrElse(false)) Some(nestedQuery("depictions") query { existsQuery("depictions.url") }) else None }
     ).flatten
     
-    bool { must(filters) }
+    val notClauses = Seq(
+      // Check for missing 'depicitions' field iff hasDepicitions is set to false
+      { if (!args.filters.hasDepiction.getOrElse(true)) Some(nestedQuery("depictions") query { existsQuery("depictions.url") }) else None },
+      { if (args.filters.rootOnly) Some(existsQuery("is_part_of")) else None  }
+    ).flatten
+    
+    if (notClauses.size > 0)
+      bool { must(filterClauses) not (notClauses) }
+    else
+      bool { must(filterClauses) }
   }
   
   private def buildAggregationDefinitions(args: SearchArgs) = {
@@ -78,7 +90,7 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
             queryStringQuery(args.query.getOrElse("*")),
             hasChildQuery("reference") query { termQuery("context", args.query.getOrElse("*")) }
           )
-        ) filter(buildTermFilters(args)) 
+        ) filter(buildFilters(args)) 
       }
     } start args.offset limit args.limit aggregations buildAggregationDefinitions(args)
 
@@ -93,7 +105,7 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
         ) filter {
           bool {
             must(
-              hasParentQuery("item") query buildTermFilters(args)
+              hasParentQuery("item") query buildFilters(args)
             )
           }
         }

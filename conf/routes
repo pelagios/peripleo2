@@ -39,6 +39,7 @@ GET     /logout                                      controllers.admin.LoginLogo
 # Public JSON API
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+GET     /api/datasets                                controllers.api.DatasetAPIController.list(offset: Int ?= 0, limit: Int ?= 20, rootOnly: Boolean = true)
 GET     /api/gazetteers                              controllers.api.GazetteerAPIController.list
 GET     /api/search                                  controllers.api.SearchAPIController.search
 
