@@ -5,11 +5,16 @@ import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
 
 object ItemType extends Enumeration {
+  
+  /** An authority list.
+    * Examples: a gazetteer, a person authority list.  
+    */
+  val AUTHORITY_LIST = Value("AUTHORITY_LIST")
 
+  
   /** A dataset provided by an institution or indvidual.
-    * Examples: a gazetter, a dataset of geospatial features,
-    * a numimatics dataset, a person authority list, a corpus
-    * of literature.   
+    * Examples: a dataset of geospatial features, a numimatics
+    * dataset, a corpus of literature.   
     */
   val DATASET = Value("DATASET")
 

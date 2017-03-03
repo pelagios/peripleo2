@@ -36,7 +36,7 @@ class GazetteerAdminController @Inject() (
 
     val gazetteer = Item(
       Seq(name),
-      ItemType.DATASET,
+      ItemType.AUTHORITY_LIST,
       name,
       Some(DateTime.now),
       None, // lastChangedAt
