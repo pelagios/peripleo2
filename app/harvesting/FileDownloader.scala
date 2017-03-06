@@ -11,6 +11,7 @@ import play.api.Logger
 import play.api.libs.ws.{ WSClient, StreamedResponse }
 import play.api.libs.Files.TemporaryFile
 import scala.concurrent.{ ExecutionContext, Future }
+import scala.util.Try
 
 class FileDownloader @Inject() (ws: WSClient, implicit val materializer: Materializer, implicit val ctx: ExecutionContext) {
   
@@ -29,7 +30,9 @@ class FileDownloader @Inject() (ws: WSClient, implicit val materializer: Materia
   
   // TODO if we want to compute file hashes (to check for changes) - this is probably the place to put the code
  
-  def getExtension(url: String, contentType: Option[String]): String = {
+  private class UnknownFormatError(url: String, msg: String) extends Exception(msg)
+    
+  def getExtension(url: String, contentType: Option[String]): String =
     KNOWN_EXTENSIONS.find(ext => url.endsWith(ext)) match {
       case Some(extension) =>
         // If the URL ends with a known extension - fine
@@ -37,12 +40,19 @@ class FileDownloader @Inject() (ws: WSClient, implicit val materializer: Materia
         
       case None if contentType.isDefined =>
         // If not, try via response Content-Type
-        EXTENSION_BY_CONTENT_TYPE.find { case(prefix, extension) =>
-          Logger.info("Getting format from HTTP content type: " + contentType.get) 
-          contentType.get.startsWith(prefix) 
-        }.map(_._2).get
+        EXTENSION_BY_CONTENT_TYPE.find { case( prefix, extension) =>
+          contentType.get.startsWith(prefix)
+        } match {
+          case Some((_, extension)) => extension
+          case None => 
+            Logger.error(s"Could not determine content type for $url (" + contentType.get + ")")
+            throw new UnknownFormatError(url, "Unsupported file format: " + contentType.get)
+        }
+        
+      case _ =>
+        Logger.error(s"Could not determine content type for $url (no content type)")
+        throw new UnknownFormatError(url, "Unknown file format (no content type)")
     }
-  }
   
   def download(url: String, retries: Int = MAX_RETRIES): Future[TemporaryFile] = {
     Logger.info("Downloading from " + url)
@@ -62,16 +72,20 @@ class FileDownloader @Inject() (ws: WSClient, implicit val materializer: Materia
         Logger.info("Download complete")
         val contentType = response.headers.headers.get("Content-Type").flatMap(_.headOption)
         val extension = getExtension(url, contentType)
-        
         val renamedTempFile = new TemporaryFile(new File(TMP_DIR, filename + "." + extension))
         Files.copy(tempFile.file.toPath, renamedTempFile.file.toPath) 
         tempFile.finalize()
-        renamedTempFile  
+        renamedTempFile
       }
+    } recoverWith {
+      case t: UnknownFormatError =>
+        // Break immediately
+        throw t
       
-    } recoverWith { case t: Throwable =>
-      if (retries > 0) download(url, retries - 1)
-      else throw t
+      case t: Throwable =>  
+        // Retry
+        if (retries > 0) download(url, retries - 1)
+        else throw t
     }
   }
 

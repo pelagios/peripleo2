@@ -12,6 +12,7 @@ import services.item.{ ItemService, PathHierarchy }
 import services.item.crosswalks._
 import controllers.admin.DumpImporter
 import services.task.TaskService
+import scala.util.{ Try, Success, Failure }
 
 // TODO progress tracking that covers the entire process?
 
@@ -35,12 +36,20 @@ class VoIDHarvester @Inject() (
   
   /** Downloads the VoID and all referenced dumpfiles **/
   def downloadFiles(voidURL: String) = {
+    
     def fDownloadDatadumps(rootDatasets: Iterable[Dataset]) = {
       val datasets = rootDatasets.flatMap(PelagiosVoIDCrosswalk.flattenHierarchy).toSeq
+      
       Future.sequence(datasets.map { dataset =>
         val uris = dataset.datadumps
-        Future.sequence(uris.map(uri => downloader.download(uri)))
-          .map(tmpFiles => (dataset, tmpFiles))
+        Future.sequence(uris.map { uri => 
+          downloader.download(uri).map { file =>
+            Some(file)
+          } recover { case t: Throwable =>
+            Logger.warn("Skipping failed download: " + t.getMessage)
+            None
+          }
+        }) map { tmpFiles => (dataset, tmpFiles.flatten) }
       })
     }
     

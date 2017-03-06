@@ -6,7 +6,7 @@ import play.api.libs.functional.syntax._
 
 class Language private(val iso: String) {
   
-  require(iso.size >= 2 && iso.size < 4) 
+  require(iso.size >= 2 && iso.size < 4, iso) 
   
   override def equals(that: Any): Boolean =
     that match {
