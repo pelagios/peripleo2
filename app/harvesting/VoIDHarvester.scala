@@ -12,7 +12,6 @@ import services.item.{ ItemService, PathHierarchy }
 import services.item.crosswalks._
 import controllers.admin.DumpImporter
 import services.task.TaskService
-import scala.util.{ Try, Success, Failure }
 
 // TODO progress tracking that covers the entire process?
 
