@@ -39,7 +39,7 @@ class FileDownloader @Inject() (ws: WSClient, implicit val materializer: Materia
         
       case None if contentType.isDefined =>
         // If not, try via response Content-Type
-        EXTENSION_BY_CONTENT_TYPE.find { case( prefix, extension) =>
+        EXTENSION_BY_CONTENT_TYPE.find { case (prefix, extension) =>
           contentType.get.startsWith(prefix)
         } match {
           case Some((_, extension)) => extension
