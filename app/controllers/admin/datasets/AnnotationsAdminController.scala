@@ -34,8 +34,15 @@ class AnnotationsAdminController @Inject() (
     request.body.asFormUrlEncoded match {
       case Some(form) => form.get("url").flatMap(_.headOption) match {
         case Some(url) =>
-          voidHarvester.harvest(url)
-          Ok
+          voidHarvester.harvest(url, loggedIn.username).map { success =>
+            if (success) Logger.info(s"Import complete from $url")
+            else Logger.error(s"Import failed from $url")
+          } recover { case t: Throwable =>
+            t.printStackTrace
+            Logger.info("Error harvesting VoID: " + t.getMessage)
+          }
+          
+          Ok // Return immediately
           
         case None => BadRequest
       }
@@ -44,42 +51,36 @@ class AnnotationsAdminController @Inject() (
     }
   }
   
-  /*
-  def importVoID = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>
-    
-    // DUMMY for testing only!
-    
-    request.body.asMultipartFormData.flatMap(_.file("file")) match {
-      case Some(formData) =>
-        if (formData.filename.contains(".rdf")) {
-          Logger.info("Importing Pelagios VoID")
-          val importer = new DumpImporter(taskService)
-          importer.importDump(formData.ref.file, formData.filename, PelagiosVoIDCrosswalk.fromRDF(formData.filename), itemService, loggedIn.username)
-        }
-        
-        Redirect(routes.AnnotationsAdminController.index)
-        
-      case None => BadRequest
-    }
-  }
-  */
+  // def importVoID = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>
+  //    
+  //   request.body.asMultipartFormData.flatMap(_.file("file")) match {
+  //     case Some(formData) =>
+  //       if (formData.filename.contains(".rdf")) {
+  //         Logger.info("Importing Pelagios VoID")
+  //         val importer = new DumpImporter(taskService)
+  //         importer.importDump(formData.ref.file, formData.filename, PelagiosVoIDCrosswalk.fromRDF(formData.filename), itemService, loggedIn.username)
+  //       }
+  //      
+  //       Redirect(routes.AnnotationsAdminController.index)
+  //     
+  //     case None => BadRequest
+  //   }
+  // }
 
-  def importAnnotations = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>
-    request.body.asMultipartFormData.flatMap(_.file("file")) match {
-      case Some(formData) =>
-
-        // DUMMY for testing only!
-
-        if (formData.filename.contains(".rdf")) {
-          Logger.info("Importing Pelagios RDF/XML dump")
-          val importer = new DumpImporter(taskService)
-          importer.importDump(formData.ref.file, formData.filename, PelagiosAnnotationCrosswalk.fromRDF(formData.filename), itemService, loggedIn.username)
-        }
-
-        Redirect(routes.AnnotationsAdminController.index)
-
-      case None => BadRequest
-    }
-  }
+  // def importAnnotations = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>
+  //   request.body.asMultipartFormData.flatMap(_.file("file")) match {
+  //     case Some(formData) =>
+  // 
+  //       if (formData.filename.contains(".rdf")) {
+  //         Logger.info("Importing Pelagios RDF/XML dump")
+  //         val importer = new DumpImporter(taskService)
+  //         importer.importDump(formData.ref.file, formData.filename, PelagiosAnnotationCrosswalk.fromRDF(formData.filename), itemService, loggedIn.username)
+  //       }
+  // 
+  //       Redirect(routes.AnnotationsAdminController.index)
+  // 
+  //     case None => BadRequest
+  //   }
+  // }
 
 }

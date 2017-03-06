@@ -28,7 +28,7 @@ object PelagiosAnnotationCrosswalk {
     if (thing.parts.isEmpty) thing.parts
     else thing.parts ++ thing.parts.flatMap(flattenThingHierarchy)
 
-  def fromRDF(filename: String): InputStream => Seq[(Item, Seq[Reference])] = {
+  def fromRDF(filename: String, inDataset: PathHierarchy): InputStream => Seq[(Item, Seq[Reference])] = {
 
     def convertAnnotatedThing(thing: AnnotatedThing): Seq[(Item, Seq[Reference])] = {
       val flattenedHierarchy = thing +: flattenThingHierarchy(thing)
@@ -52,7 +52,7 @@ object PelagiosAnnotationCrosswalk {
           Some(DateTime.now().withZone(DateTimeZone.UTC)),
           None, // last_changed_at
           thing.subjects.map(Category(_)),
-          Seq.empty[PathHierarchy], // TODO is_in_dataset
+          Seq(inDataset),
           None, // TODO is_part_of
           thing.description.map(d => Seq(Description(d))).getOrElse(Seq.empty[Description]),
           thing.homepage,
