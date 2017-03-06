@@ -3,6 +3,7 @@ package controllers.admin.datasets
 import akka.actor.ActorSystem
 import controllers.{ BaseController, WebJarAssets }
 import controllers.admin.DumpImporter
+import harvesting.VoIDHarvester
 import javax.inject.{ Inject, Singleton }
 import jp.t2v.lab.play2.auth.AuthElement
 import play.api.{ Configuration, Logger }
@@ -19,6 +20,7 @@ class AnnotationsAdminController @Inject() (
   val itemService: ItemService,
   val taskService: TaskService,
   val users: UserService,
+  val voidHarvester: VoIDHarvester,
   implicit val ctx: ExecutionContext,
   implicit val system: ActorSystem,
   implicit val webjars: WebJarAssets
@@ -28,6 +30,21 @@ class AnnotationsAdminController @Inject() (
     Ok(views.html.admin.datasets.annotations())
   }
   
+  def importVoID = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>
+    request.body.asFormUrlEncoded match {
+      case Some(form) => form.get("url").flatMap(_.headOption) match {
+        case Some(url) =>
+          voidHarvester.harvest(url)
+          Ok
+          
+        case None => BadRequest
+      }
+        
+      case None => BadRequest
+    }
+  }
+  
+  /*
   def importVoID = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>
     
     // DUMMY for testing only!
@@ -45,6 +62,7 @@ class AnnotationsAdminController @Inject() (
       case None => BadRequest
     }
   }
+  */
 
   def importAnnotations = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>
     request.body.asMultipartFormData.flatMap(_.file("file")) match {

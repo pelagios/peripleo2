@@ -5,7 +5,10 @@
     <div class="card">
       <div class="inner">
         <span class="dataset-count">-</span> Annotation Datasets
-        <a href="#" class="btn new-upload" data-input="file">Upload New</a>
+        <div class="add-data">
+          <a href="#" class="btn outline register-void">Register VoID URL</a>
+          <a href="#" class="btn new-upload" data-input="file">Upload New</a>
+        </div>
 
         @helper.form(action = controllers.admin.datasets.routes.AnnotationsAdminController.importVoID(), 'enctype -> "multipart/form-data") {
           <input type="file" id="file" name="file">
@@ -26,9 +29,10 @@
     </div>
   </div>
 
-  <script src="@routes.WebJarAssets.at(webjars.locate("require.min.js"))" data-main="@routes.Assets.versioned("javascripts/admin/authorities/gazetteers.js")"></script>
+  <script src="@routes.WebJarAssets.at(webjars.locate("require.min.js"))" data-main="@routes.Assets.versioned("javascripts/admin/datasets/annotations.js")"></script>
   @views.html.admin.enableUploads()
   @helper.javascriptRouter("jsRoutes")(
+    controllers.admin.datasets.routes.javascript.AnnotationsAdminController.importVoID,
     controllers.api.admin.routes.javascript.TaskAPIController.list
   )
 }

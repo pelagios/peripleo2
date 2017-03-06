@@ -4,6 +4,7 @@ import akka.stream.Materializer
 import akka.stream.scaladsl.Sink
 import akka.util.ByteString
 import java.io.{ File, FileOutputStream }
+import java.nio.file.Files
 import java.util.UUID
 import javax.inject.Inject
 import play.api.Logger
@@ -21,6 +22,7 @@ class FileDownloader @Inject() (ws: WSClient, implicit val materializer: Materia
   
   private val EXTENSION_BY_CONTENT_TYPE = Seq(
     "application/rdf+xml" -> "rdf",
+    "text/xml" -> "rdf",
     "text/turtle" -> "ttl",
     "text/n3" -> "n3",
     "application/json" -> "json")
@@ -36,11 +38,14 @@ class FileDownloader @Inject() (ws: WSClient, implicit val materializer: Materia
       case None if contentType.isDefined =>
         // If not, try via response Content-Type
         EXTENSION_BY_CONTENT_TYPE.find { case(prefix, extension) =>
-          contentType.get.startsWith(prefix) }.map(_._2).get
+          Logger.info("Getting format from HTTP content type: " + contentType.get) 
+          contentType.get.startsWith(prefix) 
+        }.map(_._2).get
     }
   }
   
   def download(url: String, retries: Int = MAX_RETRIES): Future[TemporaryFile] = {
+    Logger.info("Downloading from " + url)
     val filename = UUID.randomUUID.toString
     val tempFile = new TemporaryFile(new File(TMP_DIR, filename + ".download"))
     val fStream = ws.url(url).withFollowRedirects(true).stream()
@@ -54,10 +59,14 @@ class FileDownloader @Inject() (ws: WSClient, implicit val materializer: Materia
           outputStream.close()
           result.get
       } map {_ =>
+        Logger.info("Download complete")
         val contentType = response.headers.headers.get("Content-Type").flatMap(_.headOption)
         val extension = getExtension(url, contentType)
-        tempFile.file.renameTo(new File(TMP_DIR, filename + "." + extension))
-        tempFile
+        
+        val renamedTempFile = new TemporaryFile(new File(TMP_DIR, filename + "." + extension))
+        Files.copy(tempFile.file.toPath, renamedTempFile.file.toPath) 
+        tempFile.finalize()
+        renamedTempFile  
       }
       
     } recoverWith { case t: Throwable =>
