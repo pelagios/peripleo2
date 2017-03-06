@@ -11,7 +11,6 @@ import play.api.Logger
 import play.api.libs.ws.{ WSClient, StreamedResponse }
 import play.api.libs.Files.TemporaryFile
 import scala.concurrent.{ ExecutionContext, Future }
-import scala.util.Try
 
 class FileDownloader @Inject() (ws: WSClient, implicit val materializer: Materializer, implicit val ctx: ExecutionContext) {
   
