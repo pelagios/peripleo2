@@ -9,6 +9,7 @@ scalaVersion := "2.11.7"
 scalacOptions ++= Seq("-feature")
 
 libraryDependencies ++= Seq(
+  ws,
   cache,
   filters,
 
