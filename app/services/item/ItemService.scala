@@ -73,7 +73,7 @@ class ItemService @Inject() (val es: ES, implicit val ctx: ExecutionContext) ext
     }
   }
   
-  private def deleteByQuery(q: QueryDefinition): Future[Unit] = {
+  private def deleteByQuery(index: String, q: QueryDefinition): Future[Unit] = {
 
     import com.sksamuel.elastic4s.ElasticDsl.search // Otherwise there's ambiguity with the .search package!
     
@@ -85,7 +85,7 @@ class ItemService @Inject() (val es: ES, implicit val ctx: ExecutionContext) ext
     def deleteOneBatch(ids: Seq[String]): Future[Unit] =
       es.client execute {
         bulk (
-          ids.map { id => delete id id from ES.PERIPLEO / ES.ITEM }
+          ids.map { id => delete id id from ES.PERIPLEO / index }
         )
       } map { _ => () }
     
@@ -104,7 +104,7 @@ class ItemService @Inject() (val es: ES, implicit val ctx: ExecutionContext) ext
     }
     
     es.client execute {
-      search in ES.PERIPLEO / ES.ITEM query q limit 50 scroll "1m"
+      search in ES.PERIPLEO / index query q limit 50 scroll "1m"
     } flatMap {
       deleteBatch(_)
     }
@@ -113,11 +113,16 @@ class ItemService @Inject() (val es: ES, implicit val ctx: ExecutionContext) ext
   
   def deleteByDataset(dataset: String) = {
     
+    def deleteReferences(): Future[Unit] =
+      deleteByQuery(ES.REFERENCE, hasParentQuery(ES.ITEM) query {
+        termQuery("is_in_dataset", dataset) 
+      })
+    
     def deleteObjects(): Future[Unit] =
-      deleteByQuery(termQuery("is_in_dataset", dataset))
+      deleteByQuery(ES.ITEM, termQuery("is_in_dataset", dataset))
     
     def deleteDatasets(): Future[Unit] =
-      deleteByQuery(bool { 
+      deleteByQuery(ES.ITEM, bool { 
         should(
           termQuery("identifiers", dataset),
           termQuery("is_part_of", dataset)

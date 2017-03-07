@@ -100,7 +100,7 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
         must (
           should(
             termQuery("context", args.query.getOrElse("*")),
-            hasParentQuery("item") query { queryStringQuery(args.query.getOrElse("*")) }
+            hasParentQuery(ES.ITEM) query { queryStringQuery(args.query.getOrElse("*")) }
           )
         ) filter {
           bool {
