@@ -51,6 +51,12 @@ class AnnotationsAdminController @Inject() (
     }
   }
   
+  def deleteDataset(id: String) = AsyncStack(AuthorityKey -> Role.ADMIN) { implicit request =>
+    itemService.deleteByDataset(id).map { _ =>
+      Ok
+    }
+  }
+  
   // def importVoID = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>
   //    
   //   request.body.asMultipartFormData.flatMap(_.file("file")) match {

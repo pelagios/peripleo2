@@ -1,7 +1,7 @@
 package services.item
 
 import com.sksamuel.elastic4s.ElasticDsl._
-import com.sksamuel.elastic4s.{ HitAs, RichSearchHit }
+import com.sksamuel.elastic4s.{ HitAs, RichSearchHit, RichSearchResponse, QueryDefinition }
 import com.sksamuel.elastic4s.source.Indexable
 import javax.inject.{ Inject, Singleton }
 import play.api.Logger
@@ -71,6 +71,64 @@ class ItemService @Inject() (val es: ES, implicit val ctx: ExecutionContext) ext
       // t.printStackTrace
       false
     }
+  }
+  
+  private def deleteByQuery(q: QueryDefinition): Future[Unit] = {
+
+    import com.sksamuel.elastic4s.ElasticDsl.search // Otherwise there's ambiguity with the .search package!
+    
+    def fetchNextBatch(scrollId: String): Future[RichSearchResponse] =
+      es.client execute {
+        search scroll scrollId keepAlive "1m"
+      }
+    
+    def deleteOneBatch(ids: Seq[String]): Future[Unit] =
+      es.client execute {
+        bulk (
+          ids.map { id => delete id id from ES.PERIPLEO / ES.ITEM }
+        )
+      } map { _ => () }
+    
+    def deleteBatch(response: RichSearchResponse, cursor: Long = 0l): Future[Unit] = {
+      val ids = response.hits.map(_.getId)
+      val total = response.totalHits
+      
+      deleteOneBatch(ids).flatMap { _ =>
+        val deletedRecords = cursor + ids.size
+        if (deletedRecords < total) {
+          fetchNextBatch(response.scrollId).flatMap(deleteBatch(_, deletedRecords))
+        } else {
+          Future.successful((): Unit)
+        }
+      }
+    }
+    
+    es.client execute {
+      search in ES.PERIPLEO / ES.ITEM query q limit 50 scroll "1m"
+    } flatMap {
+      deleteBatch(_)
+    }
+  }
+    
+  
+  def deleteByDataset(dataset: String) = {
+    
+    def deleteObjects(): Future[Unit] =
+      deleteByQuery(termQuery("is_in_dataset", dataset))
+    
+    def deleteDatasets(): Future[Unit] =
+      deleteByQuery(bool { 
+        should(
+          termQuery("identifiers", dataset),
+          termQuery("is_part_of", dataset)
+        )
+      })
+    
+    for {
+      _ <- deleteObjects
+      _ <- deleteDatasets
+    } yield ()
+    
   }
     
   override def importRecord(tuple: (Item, Seq[Reference])): Future[Boolean] =
