@@ -8,6 +8,7 @@ import org.pelagios.api.PeriodOfTime
 import org.pelagios.api.annotation.AnnotatedThing
 import services.item._
 import services.item.place.GazetteerRecord
+import scala.util.Try
 
 object PelagiosAnnotationCrosswalk {
   
@@ -44,7 +45,7 @@ object PelagiosAnnotationCrosswalk {
             None  // depiction
           )
         }}
-        
+
         val item =Item(
           Seq(Some(thing.uri), thing.identifier).flatten,
           ItemType.OBJECT,
@@ -57,7 +58,8 @@ object PelagiosAnnotationCrosswalk {
           thing.description.map(d => Seq(Description(d))).getOrElse(Seq.empty[Description]),
           thing.homepage,
           None, // license
-          thing.languages.map(Language(_)),
+          // TODO this now silently ignores error - report!
+          thing.languages.flatMap(lang => Try(Some(Language(lang))).getOrElse(None)),
           None, // TODO geometry
           None, // TODO representative point
           thing.temporal.map(convertPeriodOfTime),
