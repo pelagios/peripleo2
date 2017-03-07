@@ -1,6 +1,6 @@
 package controllers.api.admin
 
-import controllers.{ BaseController, HasPrettyPrintJSON }
+import controllers.{ BaseAuthController, HasPrettyPrintJSON }
 import javax.inject.{ Inject, Singleton }
 import jp.t2v.lab.play2.auth.AuthElement
 import play.api.Configuration
@@ -17,7 +17,7 @@ class TaskAPIController @Inject() (
   val users: UserService,
   val taskService: TaskService,
   implicit val ctx: ExecutionContext
-) extends BaseController with AuthElement with HasPrettyPrintJSON {
+) extends BaseAuthController with AuthElement with HasPrettyPrintJSON {
   
   private def getArg(key: String)(implicit request: Request[AnyContent]): Option[String] =
     request.queryString.get(key).flatMap(_.headOption)

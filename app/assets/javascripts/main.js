@@ -3,6 +3,7 @@ require.config({
   fileExclusionRegExp : /^lib$/,
   modules : [
     { name : 'admin/datasets/annotations' },
-    { name : 'admin/authorities/gazetteers' }
+    { name : 'admin/authorities/gazetteers' },
+    { name : 'ui/app' }
   ]
 });

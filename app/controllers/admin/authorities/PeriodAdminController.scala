@@ -1,6 +1,6 @@
 package controllers.admin.authorities
 
-import controllers.{ BaseController, WebJarAssets }
+import controllers.{ BaseAuthController, WebJarAssets }
 import javax.inject.{ Inject, Singleton }
 import jp.t2v.lab.play2.auth.AuthElement
 import play.api.Configuration
@@ -12,7 +12,7 @@ class PeriodAdminController @Inject() (
   val config: Configuration,
   val users: UserService,
   implicit val webjars: WebJarAssets
-) extends BaseController with AuthElement {
+) extends BaseAuthController with AuthElement {
 
   def index = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>
     Ok(views.html.admin.authorities.periods())

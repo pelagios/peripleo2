@@ -8,7 +8,7 @@ trait HasConfig { def config: Configuration }
 
 trait HasUserService { def users: UserService }
 
-abstract class BaseController extends Controller with HasConfig with HasUserService with Security {
+abstract class BaseAuthController extends Controller with HasConfig with HasUserService with Security {
   
   // TODO for later use
   

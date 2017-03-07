@@ -51,7 +51,7 @@ GET     /api/search                                  controllers.api.SearchAPICo
 GET     /api/admin/tasks                             controllers.api.admin.TaskAPIController.list
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Application root (TODO temporarily directs to login)
+# Application root
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-# GET     /                                            controllers.admin.GazetteerAdminController.index
+GET     /                                            controllers.ApplicationController.index

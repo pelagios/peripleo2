@@ -1,7 +1,7 @@
 package controllers.admin.datasets
 
 import akka.actor.ActorSystem
-import controllers.{ BaseController, WebJarAssets }
+import controllers.{ BaseAuthController, WebJarAssets }
 import harvesting.{ DumpImporter, VoIDHarvester }
 import harvesting.crosswalks._
 import javax.inject.{ Inject, Singleton }
@@ -23,7 +23,7 @@ class AnnotationsAdminController @Inject() (
   implicit val ctx: ExecutionContext,
   implicit val system: ActorSystem,
   implicit val webjars: WebJarAssets
-) extends BaseController with AuthElement {
+) extends BaseAuthController with AuthElement {
 
   def index = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>
     Ok(views.html.admin.datasets.annotations())

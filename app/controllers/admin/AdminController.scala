@@ -1,6 +1,6 @@
 package controllers.admin
 
-import controllers.BaseController
+import controllers.BaseAuthController
 import javax.inject.{ Inject, Singleton }
 import jp.t2v.lab.play2.auth.AuthElement
 import play.api.Configuration
@@ -11,7 +11,7 @@ import services.user.{ Role, UserService }
 class AdminController @Inject() (
   val config: Configuration,
   val users: UserService
-) extends BaseController with AuthElement {
+) extends BaseAuthController with AuthElement {
 
   def index = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>
     Redirect(controllers.admin.datasets.routes.GeodataAdminController.index)

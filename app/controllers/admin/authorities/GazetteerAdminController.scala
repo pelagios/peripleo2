@@ -2,7 +2,7 @@ package controllers.admin.authorities
 
 import akka.actor.ActorSystem
 import akka.stream.Materializer
-import controllers.{ BaseController, WebJarAssets }
+import controllers.{ BaseAuthController, WebJarAssets }
 import harvesting.{ DumpImporter, StreamImporter }
 import harvesting.crosswalks._
 import java.io.FileInputStream
@@ -29,7 +29,7 @@ class GazetteerAdminController @Inject() (
   implicit val ctx: ExecutionContext,
   implicit val system: ActorSystem,
   implicit val webjars: WebJarAssets
-) extends BaseController with AuthElement {
+) extends BaseAuthController with AuthElement {
 
   private def upsertGazetteerMeta(filename: String) = {
     val name = filename.substring(0, filename.indexOf('.'))
