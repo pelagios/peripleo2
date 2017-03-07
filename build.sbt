@@ -25,6 +25,7 @@ libraryDependencies ++= Seq(
   "org.openrdf.sesame" % "sesame-rio-rdfxml" % "2.7.5",
 
   "org.webjars" % "jquery" % "1.12.0",
+  "org.webjars" % "leaflet" % "1.0.3",
 
   "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test
 )
