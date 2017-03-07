@@ -43,7 +43,7 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
     val filterClauses = Seq(
       args.filters.itemTypeFilter.map(termFilterDefinition("item_type", _)),
       args.filters.categoryFilter.map(termFilterDefinition("category", _)),
-      // TODO dataset
+      args.filters.datasetFilter.map(termFilterDefinition("is_in_dataset", _)),
       args.filters.languageFilter.map(termFilterDefinition("languages", _)),
       // Check for existing 'depictions' field iff hasDepictions is set to true
       { if (args.filters.hasDepiction.getOrElse(false)) Some(nestedQuery("depictions") query { existsQuery("depictions.url") }) else None }
