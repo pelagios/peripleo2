@@ -2,8 +2,7 @@ package controllers.admin.datasets
 
 import akka.actor.ActorSystem
 import controllers.{ BaseController, WebJarAssets }
-import controllers.admin.DumpImporter
-import harvesting.VoIDHarvester
+import harvesting.{ DumpImporter, VoIDHarvester }
 import javax.inject.{ Inject, Singleton }
 import jp.t2v.lab.play2.auth.AuthElement
 import play.api.{ Configuration, Logger }

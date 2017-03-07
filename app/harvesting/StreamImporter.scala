@@ -1,4 +1,4 @@
-package controllers.admin
+package harvesting
 
 import akka.Done
 import akka.actor.ActorSystem

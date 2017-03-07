@@ -10,7 +10,6 @@ import play.api.libs.Files.TemporaryFile
 import scala.concurrent.{ Future, ExecutionContext }
 import services.item.{ ItemService, PathHierarchy }
 import services.item.crosswalks._
-import controllers.admin.DumpImporter
 import services.task.TaskService
 
 // TODO progress tracking that covers the entire process?

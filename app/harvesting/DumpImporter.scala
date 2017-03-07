@@ -1,4 +1,4 @@
-package controllers.admin
+package harvesting
 
 import akka.actor.ActorSystem
 import java.io.{ File, FileInputStream, InputStream }

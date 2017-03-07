@@ -3,7 +3,7 @@ package controllers.admin.authorities
 import akka.actor.ActorSystem
 import akka.stream.Materializer
 import controllers.{ BaseController, WebJarAssets }
-import controllers.admin.{ DumpImporter, StreamImporter }
+import harvesting.{ DumpImporter, StreamImporter }
 import java.io.FileInputStream
 import java.util.UUID
 import javax.inject.{ Inject, Singleton }

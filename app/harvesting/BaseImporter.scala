@@ -1,4 +1,4 @@
-package controllers.admin
+package harvesting
 
 import java.io.{ File, FileInputStream }
 import java.util.zip.GZIPInputStream
