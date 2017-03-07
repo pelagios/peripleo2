@@ -1,4 +1,4 @@
-package services.item.place.crosswalks
+package harvesting.crosswalks
 
 import com.vividsolutions.jts.geom.Geometry
 import play.api.Logger

@@ -1,4 +1,4 @@
-package services.item.place.crosswalks
+package harvesting.crosswalks
 
 import java.io.InputStream
 import services.item.{ Description, Language, TemporalBounds }
@@ -9,7 +9,7 @@ import org.pelagios.api.PeriodOfTime
 import java.io.File
 import java.io.FileInputStream
 
-object PelagiosRDFCrosswalk {
+object PelagiosGazetteerCrosswalk {
   
   private def convertPeriodOfTime(period: PeriodOfTime): TemporalBounds = {
     val startDate = period.start

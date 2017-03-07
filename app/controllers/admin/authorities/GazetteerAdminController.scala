@@ -4,6 +4,7 @@ import akka.actor.ActorSystem
 import akka.stream.Materializer
 import controllers.{ BaseController, WebJarAssets }
 import harvesting.{ DumpImporter, StreamImporter }
+import harvesting.crosswalks._
 import java.io.FileInputStream
 import java.util.UUID
 import javax.inject.{ Inject, Singleton }
@@ -16,7 +17,6 @@ import services.task.TaskService
 import services.user.{ Role, UserService }
 import services.item._
 import services.item.place.PlaceService
-import services.item.place.crosswalks._
 
 @Singleton
 class GazetteerAdminController @Inject() (
@@ -75,7 +75,7 @@ class GazetteerAdminController @Inject() (
             if (formData.filename.contains(".ttl")) {
               Logger.info("Importing Pelagios RDF/TTL dump")
               val importer = new DumpImporter(taskService)
-              importer.importDump(formData.ref.file, formData.filename, PelagiosRDFCrosswalk.fromRDF(formData.filename), placeService, loggedIn.username)
+              importer.importDump(formData.ref.file, formData.filename, PelagiosGazetteerCrosswalk.fromRDF(formData.filename), placeService, loggedIn.username)
             } else if (formData.filename.toLowerCase.contains("pleiades")) {
               Logger.info("Using Pleiades crosswalk")
               val importer = new StreamImporter(taskService, materializer)

@@ -1,4 +1,4 @@
-package services.item.crosswalks
+package harvesting.crosswalks
 
 import java.io.InputStream
 import java.util.UUID

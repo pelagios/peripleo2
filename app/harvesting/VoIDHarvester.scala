@@ -1,6 +1,7 @@
 package harvesting
 
 import akka.actor.ActorSystem
+import harvesting.crosswalks._
 import java.io.FileInputStream
 import javax.inject.Inject
 import org.pelagios.Scalagios
@@ -9,7 +10,6 @@ import play.api.Logger
 import play.api.libs.Files.TemporaryFile
 import scala.concurrent.{ Future, ExecutionContext }
 import services.item.{ ItemService, PathHierarchy }
-import services.item.crosswalks._
 import services.task.TaskService
 
 // TODO progress tracking that covers the entire process?

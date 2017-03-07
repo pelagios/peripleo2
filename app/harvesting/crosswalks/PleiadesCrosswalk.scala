@@ -1,4 +1,4 @@
-package services.item.place.crosswalks
+package harvesting.crosswalks
 
 import com.vividsolutions.jts.geom.{ Coordinate, Geometry }
 import org.joda.time.DateTime
