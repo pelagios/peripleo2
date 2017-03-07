@@ -1,12 +1,14 @@
 package harvesting
 
 import akka.actor.ActorSystem
+import akka.stream.Materializer
 import harvesting.crosswalks._
 import java.io.FileInputStream
 import javax.inject.Inject
 import org.pelagios.Scalagios
 import org.pelagios.api.dataset.Dataset
 import play.api.Logger
+import play.api.libs.ws.WSClient
 import play.api.libs.Files.TemporaryFile
 import scala.concurrent.{ Future, ExecutionContext }
 import services.item.{ ItemService, PathHierarchy }
@@ -15,12 +17,13 @@ import services.task.TaskService
 // TODO progress tracking that covers the entire process?
 
 class VoIDHarvester @Inject() (
-  downloader: FileDownloader,
-  itemService: ItemService,
-  taskService: TaskService,
+  val itemService: ItemService,
+  val taskService: TaskService,
+  val ws: WSClient,
+  implicit val materializer: Materializer, 
   implicit val system: ActorSystem,
   implicit val ctx: ExecutionContext
-) {
+) extends HasFileDownload {
   
   private def parseVoID(file: TemporaryFile) = Future {
     scala.concurrent.blocking {
@@ -41,7 +44,7 @@ class VoIDHarvester @Inject() (
       Future.sequence(datasets.map { dataset =>
         val uris = dataset.datadumps
         Future.sequence(uris.map { uri => 
-          downloader.download(uri).map { file =>
+          download(uri).map { file =>
             Some(file)
           } recover { case t: Throwable =>
             Logger.warn("Skipping failed download: " + t.getMessage)
@@ -52,7 +55,7 @@ class VoIDHarvester @Inject() (
     }
     
     for {
-      voidFile <- downloader.download(voidURL)
+      voidFile <- download(voidURL)
       rootDatasets <- parseVoID(voidFile)
       dumpfiles <- fDownloadDatadumps(rootDatasets)
     } yield (rootDatasets, dumpfiles)

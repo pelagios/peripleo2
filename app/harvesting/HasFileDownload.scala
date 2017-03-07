@@ -6,13 +6,12 @@ import akka.util.ByteString
 import java.io.{ File, FileOutputStream }
 import java.nio.file.Files
 import java.util.UUID
-import javax.inject.Inject
 import play.api.Logger
-import play.api.libs.ws.{ WSClient, StreamedResponse }
+import play.api.libs.ws.WSClient
 import play.api.libs.Files.TemporaryFile
 import scala.concurrent.{ ExecutionContext, Future }
 
-class FileDownloader @Inject() (ws: WSClient, implicit val materializer: Materializer, implicit val ctx: ExecutionContext) {
+trait HasFileDownload { self: { val ws: WSClient } =>
   
   private val TMP_DIR = System.getProperty("java.io.tmpdir")
   
@@ -31,7 +30,7 @@ class FileDownloader @Inject() (ws: WSClient, implicit val materializer: Materia
  
   private class UnknownFormatError(url: String, msg: String) extends Exception(msg)
     
-  def getExtension(url: String, contentType: Option[String]): String =
+  private def getExtension(url: String, contentType: Option[String]): String =
     KNOWN_EXTENSIONS.find(ext => url.endsWith(ext)) match {
       case Some(extension) =>
         // If the URL ends with a known extension - fine
@@ -53,7 +52,7 @@ class FileDownloader @Inject() (ws: WSClient, implicit val materializer: Materia
         throw new UnknownFormatError(url, "Unknown file format (no content type)")
     }
   
-  def download(url: String, retries: Int = MAX_RETRIES): Future[TemporaryFile] = {
+  protected def download(url: String, retries: Int = MAX_RETRIES)(implicit ctx: ExecutionContext, mat: Materializer) : Future[TemporaryFile] = {
     Logger.info("Downloading from " + url)
     val filename = UUID.randomUUID.toString
     val tempFile = new TemporaryFile(new File(TMP_DIR, filename + ".download"))
