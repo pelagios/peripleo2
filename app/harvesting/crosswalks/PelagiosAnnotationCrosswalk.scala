@@ -46,7 +46,7 @@ object PelagiosAnnotationCrosswalk {
         }}
         
         val item =Item(
-          Seq(thing.identifier.getOrElse(UUID.randomUUID.toString)),
+          Seq(Some(thing.uri), thing.identifier).flatten,
           ItemType.OBJECT,
           thing.title,
           Some(DateTime.now().withZone(DateTimeZone.UTC)),
