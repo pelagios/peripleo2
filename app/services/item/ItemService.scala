@@ -84,9 +84,7 @@ class ItemService @Inject() (val es: ES, implicit val ctx: ExecutionContext) ext
     
     def deleteOneBatch(ids: Seq[String]): Future[Unit] =
       es.client execute {
-        bulk (
-          ids.map { id => delete id id from ES.PERIPLEO / index }
-        )
+        bulk ( ids.map { id => delete id id from ES.PERIPLEO / index } )
       } map { _ => () }
     
     def deleteBatch(response: RichSearchResponse, cursor: Long = 0l): Future[Unit] = {
@@ -130,6 +128,7 @@ class ItemService @Inject() (val es: ES, implicit val ctx: ExecutionContext) ext
       })
     
     for {
+      _ <- deleteReferences
       _ <- deleteObjects
       _ <- deleteDatasets
     } yield ()
