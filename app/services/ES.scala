@@ -39,7 +39,7 @@ object ES extends ElasticSearchSanitizer {
   val TASK      = "task"
 
   // Maximum response size in ES
-  val MAX_SIZE           = 2147483647
+  val MAX_SIZE           = 10000
 
   // Max. number of retries to do in case of failed imports
   val MAX_RETRIES        = 10
