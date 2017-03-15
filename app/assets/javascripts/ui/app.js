@@ -4,7 +4,7 @@ require.config({
 });
 
 require([
-  'ui/controls/searchpanel',
+  'ui/controls/searchPanel',
   'ui/map/map',
   'ui/api'
 ], function(SearchPanel, Map, API) {
@@ -25,6 +25,9 @@ require([
     searchPanel.on('queryChange', api.updateQuery);
     searchPanel.on('filterChange', api.updateFilters);
     searchPanel.on('settingsChange', api.updateSettings);
+
+    // TODO there will be more to update than just the map soon
+    api.on('response', map.update);
   });
 
 });

@@ -8,7 +8,9 @@ define(['ui/common/hasEvents'], function(HasEvents) {
 
   var API = function() {
 
-    var searchArgs = {
+    var self = this,
+
+        searchArgs = {
 
           query: false,
 
@@ -62,7 +64,7 @@ define(['ui/common/hasEvents'], function(HasEvents) {
           var requestArgs = jQuery.extend({}, searchArgs); // Args at time of query
           // busy = true;
           jQuery.getJSON(buildFirstPageQuery(), function(response) {
-            console.log(response);
+            self.fireEvent('response', response);
           });
         },
 
