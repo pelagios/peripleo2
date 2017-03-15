@@ -1,8 +1,10 @@
-define([], function() {
+define(['ui/common/hasEvents'], function(HasEvents) {
 
   var SearchPanel = function(container) {
 
-    var element = jQuery(
+    var self = this,
+
+       element = jQuery(
           '<div id="searchpanel-container">' +
           '  <div class="searchbox">' +
           '    <form>' +
@@ -30,6 +32,18 @@ define([], function() {
           }
         },
 
+        onSubmit = function() {
+          var chars = searchInput.val().trim();
+
+          if (chars.length === 0)
+            self.fireEvent('queryChange', false);
+          else
+            self.fireEvent('queryChange', chars);
+
+          searchInput.blur();
+          return false;
+        },
+
         /** Handler for the 'X' clear button **/
         onResetSearch = function() {
           autoSuggest.clear();
@@ -37,21 +51,12 @@ define([], function() {
           updateIcon();
         };
 
-    searchForm.submit(function(e) {
-      var chars = searchInput.val().trim();
-
-      if (chars.length === 0)
-        eventBroker.fireEvent(Events.SEARCH_CHANGED, { query : false });
-      else
-        eventBroker.fireEvent(Events.SEARCH_CHANGED, { query : chars });
-
-      searchInput.blur();
-      return false; // preventDefault + stopPropagation
-    });
-
-    // Append panel to the DOM
+    searchForm.submit(onSubmit);
     container.append(element);
+
+    HasEvents.apply(this);
   };
+  SearchPanel.prototype = Object.create(HasEvents.prototype);
 
   return SearchPanel;
 
