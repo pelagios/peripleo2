@@ -1,0 +1,27 @@
+@import "searchpanel/_filterpane.less";
+@import "searchpanel/_footer.less";
+@import "searchpanel/_searchBox.less";
+
+#controls {
+  position:fixed;
+  top:0;
+  left:30px;
+  font-size:13px;
+  width:400px;
+  height:100%;
+  padding:15px 0;
+  pointer-events:none;
+  display: flex;
+  flex-direction: column;
+  z-index:1; // Move in front of map
+}
+
+#controls * {
+  pointer-events:all;
+}
+
+#searchpanel {
+  overflow:hidden;
+  .rounded-corners(2px);
+  .box-shadow(0, 0, 8px, 0, rgba(0,0,0,0.35));
+}

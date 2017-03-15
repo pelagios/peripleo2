@@ -4,7 +4,7 @@ require.config({
 });
 
 require([
-  'ui/controls/searchPanel',
+  'ui/controls/searchpanel/searchPanel',
   'ui/map/map',
   'ui/api'
 ], function(SearchPanel, Map, API) {

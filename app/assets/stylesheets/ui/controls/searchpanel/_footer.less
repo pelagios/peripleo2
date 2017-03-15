@@ -1,0 +1,44 @@
+#filterpane-footer {
+  padding:14px 0 11px 10px;
+  color:#686868;
+  font-size:13px;
+
+  .left {
+    color:@ocean-dark;
+    cursor:pointer;
+
+    .icon {
+      position:relative;
+      font-size:14px;
+      top:1px;
+      margin-right:4px;
+    }
+
+  }
+
+  .left:hover {
+    .total { text-decoration:underline; }
+  }
+
+  .right {
+    float:right;
+    color:@light-grey-type;
+    cursor:pointer;
+  }
+
+  .right:hover {
+    color:@light-grey-type-hover;
+  }
+
+  .right:after {
+    font-family:'Stroke7';
+    font-size:36px;
+    line-height:14px;
+    content:'\e688';
+  }
+
+  .right.open:after {
+    content:'\f077';
+  }
+
+}
