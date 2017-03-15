@@ -16,6 +16,7 @@ define([], function() {
         map = L.map(containerDiv, {
           center: [ 48, 16 ],
           zoom: 4,
+          zoomControl: false,
           layers: [ Layers.AWMC ]
         });
   };
