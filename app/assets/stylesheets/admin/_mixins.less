@@ -5,6 +5,17 @@
   border-radius: @radius;
 }
 
+.rounded-corners-bottom (@radius) {
+  -moz-border-radius-bottomleft: @radius;
+  -moz-border-radius-bottomright: @radius;
+  -webkit-border-bottom-left-radius: @radius;
+  -webkit-border-bottom-right-radius: @radius;
+  -khtml-border-radius-bottomleft: @radius;
+  -khtml-border-radius-bottomright: @radius;
+  border-bottom-left-radius: @radius;
+  border-bottom-right-radius: @radius;
+}
+
 .noselect() {
   -webkit-touch-callout:none;
   -webkit-user-select:none;

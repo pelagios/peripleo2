@@ -3,28 +3,21 @@ require.config({
   fileExclusionRegExp: /^lib$/
 });
 
-require([], function() {
-
-  var Layers = {
-
-        AWMC   : L.tileLayer('http://a.tiles.mapbox.com/v3/isawnyu.map-knmctlkh/{z}/{x}/{y}.png', {
-                     attribution: 'Tiles &copy; <a href="http://mapbox.com/" target="_blank">MapBox</a> | ' +
-                       'Data &copy; <a href="http://www.openstreetmap.org/" target="_blank">OpenStreetMap</a> and contributors, CC-BY-SA | '+
-                       'Tiles and Data &copy; 2013 <a href="http://www.awmc.unc.edu" target="_blank">AWMC</a> ' +
-                       '<a href="http://creativecommons.org/licenses/by-nc/3.0/deed.en_US" target="_blank">CC-BY-NC 3.0</a>'
-                   })
-
-      };
+require([
+  'ui/controls/searchpanel',
+  'ui/map/map'
+], function(SearchPanel, Map) {
 
   jQuery(document).ready(function() {
+    var body = jQuery(document.body),
 
-    // TODO implement
-    var map = L.map('map', {
-      center: [ 48, 16 ],
-      zoom: 4,
-      layers: [ Layers.AWMC ]
-    });
+        mapDiv = jQuery('<div id="map"></div>').appendTo(body),
 
+        controlsDiv = jQuery('<div id="controls"></div>').appendTo(body),
+
+        map = new Map(mapDiv[0]),
+
+        searchPanel = new SearchPanel(controlsDiv);
   });
 
 });

@@ -1,0 +1,71 @@
+.box-shadow (@h, @v, @blur, @spread, @color) {
+  box-shadow: @h @v @blur @spread @color;
+  -webkit-box-shadow:@h @v @blur @spread @color;
+  -moz-box-shadow:@h @v @blur @spread @color;
+  -o-box-shadow:@h @v @blur @spread @color;
+}
+
+.box-shadow-inset (@h, @v, @blur, @spread, @color) {
+  box-shadow: inset @h @v @blur @spread @color;
+  -webkit-box-shadow: inset @h @v @blur @spread #ABABAB;
+  -moz-box-shadow: inset @h @v @blur @spread #ABABAB;
+  -o-box-shadow: inset @h @v @blur @spread #ABABAB;
+}
+
+.no-select() {
+  -webkit-user-select: none;
+	-moz-user-select: none;
+	user-select: none;
+	-webkit-user-drag: none;
+}
+
+.rounded-corners (@radius) {
+  -moz-border-radius: @radius;
+  -webkit-border-radius: @radius;
+  -khtml-border-radius: @radius;
+  border-radius: @radius;
+}
+
+.rounded-corners-bottom (@radius) {
+  -moz-border-radius-bottomleft: @radius;
+  -moz-border-radius-bottomright: @radius;
+  -webkit-border-bottom-left-radius: @radius;
+  -webkit-border-bottom-right-radius: @radius;
+  -khtml-border-radius-bottomleft: @radius;
+  -khtml-border-radius-bottomright: @radius;
+  border-bottom-left-radius: @radius;
+  border-bottom-right-radius: @radius;
+}
+
+.rounded-corners-top (@radius) {
+  -moz-border-radius-topleft: @radius;
+  -moz-border-radius-topright: @radius;
+  -webkit-border-top-left-radius: @radius;
+  -webkit-border-top-right-radius: @radius;
+  -khtml-border-radius-topleft: @radius;
+  -khtml-border-radius-topright: @radius;
+  border-top-left-radius: @radius;
+  border-top-right-radius: @radius;
+}
+
+.rounded-corners-left (@radius) {
+  -moz-border-radius-topleft: @radius;
+  -moz-border-radius-bottomleft: @radius;
+  -webkit-border-top-left-radius: @radius;
+  -webkit-border-bottom-left-radius: @radius;
+  -khtml-border-radius-topleft: @radius;
+  -khtml-border-radius-bottomleft: @radius;
+  border-top-left-radius: @radius;
+  border-bottom-left-radius: @radius;
+}
+
+.rounded-corners-right (@radius) {
+  -moz-border-radius-topright: @radius;
+  -moz-border-radius-bottomright: @radius;
+  -webkit-border-top-right-radius: @radius;
+  -webkit-border-bottom-right-radius: @radius;
+  -khtml-border-radius-topright: @radius;
+  -khtml-border-radius-bottomright: @radius;
+  border-top-right-radius: @radius;
+  border-bottom-right-radius: @radius;
+}
