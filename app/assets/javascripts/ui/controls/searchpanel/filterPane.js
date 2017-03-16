@@ -22,6 +22,14 @@ define([
 
         footer = new Footer(element),
 
+        getAggregation = function(response, name) {
+          var aggregation = response.aggregations.find(function(agg) {
+            return agg.name === name;
+          });
+          
+          if (aggregation) return aggregation.buckets;
+        },
+
         togglePane = function() {
           var visible = body.is(':visible'),
               action = (visible) ? 'slideUp' : 'slideDown';
@@ -32,8 +40,8 @@ define([
           else self.fireEvent('open');
         },
 
-        update = function(searchResponse) {
-          timeHistogram.update(searchResponse);
+        update = function(response) {
+          timeHistogram.update(getAggregation(response, 'by_time'));
         };
 
     body.hide();

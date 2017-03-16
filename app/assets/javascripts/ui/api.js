@@ -18,7 +18,7 @@ define(['ui/common/hasEvents'], function(HasEvents) {
 
           settings: {
 
-            timeHistogram : false,
+            timeHistogram : true,
 
             termAggregations: false,
 

@@ -61,9 +61,6 @@ define([
         /** Caches the current histogram range  **/
         histogramRange = false,
 
-        /** Ignore subsequent updates **/
-        ignoreUpdates = false,
-
         /** Caches the selection range **/
         selectionRange = false,
 
@@ -160,8 +157,8 @@ define([
           toHandleLabel.empty();
           toHandleLabel.hide();
 
-          if (selection) self.fireEvent("selectionChange", selection);
-          else self.fireEvent("selectionChange", { from: false, to: false });
+          if (selection) self.fireEvent('selectionChange', selection);
+          else self.fireEvent('selectionChange', { from: false, to: false });
         },
 
         onDragBounds = function(e) {
@@ -182,7 +179,7 @@ define([
           toHandleLabel.show();
           toHandle.css('left', offsetX + width + canvasOffset);
 
-          eventBroker.fireEvent(Events.SEARCH_CHANGED, getSelectedRange());
+          self.fireEvent('selectionChange', getSelectedRange());
         },
 
         onStopBounds = function(e) {
@@ -211,66 +208,68 @@ define([
           toHandle.css('left', selectionNewToX + canvasOffset);
         },
 
-        update = function(response) {
+        update = function(buckets) {
 
-          console.log(response);
+          console.log(buckets.length);
 
-          /*
-          if (!ignoreUpdates) {
-            // SOLR interleaves keys and values into one array
-            var values = Utils.chunkArray(response.facet_counts.facet_ranges[facetField].counts, 2);
-            if (values && values.length > 0) {
-              var currentSelection = getSelectedRange(),
-                  selectionNewFromX, selectionNewToX, // Updated selection bounds
-                  maxValue = Math.max.apply(Math, jQuery.map(values, function(val) { return val[1]; })),
-                  minYear = new Date(values[0][0]),
-                  maxYear = new Date(values[values.length - 1][0]),
-                  height = ctx.canvas.height - 1,
-                  xOffset = 4,
-                  drawingAreaWidth = ctx.canvas.width - 2 * xOffset,
-                  barSpacing = Math.round(drawingAreaWidth / values.length),
-                  barWidth = barSpacing - 4;
+          var getKey = function(obj) {
+                return Object.keys(obj)[0];
+              },
 
-              histogramRange = { from: minYear, to: maxYear };
+              getVal = function(obj) {
+                var keys = Object.keys(obj);
+                return obj[keys[0]];
+              },
 
-              // Relabel
-              histogramFromLabel.html(Utils.formatYear(minYear));
-              histogramToLabel.html(Utils.formatYear(maxYear));
+              currentSelection = getSelectedRange(),
+              selectionNewFromX, selectionNewToX, // Updated selection bounds
+              maxValue = Math.max.apply(Math, buckets.map(getVal)),
+              minYear = new Date(getKey(buckets[0])),
+              maxYear = new Date(getKey(buckets[buckets.length - 1])),
+              height = ctx.canvas.height - 1,
+              xOffset = 4,
+              drawingAreaWidth = ctx.canvas.width - 2 * xOffset,
+              barSpacing = Math.round(drawingAreaWidth / buckets.length),
+              barWidth = barSpacing - 4;
 
-              if (minYear.getFullYear() < 0 && maxYear.getFullYear() > 0) {
-                histogramZeroLabel.show();
-                histogramZeroLabel[0].style.left = (yearToX(0) + canvasOffset - 35) + 'px';
-              } else {
-                histogramZeroLabel.hide();
-              }
+          histogramRange = { from: minYear, to: maxYear };
 
-              // Redraw
-              ctx.clearRect(0, 0, canvasWidth, ctx.canvas.height);
+          // Relabel
+          histogramFromLabel.html(Formatting.formatYear(minYear));
+          histogramToLabel.html(Formatting.formatYear(maxYear));
 
-              // 1 AD marker
-              jQuery.each(values, function(idx, value) {
-                var barHeight = Math.round(Math.sqrt(value[1] / maxValue) * height);
-                ctx.strokeStyle = BAR_STROKE;
-                ctx.fillStyle = BAR_FILL;
-                ctx.beginPath();
-                ctx.rect(xOffset + 0.5, height - barHeight + 0.5, barWidth, barHeight);
-                ctx.fill();
-                ctx.stroke();
-                xOffset += barSpacing;
-              });
-
-              // Reset labels & selection
-              histogramRange.from = minYear;
-              histogramRange.to = maxYear;
-
-              setSelection(currentSelection.from, currentSelection.to);
-
-              // We don't want to handle to many updates - introduce a wait
-              ignoreUpdates = true;
-              setTimeout(function() { ignoreUpdates = false; }, MIN_UPDATE_DELAY);
-            }
+          if (minYear.getFullYear() < 0 && maxYear.getFullYear() > 0) {
+            histogramZeroLabel.show();
+            histogramZeroLabel[0].style.left = (yearToX(0) + canvasOffset - 35) + 'px';
+          } else {
+            histogramZeroLabel.hide();
           }
-          */
+
+          // Redraw
+          ctx.clearRect(0, 0, canvasWidth, ctx.canvas.height);
+
+          buckets.forEach(function(obj) {
+            var val = getVal(obj),
+                barHeight = Math.round(Math.sqrt(val / maxValue) * height);
+
+            ctx.strokeStyle = BAR_STROKE;
+            ctx.fillStyle = BAR_FILL;
+            ctx.beginPath();
+            ctx.rect(xOffset + 0.5, height - barHeight + 0.5, barWidth, barHeight);
+            ctx.fill();
+            ctx.stroke();
+            xOffset += barSpacing;
+          });
+
+          // Reset labels & selection
+          // histogramRange.from = minYear;
+          // histogramRange.to = maxYear;
+
+          setSelection(currentSelection.from, currentSelection.to);
+
+          // We don't want to handle to many updates - introduce a wait
+          // ignoreUpdates = true;
+          // setTimeout(function() { ignoreUpdates = false; }, MIN_UPDATE_DELAY);
         };
 
     fromHandleLabel.hide();
