@@ -1,16 +1,37 @@
 define(['ui/common/hasEvents'], function(HasEvents) {
 
+  var ROTATE_DURATION = 250;
+
   var PanelFooter = function(parentEl) {
 
-    var footer = jQuery(
+    var self = this,
+
+        footer = jQuery(
           '<div id="filterpane-footer">' +
-            '<span class="left">' +
+            '<span class="footer-text">' +
               '<span class="icon">&#xf03a;</span>' +
               '<span class="label"></span>' +
             '</span>' +
-            '<span class="right"></span>' +
-          '</div>').appendTo(parentEl);
+            '<span class="pane-toggle"></span>' +
+          '</div>').appendTo(parentEl),
 
+        btnTogglePane = footer.find('.pane-toggle'),
+
+        onTogglePane = function() {
+          var isOpen = btnTogglePane.hasClass('open');
+
+          if (isOpen) {
+            btnTogglePane.removeClass('open');
+            btnTogglePane.velocity({ rotateZ: '0deg' }, { duration: ROTATE_DURATION });
+          } else {
+            btnTogglePane.addClass('open');
+            btnTogglePane.velocity({ rotateZ: '-180deg' }, { duration: ROTATE_DURATION });
+          }
+
+          self.fireEvent('togglePane');
+        };
+
+    btnTogglePane.click(onTogglePane);
     HasEvents.apply(this);
   };
   PanelFooter.prototype = Object.create(HasEvents.prototype);

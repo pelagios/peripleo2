@@ -2,8 +2,9 @@
   padding:14px 0 11px 10px;
   color:#686868;
   font-size:13px;
+  position:relative;
 
-  .left {
+  .footer-text {
     color:@ocean-dark;
     cursor:pointer;
 
@@ -16,29 +17,28 @@
 
   }
 
-  .left:hover {
-    .total { text-decoration:underline; }
+  .footer-text:hover .total {
+    text-decoration:underline;
   }
 
-  .right {
-    float:right;
+  .pane-toggle {
+    position:absolute;
+    top:15px;
+    right:0;
     color:@light-grey-type;
     cursor:pointer;
+    transform-origin:50% 30%;
   }
 
-  .right:hover {
+  .pane-toggle:hover {
     color:@light-grey-type-hover;
   }
 
-  .right:after {
+  .pane-toggle:after {
     font-family:'Stroke7';
     font-size:36px;
     line-height:14px;
     content:'\e688';
-  }
-
-  .right.open:after {
-    content:'\f077';
   }
 
 }
