@@ -8,7 +8,9 @@ define([
 
        BAR_FILL = '#6baed6',
 
-       MIN_UPDATE_DELAY = 800;
+       MIN_UPDATE_DELAY = 800,
+
+       MAX_BUCKETS = 46;
 
   var TimeHistogram = function(parentEl, width, height) {
 
@@ -210,8 +212,6 @@ define([
 
         update = function(buckets) {
 
-          console.log(buckets.length);
-
           var getKey = function(obj) {
                 return Object.keys(obj)[0];
               },
@@ -220,6 +220,46 @@ define([
                 var keys = Object.keys(obj);
                 return obj[keys[0]];
               },
+
+              resample = function(buckets) {
+                if (buckets.length > MAX_BUCKETS) {
+                  var step = buckets.length / MAX_BUCKETS,
+                      windowStart = 0,
+                      windowEnd = step,
+                      startIdx, startFraction,
+                      endIdx, endFraction,
+                      currentBucket, currentValue,
+                      resampled = [];
+
+                  // Don't compare to 0 - JS introduces nasty rounding errors!
+                  while (buckets.length - windowEnd > 0.01) {
+                    startIdx = Math.floor(windowStart);
+                    startFraction = windowStart - startIdx;
+                    endIdx = Math.ceil(windowEnd);
+                    endFraction = windowEnd - endIdx;
+
+                    currentValue = getVal(buckets[startIdx]) * startFraction;
+                    for (var i=startIdx + 1; i<endIdx; i++) {
+                      currentValue += getVal(buckets[i]);
+                    }
+                    currentValue += getVal(buckets[endIdx]) * endFraction;
+
+                    currentBucket = {};
+                    currentBucket[ getKey(buckets[startIdx]) ] = currentValue;
+                    resampled.push(currentBucket);
+
+                    windowStart = windowEnd;
+                    windowEnd = windowStart + step;
+                  }
+
+                  return resampled;
+                } else {
+                  // TODO should we resample if no. of buckets < MAX_BUCKETS?
+                  return buckets;
+                }
+              },
+
+              resampled = resample(buckets),
 
               toDate = function(str) {
                 var date = new Date(str);
@@ -238,14 +278,14 @@ define([
 
               currentSelection = getSelectedRange(),
               selectionNewFromX, selectionNewToX, // Updated selection bounds
-              maxValue = Math.max.apply(Math, buckets.map(getVal)),
-              minYear = toDate(getKey(buckets[0])),
-              maxYear = toDate(getKey(buckets[buckets.length - 1])),
+              maxValue = Math.max.apply(Math, resampled.map(getVal)),
+              minYear = toDate(getKey(resampled[0])),
+              maxYear = toDate(getKey(resampled[resampled.length - 1])),
               height = ctx.canvas.height - 1,
               xOffset = 4,
               drawingAreaWidth = ctx.canvas.width - 2 * xOffset,
-              barSpacing = Math.round(drawingAreaWidth / buckets.length),
-              barWidth = barSpacing - 4;
+              barSpacing = Math.round(drawingAreaWidth / resampled.length),
+              barWidth = barSpacing - 3;
 
           histogramRange = { from: minYear, to: maxYear };
 
@@ -263,7 +303,7 @@ define([
           // Redraw
           ctx.clearRect(0, 0, canvasWidth, ctx.canvas.height);
 
-          buckets.forEach(function(obj) {
+          resampled.forEach(function(obj) {
             var val = getVal(obj),
                 barHeight = Math.round(Math.sqrt(val / maxValue) * height);
 

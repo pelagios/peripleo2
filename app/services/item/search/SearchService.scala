@@ -29,17 +29,17 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
     override def as(hit: RichSearchHit): Item =
       Json.fromJson[Item](Json.parse(hit.sourceAsString)).get
   }
-  
+
   private def buildFilters(args: SearchArgs) = {
-    
+
     def termFilterDefinition(field: String, filter: TermFilter) = {
       val filters = filter.values.map(termQuery(field, _))
       filter.setting match {
         case TermFilter.ONLY => should(filters)
         case TermFilter.EXCLUDE => not(filters)
-      }  
-    } 
-    
+      }
+    }
+
     val filterClauses = Seq(
       args.filters.itemTypeFilter.map(termFilterDefinition("item_type", _)),
       args.filters.categoryFilter.map(termFilterDefinition("category", _)),
@@ -48,37 +48,37 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
       // Check for existing 'depictions' field iff hasDepictions is set to true
       { if (args.filters.hasDepiction.getOrElse(false)) Some(nestedQuery("depictions") query { existsQuery("depictions.url") }) else None }
     ).flatten
-    
+
     val notClauses = Seq(
       // Check for missing 'depicitions' field iff hasDepicitions is set to false
       { if (!args.filters.hasDepiction.getOrElse(true)) Some(nestedQuery("depictions") query { existsQuery("depictions.url") }) else None },
       { if (args.filters.rootOnly) Some(existsQuery("is_part_of")) else None  }
     ).flatten
-    
+
     if (notClauses.size > 0)
       bool { must(filterClauses) not (notClauses) }
     else
       bool { must(filterClauses) }
   }
-  
+
   private def buildAggregationDefinitions(args: SearchArgs) = {
     val termAggregations =
       if (args.settings.termAggregations)
         Seq(
-          aggregation terms "by_type" field "item_type" size 20,        
+          aggregation terms "by_type" field "item_type" size 20,
           aggregation terms "by_dataset" field "is_in_dataset" size 20,
           aggregation terms "by_language" field "languages" size 20)
       else
         Seq.empty[AbstractAggregationDefinition]
-    
-    val timeHistogramAggregations = 
+
+    val timeHistogramAggregations =
       if (args.settings.timeHistogram)
         Seq(
           aggregation histogram "by_decade" script histogramScript(10) interval 10,
           aggregation histogram "by_century" script histogramScript(100) interval 100)
       else
         Seq.empty[AbstractAggregationDefinition]
-    
+
     termAggregations ++ timeHistogramAggregations
   }
 
@@ -90,7 +90,7 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
             queryStringQuery(args.query.getOrElse("*")),
             hasChildQuery("reference") query { termQuery("context", args.query.getOrElse("*")) }
           )
-        ) filter(buildFilters(args)) 
+        ) filter(buildFilters(args))
       }
     } start args.offset limit args.limit aggregations buildAggregationDefinitions(args)
 
@@ -148,18 +148,18 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
                 case (Some(_), Some(_)) =>
                   val byCentury = Aggregation.parseHistogram(aggs.get("by_century"), "by_time")
                   val byDecade = Aggregation.parseHistogram(aggs.get("by_decade"), "by_time")
-                  if (byCentury.buckets.size >= 20) Some(byCentury) else Some(byDecade)
-                  
+                  if (byCentury.buckets.size >= 40) Some(byCentury) else Some(byDecade)
+
                 case _ => None
             }
-            
+
             Seq(
               Option(response.aggregations.get("by_type")).map(Aggregation.parseTerms),
               Option(response.aggregations.get("by_dataset")).map(Aggregation.parseTerms),
               Option(response.aggregations.get("by_language")).map(Aggregation.parseTerms),
               histogram
             ).flatten
-            
+
           case None => Seq.empty[Aggregation]
         }
       }
@@ -173,7 +173,7 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
         placeCounts <- fPlaceQuery
         places <- resolvePlaces(placeCounts.map(_._1))
       } yield (totalHits, items, aggregations, placeCounts, places)
-  
+
       fResults.map { case (totalHits, items, aggregations, placeCounts, places) =>
         val topPlaces = TopPlaces.build(placeCounts, places)
         RichResultPage(System.currentTimeMillis - startTime, totalHits, args.offset, args.limit, items, aggregations, Some(topPlaces))
