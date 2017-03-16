@@ -221,11 +221,26 @@ define([
                 return obj[keys[0]];
               },
 
+              toDate = function(str) {
+                var date = new Date(str);
+
+                // Cf. http://scholarslab.org/research-and-development/parsing-bc-dates-with-javascript/
+                if (str.indexOf('-') === 0) {
+                  var year = (str.indexOf('-', 1) < 0) ?
+                    parseInt(str.substring(1)) : // -YYYY
+                    parseInt(str.substring(1, str.indexOf('-', 1))); // -YYYY-MM...
+
+                  date.setFullYear(-year);
+                }
+
+                return date;
+              },
+
               currentSelection = getSelectedRange(),
               selectionNewFromX, selectionNewToX, // Updated selection bounds
               maxValue = Math.max.apply(Math, buckets.map(getVal)),
-              minYear = new Date(getKey(buckets[0])),
-              maxYear = new Date(getKey(buckets[buckets.length - 1])),
+              minYear = toDate(getKey(buckets[0])),
+              maxYear = toDate(getKey(buckets[buckets.length - 1])),
               height = ctx.canvas.height - 1,
               xOffset = 4,
               drawingAreaWidth = ctx.canvas.width - 2 * xOffset,
