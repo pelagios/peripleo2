@@ -25,6 +25,7 @@ libraryDependencies ++= Seq(
   "org.openrdf.sesame" % "sesame-rio-rdfxml" % "2.7.5",
 
   "org.webjars" % "jquery" % "1.12.0",
+  "org.webjars" % "jquery-ui" % "1.11.4",
   "org.webjars" % "leaflet" % "1.0.3",
   "org.webjars" % "velocity" % "1.1.0",
 

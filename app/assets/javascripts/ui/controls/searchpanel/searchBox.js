@@ -12,7 +12,6 @@ define(['ui/common/hasEvents'], function(HasEvents) {
            '  </form>' +
            '</div>').appendTo(parentEl),
 
-         /** DOM element shorthands **/
          searchBoxForm = element.find('form'),
          searchBoxInput = searchBoxForm.find('input'),
          searchBoxIcon = searchBoxForm.find('.icon'),

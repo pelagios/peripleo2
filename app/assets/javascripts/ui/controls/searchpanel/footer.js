@@ -28,7 +28,7 @@ define(['ui/common/hasEvents'], function(HasEvents) {
             btnTogglePane.velocity({ rotateZ: '-180deg' }, { duration: ROTATE_DURATION });
           }
 
-          self.fireEvent('togglePane');
+          self.fireEvent('toggle');
         };
 
     btnTogglePane.click(onTogglePane);

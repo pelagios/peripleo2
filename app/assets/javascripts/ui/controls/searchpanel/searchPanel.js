@@ -20,10 +20,16 @@ define([
 
         forwardFilterChange = function() {
           // TODO
+        },
+
+        update = function(searchResponse) {
+          filterPane.update(searchResponse);
         };
 
     searchBox.on('change', forwardQueryChange);
     filterPane.on('change', forwardFilterChange);
+
+    this.update = update;
 
     HasEvents.apply(this);
   };

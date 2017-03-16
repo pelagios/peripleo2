@@ -1,10 +1,22 @@
+@import "_timehistogram.less";
+
 #filterpane {
   margin-top:-2px;
   background-color:#fff;
 }
 
 #filterpane-body {
-  background-color:#f2f2f2;
-  border-bottom:1px solid #e5e5e5;
-  height:200px;
+  background-color:@light-grey;
+  border-bottom:1px solid @light-grey-border;
+
+  .section {
+    padding:6px;
+    background-color:@light-grey;
+    border-bottom:1px solid @light-grey-border;
+  }
+
+  .section:last-child {
+    border:none;
+  }
+
 }

@@ -1,7 +1,8 @@
 define([
   'ui/common/hasEvents',
-  'ui/controls/searchpanel/footer'
-], function(HasEvents, Footer) {
+  'ui/controls/searchpanel/footer',
+  'ui/controls/searchpanel/timeHistogram'
+], function(HasEvents, Footer, TimeHistogram) {
 
   var SLIDE_DURATION = 180;
 
@@ -16,6 +17,9 @@ define([
 
         body = element.find('#filterpane-body'),
 
+        timeHistogramSection = jQuery('<div class="section"></div').appendTo(body),
+        timeHistogram = new TimeHistogram(timeHistogramSection, 320, 40),
+
         footer = new Footer(element),
 
         togglePane = function() {
@@ -24,12 +28,19 @@ define([
 
           body.velocity(action, { duration: SLIDE_DURATION });
 
-          // TODO fire events
-          
+          if (visible) self.fireEvent('close');
+          else self.fireEvent('open');
+        },
+
+        update = function(searchResponse) {
+          timeHistogram.update(searchResponse);
         };
 
     body.hide();
-    footer.on('togglePane', togglePane);
+
+    footer.on('toggle', togglePane);
+
+    this.update = update;
 
     HasEvents.apply(this);
   };

@@ -20,14 +20,18 @@ require([
 
         searchPanel = new SearchPanel(controlsDiv),
 
-        api = new API();
+        api = new API(),
+
+        onUpdate = function(response) {
+          map.update(response);
+          searchPanel.update(response);
+        };
 
     searchPanel.on('queryChange', api.updateQuery);
     searchPanel.on('filterChange', api.updateFilters);
     searchPanel.on('settingsChange', api.updateSettings);
 
-    // TODO there will be more to update than just the map soon
-    api.on('response', map.update);
+    api.on('response', onUpdate);
   });
 
 });
