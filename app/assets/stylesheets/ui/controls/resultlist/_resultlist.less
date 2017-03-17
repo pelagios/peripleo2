@@ -29,3 +29,23 @@
   }
 
 }
+
+#result-list::-webkit-scrollbar {
+  width:14px;
+}
+
+#result-list::-webkit-scrollbar-track {
+  background:@light-grey-border;
+  .rounded-corners-right(2px);
+}
+
+#result-list::-webkit-scrollbar-thumb {
+  background-color:darken(@light-grey-border, 25%);
+  border:3px solid transparent;
+  border-radius:9px;
+  background-clip:content-box;
+}
+
+#result-list::-webkit-scrollbar-thumb:hover {
+  background-color:darken(@light-grey-border, 23%);
+}
