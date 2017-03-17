@@ -5,7 +5,7 @@ define([
 
   var ROTATE_DURATION = 250;
 
-  var PanelFooter = function(parentEl) {
+  var Footer = function(parentEl) {
 
     var self = this,
 
@@ -46,8 +46,8 @@ define([
 
     HasEvents.apply(this);
   };
-  PanelFooter.prototype = Object.create(HasEvents.prototype);
+  Footer.prototype = Object.create(HasEvents.prototype);
 
-  return PanelFooter;
+  return Footer;
 
 });

@@ -4,10 +4,11 @@ require.config({
 });
 
 require([
+  'ui/controls/resultlist/resultList',
   'ui/controls/searchpanel/searchPanel',
   'ui/map/map',
   'ui/api'
-], function(SearchPanel, Map, API) {
+], function(ResultList, SearchPanel, Map, API) {
 
   jQuery(document).ready(function() {
     var body = jQuery(document.body),
@@ -20,11 +21,14 @@ require([
 
         searchPanel = new SearchPanel(controlsDiv),
 
+        resultList = new ResultList(controlsDiv),
+
         api = new API(),
 
         onUpdate = function(response) {
-          map.update(response);
           searchPanel.update(response);
+           resultList.update(response);
+                  map.update(response);
         };
 
     searchPanel.on('queryChange', api.updateQuery);
