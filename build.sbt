@@ -27,6 +27,7 @@ libraryDependencies ++= Seq(
   "org.webjars" % "jquery" % "1.12.0",
   "org.webjars" % "jquery-ui" % "1.11.4",
   "org.webjars" % "leaflet" % "1.0.3",
+  "org.webjars" % "numeral-js" % "1.5.3-1",
   "org.webjars" % "velocity" % "1.1.0",
 
   "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test

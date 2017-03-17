@@ -35,13 +35,16 @@ define([
               action = (visible) ? 'slideUp' : 'slideDown';
 
           body.velocity(action, { duration: SLIDE_DURATION });
-          
+
           if (visible) self.fireEvent('close');
           else self.fireEvent('open');
         },
 
         update = function(response) {
-          timeHistogram.update(getAggregation(response, 'by_time'));
+          footer.update(response);
+          if (response.aggregations) {
+            timeHistogram.update(getAggregation(response, 'by_time'));
+          }
         };
 
     body.hide();
