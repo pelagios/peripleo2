@@ -14,8 +14,10 @@ define([
 
         filterPane = new FilterPane(element),
 
-        forwardQueryChange = function(query) {
-          self.fireEvent('queryChange', query);
+        forwardEvent = function(event) {
+          return function(obj) {
+            self.fireEvent(event, obj);
+          };
         },
 
         forwardFilterChange = function() {
@@ -26,8 +28,10 @@ define([
           filterPane.update(searchResponse);
         };
 
-    searchBox.on('change', forwardQueryChange);
-    filterPane.on('change', forwardFilterChange);
+    searchBox.on('change', forwardEvent('queryChange'));
+
+    filterPane.on('open', forwardEvent('open'));
+    filterPane.on('close', forwardEvent('close'));
 
     this.update = update;
 

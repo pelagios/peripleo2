@@ -18,7 +18,7 @@ define(['ui/common/hasEvents'], function(HasEvents) {
 
           settings: {
 
-            timeHistogram : true,
+            timeHistogram : false,
 
             termAggregations: false,
 
@@ -64,7 +64,7 @@ define(['ui/common/hasEvents'], function(HasEvents) {
           var requestArgs = jQuery.extend({}, searchArgs); // Args at time of query
           // busy = true;
           jQuery.getJSON(buildFirstPageQuery(), function(response) {
-            self.fireEvent('response', response);
+            self.fireEvent('update', response);
           });
         },
 
@@ -79,11 +79,30 @@ define(['ui/common/hasEvents'], function(HasEvents) {
 
         updateSettings = function(diff) {
           jQuery.extend(searchArgs.settings, diff);
+          makeRequest();
+        },
+
+        // Shorthand
+        enableAggregations = function() {
+          updateSettings({
+            timeHistogram    : true,
+            termAggregations : true,
+          });
+        },
+
+        // Shorthand
+        disableAggregations = function() {
+          updateSettings({
+            timeHistogram    : false,
+            termAggregations : false,
+          });
         };
 
     this.updateQuery = updateQuery;
     this.updateFilters = updateFilters;
     this.updateSettings = updateSettings;
+    this.enableAggregations = enableAggregations;
+    this.disableAggregations = disableAggregations;
 
     HasEvents.apply(this);
   };

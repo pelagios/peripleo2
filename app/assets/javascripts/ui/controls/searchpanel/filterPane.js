@@ -26,7 +26,7 @@ define([
           var aggregation = response.aggregations.find(function(agg) {
             return agg.name === name;
           });
-          
+
           if (aggregation) return aggregation.buckets;
         },
 
@@ -35,7 +35,7 @@ define([
               action = (visible) ? 'slideUp' : 'slideDown';
 
           body.velocity(action, { duration: SLIDE_DURATION });
-
+          
           if (visible) self.fireEvent('close');
           else self.fireEvent('open');
         },

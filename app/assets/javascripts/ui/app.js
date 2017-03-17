@@ -28,10 +28,11 @@ require([
         };
 
     searchPanel.on('queryChange', api.updateQuery);
-    searchPanel.on('filterChange', api.updateFilters);
-    searchPanel.on('settingsChange', api.updateSettings);
 
-    api.on('response', onUpdate);
+    searchPanel.on('open', api.enableAggregations);
+    searchPanel.on('close', api.disableAggregations);
+
+    api.on('update', onUpdate);
   });
 
 });
