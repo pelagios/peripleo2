@@ -32,9 +32,10 @@ require([
         };
 
     searchPanel.on('queryChange', api.updateQuery);
-
     searchPanel.on('open', api.enableAggregations);
     searchPanel.on('close', api.disableAggregations);
+
+    resultList.on('nextPage', api.loadNextPage);
 
     api.on('update', onUpdate);
   });

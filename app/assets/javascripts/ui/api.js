@@ -4,7 +4,7 @@
 define(['ui/common/hasEvents'], function(HasEvents) {
 
   /** Number of results per page **/
-  var LIMIT = 20;
+  var PAGE_SIZE = 20;
 
   var API = function() {
 
@@ -28,6 +28,8 @@ define(['ui/common/hasEvents'], function(HasEvents) {
 
         },
 
+        currentOffset = 0,
+
         // DRY helper
         appendIfExists = function(param, key, url) {
           if (param) return url + '&' + key + '=' + param;
@@ -35,7 +37,7 @@ define(['ui/common/hasEvents'], function(HasEvents) {
         },
 
         buildBaseQuery = function() {
-          var url = '/api/search?limit=' + LIMIT;
+          var url = '/api/search?limit=' + PAGE_SIZE;
 
           // TODO more to come later
           url = appendIfExists(searchArgs.query, 'q', url);
@@ -55,16 +57,27 @@ define(['ui/common/hasEvents'], function(HasEvents) {
           return url;
         },
 
-        buildNextPageQuery = function(offset) {
+        buildNextPageQuery = function() {
           // TODO more to come later
-          return buildBaseQuery();
+          return buildBaseQuery() + '&offset=' + (currentOffset + PAGE_SIZE);
         },
 
         makeRequest = function() {
-          var requestArgs = jQuery.extend({}, searchArgs); // Args at time of query
+          // var requestArgs = jQuery.extend({}, searchArgs); // Args at time of query
           // busy = true;
           jQuery.getJSON(buildFirstPageQuery(), function(response) {
             self.fireEvent('update', response);
+          });
+        },
+
+        loadNextPage = function() {
+          jQuery.getJSON(buildNextPageQuery(), function(response) {
+            currentOffset = response.offset;
+
+            // TODO different events for new result vs. next page?
+
+            // self.fireEvent('update', response);
+            console.log(response);
           });
         },
 
@@ -103,6 +116,7 @@ define(['ui/common/hasEvents'], function(HasEvents) {
     this.updateSettings = updateSettings;
     this.enableAggregations = enableAggregations;
     this.disableAggregations = disableAggregations;
+    this.loadNextPage = loadNextPage;
 
     HasEvents.apply(this);
   };
