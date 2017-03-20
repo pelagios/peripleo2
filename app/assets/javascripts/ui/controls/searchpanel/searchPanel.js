@@ -14,24 +14,15 @@ define([
 
         filterPane = new FilterPane(element),
 
-        forwardEvent = function(event) {
-          return function(obj) {
-            self.fireEvent(event, obj);
-          };
-        },
-
-        forwardFilterChange = function() {
-          // TODO
-        },
-
         update = function(searchResponse) {
           filterPane.update(searchResponse);
         };
 
-    searchBox.on('change', forwardEvent('queryChange'));
+    searchBox.on('change', this.forwardEvent('queryChange'));
 
-    filterPane.on('open', forwardEvent('open'));
-    filterPane.on('close', forwardEvent('close'));
+    filterPane.on('open', this.forwardEvent('open'));
+    filterPane.on('close', this.forwardEvent('close'));
+    filterPane.on('timerangeChange', this.forwardEvent('timerangeChange'));
 
     this.update = update;
 

@@ -34,6 +34,7 @@ require([
     searchPanel.on('queryChange', api.updateQuery);
     searchPanel.on('open', api.enableAggregations);
     searchPanel.on('close', api.disableAggregations);
+    searchPanel.on('timerangeChange', api.updateTimerange);
 
     resultList.on('nextPage', api.loadNextPage);
 

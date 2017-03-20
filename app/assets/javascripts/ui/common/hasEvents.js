@@ -43,6 +43,18 @@ define(function() {
       this.handlers[event](e, args);
   };
 
+  /**
+   * A helper to forward an event from a child component. Use as follows:
+   *
+   * childComponent.on('changed', forwardEvent('childChanged'));
+   */
+  HasEvents.prototype.forwardEvent = function(event) {
+    var self = this;
+    return function(e) {
+      self.fireEvent(event, e);
+    };
+  };
+
   return HasEvents;
 
 });

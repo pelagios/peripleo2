@@ -49,6 +49,8 @@ define([
 
     body.hide();
 
+    timeHistogram.on('selectionChange', this.forwardEvent('timerangeChange'));
+
     footer.on('toggle', togglePane);
 
     this.update = update;

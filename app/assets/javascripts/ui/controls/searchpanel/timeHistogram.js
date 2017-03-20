@@ -181,7 +181,8 @@ define([
           toHandleLabel.show();
           toHandle.css('left', offsetX + width + canvasOffset);
 
-          self.fireEvent('selectionChange', getSelectedRange());
+          // getSelectedRange returns a ref to the global var - don't hand this outside!
+          self.fireEvent('selectionChange', jQuery.extend({}, getSelectedRange()));
         },
 
         onStopBounds = function(e) {
