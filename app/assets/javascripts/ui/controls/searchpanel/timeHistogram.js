@@ -212,120 +212,121 @@ define([
         },
 
         update = function(buckets) {
+          if (buckets.length > 0) {
+            var getKey = function(obj) {
+                  return Object.keys(obj)[0];
+                },
 
-          var getKey = function(obj) {
-                return Object.keys(obj)[0];
-              },
+                getVal = function(obj) {
+                  var keys = Object.keys(obj);
+                  return obj[keys[0]];
+                },
 
-              getVal = function(obj) {
-                var keys = Object.keys(obj);
-                return obj[keys[0]];
-              },
+                resample = function(buckets) {
+                  if (buckets.length > MAX_BUCKETS) {
+                    var step = buckets.length / MAX_BUCKETS,
+                        windowStart = 0,
+                        windowEnd = step,
+                        startIdx, startFraction,
+                        endIdx, endFraction,
+                        currentBucket, currentValue,
+                        resampled = [];
 
-              resample = function(buckets) {
-                if (buckets.length > MAX_BUCKETS) {
-                  var step = buckets.length / MAX_BUCKETS,
-                      windowStart = 0,
-                      windowEnd = step,
-                      startIdx, startFraction,
-                      endIdx, endFraction,
-                      currentBucket, currentValue,
-                      resampled = [];
+                    // Don't compare to 0 - JS introduces nasty rounding errors!
+                    while (buckets.length - windowEnd > 0.01) {
+                      startIdx = Math.floor(windowStart);
+                      startFraction = windowStart - startIdx;
+                      endIdx = Math.ceil(windowEnd);
+                      endFraction = windowEnd - endIdx;
 
-                  // Don't compare to 0 - JS introduces nasty rounding errors!
-                  while (buckets.length - windowEnd > 0.01) {
-                    startIdx = Math.floor(windowStart);
-                    startFraction = windowStart - startIdx;
-                    endIdx = Math.ceil(windowEnd);
-                    endFraction = windowEnd - endIdx;
+                      currentValue = getVal(buckets[startIdx]) * startFraction;
+                      for (var i=startIdx + 1; i<endIdx; i++) {
+                        currentValue += getVal(buckets[i]);
+                      }
+                      currentValue += getVal(buckets[endIdx]) * endFraction;
 
-                    currentValue = getVal(buckets[startIdx]) * startFraction;
-                    for (var i=startIdx + 1; i<endIdx; i++) {
-                      currentValue += getVal(buckets[i]);
+                      currentBucket = {};
+                      currentBucket[ getKey(buckets[startIdx]) ] = currentValue;
+                      resampled.push(currentBucket);
+
+                      windowStart = windowEnd;
+                      windowEnd = windowStart + step;
                     }
-                    currentValue += getVal(buckets[endIdx]) * endFraction;
 
-                    currentBucket = {};
-                    currentBucket[ getKey(buckets[startIdx]) ] = currentValue;
-                    resampled.push(currentBucket);
+                    return resampled;
+                  } else {
+                    // TODO should we resample if no. of buckets < MAX_BUCKETS?
+                    return buckets;
+                  }
+                },
 
-                    windowStart = windowEnd;
-                    windowEnd = windowStart + step;
+                resampled = resample(buckets),
+
+                toDate = function(str) {
+                  var date = new Date(str);
+
+                  // Cf. http://scholarslab.org/research-and-development/parsing-bc-dates-with-javascript/
+                  if (str.indexOf('-') === 0) {
+                    var year = (str.indexOf('-', 1) < 0) ?
+                      parseInt(str.substring(1)) : // -YYYY
+                      parseInt(str.substring(1, str.indexOf('-', 1))); // -YYYY-MM...
+
+                    date.setFullYear(-year);
                   }
 
-                  return resampled;
-                } else {
-                  // TODO should we resample if no. of buckets < MAX_BUCKETS?
-                  return buckets;
-                }
-              },
+                  return date;
+                },
 
-              resampled = resample(buckets),
+                currentSelection = getSelectedRange(),
+                selectionNewFromX, selectionNewToX, // Updated selection bounds
+                maxValue = Math.max.apply(Math, resampled.map(getVal)),
+                minYear = toDate(getKey(resampled[0])),
+                maxYear = toDate(getKey(resampled[resampled.length - 1])),
+                height = ctx.canvas.height - 1,
+                xOffset = 4,
+                drawingAreaWidth = ctx.canvas.width - 2 * xOffset,
+                barSpacing = Math.round(drawingAreaWidth / resampled.length),
+                barWidth = barSpacing - 3;
 
-              toDate = function(str) {
-                var date = new Date(str);
+            histogramRange = { from: minYear, to: maxYear };
 
-                // Cf. http://scholarslab.org/research-and-development/parsing-bc-dates-with-javascript/
-                if (str.indexOf('-') === 0) {
-                  var year = (str.indexOf('-', 1) < 0) ?
-                    parseInt(str.substring(1)) : // -YYYY
-                    parseInt(str.substring(1, str.indexOf('-', 1))); // -YYYY-MM...
+            // Relabel
+            histogramFromLabel.html(Formatting.formatYear(minYear));
+            histogramToLabel.html(Formatting.formatYear(maxYear));
 
-                  date.setFullYear(-year);
-                }
+            if (minYear.getFullYear() < 0 && maxYear.getFullYear() > 0) {
+              histogramZeroLabel.show();
+              histogramZeroLabel[0].style.left = (yearToX(0) + canvasOffset - 35) + 'px';
+            } else {
+              histogramZeroLabel.hide();
+            }
 
-                return date;
-              },
+            // Redraw
+            ctx.clearRect(0, 0, canvasWidth, ctx.canvas.height);
 
-              currentSelection = getSelectedRange(),
-              selectionNewFromX, selectionNewToX, // Updated selection bounds
-              maxValue = Math.max.apply(Math, resampled.map(getVal)),
-              minYear = toDate(getKey(resampled[0])),
-              maxYear = toDate(getKey(resampled[resampled.length - 1])),
-              height = ctx.canvas.height - 1,
-              xOffset = 4,
-              drawingAreaWidth = ctx.canvas.width - 2 * xOffset,
-              barSpacing = Math.round(drawingAreaWidth / resampled.length),
-              barWidth = barSpacing - 3;
+            resampled.forEach(function(obj) {
+              var val = getVal(obj),
+                  barHeight = Math.round(Math.sqrt(val / maxValue) * height);
 
-          histogramRange = { from: minYear, to: maxYear };
+              ctx.strokeStyle = BAR_STROKE;
+              ctx.fillStyle = BAR_FILL;
+              ctx.beginPath();
+              ctx.rect(xOffset + 0.5, height - barHeight + 0.5, barWidth, barHeight);
+              ctx.fill();
+              ctx.stroke();
+              xOffset += barSpacing;
+            });
 
-          // Relabel
-          histogramFromLabel.html(Formatting.formatYear(minYear));
-          histogramToLabel.html(Formatting.formatYear(maxYear));
+            // Reset labels & selection
+            // histogramRange.from = minYear;
+            // histogramRange.to = maxYear;
 
-          if (minYear.getFullYear() < 0 && maxYear.getFullYear() > 0) {
-            histogramZeroLabel.show();
-            histogramZeroLabel[0].style.left = (yearToX(0) + canvasOffset - 35) + 'px';
-          } else {
-            histogramZeroLabel.hide();
+            setSelection(currentSelection.from, currentSelection.to);
+
+            // We don't want to handle to many updates - introduce a wait
+            // ignoreUpdates = true;
+            // setTimeout(function() { ignoreUpdates = false; }, MIN_UPDATE_DELAY);
           }
-
-          // Redraw
-          ctx.clearRect(0, 0, canvasWidth, ctx.canvas.height);
-
-          resampled.forEach(function(obj) {
-            var val = getVal(obj),
-                barHeight = Math.round(Math.sqrt(val / maxValue) * height);
-
-            ctx.strokeStyle = BAR_STROKE;
-            ctx.fillStyle = BAR_FILL;
-            ctx.beginPath();
-            ctx.rect(xOffset + 0.5, height - barHeight + 0.5, barWidth, barHeight);
-            ctx.fill();
-            ctx.stroke();
-            xOffset += barSpacing;
-          });
-
-          // Reset labels & selection
-          // histogramRange.from = minYear;
-          // histogramRange.to = maxYear;
-
-          setSelection(currentSelection.from, currentSelection.to);
-
-          // We don't want to handle to many updates - introduce a wait
-          // ignoreUpdates = true;
-          // setTimeout(function() { ignoreUpdates = false; }, MIN_UPDATE_DELAY);
         };
 
     fromHandleLabel.hide();
