@@ -1,8 +1,10 @@
 package services.item.search
 
 import com.sksamuel.elastic4s.ElasticDsl._
-import com.sksamuel.elastic4s.{ AbstractAggregationDefinition, HitAs, RichSearchHit }
+import com.sksamuel.elastic4s.{ AbstractAggregationDefinition, HitAs, RangeQueryDefinition, RichSearchHit }
 import javax.inject.{ Inject, Singleton }
+import org.joda.time.{ DateTime, DateTimeZone }
+import org.joda.time.format.DateTimeFormat
 import play.api.libs.json.Json
 import scala.concurrent.{ Future, ExecutionContext }
 import scala.language.reflectiveCalls
@@ -14,6 +16,10 @@ import services.item.search.filters.TermFilter
 
 @Singleton
 class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
+  
+  private val dateFormatter = DateTimeFormat.forPattern("yyyy-MM-dd").withZone(DateTimeZone.UTC)
+  
+  private def formatDate(dt: DateTime) = dateFormatter.print(dt.withZone(DateTimeZone.UTC))
 
   private def histogramScript(interval: Int) =
     s"""
@@ -39,16 +45,31 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
         case TermFilter.EXCLUDE => not(filters)
       }
     }
-
-    val filterClauses = Seq(
-      args.filters.itemTypeFilter.map(termFilterDefinition("item_type", _)),
-      args.filters.categoryFilter.map(termFilterDefinition("category", _)),
-      args.filters.datasetFilter.map(termFilterDefinition("is_in_dataset", _)),
-      args.filters.languageFilter.map(termFilterDefinition("languages", _)),
-      // Check for existing 'depictions' field iff hasDepictions is set to true
-      { if (args.filters.hasDepiction.getOrElse(false)) Some(nestedQuery("depictions") query { existsQuery("depictions.url") }) else None }
-    ).flatten
-
+    
+    def timerangeFilterDefinition() = args.filters.dateRangeFilter.map { filter =>
+      (filter.from, filter.to) match {
+        case (Some(from), Some(to)) =>
+          Seq(
+            rangeQuery("temporal_bounds.from").to(formatDate(to)),
+            rangeQuery("temporal_bounds.to").from(formatDate(from))
+          )
+          
+        case _ =>
+          Seq()
+          // TODO support open intervals
+      }
+    }.getOrElse(Seq.empty[RangeQueryDefinition])
+    
+    val filterClauses = 
+      Seq(
+        args.filters.itemTypeFilter.map(termFilterDefinition("item_type", _)),
+        args.filters.categoryFilter.map(termFilterDefinition("category", _)),
+        args.filters.datasetFilter.map(termFilterDefinition("is_in_dataset", _)),
+        args.filters.languageFilter.map(termFilterDefinition("languages", _)),
+        // Check for existing 'depictions' field iff hasDepictions is set to true
+        { if (args.filters.hasDepiction.getOrElse(false)) Some(nestedQuery("depictions") query { existsQuery("depictions.url") }) else None }
+      ).flatten ++ timerangeFilterDefinition()
+      
     val notClauses = Seq(
       // Check for missing 'depicitions' field iff hasDepicitions is set to false
       { if (!args.filters.hasDepiction.getOrElse(true)) Some(nestedQuery("depictions") query { existsQuery("depictions.url") }) else None },
@@ -90,9 +111,11 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
             queryStringQuery(args.query.getOrElse("*")),
             hasChildQuery("reference") query { termQuery("context", args.query.getOrElse("*")) }
           )
-        ) filter(buildFilters(args))
+        ) // filter(buildFilters(args))
       }
-    } start args.offset limit args.limit aggregations buildAggregationDefinitions(args)
+    // TODO need to figure out how to design the query
+    // TODO we want post-filtering for the time histogram, but not the other aggregations
+    } postFilter buildFilters(args) start args.offset limit args.limit aggregations buildAggregationDefinitions(args)
 
   private def buildPlaceQuery(args: SearchArgs) =
     search in ES.PERIPLEO / ES.REFERENCE query {
