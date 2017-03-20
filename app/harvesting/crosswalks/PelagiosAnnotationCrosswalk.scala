@@ -34,12 +34,12 @@ object PelagiosAnnotationCrosswalk {
     def convertAnnotatedThing(thing: AnnotatedThing): Seq[(Item, Seq[Reference])] = {
       val flattenedHierarchy = thing +: flattenThingHierarchy(thing)
       flattenedHierarchy.map { thing =>
-        
         val references = thing.annotations.flatMap { _.places.headOption.map { placeUri =>
+          val uri = GazetteerRecord.normalizeURI(placeUri)
           Reference(
             ReferenceType.PLACE,
-            None, // TODO relation
-            GazetteerRecord.normalizeURI(placeUri),
+            None, // relation
+            uri, uri,
             None, // homepage
             None, // context
             None  // depiction

@@ -63,15 +63,17 @@ class ItemSpec extends PlaySpec with TestHelpers {
       val objectReferences = loadJSON[Seq[Reference]]("services/item/object/object_references.json")
       objectReferences.size mustBe 2
       
-      val placeReference = objectReferences(0)      
+      val placeReference = objectReferences(0)     
       placeReference.referenceType mustBe ReferenceType.PLACE
       placeReference.relation mustBe Some(Relation.FINDSPOT)
       placeReference.uri mustBe "http://pleiades.stoa.org/places/589872"
+      placeReference.rootUri mustBe "http://pleiades.stoa.org/places/589872"
       
       val personReference = objectReferences(1)
       personReference.referenceType mustBe ReferenceType.PERSON
       personReference.relation mustBe Some(Relation.ATTESTATION)
       personReference.uri mustBe "http://collection.britishmuseum.org/resource?uri=http://collection.britishmuseum.org/id/person-institution/56988"
+      personReference.rootUri mustBe "http://collection.britishmuseum.org/resource?uri=http://collection.britishmuseum.org/id/person-institution/56988"
     }
     
   }
@@ -167,6 +169,7 @@ class ItemSpec extends PlaySpec with TestHelpers {
       val source = Reference(
         ReferenceType.PLACE,
         Some(Relation.ATTESTATION),
+        "http://pleiades.stoa.org/places/118543",
         "http://pleiades.stoa.org/places/118543",
         None, // homepage
         None, // context

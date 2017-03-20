@@ -1,4 +1,5 @@
 [{
   "reference_type": "PLACE",
-  "uri": "http://pleiades.stoa.org/places/118543"
+  "uri": "http://pleiades.stoa.org/places/118543",
+  "root_uri": "http://pleiades.stoa.org/places/118543"
 }]

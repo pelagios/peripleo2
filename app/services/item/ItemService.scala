@@ -13,6 +13,8 @@ import services.task.TaskType
 
 @Singleton
 class ItemService @Inject() (val es: ES, implicit val ctx: ExecutionContext) extends HasBatchImport[(Item, Seq[Reference])] {
+  
+  import com.sksamuel.elastic4s.ElasticDsl.search // Otherwise there's ambiguity with the .search package!
 
   override val taskType = TaskType("ITEM_IMPORT")
   
@@ -20,9 +22,12 @@ class ItemService @Inject() (val es: ES, implicit val ctx: ExecutionContext) ext
     override def json(i: Item): String = Json.stringify(Json.toJson(i))
   }
 
-  implicit object ItemHitAs extends HitAs[Item] {
-    override def as(hit: RichSearchHit): Item =
-      Json.fromJson[Item](Json.parse(hit.sourceAsString)).get
+  implicit object ItemHitAs extends HitAs[(Item, String)] {
+    override def as(hit: RichSearchHit): (Item, String) = {
+      val item = Json.fromJson[Item](Json.parse(hit.sourceAsString)).get
+      val id = hit.getId
+      (item, id)
+    }
   }
   
   // TODO this method is duplicate in ItemService and PlaceService - refactor
@@ -31,22 +36,30 @@ class ItemService @Inject() (val es: ES, implicit val ctx: ExecutionContext) ext
     override def json(r: Reference): String = Json.stringify(Json.toJson(r))
   }
   
-  // TODO how to handle IDs for references, so we can update properly?
-  
   /** Keeps only references that resolve to an entity in Peripleo **/
   def filterResolvable(references: Seq[Reference]): Future[Seq[Reference]] =
     if (references.isEmpty)
       Future.successful(Seq.empty[Reference])
     else
       es.client execute {
-        multiget ( references.map(ref => get id ref.uri from ES.PERIPLEO / ES.ITEM) )
-      } map { result => 
-        val found = result.responses.map { r =>
-          val found = r.response.map(_.isExists).getOrElse(false)
-          (r.getId, found)
-        }.toMap
-        
-        references.filter(ref => found.get(ref.uri).get)
+        search in ES.PERIPLEO / ES.ITEM query {
+          bool {
+            // TODO this fetches all referenced items on a single item in one go
+            // TODO we may need to limit this in some cases (literature!) 
+            // TODO current max-size is 10.000 unique (!) references
+            should (
+              references.map(_.uri).distinct.map(termQuery("identifiers", _))
+            )
+          }
+        } start 0 limit ES.MAX_SIZE
+      } map { response =>
+        // Re-write reference parentIds according to index content
+        val items = response.as[(Item, String)]
+        references.flatMap { reference =>
+          items.find(_._1.identifiers.contains(reference.uri)).map { case (item, id) =>
+            reference.copy(rootUri = id)
+          }
+        }
       }
 
   def insertOrUpdateItem(item: Item, references: Seq[Reference]): Future[Boolean] = {
@@ -56,8 +69,11 @@ class ItemService @Inject() (val es: ES, implicit val ctx: ExecutionContext) ext
       es.client execute {
         bulk (
           { update id item.identifiers.head in ES.PERIPLEO / ES.ITEM source item docAsUpsert } +: 
-            resolvableReferences.map{ ref =>
+            resolvableReferences.map { ref =>
+              
+              // TODO how to handle IDs for references, so we can update properly?
               update id item.identifiers.head in ES.PERIPLEO / ES.REFERENCE source ref parent item.identifiers.head docAsUpsert }
+          
         )
       } map { _ => true }
       
@@ -74,8 +90,6 @@ class ItemService @Inject() (val es: ES, implicit val ctx: ExecutionContext) ext
   }
   
   private def deleteByQuery(index: String, q: QueryDefinition): Future[Unit] = {
-
-    import com.sksamuel.elastic4s.ElasticDsl.search // Otherwise there's ambiguity with the .search package!
     
     def fetchNextBatch(scrollId: String): Future[RichSearchResponse] =
       es.client execute {

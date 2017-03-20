@@ -16,9 +16,9 @@ import services.item.search.filters.TermFilter
 
 @Singleton
 class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
-  
+
   private val dateFormatter = DateTimeFormat.forPattern("yyyy-MM-dd").withZone(DateTimeZone.UTC)
-  
+
   private def formatDate(dt: DateTime) = dateFormatter.print(dt.withZone(DateTimeZone.UTC))
 
   private def histogramScript(interval: Int) =
@@ -45,7 +45,7 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
         case TermFilter.EXCLUDE => not(filters)
       }
     }
-    
+
     def timerangeFilterDefinition() = args.filters.dateRangeFilter.map { filter =>
       (filter.from, filter.to) match {
         case (Some(from), Some(to)) =>
@@ -53,14 +53,14 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
             rangeQuery("temporal_bounds.from").to(formatDate(to)),
             rangeQuery("temporal_bounds.to").from(formatDate(from))
           )
-          
+
         case _ =>
           Seq()
           // TODO support open intervals
       }
     }.getOrElse(Seq.empty[RangeQueryDefinition])
-    
-    val filterClauses = 
+
+    val filterClauses =
       Seq(
         args.filters.itemTypeFilter.map(termFilterDefinition("item_type", _)),
         args.filters.categoryFilter.map(termFilterDefinition("category", _)),
@@ -69,7 +69,7 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
         // Check for existing 'depictions' field iff hasDepictions is set to true
         { if (args.filters.hasDepiction.getOrElse(false)) Some(nestedQuery("depictions") query { existsQuery("depictions.url") }) else None }
       ).flatten ++ timerangeFilterDefinition()
-      
+
     val notClauses = Seq(
       // Check for missing 'depicitions' field iff hasDepicitions is set to false
       { if (!args.filters.hasDepiction.getOrElse(true)) Some(nestedQuery("depictions") query { existsQuery("depictions.url") }) else None },
@@ -106,8 +106,8 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
   private def buildItemQuery(args: SearchArgs) =
     search in ES.PERIPLEO / ES.ITEM query {
       bool {
-        must(
-          should(
+        must (
+          should (
             queryStringQuery(args.query.getOrElse("*")),
             hasChildQuery("reference") query { termQuery("context", args.query.getOrElse("*")) }
           )
@@ -121,7 +121,7 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
     search in ES.PERIPLEO / ES.REFERENCE query {
       bool {
         must (
-          should(
+          should (
             termQuery("context", args.query.getOrElse("*")),
             hasParentQuery(ES.ITEM) query { queryStringQuery(args.query.getOrElse("*")) }
           )
@@ -136,11 +136,11 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
     } start 0 limit 0 aggregations (
       aggregation
         terms "by_place"
-        field "uri"
+        field "root_uri"
         size 600
     ) // TODO sub-aggregate places vs people vs periods etc. to places only
 
-  private def resolvePlaces(uris: Seq[String]) =
+  private def resolvePlaces(uris: Seq[String]) = {
     if (uris.isEmpty)
       Future.successful(Seq.empty[Place])
     else
@@ -149,6 +149,7 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
       } map { _.responses.flatMap { _.response.map(_.getSourceAsString).map { json =>
         Json.fromJson[Place](Json.parse(json)).get
       }}}
+  }
 
   def query(args: SearchArgs): Future[RichResultPage] = {
     val startTime = System.currentTimeMillis

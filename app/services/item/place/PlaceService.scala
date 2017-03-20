@@ -28,7 +28,7 @@ class PlaceService @Inject() (val es: ES, implicit val ctx: ExecutionContext) ex
   }
 
   def insertOrUpdatePlace(place: Place): Future[Boolean] = {
-    val ref = Reference(ReferenceType.PLACE, None, place.rootUri, None, None, None)
+    val ref = Reference(ReferenceType.PLACE, None, place.rootUri, place.rootUri, None, None, None)
         
     es.client execute {
       bulk (
