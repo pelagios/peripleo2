@@ -3,8 +3,11 @@
  */
 define(['ui/common/hasEvents'], function(HasEvents) {
 
-  /** Number of results per page **/
-  var PAGE_SIZE = 20;
+      /** Number of results per page **/
+  var PAGE_SIZE = 20,
+
+      // To throttle traffic, we'll stay idle between requests for this time in millis
+      IDLE_MS = 200;
 
   var API = function() {
 
@@ -31,6 +34,12 @@ define(['ui/common/hasEvents'], function(HasEvents) {
         },
 
         currentOffset = 0,
+
+        // Are we currently waiting for an API response?
+        busy = false,
+
+        // Did additional requests arrive while busy?
+        requestPending = false,
 
         // DRY helper
         appendIfExists = function(param, key, url) {
@@ -66,11 +75,35 @@ define(['ui/common/hasEvents'], function(HasEvents) {
         },
 
         makeRequest = function() {
-          // var requestArgs = jQuery.extend({}, searchArgs); // Args at time of query
-          // busy = true;
-          jQuery.getJSON(buildFirstPageQuery(), function(response) {
-            self.fireEvent('update', response);
-          });
+
+          var handlePending = function() {
+                if (requestPending) {
+                  request();
+                  requestPending = false;
+                } else {
+                  // Throttling: no request pending right now? Wait a bit
+                  setTimeout(function() {
+                    if (requestPending)
+                      handlePending();
+                    else
+                      // Still nothing? Clear busy flag.
+                      busy = false;
+                  }, IDLE_MS);
+                }
+              },
+
+              request = function() {
+                jQuery.getJSON(buildFirstPageQuery(), function(response) {
+                  self.fireEvent('update', response);
+                }).always(handlePending);
+              };
+
+          if (busy) {
+            requestPending = true;
+          } else {
+            busy = true;
+            request();
+          }
         },
 
         loadNextPage = function() {
