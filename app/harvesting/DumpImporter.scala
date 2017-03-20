@@ -30,11 +30,8 @@ class DumpImporter(taskService: TaskService) extends BaseImporter {
     taskService.updateStatus(taskId, TaskStatus.RUNNING)
     
     val fConvert: Future[Seq[T]] = Future {
-      // This is a long-running operation
-      scala.concurrent.blocking {
-        Logger.info("Loading dump file...")
-        crosswalk(getStream(file, filename)) 
-      }
+      Logger.info("Loading dump file...")
+      crosswalk(getStream(file, filename)) 
     }
     
     def fImport(records: Seq[T]): Future[Seq[T]] = {
@@ -42,7 +39,7 @@ class DumpImporter(taskService: TaskService) extends BaseImporter {
       
       val batches = split(records, MAX_BATCHES)
       val increment = 100.0 / batches.size
-        
+
       batches.zipWithIndex.foldLeft(Future.successful(Seq.empty[T])) { case (f, (batch, idx)) =>
         f.flatMap { unrecoverable =>
           service.importBatch(batch).flatMap { failed =>
