@@ -1,7 +1,7 @@
 define([
   'ui/common/hasEvents',
-  'ui/controls/searchpanel/footer',
-  'ui/controls/searchpanel/timeHistogram'
+  'ui/controls/search/footer',
+  'ui/controls/search/timeHistogram'
 ], function(HasEvents, Footer, TimeHistogram) {
 
   var SLIDE_DURATION = 180;
@@ -15,7 +15,7 @@ define([
             '<div id="filterpane-body"></div>' +
           '</div>').appendTo(parentEl),
 
-        body = element.find('#filterpane-body'),
+        body = element.find('#filterpane-body').hide(),
 
         timeHistogramSection = jQuery('<div class="section"></div').appendTo(body),
         timeHistogram = new TimeHistogram(timeHistogramSection, 320, 40),
@@ -47,10 +47,7 @@ define([
           }
         };
 
-    body.hide();
-
     timeHistogram.on('selectionChange', this.forwardEvent('timerangeChange'));
-
     footer.on('toggle', togglePane);
 
     this.update = update;

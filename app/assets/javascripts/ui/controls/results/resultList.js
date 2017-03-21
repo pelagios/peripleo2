@@ -14,7 +14,7 @@ define([
 
         listEl = element.find('ul'),
 
-        waitSpinner = element.find('.rl-wait'),
+        waitSpinner = element.find('.rl-wait').hide(),
 
         waitingForNextPage = false,
 
@@ -24,7 +24,16 @@ define([
                   '<h3>' + item.title + '</h3>' +
                 '</li>').appendTo(listEl);
 
-          // console.log(item);
+          // TODO should we really bind to the DOM element?
+          // TODO or just use data-id and then GET via the API?
+          el.data('item', item);
+        },
+
+        onSelect = function(e) {
+          var li = jQuery(e.target).closest('li'),
+              item = li.data('item');
+
+          self.fireEvent('select', item);
         },
 
         onScroll = function() {
@@ -48,7 +57,7 @@ define([
           response.items.forEach(createRow);
         };
 
-    waitSpinner.hide();
+    element.on('click', 'li', onSelect);
     element.scroll(onScroll);
 
     this.update = update;
