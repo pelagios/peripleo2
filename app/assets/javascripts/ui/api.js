@@ -113,7 +113,7 @@ define(['ui/common/hasEvents'], function(HasEvents) {
             // TODO different events for new result vs. next page?
 
             // self.fireEvent('update', response);
-            console.log(response);
+            // console.log(response);
           });
         },
 

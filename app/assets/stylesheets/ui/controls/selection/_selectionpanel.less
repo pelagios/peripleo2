@@ -1,8 +1,118 @@
 #current-selection {
-  padding:8px 10px;
   margin-top:4px;
-  background-color:#fff;
   position:relative;
-  .rounded-corners(2px);
+  font-size:13px;
+  line-height:150%;
   .box-shadow(0, 0, 8px, 0, rgba(0,0,0,0.25));
+  .rounded-corners(2px);
+
+  .depiction {
+    min-height:70px;
+    height:30%;
+    max-height:270px;
+    background-color:@blueish-white;
+    background-size:cover;
+    background-position:50% 20%;
+    cursor:pointer;
+    .rounded-corners-top(2px);
+  }
+
+  .info {
+    background-color:#fff;
+    padding:16px 12px;
+    border-top:1px solid @light-grey-border;
+
+    * {
+      color:@dark-grey-type;
+      white-space:nowrap;
+      text-overflow:ellipsis;
+      overflow:hidden;
+      margin:0;
+      padding:0;
+    }
+
+    h3 {
+      font-size:16px;
+      font-weight:normal;
+      padding:2px 0;
+    }
+
+    h3 > a {
+      color:@dark-grey-type;
+      text-decoration:none;
+    }
+
+    h3 > a:hover {
+      text-decoration:underline;
+    }
+
+    p.homepage {
+      color:@ocean;
+    }
+
+    p.in-dataset {
+
+      a {
+        color:@light-grey-type;
+        text-decoration:none;
+      }
+
+      a:hover {
+        color:@light-grey-type-hover;
+        text-decoration:underline;
+      }
+
+      span::after {
+        color:@light-grey-type;
+        font-family:FontAwesome;
+        font-size:14px;
+        content:'\f105';
+        padding:0 3px 0 4px;
+      }
+
+      span:last-child:after {
+        content:''
+      }
+
+    }
+
+  }
+
+  .references {
+    padding:2px 12px;
+    background-color:@blueish-white;
+    border-top:1px solid @light-grey-border;
+    .rounded-corners-bottom(2px);
+    color:@light-grey-type-hover;
+
+    .findspot {
+
+      a {
+        color:@light-grey-type-hover;
+        text-decoration:none;
+      }
+
+      a:hover {
+        text-decoration:underline;
+      }
+
+    }
+
+
+
+    .findspot::before {
+      font-family:FontAwesome;
+      font-size:14px;
+      content:'\f140';
+      padding-right:5px;
+    }
+
+    .findspot::after {
+      content:'(Findspot)';
+      padding-left:4px;
+      color:@light-grey-type;
+    }
+
+  }
+
 }

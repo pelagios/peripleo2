@@ -6,7 +6,7 @@ import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
 import services.HasGeometry
-import services.item.Description
+import services.item.{ Description, Depiction }
 import services.item.place.{ Gazetteer, GazetteerRecord, Name }
 
 object GeoNamesCrosswalk extends BaseGeoJSONCrosswalk {
@@ -25,6 +25,7 @@ object GeoNamesCrosswalk extends BaseGeoJSONCrosswalk {
       geonames.features.headOption.map(_.geometry), // TODO compute union?
       geonames.representativePoint,
       None, // temporalBounds
+      Seq.empty[Depiction],
       Seq.empty[String], // place types
       Seq.empty[String], // closeMatches
       Seq.empty[String]  // exactMatches

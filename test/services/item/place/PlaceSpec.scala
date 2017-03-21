@@ -21,6 +21,7 @@ class PlaceSpec extends PlaySpec with TestHelpers {
       Some(createPoint(14.02358, 48.31058)),
       Some(createPoint(14.02358, 48.31058).getCoordinate),
       Some(TemporalBounds.fromYears(0, 640)),
+      Seq.empty[Depiction],
       Seq("fort", "tower"),
       Seq.empty[String],
       Seq.empty[String]
@@ -37,6 +38,7 @@ class PlaceSpec extends PlaySpec with TestHelpers {
       Some(createPoint(14.02358, 48.31058)),
       Some(createPoint(14.02358, 48.31058).getCoordinate),
       Some(TemporalBounds.fromYears(-30, 0)),
+      Seq.empty[Depiction],
       Seq.empty[String],
       Seq("http://sws.geonames.org/2780394", "http://www.wikidata.org/entity/Q2739862", "http://de.wikipedia.org/wiki/Kastell_Eferding"),
       Seq.empty[String]  

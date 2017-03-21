@@ -6,7 +6,7 @@ import org.joda.time.DateTime
 import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
-import services.item.{ Description, TemporalBounds }
+import services.item.{ Description, Depiction, TemporalBounds }
 
 case class GazetteerRecord (
 
@@ -39,11 +39,13 @@ case class GazetteerRecord (
 
   /** The temporal bounds of this record **/
   temporalBounds: Option[TemporalBounds],
+
+  /** Images associated with this account **/
+  depictions: Seq[Depiction],
   
   /** Place types assigned by the gazetteer **/
   placeTypes: Seq[String],
-  
-  
+    
   
   // An optional ISO country code 
   // TODO countryCode: Option[CountryCode],
@@ -120,6 +122,8 @@ object GazetteerRecord extends HasDate with HasGeometry with HasNullableSeq {
     (JsPath \ "geometry").formatNullable[Geometry] and
     (JsPath \ "representative_point").formatNullable[Coordinate] and
     (JsPath \ "temporal_bounds").formatNullable[TemporalBounds] and
+    (JsPath \ "depictions").formatNullable[Seq[Depiction]]
+      .inmap[Seq[Depiction]](fromOptSeq[Depiction], toOptSeq[Depiction]) and
     (JsPath \ "place_types").formatNullable[Seq[String]]
       .inmap[Seq[String]](fromOptSeq[String], toOptSeq[String]) and
       

@@ -7,7 +7,7 @@ define([], function() {
     },
 
     formatYear: function(dateOrYear) {
-      var year = (dateOrYear instanceof Date) ? dateOrYear.getFullYear() : dateOrYear;
+      var year = (dateOrYear instanceof Date) ? dateOrYear.getFullYear() : parseInt(dateOrYear);
       if (year < 0) return -year + ' BC'; else return year + ' AD';
     }
 

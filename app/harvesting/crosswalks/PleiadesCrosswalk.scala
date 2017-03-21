@@ -7,7 +7,7 @@ import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
 import services.{ HasDate, HasGeometry }
-import services.item.{ Description, Language, TemporalBounds }
+import services.item.{ Description, Depiction, Language, TemporalBounds }
 import services.item.place.{ Gazetteer, GazetteerRecord, Name }
 
 object PleiadesCrosswalk extends BaseGeoJSONCrosswalk {
@@ -35,6 +35,7 @@ object PleiadesCrosswalk extends BaseGeoJSONCrosswalk {
       pleiades.features.headOption.map(_.geometry), // TODO compute union?
       pleiades.representativePoint,
       computeTemporalBounds(pleiades.names), // TODO temporalBounds
+      Seq.empty[Depiction],
       pleiades.placeTypes,
       Seq.empty[String], // TODO closeMatches
       Seq.empty[String]  // TODO exactMatches
