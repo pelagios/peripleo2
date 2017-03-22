@@ -40,7 +40,7 @@ define([
 
         show = function(item) {
 
-          console.log(item);
+          // console.log(item);
 
           var visible = element.is(':visible'),
 
@@ -91,18 +91,24 @@ define([
               },
 
               setReferences = function() {
-
-                // TODO dummy
+                // TODO load indicator
+                // TODO there will be more than just findspots in the future!
                 jsRoutes.controllers.api.ItemAPIController.getReferences(item.identifiers[0])
-                  .ajax().done(function(response) {
-                    console.log(response);
-                  });
+                  .ajax()
+                  .done(function(response) {
+                    var places = response.references.PLACE,
+                        head = (places && places.length > 3) ? places.slice(0, 3) : places;
 
-                // TODO dummy content
-                referencesEl.html(
-                  '<p class="findspot">' +
-                    '<span><a href="#">Casilinum, Capua</a></span>' +
-                  '</p>');
+                    if (head) {
+                      head.forEach(function(place) {
+                        referencesEl.html(
+                          '<p class="findspot">' +
+                            '<span><a href="#" title="' + place.description + '">' + place.title + '</a></span>' +
+                          '</p>');
+                      });
+
+                    }
+                  });
               };
 
           empty();

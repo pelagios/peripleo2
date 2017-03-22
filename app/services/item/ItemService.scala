@@ -9,6 +9,7 @@ import play.api.libs.json.Json
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.language.postfixOps 
 import services.{ ES, HasBatchImport, Page }
+import services.item.place.Place
 import services.task.TaskType
 import org.elasticsearch.search.aggregations.bucket.terms.Terms
 
@@ -90,35 +91,61 @@ class ItemService @Inject() (val es: ES, implicit val ctx: ExecutionContext) ext
     }
   }
   
-  def getReferenceStats(identifier: String): Future[ReferenceStats] =
-    es.client execute {
-      search in ES.PERIPLEO / ES.REFERENCE query {
-        hasParentQuery(ES.ITEM) query(termQuery("identifiers", identifier))
-      } start 0 limit 0 aggregations (
-        // Aggregate by reference type...
-        aggregation terms "by_type" field "reference_type" aggregations (
-          // ... and sub-aggregate by root URI
-          aggregation terms "by_root_uri" field "root_uri" size ES.MAX_SIZE
-        )
-      )
-    } map { response =>
-      
-      import scala.collection.JavaConverters._
-      
-      val byType = response.aggregations.get("by_type").asInstanceOf[Terms]
-      val byTypeAsMap = byType.getBuckets.asScala.map { bucket =>
-        val byUri = bucket.getAggregations.get("by_root_uri").asInstanceOf[Terms]
-        val byUriAsMap = byUri.getBuckets.asScala.map { subBucket =>
-          // URI -> count
-          (subBucket.getKeyAsString, subBucket.getDocCount)
-        }.toMap
-        
-        val referenceType = ReferenceType.withName(bucket.getKeyAsString)
-        (referenceType, (bucket.getDocCount, byUriAsMap))
-      }.toMap
-
-      ReferenceStats(identifier, byTypeAsMap)
+  def getReferenceStats(identifier: String): Future[ReferenceStats] = {
+    
+    /** TODO code duplication with SearchService!
+      * 
+      * We'll need to clean this up later, once we start introducing
+      * people and periods as resolvable entities. When we get there, 
+      * perhaps it's worth having a common "Entity" class, that has
+      * only a small subset of the full item and/or a 'reference' sub-package
+      * to keep things more orderly.  
+      */
+    def resolvePlaces(uris: Seq[String]) = {
+      if (uris.isEmpty)
+        Future.successful(Seq.empty[Place])
+      else
+        es.client execute {
+          multiget ( uris.map(uri => get id uri from ES.PERIPLEO / ES.ITEM) )
+        } map { _.responses.flatMap { _.response.map(_.getSourceAsString).map { json =>
+          Json.fromJson[Place](Json.parse(json)).get
+        }}}
     }
+    
+    val fStats =
+      es.client execute {
+        search in ES.PERIPLEO / ES.REFERENCE query {
+          hasParentQuery(ES.ITEM) query(termQuery("identifiers", identifier))
+        } start 0 limit 0 aggregations (
+          // Aggregate by reference type...
+          aggregation terms "by_type" field "reference_type" aggregations (
+            // ... and sub-aggregate by root URI
+            aggregation terms "by_root_uri" field "root_uri" size ES.MAX_SIZE
+          )
+        )
+      } map { response =>
+        
+        import scala.collection.JavaConverters._
+        
+        val byType = response.aggregations.get("by_type").asInstanceOf[Terms]
+        byType.getBuckets.asScala.map { bucket =>
+          val byUri = bucket.getAggregations.get("by_root_uri").asInstanceOf[Terms]
+          val byUriAsMap = byUri.getBuckets.asScala.map { subBucket =>
+            // URI -> count
+            (subBucket.getKeyAsString, subBucket.getDocCount)
+          }.toMap
+          
+          val referenceType = ReferenceType.withName(bucket.getKeyAsString)
+          (referenceType, (bucket.getDocCount, byUriAsMap))
+        }.toMap
+      }
+      
+    for {
+      stats <- fStats
+      // TODO horrible intermediate hack! Flattens place URIs from stats
+      places <- resolvePlaces(stats.flatMap(_._2._2.map(_._1)).toSeq)
+    } yield(ReferenceStats.build(identifier, stats, places.toSet))
+  }
   
   private def deleteByQuery(index: String, q: QueryDefinition): Future[Unit] = {
     
@@ -153,7 +180,6 @@ class ItemService @Inject() (val es: ES, implicit val ctx: ExecutionContext) ext
     }
   }
     
-  
   def deleteByDataset(dataset: String) = {
     
     def deleteReferences(): Future[Unit] =
