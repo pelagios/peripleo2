@@ -9,7 +9,7 @@
     "uri": "http://vocab.getty.edu/aat/300054328"
   }],
   "is_part_of": [
-    "http://opencontext.org/projects/"
+    "http://opencontext.org/projects/\u0007Open Context"
   ],
   "descriptions": [{
     "description": "An example dataset with dummy geographical coverage. Some metadata borrowed from OpenContext."

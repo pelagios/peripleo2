@@ -18,10 +18,10 @@ object PelagiosVoIDCrosswalk {
     if (rootset.subsets.isEmpty) Seq(rootset)
     else rootset +: rootset.subsets.flatMap(flattenHierarchy)
     
-  def findParents(dataset: Dataset, parentURIs: Seq[String] = Seq.empty[String]): Seq[String] = 
+  def findParents(dataset: Dataset, parents: Seq[Dataset] = Seq.empty[Dataset]): Seq[Dataset] = 
     dataset.isSubsetOf match {
-      case Some(parent) => parent.uri +: findParents(parent)
-      case _ => parentURIs
+      case Some(parent) => parent +: findParents(parent)
+      case _ => parents
     }
     
   def convertDataset(rootset: Dataset): Seq[(Item, Seq[Reference])] = {
@@ -30,7 +30,7 @@ object PelagiosVoIDCrosswalk {
       val parentHierarchy =  {
         val parents = findParents(d).reverse
         if (parents.isEmpty) None
-        else Some(PathHierarchy(parents))
+        else Some(PathHierarchy(parents.map(d => PathSegment(d.uri, d.title))))
       }
       
     Item(

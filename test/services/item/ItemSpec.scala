@@ -21,7 +21,7 @@ class ItemSpec extends PlaySpec with TestHelpers {
       datasetItem.lastSyncedAt mustBe Some(toDateTime("2017-02-03T11:18:21Z"))
       datasetItem.lastChangedAt mustBe Some(toDateTime("2014-05-19T12:00:00Z"))
       datasetItem.categories mustBe Seq(Category("Archaeology", Some("http://vocab.getty.edu/aat/300054328")))
-      datasetItem.isPartOf mustBe Some(PathHierarchy(Seq("http://opencontext.org/projects/")))
+      datasetItem.isPartOf mustBe Some(PathHierarchy(Seq(PathSegment("http://opencontext.org/projects/", "Open Context"))))
       datasetItem.descriptions mustBe Seq(Description("An example dataset with dummy geographical coverage. Some metadata borrowed from OpenContext."))
       datasetItem.homepage mustBe Some("http://opencontext.org/projects/4B5721E9-2BB3-423F-5D04-1B948FA65FAB")
       datasetItem.representativePoint mustBe Some(new Coordinate(-38.3203125, 37.16031654673677))
@@ -45,8 +45,8 @@ class ItemSpec extends PlaySpec with TestHelpers {
         Category("Numismatics", Some("http://vocab.getty.edu/aat/300054419"))
       )
       objectItem.isInDataset mustBe Seq(PathHierarchy(Seq(
-        "ecbd9773-b60f-4dc1-bd86-f2cceb6548a1",
-        "d6fdd35c-08b6-495b-ad4e-3f9256d30665"
+        PathSegment("ecbd9773-b60f-4dc1-bd86-f2cceb6548a1", "ANS Coins"),
+        PathSegment("d6fdd35c-08b6-495b-ad4e-3f9256d30665", "Greek Collection")
       )))          
       objectItem.temporalBounds mustBe Some(TemporalBounds(toDateTime("-200-01-01T00:00:00Z"), toDateTime("67-01-01T00:00:00Z")))
       objectItem.depictions mustBe Seq(
@@ -101,7 +101,7 @@ class ItemSpec extends PlaySpec with TestHelpers {
       personItem.title mustBe "Apollo"
       personItem.lastSyncedAt mustBe Some(toDateTime("2017-02-03T11:18:21Z"))
       personItem.lastChangedAt mustBe Some(toDateTime("2016-10-01T12:00:00Z"))
-      personItem.isInDataset mustBe Seq(PathHierarchy(Seq("d5e8e113-1552-4f47-9c06-1bb733c8e5be")))
+      personItem.isInDataset mustBe Seq(PathHierarchy(Seq(PathSegment("d5e8e113-1552-4f47-9c06-1bb733c8e5be", "BM People"))))
     }
     
   }
@@ -141,7 +141,7 @@ class ItemSpec extends PlaySpec with TestHelpers {
         Some(CURRENT_TIME),
         Some(CURRENT_TIME),
         Seq(Category("Archaeology", Some("http://vocab.getty.edu/aat/300054328"))),
-        Seq(PathHierarchy(Seq(UUID.randomUUID.toString))),
+        Seq(PathHierarchy(Seq(PathSegment(UUID.randomUUID.toString, "Example Dataset")))),
         None, // is_part_of
         Seq(Description("Just a dummy object for the roundtrip test")),
         Some("http://www.example.com"),

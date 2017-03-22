@@ -11,7 +11,7 @@ import play.api.Logger
 import play.api.libs.ws.WSClient
 import play.api.libs.Files.TemporaryFile
 import scala.concurrent.{ Future, ExecutionContext }
-import services.item.{ ItemService, PathHierarchy }
+import services.item.{ ItemService, PathHierarchy, PathSegment }
 import services.task.TaskService
 
 // TODO progress tracking that covers the entire process?
@@ -71,8 +71,8 @@ class VoIDHarvester @Inject() (
   def importAnnotationDumps(dumps: Seq[(Dataset, Seq[TemporaryFile])], username: String): Future[Boolean] = {
     val fImports = dumps.flatMap { case (dataset, tmpFiles) =>
       tmpFiles.map { tmp =>
-        val pathHierarchy = 
-          PathHierarchy(PelagiosVoIDCrosswalk.findParents(dataset).reverse :+ dataset.uri)
+        val parents = PelagiosVoIDCrosswalk.findParents(dataset).reverse :+ dataset
+        val pathHierarchy = PathHierarchy(parents.map(d => PathSegment(d.uri, d.title)))
           
         val importer = new DumpImporter(taskService)
         importer.importDump(tmp.file, tmp.file.getName, PelagiosAnnotationCrosswalk.fromRDF(tmp.file.getName, pathHierarchy), itemService, username)
