@@ -3,17 +3,25 @@ package controllers.api
 import controllers.HasPrettyPrintJSON
 import javax.inject.{ Inject, Singleton }
 import play.api.mvc.{ Action, Controller }
+import scala.concurrent.ExecutionContext
+import services.item.ItemService
+import play.api.libs.json.Json
 
 @Singleton
-class ItemAPIController @Inject() () extends Controller with HasPrettyPrintJSON {
+class ItemAPIController @Inject() (
+  itemService: ItemService,
+  implicit val ctx: ExecutionContext
+) extends Controller with HasPrettyPrintJSON {
   
   def getItem(identifier: String) = Action { implicit request =>
     // TODO implement
-    Ok
+    null
   }
   
   def getReferences(identifier: String) = Action.async { implicit request =>
-    null
+    itemService.getReferenceStats(identifier).map { stats =>
+      jsonOk(Json.toJson(stats)) 
+    }
   }
   
 }

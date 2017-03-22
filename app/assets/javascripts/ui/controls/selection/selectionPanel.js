@@ -91,6 +91,13 @@ define([
               },
 
               setReferences = function() {
+
+                // TODO dummy
+                jsRoutes.controllers.api.ItemAPIController.getReferences(item.identifiers[0])
+                  .ajax().done(function(response) {
+                    console.log(response);
+                  });
+
                 // TODO dummy content
                 referencesEl.html(
                   '<p class="findspot">' +

@@ -44,7 +44,6 @@ object Reference {
   
 }
 
-
 object ReferenceDepiction {
   
   implicit val referenceDepictionFormat: Format[ReferenceDepiction] = (

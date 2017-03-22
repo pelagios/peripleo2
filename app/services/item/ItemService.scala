@@ -8,8 +8,9 @@ import play.api.Logger
 import play.api.libs.json.Json
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.language.postfixOps 
-import services.{ ES, HasBatchImport }
+import services.{ ES, HasBatchImport, Page }
 import services.task.TaskType
+import org.elasticsearch.search.aggregations.bucket.terms.Terms
 
 @Singleton
 class ItemService @Inject() (val es: ES, implicit val ctx: ExecutionContext) extends HasBatchImport[(Item, Seq[Reference])] {
@@ -37,7 +38,7 @@ class ItemService @Inject() (val es: ES, implicit val ctx: ExecutionContext) ext
   }
   
   /** Keeps only references that resolve to an entity in Peripleo **/
-  def filterResolvable(references: Seq[Reference]): Future[Seq[Reference]] =
+  private def filterResolvable(references: Seq[Reference]): Future[Seq[Reference]] =
     if (references.isEmpty)
       Future.successful(Seq.empty[Reference])
     else
@@ -88,6 +89,36 @@ class ItemService @Inject() (val es: ES, implicit val ctx: ExecutionContext) ext
       false
     }
   }
+  
+  def getReferenceStats(identifier: String): Future[ReferenceStats] =
+    es.client execute {
+      search in ES.PERIPLEO / ES.REFERENCE query {
+        hasParentQuery(ES.ITEM) query(termQuery("identifiers", identifier))
+      } start 0 limit 0 aggregations (
+        // Aggregate by reference type...
+        aggregation terms "by_type" field "reference_type" aggregations (
+          // ... and sub-aggregate by root URI
+          aggregation terms "by_root_uri" field "root_uri" size ES.MAX_SIZE
+        )
+      )
+    } map { response =>
+      
+      import scala.collection.JavaConverters._
+      
+      val byType = response.aggregations.get("by_type").asInstanceOf[Terms]
+      val byTypeAsMap = byType.getBuckets.asScala.map { bucket =>
+        val byUri = bucket.getAggregations.get("by_root_uri").asInstanceOf[Terms]
+        val byUriAsMap = byUri.getBuckets.asScala.map { subBucket =>
+          // URI -> count
+          (subBucket.getKeyAsString, subBucket.getDocCount)
+        }.toMap
+        
+        val referenceType = ReferenceType.withName(bucket.getKeyAsString)
+        (referenceType, (bucket.getDocCount, byUriAsMap))
+      }.toMap
+
+      ReferenceStats(identifier, byTypeAsMap)
+    }
   
   private def deleteByQuery(index: String, q: QueryDefinition): Future[Unit] = {
     
