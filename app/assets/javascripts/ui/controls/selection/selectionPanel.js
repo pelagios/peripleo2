@@ -35,6 +35,7 @@ define([
           depictionEl.css('background-image', false);
           homepageEl.empty();
           temporalBoundsEl.empty();
+          inDatasetEl.empty();
         },
 
         show = function(item) {
@@ -58,7 +59,18 @@ define([
               setInfo = function() {
                 var title = (item.homepage) ?
                               '<a href="' + item.homepage + '" target="_blank">' + item.title + '</a>' :
-                              item.title;
+                              item.title,
+
+                    // TODO we'll do this pre-processing step on the server later!
+                    datasetPath = function() {
+                      var last = item.is_in_dataset[item.is_in_dataset.length - 1],
+                          tuples = last.split('\u0007\u0007');
+
+                      return tuples.map(function(str) {
+                        var tuple = str.split('\u0007');
+                        return { 'id': tuple[0], 'title': tuple[1] };
+                      });
+                    };
 
                 titleEl.html(title);
 
@@ -73,10 +85,9 @@ define([
                        ' - ' + Formatting.formatYear(item.temporal_bounds.to));
                 }
 
-                // TODO dummy content!
-                inDatasetEl.html('<span><a href="#">University of Graz</a></span><span><a href="#">Archaeological Collection</a><span>');
-                inDatasetEl.html('<span><a href="#">American Numismatic Society</a></span>');
-
+                datasetPath().forEach(function(segment) {
+                  inDatasetEl.append('<span><a href="#">' + segment.title + '</a></span>');
+                });
               },
 
               setReferences = function() {
