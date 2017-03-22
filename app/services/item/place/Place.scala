@@ -6,7 +6,7 @@ import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
 import services.{ HasDate, HasGeometry, HasNullableSeq }
-import services.item.{ ItemType, Language, TemporalBounds }
+import services.item.{ ItemType, Language, TemporalBounds, PathSegment }
 
 case class Place (rootUri: String, isConflationOf: Seq[GazetteerRecord]) {
   
@@ -78,7 +78,8 @@ object Place extends HasGeometry with HasNullableSeq {
       place.uris,
       ItemType.PLACE,
       place.titles.head,
-      place.sourceGazetteers.map(_.name),
+      place.sourceGazetteers.map(gazetteer =>
+        PathSegment(gazetteer.name, gazetteer.name).toString),
       toOptSeq(place.languages),
       place.temporalBoundsUnion,
       place.isConflationOf)

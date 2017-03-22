@@ -4,6 +4,8 @@ import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
 
+// TODO name and ID?
+
 case class Gazetteer(name: String)
 
 object Gazetteer {

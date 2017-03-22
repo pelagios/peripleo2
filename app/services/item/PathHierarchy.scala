@@ -53,7 +53,6 @@ object PathHierarchy {
   private def toPathHierarchies(levels: Seq[String]): Seq[PathHierarchy] = {
     // Find the root paths (i.e. those that don't contain a double-beep separator)
     val roots = levels.filterNot(_.contains(SEPARATOR))
-
     roots.map { root =>
       // For each root path, find the leaf path (i.e. the longest one starting with this root)
       val thisPath = levels.filter(_.startsWith(root)).maxBy(_.size)
