@@ -20,7 +20,10 @@ class UserService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
   
   countUsers.map { count =>
     if (count == 0) {
-      Logger.info("Empty user table - creating default admin")
+      Logger.warn("###################################################")
+      Logger.warn("# Empty user table - creating default admin/admin")
+      Logger.warn("# Make sure to remove this user in production!")
+      Logger.warn("###################################################")
       createUser("admin", "admin@example.com", "admin")
     }
   }

@@ -66,7 +66,7 @@ case class PleiadesName(
     case _ => None
   }
     
-  lazy val toNames = Seq(attested, romanized).flatten.filter(!_.isEmpty).map(Name(_, language.map(Language(_))))
+  lazy val toNames = Seq(attested, romanized).flatten.filter(!_.trim.isEmpty).map(Name(_, normalizedLanguage.flatMap(Language.safeParse)))
   
 }
 

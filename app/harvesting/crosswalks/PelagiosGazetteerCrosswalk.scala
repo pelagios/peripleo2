@@ -1,13 +1,11 @@
 package harvesting.crosswalks
 
-import java.io.InputStream
+import java.io.{ File, FileInputStream, InputStream }
 import services.item.{ Description, Depiction, Language, TemporalBounds }
 import services.item.place._
 import org.joda.time.{ DateTime, DateTimeZone }
 import org.pelagios.Scalagios
 import org.pelagios.api.PeriodOfTime
-import java.io.File
-import java.io.FileInputStream
 
 object PelagiosGazetteerCrosswalk {
   
@@ -21,7 +19,7 @@ object PelagiosGazetteerCrosswalk {
   }
   
   def fromRDF(filename: String): InputStream => Seq[GazetteerRecord] = {
-    
+
     val sourceGazetteer = Gazetteer(filename.substring(0, filename.indexOf('.')))
   
     def convertPlace(place: org.pelagios.api.gazetteer.Place): GazetteerRecord =      
@@ -31,8 +29,8 @@ object PelagiosGazetteerCrosswalk {
         DateTime.now().withZone(DateTimeZone.UTC),
         None, // last_changed_at
         place.label,
-        place.descriptions.map(l => Description(l.chars, l.lang.map(Language(_)))),
-        place.names.map(l => Name(l.chars, l.lang.map(Language(_)))),
+        place.descriptions.map(l => Description(l.chars, l.lang.flatMap(Language.safeParse))),
+        place.names.map(l => Name(l.chars, l.lang.flatMap(Language.safeParse))),
         place.location.map(_.geometry),
         place.location.map(_.pointLocation),
         place.temporalCoverage.map(convertPeriodOfTime(_)),

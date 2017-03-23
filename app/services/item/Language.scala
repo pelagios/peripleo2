@@ -1,8 +1,10 @@
 package services.item
 
+import play.api.Logger
 import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
+import scala.util.{ Try, Success, Failure }
 
 class Language private(val iso: String) {
   
@@ -23,6 +25,15 @@ class Language private(val iso: String) {
 object Language {
   
   def apply(iso: String) = new Language(iso.toUpperCase)
+  
+  /** Alternative builder that returns Option instead of failing on invalid input **/
+  def safeParse(str: String): Option[Language] =
+    Try(Language(str)) match {
+      case Success(language) => Some(language)
+      case Failure(t) =>
+        Logger.info("Error parsing language code: " + str)
+        None
+    }
   
   implicit val languageFormat: Format[Language] =
     Format(
