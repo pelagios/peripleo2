@@ -36,13 +36,16 @@ class VoIDHarvester @Inject() (
   }
   
   /** Downloads the VoID and all referenced dumpfiles **/
-  def downloadFiles(voidURL: String) = {
+  private def downloadFiles(voidURL: String) = {
     
     def fDownloadDatadumps(rootDatasets: Iterable[Dataset]) = {
       val datasets = rootDatasets.flatMap(PelagiosVoIDCrosswalk.flattenHierarchy).toSeq
       
       Future.sequence(datasets.map { dataset =>
         val uris = dataset.datadumps
+        
+        // TODO track progress via task service
+        
         Future.sequence(uris.map { uri => 
           download(uri).map { file =>
             Some(file)
@@ -62,20 +65,27 @@ class VoIDHarvester @Inject() (
   }
 
   /** Imports the datasets into the index **/
-  def importDatasets(rootDatasets: Iterable[Dataset]): Future[Boolean] = {
+  private def importDatasets(rootDatasets: Iterable[Dataset]): Future[Boolean] = {
     val items = PelagiosVoIDCrosswalk.fromDatasets(rootDatasets.toSeq)
     itemService.importBatch(items).map { _.size == 0 }
   }
   
   /** Imports annotations from the dumpfiles into the index **/
-  def importAnnotationDumps(dumps: Seq[(Dataset, Seq[TemporaryFile])], username: String): Future[Boolean] = {
+  private def importAnnotationDumps(dumps: Seq[(Dataset, Seq[TemporaryFile])], username: String): Future[Boolean] = {
     val fImports = dumps.flatMap { case (dataset, tmpFiles) =>
       tmpFiles.map { tmp =>
         val parents = PelagiosVoIDCrosswalk.findParents(dataset).reverse :+ dataset
         val pathHierarchy = PathHierarchy(parents.map(d => PathSegment(d.uri, d.title)))
           
         val importer = new DumpImporter(taskService)
-        importer.importDump(tmp.file, tmp.file.getName, PelagiosAnnotationCrosswalk.fromRDF(tmp.file.getName, pathHierarchy), itemService, username)
+        importer.importDump(
+          "Importing Pelagios annotations from " + tmp.file.getName,
+          tmp.file,
+          tmp.file.getName,
+          PelagiosAnnotationCrosswalk.fromRDF(tmp.file.getName, pathHierarchy),
+          itemService,
+          username
+          /* TODO job_id */)
       }
     }
     
@@ -83,11 +93,14 @@ class VoIDHarvester @Inject() (
       !successes.exists(_ == false))
   }
   
-  def harvest(voidURL: String, username: String) =
+  def harvest(voidURL: String, username: String) = {
+    // TODO progress reporting - generate JOB ID, so we 
+    // can aggregate sub-task progress later
     for { 
       (rootDatasets, dumpfiles) <- downloadFiles(voidURL)
       success1 <- importDatasets(rootDatasets)
       success2 <- importAnnotationDumps(dumpfiles, username)      
     } yield (success1 && success2)
+  }
   
 }

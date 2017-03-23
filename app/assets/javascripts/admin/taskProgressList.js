@@ -4,19 +4,21 @@ define([], function() {
 
       var element = jQuery(
             '<div class="task-progress">' +
+              '<p class="caption"></p>' +
               '<div class="meter">' +
-                '<p class="label">0%</p>' +
+                '<p class="percentage">0%</p>' +
                 '<div class="bar rounded" style="width:0"></div>' +
               '</div>' +
             '</div>'),
 
-          label = element.find('.label'),
-
+          caption = element.find('.caption'),
+          percentage = element.find('.percentage'),
           bar = element.find('.bar'),
 
           update = function(response) {
             var progress = response.progress + '%';
-            label.html(progress);
+            caption.html(response.caption);
+            percentage.html(progress);
             bar.css({ width: progress });
           };
 

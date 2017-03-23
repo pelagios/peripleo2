@@ -106,11 +106,13 @@ class TaskService @Inject() (val es: ES, implicit val ctx: ExecutionContext) ext
     } map { _.isFound 
     } recover { case t: Throwable => false }
   
-  def insertTask(taskType: TaskType, classname: String, spawnedBy: String): Future[UUID] = {
+  def insertTask(taskType: TaskType, classname: String, caption: String, spawnedBy: String, jobId: Option[UUID] = None): Future[UUID] = {
     val task = Task(
       UUID.randomUUID(),
+      jobId,
       taskType,
       classname,
+      caption,
       spawnedBy,
       DateTime.now(),
       None,

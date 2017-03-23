@@ -23,10 +23,10 @@ class DumpImporter(taskService: TaskService) extends BaseImporter {
       records.grouped(batchSize).toSeq
     }
 
-  def importDump[T](file: File, filename: String, crosswalk: InputStream => Seq[T], 
+  def importDump[T](caption: String, file: File, filename: String, crosswalk: InputStream => Seq[T], 
       service : HasBatchImport[T], username: String)(implicit ctx: ExecutionContext, system: ActorSystem): Future[Boolean] = {
     
-    val taskId = Await.result(taskService.insertTask(service.taskType, service.getClass.getName, username), 10.seconds)
+    val taskId = Await.result(taskService.insertTask(service.taskType, service.getClass.getName, caption, username), 10.seconds)
     taskService.updateStatus(taskId, TaskStatus.RUNNING)
     
     val fConvert: Future[Seq[T]] = Future {

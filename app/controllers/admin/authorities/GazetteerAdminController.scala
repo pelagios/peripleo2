@@ -74,16 +74,39 @@ class GazetteerAdminController @Inject() (
 
             if (formData.filename.contains(".ttl") || formData.filename.contains(".rdf")) {
               Logger.info("Importing Pelagios RDF/TTL dump")
+              
               val importer = new DumpImporter(taskService)
-              importer.importDump(formData.ref.file, formData.filename, PelagiosGazetteerCrosswalk.fromRDF(formData.filename), placeService, loggedIn.username)
+              importer.importDump(
+                formData.filename + " (Pelagios Gazetteer RDF)",
+                formData.ref.file,
+                formData.filename,
+                PelagiosGazetteerCrosswalk.fromRDF(formData.filename),
+                placeService,
+                loggedIn.username)
+                
             } else if (formData.filename.toLowerCase.contains("pleiades")) {
               Logger.info("Using Pleiades crosswalk")
+              
               val importer = new StreamImporter(taskService, materializer)
-              importer.importRecords(formData.ref.file, formData.filename, PleiadesCrosswalk.fromJson, placeService, loggedIn.username)
+              importer.importRecords(
+                formData.filename + " (Pleiades GeoJSON)",
+                formData.ref.file,
+                formData.filename,
+                PleiadesCrosswalk.fromJson,
+                placeService,
+                loggedIn.username)
+                
             } else if (formData.filename.toLowerCase.contains("geonames")) {
               Logger.info("Using GeoNames crosswalk")
+              
               val importer = new StreamImporter(taskService, materializer)
-              importer.importRecords(formData.ref.file, formData.filename, GeoNamesCrosswalk.fromJson, placeService, loggedIn.username)
+              importer.importRecords(
+                formData.filename + " (GeoNames GeoJSON)",
+                formData.ref.file,
+                formData.filename,
+                GeoNamesCrosswalk.fromJson,
+                placeService,
+                loggedIn.username)
             }
 
           }

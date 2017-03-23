@@ -9,8 +9,10 @@ import services.HasDate
 
 case class Task(
   id: UUID,
+  job: Option[UUID],
   taskType: TaskType,
   classname: String,
+  caption: String,
   spawnedBy: String,
   spawnedAt: DateTime,
   stoppedAt: Option[DateTime],
@@ -23,8 +25,10 @@ object Task extends HasDate {
   
   implicit val userFormat: Format[Task] = (
     (JsPath \ "id").format[UUID] and
+    (JsPath \ "job").formatNullable[UUID] and
     (JsPath \ "task_type").format[TaskType] and
     (JsPath \ "classname").format[String] and
+    (JsPath \ "caption").format[String] and
     (JsPath \ "spawned_by").format[String] and
     (JsPath \ "spawned_at").format[DateTime] and
     (JsPath \ "stopped_at").formatNullable[DateTime] and

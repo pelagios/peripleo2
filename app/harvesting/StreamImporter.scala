@@ -24,13 +24,13 @@ class StreamImporter(taskService: TaskService, implicit val materializer: Materi
   private def countLines(file: File) =
     scala.io.Source.fromFile(file).getLines.size
  
-  def importRecords[T](file: File, filename: String, crosswalk: String => Option[T], service : HasBatchImport[T],
+  def importRecords[T](caption: String, file: File, filename: String, crosswalk: String => Option[T], service : HasBatchImport[T],
       username: String)(implicit ctx: ExecutionContext, system: ActorSystem) = {
     
     val totalLines = countLines(file)
     var processedLines = 0
     
-    val taskId = Await.result(taskService.insertTask(service.taskType, service.getClass.getName, username), 10.seconds)
+    val taskId = Await.result(taskService.insertTask(service.taskType, service.getClass.getName, caption, username), 10.seconds)
     taskService.updateStatus(taskId, TaskStatus.RUNNING)
 
     val source = StreamConverters.fromInputStream(() => getStream(file, filename), 1024)
