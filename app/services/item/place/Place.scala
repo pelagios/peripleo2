@@ -51,8 +51,40 @@ case class Place (rootUri: String, isConflationOf: Seq[GazetteerRecord]) {
   
   lazy val exactMatches = isConflationOf.flatMap(_.exactMatches)
   
-  // For covenience
   lazy val allMatches: Seq[String] = closeMatches ++ exactMatches
+  
+  lazy val completionData = 
+    CompletionData(
+      titles ++ names.map(_._1.name),
+      rootUri,
+      ItemType.PLACE,
+      titles.head,
+      descriptions.map(_._1.description).headOption)
+
+}
+
+private[item] case class CompletionData private(input: Seq[String], output: String, payload: CompletionData.Payload)
+
+private[item] object CompletionData {
+  
+  case class Payload(itemId: String, itemType: ItemType.Value, description: Option[String])
+  
+  def apply(input: Seq[String], itemId: String, itemType: ItemType.Value, title: String,
+    description : Option[String]): CompletionData = 
+      CompletionData(input, title, Payload(itemId, itemType, description))
+   
+  // https://www.elastic.co/guide/en/elasticsearch/reference/2.4/search-suggesters-completion.html#indexing
+  implicit val payloadWrites: Writes[Payload] = (
+    (JsPath \ "id").write[String] and
+    (JsPath \ "type").write[ItemType.Value] and
+    (JsPath \ "description").writeNullable[String]
+  )(unlift(Payload.unapply))
+
+  implicit val completionDataWrites: Writes[CompletionData] = (
+    (JsPath \ "input").write[Seq[String]] and
+    (JsPath \ "output").write[String] and
+    (JsPath \ "payload").write[Payload]
+  )(unlift(CompletionData.unapply))
   
 }
 
@@ -72,7 +104,8 @@ object Place extends HasGeometry with HasNullableSeq {
     (JsPath \ "is_in_dataset").write[Seq[String]] and
     (JsPath \ "languages").writeNullable[Seq[Language]] and
     (JsPath \ "temporal_bounds").writeNullable[TemporalBounds] and
-    (JsPath \ "is_conflation_of").write[Seq[GazetteerRecord]]
+    (JsPath \ "is_conflation_of").write[Seq[GazetteerRecord]] and
+    (JsPath \ "autocomplete").write[CompletionData]
   )(place => (
       place.rootUri,
       place.uris,
@@ -82,7 +115,8 @@ object Place extends HasGeometry with HasNullableSeq {
         PathSegment(gazetteer.name, gazetteer.name).toString),
       toOptSeq(place.languages),
       place.temporalBoundsUnion,
-      place.isConflationOf)
+      place.isConflationOf,
+      place.completionData)
   )
   
 }

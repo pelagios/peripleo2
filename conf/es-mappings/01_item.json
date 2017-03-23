@@ -96,7 +96,11 @@
           "close_matches": { "type": "string", "index": "not_analyzed" },
           "exact_matches": { "type": "string", "index": "not_analyzed" }
         }
-      }
+      },
+      "autocomplete" : { "type" : "completion",
+                         "preserve_separators": false,
+                         "preserve_position_increments": false,
+                         "payloads" : true }
     }
   }
 }
