@@ -3,7 +3,10 @@ require.config({
   fileExclusionRegExp: /^lib$/
 });
 
-require(['admin/taskProgressList'], function(TaskProgressList) {
+require([
+  'admin/hasUploads',
+  'admin/taskProgressList'
+], function(Uploads, TaskProgressList) {
 
   var POLL_INTERVAL_MS = 1000;
 
@@ -99,6 +102,8 @@ require(['admin/taskProgressList'], function(TaskProgressList) {
             .done(onDone)
             .fail(onFail);
         };
+
+    Uploads.enable('.new-upload');
 
     refreshOverview();
     queryProgress();

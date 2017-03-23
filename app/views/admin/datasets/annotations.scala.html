@@ -30,7 +30,6 @@
   </div>
 
   <script src="@routes.WebJarAssets.at(webjars.locate("require.min.js"))" data-main="@routes.Assets.versioned("javascripts/admin/datasets/annotations.js")"></script>
-  @views.html.admin.enableUploads()
   @helper.javascriptRouter("jsRoutes")(
     controllers.admin.datasets.routes.javascript.AnnotationsAdminController.importVoID,
     controllers.api.admin.routes.javascript.TaskAPIController.list

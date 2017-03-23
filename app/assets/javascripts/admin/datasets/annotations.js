@@ -3,7 +3,7 @@ require.config({
   fileExclusionRegExp: /^lib$/
 });
 
-require([], function() {
+require(['admin/hasUploads'], function(Uploads) {
 
   jQuery(document).ready(function() {
     var btnRegisterVoID = jQuery('.register-void'),
@@ -18,6 +18,7 @@ require([], function() {
         };
 
     btnRegisterVoID.click(registerVoID);
+    Uploads.enable('.new-upload');
   });
 
 });
