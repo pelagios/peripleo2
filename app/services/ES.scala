@@ -41,7 +41,7 @@ object ES extends ElasticSearchSanitizer {
   // Maximum response size in ES
   val MAX_SIZE           = 10000
 
-  // Max. number of retries to do in case of failed imports
+  // Max. number of retries to do in case of failure
   val MAX_RETRIES        = 10
 
 }
@@ -69,12 +69,13 @@ class ES @Inject() (config: Configuration, lifecycle: ApplicationLifecycle) {
       }, 3.seconds)
     ) match {
       case Success(_) => {
+        // Yes, there's a cluster - let's connect, shall we?
         Logger.info("Joining ElasticSearch cluster")
         remoteClient
       }
 
       case Failure(_) => {
-        // No ES cluster available - instantiate a local client
+        // No ES cluster available? I'll have my own local node!
         val settings =
           Settings.settingsBuilder()
             .put("http.enabled", true)
@@ -92,23 +93,23 @@ class ES @Inject() (config: Configuration, lifecycle: ApplicationLifecycle) {
     }
   }
 
-  def start() = {
+  private def start() = {
     implicit val timeout = 60.seconds
     val response = client.execute { index exists(ES.PERIPLEO) }.await
     
     if (response.isExists()) {
-      // Index exists - create missing mappings as needed
+      // Index exists - create missing mappings if needed
       val list = client.admin.indices().prepareGetMappings()
       val existingMappings = list.execute().actionGet().getMappings().get(ES.PERIPLEO).keys.toArray.map(_.toString)
       loadMappings(existingMappings).foreach { case (name, json) =>
-        Logger.info("Recreating mapping " + name)
+        Logger.info("Creating mapping " + name)
         val putMapping = client.admin.indices().preparePutMapping(ES.PERIPLEO)
         putMapping.setType(name)
         putMapping.setSource(json)
         putMapping.execute().actionGet()
       }
     } else {
-      // No index - create index with all mappings
+      // Peripleo index doesn't exist - create
       Logger.info("No ES index - initializing...")
 
       val create = client.admin.indices().prepareCreate(ES.PERIPLEO)
@@ -123,12 +124,7 @@ class ES @Inject() (config: Configuration, lifecycle: ApplicationLifecycle) {
     }   
   }
 
-  def flushIndex =
-    client execute {
-      flush index ES.PERIPLEO
-    }
-
-  def stop() = {
+  private def stop() = {
     Logger.info("Stopping ElasticSearch local node")
     client.close()
   }
@@ -136,13 +132,13 @@ class ES @Inject() (config: Configuration, lifecycle: ApplicationLifecycle) {
   private def loadSettings(): String =
     Source.fromFile("conf/elasticsearch.json").getLines().mkString("\n")
 
-  /** Loads all JSON files from the mappings directory **/
-  private def loadMappings(existingMappings: Seq[String] = Seq.empty[String]): Seq[(String, String)] =
+  /** Loads JSON mapping files from the /conf directory, optionally excepting specific mappings **/
+  private def loadMappings(except: Seq[String] = Seq.empty[String]): Seq[(String, String)] =
     new File("conf/es-mappings").listFiles.toSeq.filter(_.getName.endsWith(".json"))
       .foldLeft(Seq.empty[(Int, (String, String))])((mappings, file)  => {
         val number = file.getName.substring(0, 2).toInt
         val name = file.getName.substring(3, file.getName.lastIndexOf('.'))
-        if (existingMappings.contains(name)) {
+        if (except.contains(name)) {
           mappings
         } else {
           val json = Source.fromFile(file).getLines.mkString("\n")
