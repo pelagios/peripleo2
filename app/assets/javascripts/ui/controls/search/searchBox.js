@@ -1,4 +1,7 @@
-define(['ui/common/hasEvents'], function(HasEvents) {
+define([
+  'ui/common/hasEvents',
+  'ui/controls/search/autocomplete'
+], function(HasEvents, Autocomplete) {
 
   var SearchBox = function(parentEl) {
 
@@ -15,6 +18,8 @@ define(['ui/common/hasEvents'], function(HasEvents) {
          searchBoxForm = element.find('form'),
          searchBoxInput = searchBoxForm.find('input'),
          searchBoxIcon = searchBoxForm.find('.icon'),
+
+         autocomplete = new Autocomplete(searchBoxForm, searchBoxInput),
 
          onSubmit = function() {
            var chars = searchBoxInput.val().trim();

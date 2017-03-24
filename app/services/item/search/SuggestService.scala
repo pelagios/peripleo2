@@ -34,8 +34,8 @@ class SuggestService @Inject() (val es: ES, implicit val ctx: ExecutionContext) 
   def suggest(query: String): Future[Seq[Suggestion]] =
     es.client execute {
       search in ES.PERIPLEO / ES.ITEM suggestions (
-        phraseSuggestion("phrases") field("title") text(query) size 2,
-        completionSuggestion("entities") field("suggest") text(query) size 3
+        phraseSuggestion("phrases") field("title") text(query) size 5,
+        completionSuggestion("entities") field("suggest") text(query) size 5
       ) size 0
     } map { response =>
       val phrases = response.suggestion("phrases").entries
