@@ -105,7 +105,7 @@ object Place extends HasGeometry with HasNullableSeq {
     (JsPath \ "languages").writeNullable[Seq[Language]] and
     (JsPath \ "temporal_bounds").writeNullable[TemporalBounds] and
     (JsPath \ "is_conflation_of").write[Seq[GazetteerRecord]] and
-    (JsPath \ "autocomplete").write[CompletionData]
+    (JsPath \ "suggest").write[CompletionData]
   )(place => (
       place.rootUri,
       place.uris,
