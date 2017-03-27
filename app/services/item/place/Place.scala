@@ -75,7 +75,7 @@ private[item] object CompletionData {
    
   // https://www.elastic.co/guide/en/elasticsearch/reference/2.4/search-suggesters-completion.html#indexing
   implicit val payloadWrites: Writes[Payload] = (
-    (JsPath \ "id").write[String] and
+    (JsPath \ "identifier").write[String] and
     (JsPath \ "type").write[ItemType.Value] and
     (JsPath \ "description").writeNullable[String]
   )(unlift(Payload.unapply))
