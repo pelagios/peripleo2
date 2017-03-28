@@ -34,14 +34,10 @@ define([
          },
 
          onSelectOption = function(option) {
-           if (option.identifier) {
-             // Item option
-             
-
-           } else {
-             // Text option
+           if (option.identifier)
+             self.fireEvent('selectSuggestOption', option);
+           else
              onSubmit();
-           }
          };
 
     searchBoxForm.submit(onSubmit);

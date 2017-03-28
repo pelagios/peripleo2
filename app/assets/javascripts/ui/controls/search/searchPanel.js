@@ -19,6 +19,7 @@ define([
         };
 
     searchBox.on('change', this.forwardEvent('queryChange'));
+    searchBox.on('selectSuggestOption', this.forwardEvent('selectSuggestOption'));
 
     filterPane.on('open', this.forwardEvent('open'));
     filterPane.on('close', this.forwardEvent('close'));

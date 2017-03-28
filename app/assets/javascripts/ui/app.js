@@ -32,12 +32,19 @@ require([
           searchPanel.update(response);
            resultList.update(response);
                   map.update(response);
+        },
+
+        onSelectSuggestOption = function(option) {
+          // TODO fetch via API
+          // TODO selectionPanel.show
+          console.log('direct select', option);
         };
 
     searchPanel.on('open', api.enableAggregations);
     searchPanel.on('close', api.disableAggregations);
     searchPanel.on('queryChange', api.updateQuery);
     searchPanel.on('timerangeChange', api.updateTimerange);
+    searchPanel.on('selectSuggestOption', onSelectSuggestOption);
 
     resultList.on('select', selectionPanel.show);
     resultList.on('nextPage', api.loadNextPage);
