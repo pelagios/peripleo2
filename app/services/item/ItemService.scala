@@ -123,9 +123,7 @@ class ItemService @Inject() (val es: ES, implicit val ctx: ExecutionContext) ext
           )
         )
       } map { response =>
-        
-        play.api.Logger.info(response.toString)
-        
+
         import scala.collection.JavaConverters._
         
         val byType = response.aggregations.get("by_type").asInstanceOf[Terms]

@@ -22,7 +22,7 @@ define([
             '</div>' +
           '</div>').hide().appendTo(parentEl),
 
-        depictionEl = element.find('.depiction'),
+        depictionEl = element.find('.depiction').hide(),
 
         titleEl = element.find('h3'),
         homepageEl = element.find('.homepage'),
@@ -48,11 +48,18 @@ define([
                        (!visible && item) ? 'slideDown' : false, // Closed + select
 
               setDepiction = function() {
+                var isPanelVisible = depictionEl.is(':visible');
+
                 if (record.depictions && record.depictions.length > 0) {
                   var firstURL = record.depictions[0].url;
 
                   // TODO pre-load image & report in case of 404
                   depictionEl.css('background-image', 'url(' + firstURL + ')');
+
+                  if (!isPanelVisible)
+                    depictionEl.velocity('slideDown', { duration: SLIDE_DURATION });
+                } else if (isPanelVisible) {
+                  depictionEl.velocity('slideUp', { duration: SLIDE_DURATION });
                 }
               },
 

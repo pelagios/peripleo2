@@ -3,6 +3,7 @@
   position:relative;
   font-size:13px;
   line-height:150%;
+  overflow:hidden;
   .box-shadow(0, 0, 8px, 0, rgba(0,0,0,0.25));
   .rounded-corners(2px);
 
@@ -15,12 +16,12 @@
     background-position:50% 20%;
     cursor:pointer;
     .rounded-corners-top(2px);
+    border-bottom:1px solid @light-grey-border;
   }
 
   .info {
     background-color:#fff;
     padding:16px 12px;
-    border-top:1px solid @light-grey-border;
 
     * {
       color:@dark-grey-type;
