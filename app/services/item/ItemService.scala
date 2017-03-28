@@ -4,20 +4,17 @@ import com.sksamuel.elastic4s.ElasticDsl._
 import com.sksamuel.elastic4s.{ HitAs, RichSearchHit, RichSearchResponse, QueryDefinition }
 import com.sksamuel.elastic4s.source.Indexable
 import javax.inject.{ Inject, Singleton }
-import play.api.Logger
 import play.api.libs.json.Json
 import scala.concurrent.{ ExecutionContext, Future }
-import scala.language.{ postfixOps, reflectiveCalls } 
-import services.{ ES, HasBatchImport, Page }
-import services.item.reference._
+import services.ES
+import services.item.reference.{ ReferenceService, UnboundReference }
 import services.task.TaskType
-import org.elasticsearch.search.aggregations.bucket.terms.Terms
 
 @Singleton
 class ItemService @Inject() (
   val es: ES,
   implicit val ctx: ExecutionContext
-) extends HasBatchImport[(Item, Seq[UnboundReference])] with ReferenceService {
+) extends ReferenceService with ItemImporter {
   
   import com.sksamuel.elastic4s.ElasticDsl.search // Otherwise there's ambiguity with the .search package!
 
@@ -32,33 +29,27 @@ class ItemService @Inject() (
       Json.fromJson[Item](Json.parse(hit.sourceAsString)).get
     }
   }
-
-  def insertOrUpdateItem(item: Item, references: Seq[UnboundReference]): Future[Boolean] = {
-    val fFilterResolvable = filterResolvable(references)
-    
-    def fUpsert(resolvableReferences: Seq[Reference]) =
-      es.client execute {
-        bulk (
-          { update id item.docId.toString in ES.PERIPLEO / ES.ITEM source item docAsUpsert } +: 
-            resolvableReferences.map { ref =>
-              
-              // TODO how to handle IDs for references, so we can update properly?
-              update id item.identifiers.head in ES.PERIPLEO / ES.REFERENCE source ref parent item.identifiers.head docAsUpsert }
-          
-        )
-      } map { _ => true }
-      
-    val f = for {
-      resolvableReferences <- fFilterResolvable
-      success <- fUpsert(resolvableReferences)
-    } yield success
-    
-    f.recover { case t: Throwable =>
-      Logger.error("Error indexing item " + item.identifiers.head + ": " + t.getMessage)
-      // t.printStackTrace
-      false
-    }
-  }
+  
+  /** Retrieves connected items.
+    * 
+    * Items are connected of they match any of the provided URIs in
+    * their identifiers, close_match or exact_match fields. 
+    * 
+    * TODO make this method filter-able by item type
+    * 
+    */
+  def findConnected(uris: Seq[String]): Future[Seq[Item]] =
+    es.client execute {
+      search in ES.PERIPLEO / ES.ITEM query {
+        bool {
+          should {
+            uris.map(uri => termQuery("is_conflation_of.identifiers" -> uri)) ++
+            uris.map(uri => termQuery("is_conflation_of.close_matches" -> uri)) ++
+            uris.map(uri => termQuery("is_conflation_of.exact_matches" -> uri))
+          }
+        }
+      } limit ES.MAX_SIZE
+    } map { _.as[Item].toSeq }
   
   private def deleteByQuery(index: String, q: QueryDefinition): Future[Unit] = {
     
