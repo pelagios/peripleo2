@@ -135,7 +135,7 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
     } start 0 limit 0 aggregations (
       aggregation
         terms "by_place"
-        field "root_uri"
+        field "reference_to.doc_id"
         size 600
     ) // TODO sub-aggregate places vs people vs periods etc. to places only
 
