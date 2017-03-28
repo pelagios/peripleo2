@@ -12,21 +12,46 @@
 }
 
 .tt-suggestion {
-  color:@dark-grey-type;
-  font-size:15px;
-  font-weight:300;
-  padding:8px 10px;
+  position:relative;
+  color:@light-grey-type-hover;
+  font-size:13px;
+  padding:8px 10px 8px 4px;
   line-height:18px;
-  border-bottom:1px solid @light-grey-border;
+  border-top:1px solid @light-grey-border;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+  font-weight:300;
+  cursor:pointer;
 
-  strong {
-    font-weight:normal;
+  .description {
+    padding-left:5px;
   }
 
 }
 
-.tt-suggestion:last-child {
-  border:none;
+.tt-suggestion::before {
+  font-family:FontAwesome;
+  font-size:12px;
+  line-height:18px;
+  color:lighten(@light-grey-type, 5%);
+  display:inline-block;
+  text-align:center;
+  width:24px;
+}
+
+.tt-suggestion.text::before {
+  content:'\f002';
+}
+
+.tt-suggestion.entity.PLACE::before {
+  font-size:14px;
+  content:'\f041';
+}
+
+.tt-suggestion.entity .label {
+  color:@dark-grey-type;
+  font-weight:normal;
 }
 
 .tt-suggestion:hover {

@@ -3,6 +3,7 @@ package services.item.search
 import com.sksamuel.elastic4s.ElasticDsl._
 import java.util.ArrayList
 import javax.inject.{ Inject, Singleton }
+import org.elasticsearch.common.unit.Fuzziness
 import org.elasticsearch.search.suggest.completion.CompletionSuggestion
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
@@ -20,7 +21,7 @@ object Suggestion {
   
   implicit val suggestionWrites: Writes[Suggestion] = (
     (JsPath \ "text").write[String] and
-    (JsPath \ "item_id").writeNullable[String] and
+    (JsPath \ "identifier").writeNullable[String] and
     (JsPath \ "item_type").writeNullable[ItemType] and
     (JsPath \ "description").writeNullable[String]
   )(unlift(Suggestion.unapply))
@@ -35,8 +36,8 @@ class SuggestService @Inject() (val es: ES, implicit val ctx: ExecutionContext) 
   def suggest(query: String): Future[Seq[Suggestion]] =
     es.client execute {
       search in ES.PERIPLEO / ES.ITEM suggestions (
-        phraseSuggestion("phrases") field("title") text(query) size 5,
-        completionSuggestion("entities") field("suggest") text(query) size 5
+        phraseSuggestion("phrases") field("title") text(query) size 3,
+        fuzzyCompletionSuggestion("entities").fuzzyPrefixLength(3) field("suggest") text(query) size 4
       ) size 0
     } map { response =>
       val phrases = response.suggestion("phrases").entries
@@ -51,7 +52,7 @@ class SuggestService @Inject() (val es: ES, implicit val ctx: ExecutionContext) 
           val payload = option.getPayloadAsMap
           Suggestion(
             option.getText.string,
-            Option(payload.get("id")).map(_.toString),
+            Option(payload.get("identifier")).map(_.toString),
             Option(payload.get("type")).map(t => ItemType.parse(t.asInstanceOf[ArrayList[String]].asScala)),
             Option(payload.get("description")).map(_.toString))
         }.toSeq

@@ -31,9 +31,22 @@ define([
 
            searchBoxInput.blur();
            return false;
+         },
+
+         onSelectOption = function(option) {
+           if (option.identifier) {
+             // Item option
+             
+
+           } else {
+             // Text option
+             onSubmit();
+           }
          };
 
     searchBoxForm.submit(onSubmit);
+    autocomplete.on('selectOption', onSelectOption);
+
     HasEvents.apply(this);
   };
   SearchBox.prototype = Object.create(HasEvents.prototype);
