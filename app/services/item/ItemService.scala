@@ -114,28 +114,30 @@ class ItemService @Inject() (val es: ES, implicit val ctx: ExecutionContext) ext
     val fStats =
       es.client execute {
         search in ES.PERIPLEO / ES.REFERENCE query {
-          hasParentQuery(ES.ITEM) query(termQuery("identifiers", identifier))
+          hasParentQuery(ES.ITEM) query(termQuery("is_conflation_of.identifiers", identifier))
         } start 0 limit 0 aggregations (
           // Aggregate by reference type...
           aggregation terms "by_type" field "reference_type" aggregations (
             // ... and sub-aggregate by root URI
-            aggregation terms "by_root_uri" field "root_uri" size ES.MAX_SIZE
+            aggregation terms "by_doc_id" field "reference_to.doc_id" size ES.MAX_SIZE
           )
         )
       } map { response =>
+        
+        play.api.Logger.info(response.toString)
         
         import scala.collection.JavaConverters._
         
         val byType = response.aggregations.get("by_type").asInstanceOf[Terms]
         byType.getBuckets.asScala.map { bucket =>
-          val byUri = bucket.getAggregations.get("by_root_uri").asInstanceOf[Terms]
-          val byUriAsMap = byUri.getBuckets.asScala.map { subBucket =>
+          val byDocId = bucket.getAggregations.get("by_doc_id").asInstanceOf[Terms]
+          val byDocIdAsMap = byDocId.getBuckets.asScala.map { subBucket =>
             // URI -> count
             (subBucket.getKeyAsString, subBucket.getDocCount)
           }.toMap
           
           val referenceType = ReferenceType.withName(bucket.getKeyAsString)
-          (referenceType, (bucket.getDocCount, byUriAsMap))
+          (referenceType, (bucket.getDocCount, byDocIdAsMap))
         }.toMap
       }
       

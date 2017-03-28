@@ -97,8 +97,7 @@ define([
                 jsRoutes.controllers.api.ItemAPIController.getReferences(record.uri)
                   .ajax()
                   .done(function(response) {
-                    /*
-                    var places = response.references.PLACE,
+                    var places = response.PLACE,
                         head = (places && places.length > 3) ? places.slice(0, 3) : places;
 
                     if (head) {
@@ -109,7 +108,7 @@ define([
                           '</p>');
                       });
 
-                    }*/
+                    }
                   });
               };
 
