@@ -59,7 +59,7 @@ sealed trait ItemType {
   val parent: Option[ItemType]
   
   lazy val asString: Seq[String] = parent match {
-    case Some(parent) => name +: parent.asString
+    case Some(parent) => parent.asString :+ name
     case None => Seq(name)
   }
   
