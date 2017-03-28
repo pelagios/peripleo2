@@ -39,31 +39,32 @@ define([
         },
 
         show = function(item) {
+              // WARNING: for the moment, we assume items to have exactly one record!
+          var record = item.is_conflation_of[0],
 
-          // console.log(item);
-
-          var visible = element.is(':visible'),
+              visible = element.is(':visible'),
 
               slideAction = (visible && !item) ? 'slideUp' : // Open + deselect
                        (!visible && item) ? 'slideDown' : false, // Closed + select
 
               setDepiction = function() {
-                if (item.depictions && item.depictions.length > 0) {
-                  var firstURL = item.depictions[0].url;
+                if (record.depictions && record.depictions.length > 0) {
+                  var firstURL = record.depictions[0].url;
 
                   // TODO pre-load image & report in case of 404
                   depictionEl.css('background-image', 'url(' + firstURL + ')');
                 }
               },
 
+              // WARNING: for the moment, we assume items to have exactly one record!
               setInfo = function() {
-                var title = (item.homepage) ?
-                              '<a href="' + item.homepage + '" target="_blank">' + item.title + '</a>' :
+                var title = (record.homepage) ?
+                              '<a href="' + record.homepage + '" target="_blank">' + item.title + '</a>' :
                               item.title,
 
                     // TODO we'll do this pre-processing step on the server later!
                     datasetPath = function() {
-                      var last = item.is_in_dataset[item.is_in_dataset.length - 1],
+                      var last = record.is_in_dataset[record.is_in_dataset.length - 1],
                           tuples = last.split('\u0007\u0007');
 
                       return tuples.map(function(str) {
@@ -74,8 +75,8 @@ define([
 
                 titleEl.html(title);
 
-                if (item.homepage)
-                  homepageEl.html(item.homepage);
+                if (record.homepage)
+                  homepageEl.html(record.homepage);
 
                 if (item.temporal_bounds) {
                   if (item.temporal_bounds.from === item.temporal_bounds.to)
@@ -93,9 +94,10 @@ define([
               setReferences = function() {
                 // TODO load indicator
                 // TODO there will be more than just findspots in the future!
-                jsRoutes.controllers.api.ItemAPIController.getReferences(item.identifiers[0])
+                jsRoutes.controllers.api.ItemAPIController.getReferences(record.uri)
                   .ajax()
                   .done(function(response) {
+                    /*
                     var places = response.references.PLACE,
                         head = (places && places.length > 3) ? places.slice(0, 3) : places;
 
@@ -107,7 +109,7 @@ define([
                           '</p>');
                       });
 
-                    }
+                    }*/
                   });
               };
 
