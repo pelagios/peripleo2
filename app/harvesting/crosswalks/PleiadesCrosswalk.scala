@@ -22,7 +22,8 @@ object PleiadesCrosswalk extends BaseGeoJSONCrosswalk {
       Some(TemporalBounds.fromYears(startDate.min, endDate.max))
   }
 
-  def fromJson(record: String): Option[ItemRecord] = super.fromJson[PleiadesRecord](record, { pleiades =>
+  def fromJson(record: String): Option[ItemRecord] = super.fromJson[PleiadesRecord](record, { pleiades =>    
+    val names = pleiades.names.flatMap(_.toNames)
     ItemRecord(
       ItemRecord.normalizeURI(pleiades.uri),
       Seq(ItemRecord.normalizeURI(pleiades.uri)),
@@ -35,12 +36,12 @@ object PleiadesCrosswalk extends BaseGeoJSONCrosswalk {
       pleiades.description.map(d => Seq(new Description(d))).getOrElse(Seq.empty[Description]),
       None, // homepage
       None, // license
-      pleiades.names.flatMap(_.language).flatMap(Language.safeParse),
+      names.flatMap(_.language).distinct,
       Seq.empty[Depiction],
       pleiades.features.headOption.map(_.geometry), // TODO compute union?
       pleiades.representativePoint,
       computeTemporalBounds(pleiades.names), // TODO temporalBounds
-      pleiades.names.flatMap(_.toNames),
+      names,
       Seq.empty[String], // TODO closeMatches
       Seq.empty[String]  // TODO exactMatches
     )
