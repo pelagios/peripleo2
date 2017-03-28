@@ -67,7 +67,7 @@ trait HasFileDownload { self: { val ws: WSClient } =>
           outputStream.close()
           result.get
       } map {_ =>
-        Logger.info("Download complete")
+        Logger.info("Download complete")        
         val contentType = response.headers.headers.get("Content-Type").flatMap(_.headOption)
         val extension = getExtension(url, contentType)
         val renamedTempFile = new TemporaryFile(new File(TMP_DIR, filename + "." + extension))
