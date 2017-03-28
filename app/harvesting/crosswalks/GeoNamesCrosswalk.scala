@@ -9,7 +9,7 @@ import services.HasGeometry
 import services.item._
 
 object GeoNamesCrosswalk extends BaseGeoJSONCrosswalk {
-  
+
   def fromJson(record: String): Option[ItemRecord] = super.fromJson[GeoNamesRecord](record, { geonames =>
     ItemRecord(
       ItemRecord.normalizeURI(geonames.uri),
@@ -19,7 +19,7 @@ object GeoNamesCrosswalk extends BaseGeoJSONCrosswalk {
       geonames.title,
       Some(PathHierarchy("GeoNames", "GeoNames")),
       None, // isPartOf
-      Seq.empty[Category], 
+      Seq.empty[Category],
       geonames.description.map(d => Seq(new Description(d))).getOrElse(Seq.empty[Description]),
       None, // homepage
       None, // license
@@ -27,38 +27,37 @@ object GeoNamesCrosswalk extends BaseGeoJSONCrosswalk {
       Seq.empty[Depiction],
       geonames.features.headOption.map(_.geometry), // TODO compute union?
       geonames.representativePoint,
-      Seq.empty[String], // periods
       None, // temporalBounds
       geonames.names,
       Seq.empty[String], // closeMatches
       Seq.empty[String]  // exactMatches
     )
   })
-  
+
 }
 
 case class GeoNamesRecord(
 
   uri: String,
-  
+
   title: String,
-  
+
   description: Option[String],
-  
+
   names: Seq[Name],
-  
+
   features: Seq[Feature],
-  
+
   representativePoint: Option[Coordinate],
-  
+
   countryCode: Option[String],
-  
+
   population: Option[Long]
-    
+
 )
 
 object GeoNamesRecord extends HasGeometry {
-  
+
   implicit val pleiadesRecordReads: Reads[GeoNamesRecord] = (
     (JsPath \ "uri").read[String] and
     (JsPath \ "title").read[String] and
@@ -69,5 +68,5 @@ object GeoNamesRecord extends HasGeometry {
     (JsPath \ "country_code").readNullable[String] and
     (JsPath \ "population").readNullable[Long]
   )(GeoNamesRecord.apply _)
-  
+
 }

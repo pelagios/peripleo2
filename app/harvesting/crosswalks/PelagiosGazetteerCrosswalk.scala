@@ -9,21 +9,21 @@ import org.pelagios.api.PeriodOfTime
 import services.item._
 
 object PelagiosGazetteerCrosswalk {
-  
+
   private def convertPeriodOfTime(period: PeriodOfTime): TemporalBounds = {
     val startDate = period.start
     val endDate = period.end.getOrElse(startDate)
-    
+
     TemporalBounds(
-      new DateTime(startDate).withZone(DateTimeZone.UTC), 
-      new DateTime(endDate).withZone(DateTimeZone.UTC))          
+      new DateTime(startDate).withZone(DateTimeZone.UTC),
+      new DateTime(endDate).withZone(DateTimeZone.UTC))
   }
-  
+
   def fromRDF(filename: String): InputStream => Seq[ItemRecord] = {
 
     val sourceGazetteer = filename.substring(0, filename.indexOf('.'))
-  
-    def convertPlace(place: org.pelagios.api.gazetteer.Place): ItemRecord =      
+
+    def convertPlace(place: org.pelagios.api.gazetteer.Place): ItemRecord =
       ItemRecord(
         ItemRecord.normalizeURI(place.uri),
         Seq(ItemRecord.normalizeURI(place.uri)),
@@ -40,18 +40,17 @@ object PelagiosGazetteerCrosswalk {
         place.depictions.map(image => Depiction(image.uri, None, image.title, None, None, image.license)),
         place.location.map(_.geometry),
         place.location.map(_.pointLocation),
-        Seq.empty[String], // periods
         place.temporalCoverage.map(convertPeriodOfTime(_)),
-        place.names.map(l => Name(l.chars, l.lang.flatMap(Language.safeParse))),       
+        place.names.map(l => Name(l.chars, l.lang.flatMap(Language.safeParse))),
         place.closeMatches.map(ItemRecord.normalizeURI),
         place.exactMatches.map(ItemRecord.normalizeURI))
-    
+
     // Return crosswalk function
     { stream: InputStream =>
       Scalagios.readPlaces(stream, filename).map(convertPlace).toSeq }
   }
-  
+
   def readFile(file: File): Seq[ItemRecord] =
     fromRDF(file.getName)(new FileInputStream(file))
-  
+
 }

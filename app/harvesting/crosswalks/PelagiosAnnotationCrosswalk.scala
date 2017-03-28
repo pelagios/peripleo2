@@ -11,17 +11,17 @@ import services.item.reference.{ ReferenceType, UnboundReference }
 import scala.util.Try
 
 object PelagiosAnnotationCrosswalk {
-  
+
   // Bit annoying that this is duplication with the Place crosswalk - but would
   // rather have those few lines of duplication than pollute the code with a
   // Pelagios-RDF-specific trait
   private def convertPeriodOfTime(period: PeriodOfTime): TemporalBounds = {
     val startDate = period.start
     val endDate = period.end.getOrElse(startDate)
-    
+
     TemporalBounds(
-      new DateTime(startDate).withZone(DateTimeZone.UTC), 
-      new DateTime(endDate).withZone(DateTimeZone.UTC))          
+      new DateTime(startDate).withZone(DateTimeZone.UTC),
+      new DateTime(endDate).withZone(DateTimeZone.UTC))
   }
 
   /** Returns a flat list of all things below this thing in the hierarchy **/
@@ -34,7 +34,7 @@ object PelagiosAnnotationCrosswalk {
     def convertAnnotatedThing(thing: AnnotatedThing): Seq[(Item, Seq[UnboundReference])] = {
       val flattenedHierarchy = thing +: flattenThingHierarchy(thing)
       flattenedHierarchy.map { thing =>
-        
+
         val references = thing.annotations.flatMap { _.places.headOption.map { placeUri =>
           val uri = ItemRecord.normalizeURI(placeUri)
           UnboundReference(
@@ -51,7 +51,7 @@ object PelagiosAnnotationCrosswalk {
           thing.uri,
           Seq(Some(thing.uri), thing.identifier).flatten,
           DateTime.now().withZone(DateTimeZone.UTC),
-          None, // lastChangedAt 
+          None, // lastChangedAt
           thing.title,
           Some(inDataset),
           None, // TODO isPartOf
@@ -60,21 +60,20 @@ object PelagiosAnnotationCrosswalk {
           thing.homepage,
           None, // license
           thing.languages.flatMap(Language.safeParse),
-          thing.depictions.map(url => Depiction(url, None, None, None, None, None)),    
+          thing.depictions.map(url => Depiction(url, None, None, None, None, None)),
           None, // TODO geometry
           None, // TODO representative point
-          Seq.empty[String], // Periods
           thing.temporal.map(convertPeriodOfTime),
           Seq.empty[Name],
           Seq.empty[String], // closeMatches
           Seq.empty[String]) // exactMatches
-        
+
         (Item.fromRecord(ItemType.OBJECT, record), references)
       }
     }
-    
+
     { stream: InputStream =>
       Scalagios.readAnnotations(stream, filename).flatMap(convertAnnotatedThing).toSeq }
   }
-  
+
 }

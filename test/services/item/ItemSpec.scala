@@ -10,9 +10,9 @@ import play.api.test.Helpers._
 import services.TestHelpers
 
 class ItemSpec extends PlaySpec with TestHelpers {
-  
+
   "Sample dataset Item" should {
-    
+
     "be properly created from JSON" in {
       val datasetItem = loadJSON[Item]("services/item/dataset/dataset_item.json")
       datasetItem.identifiers mustBe Seq("http://opencontext.org/projects/4B5721E9-2BB3-423F-5D04-1B948FA65FAB")
@@ -30,21 +30,21 @@ class ItemSpec extends PlaySpec with TestHelpers {
       record.representativePoint mustBe Some(new Coordinate(-38.3203125, 37.16031654673677))
       record.temporalBounds mustBe Some(TemporalBounds(toDateTime("-1500000-01-01T00:00:00Z"), toDateTime("1500-01-01T00:00:00Z")))
     }
-    
+
   }
-  
+
   "Sample object Item" should {
-    
+
     "be properly created from JSON" in {
-      val objectItem = loadJSON[Item]("services/item/object/object_item.json")       
+      val objectItem = loadJSON[Item]("services/item/object/object_item.json")
       objectItem.identifiers mustBe Seq("7beabb84-37f1-4f18-8a74-b02143890bb7", "http://numismatics.org/collection/1991.60.36")
       objectItem.itemType mustBe ItemType.OBJECT
-      objectItem.title mustBe "Silver 4 drachm (tetradrachm), Cnossus, 200 BC - 67 BC. 1991.60.36" 
+      objectItem.title mustBe "Silver 4 drachm (tetradrachm), Cnossus, 200 BC - 67 BC. 1991.60.36"
       objectItem.isConflationOf.size mustBe 1
-      
+
       val record = objectItem.isConflationOf(0)
       record.lastSyncedAt mustBe toDateTime("2017-02-03T11:18:21Z")
-      record.lastChangedAt mustBe Some(toDateTime("2016-10-01T12:00:00Z"))          
+      record.lastChangedAt mustBe Some(toDateTime("2016-10-01T12:00:00Z"))
       record.categories mustBe Seq(
         Category("Archaeology", Some("http://vocab.getty.edu/aat/300054328")),
         Category("Numismatics", Some("http://vocab.getty.edu/aat/300054419"))
@@ -65,11 +65,11 @@ class ItemSpec extends PlaySpec with TestHelpers {
           None, None, None)
       )
     }
-    
+
   }
-  
+
   "Sample period Item" should {
-    
+
     "be properly created from JSON" in {
       val periodItem = loadJSON[Item]("services/item/period/period_item.json")
       periodItem.identifiers mustBe Seq("http://n2t.net/ark:/99152/p0z5nvh24r6")
@@ -77,19 +77,19 @@ class ItemSpec extends PlaySpec with TestHelpers {
       periodItem.title mustBe "Aegean Bronze Age"
       periodItem.temporalBounds mustBe Some(TemporalBounds.fromYears(-2999, -1999))
       periodItem.isConflationOf.size mustBe 1
-      
+
       val record = periodItem.isConflationOf(0)
       record.lastSyncedAt mustBe toDateTime("2017-02-14T07:49:00Z")
       record.title mustBe "Aegean Bronze Age"
       record.isInDataset mustBe Some(PathHierarchy("http://perio.do/", "PeriodO"))
       record.descriptions mustBe Seq(Description("In collection: Stokstad, Marilyn, 1929-. Art history. 2005."))
-      record.temporalBounds mustBe Some(TemporalBounds.fromYears(-2999, -1999))   
+      record.temporalBounds mustBe Some(TemporalBounds.fromYears(-2999, -1999))
     }
-    
+
   }
-  
+
   "Sample person Item" should {
-    
+
     "be properly created from JSON" in {
       val personItem = loadJSON[Item]("services/item/person/person_item.json")
 
@@ -97,7 +97,7 @@ class ItemSpec extends PlaySpec with TestHelpers {
       personItem.itemType mustBe ItemType.PERSON
       personItem.title mustBe "Apollo"
       personItem.isConflationOf.size mustBe 1
-      
+
       val record = personItem.isConflationOf(0)
       record.uri mustBe "http://collection.britishmuseum.org/id/person-institution/56988"
       record.lastSyncedAt mustBe toDateTime("2017-02-03T11:18:21Z")
@@ -106,11 +106,11 @@ class ItemSpec extends PlaySpec with TestHelpers {
       record.isInDataset mustBe Some(PathHierarchy(Seq(PathSegment("d5e8e113-1552-4f47-9c06-1bb733c8e5be", "BM People"))))
       record.homepage mustBe Some("http://collection.britishmuseum.org/resource?uri=http://collection.britishmuseum.org/id/person-institution/56988")
     }
-    
+
   }
-  
+
   "Sample place Item" should {
-    
+
     "be properly created from JSON" in {
        val placeItem = loadJSON[Item]("services/item/place/place_item.json")
        placeItem.identifiers mustBe Seq(
@@ -124,18 +124,18 @@ class ItemSpec extends PlaySpec with TestHelpers {
        placeItem.temporalBounds mustBe Some(TemporalBounds(toDateTime("-30-01-01T00:00:00Z"), toDateTime("640-01-01T00:00:00Z")))
        placeItem.isConflationOf.flatMap(_.languages) mustBe Seq(Language("LA"))
        placeItem.isConflationOf.size mustBe 3
-       
+
        val pleiades = placeItem.isConflationOf(0)
        pleiades.uri mustBe "http://pleiades.stoa.org/places/118543"
        pleiades.isInDataset mustBe Some(PathHierarchy("http://pleiades.stoa.org", "Pleiades"))
        pleiades.names mustBe Seq(Name("Ad Mauros"))
        pleiades.categories mustBe Seq(Category("fort"), Category("tower"))
-        
+
        val dare = placeItem.isConflationOf(1)
        dare.uri mustBe "http://dare.ht.lu.se/places/10778"
        dare.isInDataset mustBe Some(PathHierarchy("http://dare.ht.lu.se", "DARE"))
        dare.closeMatches must contain ("http://www.wikidata.org/entity/Q2739862")
-        
+
        val trismegistos = placeItem.isConflationOf(2)
        trismegistos.uri mustBe "http://www.trismegistos.org/place/35191"
        trismegistos.isInDataset mustBe Some(PathHierarchy("http://www.trismegistos.org", "Trismegistos"))
@@ -145,19 +145,19 @@ class ItemSpec extends PlaySpec with TestHelpers {
          Name("Marianianio", Some(Language("LA")))
        )
     }
-    
+
   }
-  
+
   "JSON serialization/parsing roundtrip" should {
-    
+
     "yield an equal item" in {
       val point = createPoint(14.02358, 48.31058)
-      
+
       val source = Item.fromRecord(ItemType.OBJECT, ItemRecord(
         "http://numismatics.org/collection/1991.60.36",
         Seq("http://numismatics.org/collection/1991.60.36"),
         CURRENT_TIME,
-        Some(CURRENT_TIME),        
+        Some(CURRENT_TIME),
         "A dummy object",
         Some(PathHierarchy("http://numismatics.org", "Example Dataset")),
         None, // isPartOf
@@ -172,20 +172,19 @@ class ItemSpec extends PlaySpec with TestHelpers {
         ),
         Some(point),
         Some(point.getCoordinate),
-        Seq.empty[String], // periods
         Some(TemporalBounds.fromYears(-500, -250)),
         Seq.empty[Name],
         Seq.empty[String], // closeMatches
         Seq.empty[String]  // exactMatches
       ))
-      
+
       val serialized = Json.prettyPrint(Json.toJson(source))
-      
+
       val parsed = Json.fromJson[Item](Json.parse(serialized))
       parsed.isSuccess mustBe true
       parsed.get mustBe source
     }
-       
+
   }
-  
+
 }

@@ -10,14 +10,14 @@ import services.{ HasDate, HasGeometry }
 import services.item._
 
 object PleiadesCrosswalk extends BaseGeoJSONCrosswalk {
-  
+
   private val PLEIADES = PathHierarchy("Pleiades", "Pleiades")
-  
+
   private def computeTemporalBounds(names: Seq[PleiadesName]): Option[TemporalBounds] = {
     val startDate= names.flatMap(_.startDate)
     val endDate = names.flatMap(_.endDate)
     if (startDate.isEmpty || endDate.isEmpty)
-      None 
+      None
     else
       Some(TemporalBounds.fromYears(startDate.min, endDate.max))
   }
@@ -39,22 +39,21 @@ object PleiadesCrosswalk extends BaseGeoJSONCrosswalk {
       Seq.empty[Depiction],
       pleiades.features.headOption.map(_.geometry), // TODO compute union?
       pleiades.representativePoint,
-      Seq.empty[String], // periods
       computeTemporalBounds(pleiades.names), // TODO temporalBounds
       pleiades.names.flatMap(_.toNames),
       Seq.empty[String], // TODO closeMatches
       Seq.empty[String]  // TODO exactMatches
     )
   })
-  
+
 }
 
 case class HistoryRecord(modified: DateTime)
 
 object HistoryRecord extends HasDate {
-  
+
   implicit val historyRecordReads: Reads[HistoryRecord] = (JsPath \ "modified").read[DateTime].map(HistoryRecord(_))
-  
+
 }
 
 case class PleiadesName(
@@ -64,26 +63,26 @@ case class PleiadesName(
   startDate: Option[Int],
   endDate: Option[Int]
 ) {
-  
+
   // BAD bad Pleiades!
   lazy val normalizedLanguage = language match {
     case Some(language) if !language.trim.isEmpty => Some(language)
     case _ => None
   }
-    
+
   lazy val toNames = Seq(attested, romanized).flatten.filter(!_.trim.isEmpty).map(Name(_, normalizedLanguage.flatMap(Language.safeParse)))
-  
+
 }
 
 object PleiadesName {
-  
+
    implicit val pleiadesNameReads: Reads[PleiadesName] = (
     (JsPath \ "attested").readNullable[String] and
     (JsPath \ "romanized").readNullable[String] and
     (JsPath \ "language").readNullable[String] and
     (JsPath \ "start").readNullable[Int] and
     (JsPath \ "end").readNullable[Int]
-  )(PleiadesName.apply _) 
+  )(PleiadesName.apply _)
 }
 
 case class PleiadesRecord(
@@ -91,27 +90,27 @@ case class PleiadesRecord(
   uri: String,
 
   history: Seq[HistoryRecord],
-  
+
   title: String,
-  
+
   description: Option[String],
-  
+
   names: Seq[PleiadesName],
-  
+
   features: Seq[Feature],
-  
+
   representativePoint: Option[Coordinate],
-    
+
   placeTypes: Seq[String]
-  
+
   // TODO close matches
-  
+
   // TODO exact matches
-    
+
 )
 
 object PleiadesRecord extends HasGeometry {
-  
+
   implicit val pleiadesRecordReads: Reads[PleiadesRecord] = (
     (JsPath \ "uri").read[String] and
     (JsPath \ "history").read[Seq[HistoryRecord]] and
@@ -122,5 +121,5 @@ object PleiadesRecord extends HasGeometry {
     (JsPath \ "reprPoint").readNullable[Coordinate] and
     (JsPath \ "placeTypes").readNullable[Seq[String]].map(_.getOrElse(Seq.empty[String]))
   )(PleiadesRecord.apply _)
-  
+
 }

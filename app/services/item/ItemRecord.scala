@@ -39,8 +39,6 @@ case class ItemRecord(
 
   representativePoint: Option[Coordinate],
 
-  periods: Seq[String],
-
   temporalBounds: Option[TemporalBounds],
 
   names: Seq[Name],
@@ -115,8 +113,6 @@ object ItemRecord extends HasDate with HasNullableSeq with HasGeometry {
       .inmap[Seq[Depiction]](fromOptSeq[Depiction], toOptSeq[Depiction]) and
     (JsPath \ "geometry").formatNullable[Geometry] and
     (JsPath \ "representative_point").formatNullable[Coordinate] and
-    (JsPath \ "periods").formatNullable[Seq[String]]
-      .inmap[Seq[String]](fromOptSeq[String], toOptSeq[String]) and
     (JsPath \ "temporal_bounds").formatNullable[TemporalBounds] and
     (JsPath \ "names").formatNullable[Seq[Name]]
       .inmap[Seq[Name]](fromOptSeq[Name], toOptSeq[Name]) and

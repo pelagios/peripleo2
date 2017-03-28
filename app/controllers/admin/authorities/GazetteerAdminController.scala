@@ -51,7 +51,6 @@ class GazetteerAdminController @Inject() (
       Seq.empty[Depiction],
       None, // geometry
       None, // representativePoint
-      Seq.empty[String], // periods
       None, // temporalBounds
       Seq.empty[Name],
       Seq.empty[String], // closeMatches

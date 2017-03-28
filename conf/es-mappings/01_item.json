@@ -57,7 +57,6 @@
               "license": { "type": "string", "index": "not_analyzed" }
             }
           },
-          "periods": { "type": "string", "index": "not_analyzed" },
           "temporal_bounds": {
             "properties": {
               "from": { "type": "date", "format": "yyyy-MM-dd" },
