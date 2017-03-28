@@ -1,14 +1,19 @@
 {
-  "identifiers": [ "http://collection.britishmuseum.org/id/person-institution/56988" ],
-  "item_type": "PERSON",
-  "last_synced_at": "2017-02-03T11:18:21Z",
-  "last_changed_at": "2016-10-01T12:00:00Z",
+  "doc_id": "3a202be0-b86f-40f2-9586-4840717d89d0",
+  "item_type": [ "PERSON" ],
   "title": "Apollo",
-  "is_in_dataset": [
-    "d5e8e113-1552-4f47-9c06-1bb733c8e5be\u0007BM People"
-  ],
-  "descriptions": [{
-    "description": "One of the twelve Olympian gods; son of Zeus/Jupiter (q.v.) and Leto/Latona (q.v.); brother of Artemis/Diana (q.v.); a major deity representing, in opposition to Dionysos/Bacchus (q.v.), the rational and civilized aspects of human nature; patron of the arts and leader of the Muses (q.v.); later, manifested as Phoebus (q.v.), he became identified with the sun-god Helios/Sol (q.v.)."
-  }],
-  "homepage": "http://collection.britishmuseum.org/resource?uri=http://collection.britishmuseum.org/id/person-institution/56988"
+  "is_conflation_of": [{
+    "uri": "http://collection.britishmuseum.org/id/person-institution/56988",
+    "identifiers": [ "http://collection.britishmuseum.org/id/person-institution/56988" ],
+    "last_synced_at": "2017-02-03T11:18:21Z",
+    "last_changed_at": "2016-10-01T12:00:00Z",
+    "title": "Apollo",
+    "is_in_dataset": [
+      "d5e8e113-1552-4f47-9c06-1bb733c8e5be\u0007BM People"
+    ],
+    "descriptions": [{
+      "description": "One of the twelve Olympian gods; son of Zeus/Jupiter (q.v.) and Leto/Latona (q.v.); brother of Artemis/Diana (q.v.); a major deity representing, in opposition to Dionysos/Bacchus (q.v.), the rational and civilized aspects of human nature; patron of the arts and leader of the Muses (q.v.); later, manifested as Phoebus (q.v.), he became identified with the sun-god Helios/Sol (q.v.)."
+    }],
+    "homepage": "http://collection.britishmuseum.org/resource?uri=http://collection.britishmuseum.org/id/person-institution/56988"
+  }]
 }

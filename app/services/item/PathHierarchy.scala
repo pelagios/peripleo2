@@ -13,29 +13,34 @@ case class PathSegment(id: String, title: String) {
 object PathSegment {
   
   val SEPARATOR = 0x0007.toChar
-  
+    
 }
 
 case class PathHierarchy(path: Seq[PathSegment])
-    
+
 object PathHierarchy {
   
   // We're using single Beeps to separate id and title within each segment,
   // and then a double Beep to separate the segments
   val SEPARATOR = Seq(PathSegment.SEPARATOR, PathSegment.SEPARATOR).mkString
   
-  def toHierarchy(maybeLevels: Option[Seq[String]]): Option[PathHierarchy] = 
-    maybeLevels.map(toPathHierarchies(_).head)
-      
-  def toHierarchies(maybeLevels: Option[Seq[String]]): Seq[PathHierarchy] =
-    maybeLevels.map(toPathHierarchies).getOrElse(Seq.empty[PathHierarchy])
+  // For convenience
+  def apply(id: String, title: String) = new PathHierarchy(Seq(PathSegment(id, title)))
+  
+  def toHierarchy(levels: Seq[String]): PathHierarchy = 
+    toHierarchies(levels).head
+  
+  def toOptHierarchy(maybeLevels: Option[Seq[String]]): Option[PathHierarchy] = 
+    maybeLevels.map(toHierarchies(_).head)
+    
+  def fromHierarchy(hierarchy: PathHierarchy): Seq[String] =
+    toList(hierarchy)
 
-  def fromHierarchy(hierarchy: Option[PathHierarchy]): Option[Seq[String]] =
+  def fromOptHierarchy(hierarchy: Option[PathHierarchy]): Option[Seq[String]] =
     hierarchy.map(toList)
-
-  def fromHierarchies(hierarchies: Seq[PathHierarchy]): Option[Seq[String]] =
-    if (hierarchies.isEmpty) None
-    else Some(hierarchies.flatMap(toList))
+    
+ def fromHierarchies(hierarchies: Seq[PathHierarchy]): Seq[String] =
+    hierarchies.flatMap(toList)
   
   /** Builds the 'levels' for the path. Example: the path
     * 
@@ -50,7 +55,7 @@ object PathHierarchy {
       hierarchy.path.take(idx + 1).mkString(SEPARATOR) }
   
   /** Rebuilds the path from a list of levels **/
-  private def toPathHierarchies(levels: Seq[String]): Seq[PathHierarchy] = {
+  def toHierarchies(levels: Seq[String]): Seq[PathHierarchy] = {
     // Find the root paths (i.e. those that don't contain a double-beep separator)
     val roots = levels.filterNot(_.contains(SEPARATOR))
     roots.map { root =>

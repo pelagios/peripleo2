@@ -7,12 +7,11 @@ import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
 import services.{ HasDate, HasGeometry }
-import services.item.{ Description, Depiction, Language, TemporalBounds }
-import services.item.place.{ Gazetteer, GazetteerRecord, Name }
+import services.item._
 
 object PleiadesCrosswalk extends BaseGeoJSONCrosswalk {
   
-  private val PLEIADES = Gazetteer("Pleiades")
+  private val PLEIADES = PathHierarchy("Pleiades", "Pleiades")
   
   private def computeTemporalBounds(names: Seq[PleiadesName]): Option[TemporalBounds] = {
     val startDate= names.flatMap(_.startDate)
@@ -23,20 +22,26 @@ object PleiadesCrosswalk extends BaseGeoJSONCrosswalk {
       Some(TemporalBounds.fromYears(startDate.min, endDate.max))
   }
 
-  def fromJson(record: String): Option[GazetteerRecord] = super.fromJson[PleiadesRecord](record, { pleiades =>
-    GazetteerRecord(
-      pleiades.uri,
-      PLEIADES,
+  def fromJson(record: String): Option[ItemRecord] = super.fromJson[PleiadesRecord](record, { pleiades =>
+    ItemRecord(
+      ItemRecord.normalizeURI(pleiades.uri),
+      Seq(ItemRecord.normalizeURI(pleiades.uri)),
       DateTime.now(),
       pleiades.history.headOption.map(_.modified),
       pleiades.title,
+      Some(PLEIADES),
+      None, // isPartOf
+      pleiades.placeTypes.map(Category(_)),
       pleiades.description.map(d => Seq(new Description(d))).getOrElse(Seq.empty[Description]),
-      pleiades.names.flatMap(_.toNames),
+      None, // homepage
+      None, // license
+      pleiades.names.flatMap(_.language).flatMap(Language.safeParse),
+      Seq.empty[Depiction],
       pleiades.features.headOption.map(_.geometry), // TODO compute union?
       pleiades.representativePoint,
+      Seq.empty[String], // periods
       computeTemporalBounds(pleiades.names), // TODO temporalBounds
-      Seq.empty[Depiction],
-      pleiades.placeTypes,
+      pleiades.names.flatMap(_.toNames),
       Seq.empty[String], // TODO closeMatches
       Seq.empty[String]  // TODO exactMatches
     )

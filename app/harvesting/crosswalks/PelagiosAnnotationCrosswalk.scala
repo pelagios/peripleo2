@@ -7,7 +7,7 @@ import org.pelagios.Scalagios
 import org.pelagios.api.PeriodOfTime
 import org.pelagios.api.annotation.AnnotatedThing
 import services.item._
-import services.item.place.GazetteerRecord
+import services.item.reference.{ ReferenceType, UnboundReference }
 import scala.util.Try
 
 object PelagiosAnnotationCrosswalk {
@@ -29,45 +29,47 @@ object PelagiosAnnotationCrosswalk {
     if (thing.parts.isEmpty) thing.parts
     else thing.parts ++ thing.parts.flatMap(flattenThingHierarchy)
 
-  def fromRDF(filename: String, inDataset: PathHierarchy): InputStream => Seq[(Item, Seq[Reference])] = {
+  def fromRDF(filename: String, inDataset: PathHierarchy): InputStream => Seq[(Item, Seq[UnboundReference])] = {
 
-    def convertAnnotatedThing(thing: AnnotatedThing): Seq[(Item, Seq[Reference])] = {
+    def convertAnnotatedThing(thing: AnnotatedThing): Seq[(Item, Seq[UnboundReference])] = {
       val flattenedHierarchy = thing +: flattenThingHierarchy(thing)
       flattenedHierarchy.map { thing =>
+        
         val references = thing.annotations.flatMap { _.places.headOption.map { placeUri =>
-          val uri = GazetteerRecord.normalizeURI(placeUri)
-          Reference(
+          val uri = ItemRecord.normalizeURI(placeUri)
+          UnboundReference(
             ReferenceType.PLACE,
+            uri,
             None, // relation
-            uri, uri,
             None, // homepage
             None, // context
             None  // depiction
           )
         }}
 
-        val item =Item(
+        val record = ItemRecord(
+          thing.uri,
           Seq(Some(thing.uri), thing.identifier).flatten,
-          ItemType.OBJECT,
+          DateTime.now().withZone(DateTimeZone.UTC),
+          None, // lastChangedAt 
           thing.title,
-          Some(DateTime.now().withZone(DateTimeZone.UTC)),
-          None, // last_changed_at
+          Some(inDataset),
+          None, // TODO isPartOf
           thing.subjects.map(Category(_)),
-          Seq(inDataset),
-          None, // TODO is_part_of
           thing.description.map(d => Seq(Description(d))).getOrElse(Seq.empty[Description]),
           thing.homepage,
           None, // license
-          // TODO this now silently ignores error - report!
-          thing.languages.flatMap(lang => Try(Some(Language(lang))).getOrElse(None)),
+          thing.languages.flatMap(Language.safeParse),
+          thing.depictions.map(url => Depiction(url, None, None, None, None, None)),    
           None, // TODO geometry
           None, // TODO representative point
+          Seq.empty[String], // Periods
           thing.temporal.map(convertPeriodOfTime),
-          Seq.empty[String], // periods
-          thing.depictions.map(url => Depiction(url, None, None, None, None, None))
-        )
+          Seq.empty[Name],
+          Seq.empty[String], // closeMatches
+          Seq.empty[String]) // exactMatches
         
-        (item, references)
+        (Item.fromRecord(ItemType.OBJECT, record), references)
       }
     }
     

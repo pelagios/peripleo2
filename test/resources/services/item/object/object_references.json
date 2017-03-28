@@ -1,11 +1,15 @@
 [{
   "reference_type": "PLACE",
-  "relation": "FINDSPOT",
-  "uri": "http://pleiades.stoa.org/places/589872",
-  "root_uri": "http://pleiades.stoa.org/places/589872"
+  "reference_to": {
+    "uri": "http://pleiades.stoa.org/places/589872",
+    "doc_id": "a4a60286-a9af-49ce-969f-177725a579ea"
+  },
+  "relation": "FINDSPOT"
 },{
   "reference_type": "PERSON",
-  "relation": "ATTESTATION",
-  "uri": "http://collection.britishmuseum.org/resource?uri=http://collection.britishmuseum.org/id/person-institution/56988",
-  "root_uri": "http://collection.britishmuseum.org/resource?uri=http://collection.britishmuseum.org/id/person-institution/56988"
+  "reference_to": {
+    "uri": "http://collection.britishmuseum.org/resource?uri=http://collection.britishmuseum.org/id/person-institution/56988",
+    "doc_id": "ae12f7eb-e5b1-4fca-9607-fdd212b0e0d4"
+  },
+  "relation": "ATTESTATION"
 }]

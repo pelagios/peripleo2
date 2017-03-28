@@ -10,7 +10,6 @@ import scala.concurrent.{ Future, ExecutionContext }
 import scala.language.reflectiveCalls
 import services.{ ES, Page }
 import services.item.Item
-import services.item.place.Place
 import org.elasticsearch.search.aggregations.bucket.histogram.InternalHistogram
 import services.item.search.filters.TermFilter
 
@@ -63,9 +62,9 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
     val filterClauses =
       Seq(
         args.filters.itemTypeFilter.map(termFilterDefinition("item_type", _)),
-        args.filters.categoryFilter.map(termFilterDefinition("category", _)),
-        args.filters.datasetFilter.map(termFilterDefinition("is_in_dataset", _)),
-        args.filters.languageFilter.map(termFilterDefinition("languages", _)),
+        args.filters.categoryFilter.map(termFilterDefinition("is_conflation_of.category", _)),
+        args.filters.datasetFilter.map(termFilterDefinition("is_conflation_of.is_in_dataset", _)),
+        args.filters.languageFilter.map(termFilterDefinition("is_conflation_of.languages", _)),
         // Check for existing 'depictions' field iff hasDepictions is set to true
         { if (args.filters.hasDepiction.getOrElse(false)) Some(nestedQuery("depictions") query { existsQuery("depictions.url") }) else None }
       ).flatten ++ timerangeFilterDefinition()
@@ -87,8 +86,8 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
       if (args.settings.termAggregations)
         Seq(
           aggregation terms "by_type" field "item_type" size 20,
-          aggregation terms "by_dataset" field "is_in_dataset" size 20,
-          aggregation terms "by_language" field "languages" size 20)
+          aggregation terms "by_dataset" field "is_conflation_of.is_in_dataset" size 20,
+          aggregation terms "by_language" field "is_conflation_of.languages" size 20)
       else
         Seq.empty[AbstractAggregationDefinition]
 
@@ -142,12 +141,12 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
 
   private def resolvePlaces(uris: Seq[String]) = {
     if (uris.isEmpty)
-      Future.successful(Seq.empty[Place])
+      Future.successful(Seq.empty[Item])
     else
       es.client execute {
         multiget ( uris.map(uri => get id uri from ES.PERIPLEO / ES.ITEM) )
       } map { _.responses.flatMap { _.response.map(_.getSourceAsString).map { json =>
-        Json.fromJson[Place](Json.parse(json)).get
+        Json.fromJson[Item](Json.parse(json)).get
       }}}
   }
 

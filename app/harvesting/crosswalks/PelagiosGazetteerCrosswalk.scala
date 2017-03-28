@@ -6,6 +6,7 @@ import services.item.place._
 import org.joda.time.{ DateTime, DateTimeZone }
 import org.pelagios.Scalagios
 import org.pelagios.api.PeriodOfTime
+import services.item._
 
 object PelagiosGazetteerCrosswalk {
   
@@ -18,33 +19,39 @@ object PelagiosGazetteerCrosswalk {
       new DateTime(endDate).withZone(DateTimeZone.UTC))          
   }
   
-  def fromRDF(filename: String): InputStream => Seq[GazetteerRecord] = {
+  def fromRDF(filename: String): InputStream => Seq[ItemRecord] = {
 
-    val sourceGazetteer = Gazetteer(filename.substring(0, filename.indexOf('.')))
+    val sourceGazetteer = filename.substring(0, filename.indexOf('.'))
   
-    def convertPlace(place: org.pelagios.api.gazetteer.Place): GazetteerRecord =      
-      GazetteerRecord(
-        GazetteerRecord.normalizeURI(place.uri),
-        sourceGazetteer,
+    def convertPlace(place: org.pelagios.api.gazetteer.Place): ItemRecord =      
+      ItemRecord(
+        ItemRecord.normalizeURI(place.uri),
+        Seq(ItemRecord.normalizeURI(place.uri)),
         DateTime.now().withZone(DateTimeZone.UTC),
-        None, // last_changed_at
+        None, // lastChangedAt
         place.label,
+        Some(PathHierarchy(sourceGazetteer, sourceGazetteer)),
+        None, // isPartOf
+        place.category.map(category => Seq(Category(category.toString))).getOrElse(Seq.empty[Category]),
         place.descriptions.map(l => Description(l.chars, l.lang.flatMap(Language.safeParse))),
-        place.names.map(l => Name(l.chars, l.lang.flatMap(Language.safeParse))),
+        None, // homepage
+        None, // license
+        place.names.flatMap(_.lang).flatMap(Language.safeParse),
+        place.depictions.map(image => Depiction(image.uri, None, image.title, None, None, image.license)),
         place.location.map(_.geometry),
         place.location.map(_.pointLocation),
+        Seq.empty[String], // periods
         place.temporalCoverage.map(convertPeriodOfTime(_)),
-        place.depictions.map(image => Depiction(image.uri, None, image.title, None, None, image.license)),
-        place.category.map(category => Seq(category.toString)).getOrElse(Seq.empty[String]),
-        place.closeMatches.map(GazetteerRecord.normalizeURI(_)),
-        place.exactMatches.map(GazetteerRecord.normalizeURI(_)))
+        place.names.map(l => Name(l.chars, l.lang.flatMap(Language.safeParse))),       
+        place.closeMatches.map(ItemRecord.normalizeURI),
+        place.exactMatches.map(ItemRecord.normalizeURI))
     
     // Return crosswalk function
     { stream: InputStream =>
       Scalagios.readPlaces(stream, filename).map(convertPlace).toSeq }
   }
   
-  def readFile(file: File): Seq[GazetteerRecord] =
+  def readFile(file: File): Seq[ItemRecord] =
     fromRDF(file.getName)(new FileInputStream(file))
   
 }

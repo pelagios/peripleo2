@@ -5,6 +5,7 @@ import org.joda.time.{ DateTime, DateTimeZone }
 import org.pelagios.Scalagios
 import org.pelagios.api.dataset.Dataset
 import services.item._
+import services.item.reference.UnboundReference
 
 object PelagiosVoIDCrosswalk {
   
@@ -24,7 +25,7 @@ object PelagiosVoIDCrosswalk {
       case _ => parents
     }
     
-  def convertDataset(rootset: Dataset): Seq[(Item, Seq[Reference])] = {
+  def convertDataset(rootset: Dataset): Seq[(Item, Seq[UnboundReference])] = {
         
     val datasets = flattenHierarchy(rootset).map { d =>
       val parentHierarchy =  {
@@ -33,36 +34,41 @@ object PelagiosVoIDCrosswalk {
         else Some(PathHierarchy(parents.map(d => PathSegment(d.uri, d.title))))
       }
       
-    Item(
-      Seq(d.uri),
-      ItemType.DATASET,
-      d.title,
-      Some(DateTime.now().withZone(DateTimeZone.UTC)),
-      None, // last_changed_at
-      d.subjects.map(Category(_)),
-      Seq.empty[PathHierarchy], // is_in_dataset
-      parentHierarchy,
-      d.description.map(d => Seq(Description(d))).getOrElse(Seq.empty[Description]),
-      d.homepage,
-      d.license,
-      Seq.empty[Language],
-      None, // TODO geometry
-      None, // TODO representative point
-      None, // temporal_bounds
-      Seq.empty[String], // periods
-      Seq.empty[Depiction])
+      val record = ItemRecord(
+        d.uri,
+        Seq(d.uri),
+        DateTime.now().withZone(DateTimeZone.UTC),
+        None, // lastChangedAt
+        d.title,
+        None, // isInDataset
+        parentHierarchy,
+        d.subjects.map(Category(_)),
+        d.description.map(d => Seq(Description(d))).getOrElse(Seq.empty[Description]),
+        d.homepage,
+        d.license,
+        Seq.empty[Language],
+        Seq.empty[Depiction],
+        None, // TODO geometry
+        None, // TODO representative point
+        Seq.empty[String], // periods
+        None, // temporal_bounds
+        Seq.empty[Name],
+        Seq.empty[String], // closeMatches
+        Seq.empty[String]) // exactMatches
+        
+      Item.fromRecord(ItemType.DATASET.ANNOTATIONS, record)
     }
     
     // We need to add an empty set of references, so it's compatible
     // with the generic ItemService import interface
-    datasets.map((_, Seq.empty[Reference]))
+    datasets.map((_, Seq.empty[UnboundReference]))
   }
  
-  def fromRDF(filename: String): InputStream => Seq[(Item, Seq[Reference])] =
+  def fromRDF(filename: String): InputStream => Seq[(Item, Seq[UnboundReference])] =
     { stream: InputStream =>
       Scalagios.readVoID(stream, filename).flatMap(convertDataset).toSeq }
   
-  def fromDatasets(rootDatasets: Seq[Dataset]): Seq[(Item, Seq[Reference])] =
+  def fromDatasets(rootDatasets: Seq[Dataset]): Seq[(Item, Seq[UnboundReference])] =
     rootDatasets.flatMap(convertDataset)
   
 }

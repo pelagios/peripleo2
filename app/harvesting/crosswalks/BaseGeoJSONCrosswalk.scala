@@ -6,11 +6,11 @@ import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
 import services.HasGeometry
-import services.item.place.GazetteerRecord
+import services.item.ItemRecord
 
 trait BaseGeoJSONCrosswalk {
   
-  def fromJson[T](record: String, crosswalk: T => GazetteerRecord)(implicit reads: Reads[T]): Option[GazetteerRecord] =
+  def fromJson[T](record: String, crosswalk: T => ItemRecord)(implicit reads: Reads[T]): Option[ItemRecord] =
     
     Json.fromJson[T](Json.parse(record)) match {
     

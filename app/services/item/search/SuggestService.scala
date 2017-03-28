@@ -1,6 +1,7 @@
 package services.item.search
 
 import com.sksamuel.elastic4s.ElasticDsl._
+import java.util.ArrayList
 import javax.inject.{ Inject, Singleton }
 import org.elasticsearch.search.suggest.completion.CompletionSuggestion
 import play.api.libs.json._
@@ -12,7 +13,7 @@ import services.item.ItemType
 
 case class Suggestion(text: String, 
   itemId: Option[String] = None,
-  itemType: Option[ItemType.Value] = None, 
+  itemType: Option[ItemType] = None, 
   description: Option[String] = None)
   
 object Suggestion {
@@ -20,7 +21,7 @@ object Suggestion {
   implicit val suggestionWrites: Writes[Suggestion] = (
     (JsPath \ "text").write[String] and
     (JsPath \ "item_id").writeNullable[String] and
-    (JsPath \ "item_type").writeNullable[ItemType.Value] and
+    (JsPath \ "item_type").writeNullable[ItemType] and
     (JsPath \ "description").writeNullable[String]
   )(unlift(Suggestion.unapply))
 
@@ -51,7 +52,7 @@ class SuggestService @Inject() (val es: ES, implicit val ctx: ExecutionContext) 
           Suggestion(
             option.getText.string,
             Option(payload.get("id")).map(_.toString),
-            Option(payload.get("type")).map(t => ItemType.withName(t.toString)),
+            Option(payload.get("type")).map(t => ItemType.parse(t.asInstanceOf[ArrayList[String]].asScala)),
             Option(payload.get("description")).map(_.toString))
         }.toSeq
               

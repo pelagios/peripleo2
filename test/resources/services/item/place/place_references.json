@@ -1,5 +1,7 @@
 [{
   "reference_type": "PLACE",
-  "uri": "http://pleiades.stoa.org/places/118543",
-  "root_uri": "http://pleiades.stoa.org/places/118543"
+  "reference_to": {
+    "uri": "http://pleiades.stoa.org/places/118543",
+    "doc_id": "4748b373-71aa-4957-944e-578da84a3972"
+  }
 }]

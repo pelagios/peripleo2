@@ -4,55 +4,63 @@ import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
 
-object ItemType extends Enumeration {
+/** Item type taxonomy **/
+object ItemType {
   
-  /** An authority list.
-    * Examples: a gazetteer, a person authority list.  
-    */
-  val AUTHORITY_LIST = Value("AUTHORITY_LIST")
+  object DATASET extends ItemType { val name = "DATASET" ; val parent = None
+   
+    object AUTHORITY extends ItemType { val name = "AUTHORITY" ; val parent = Some(DATASET)
+     
+      object GAZETTEER extends ItemType { val name = "AUTHORITY_GAZETTEER" ; val parent = Some(AUTHORITY) }
+      object PEOPLE    extends ItemType { val name = "AUTHORITY_PEOPLE"    ; val parent = Some(AUTHORITY) }
+      object PERIODS   extends ItemType { val name = "AUTHORITY_PERIODS"   ; val parent = Some(AUTHORITY) }
+     
+    }
+   
+    object ANNOTATIONS extends ItemType { val name = "DATASET_ANNOTATIONS" ; val parent = Some(DATASET) }
+    object GEODATA     extends ItemType { val name = "DATASET_GEODATA"     ; val parent = Some(DATASET) }
+   
+  }
+ 
+  object OBJECT  extends ItemType { val name = "OBJECT"  ; val parent = None }
+  object FEATURE extends ItemType { val name = "FEATURE" ; val parent = None }
+  object PLACE   extends ItemType { val name = "PLACE"   ; val parent = None }
+  object PERSON  extends ItemType { val name = "PERSON"  ; val parent = None }
+  object PERIOD  extends ItemType { val name = "PERIOD"  ; val parent = None }
+  
+  // This is a bit of a nuisance, but can't find a better way
+  private val LOOKUP_TABLE = 
+    Seq(DATASET,
+        DATASET.AUTHORITY,
+        DATASET.AUTHORITY.GAZETTEER,
+        DATASET.AUTHORITY.PEOPLE,
+        DATASET.AUTHORITY.PERIODS,
+        DATASET.ANNOTATIONS,
+        DATASET.GEODATA,
+        OBJECT,
+        FEATURE,
+        PLACE,
+        PERSON,
+        PERIOD).map(itemType => (itemType.asString.toSet -> itemType)).toMap
+  
+  def parse(s: Seq[String]): ItemType = LOOKUP_TABLE.get(s.toSet).get
+ 
+  implicit val itemTypeFormat: Format[ItemType] = Format(
+    JsPath.read[JsArray].map(json => parse(json.as[Seq[String]])),
+    Writes[ItemType](t => Json.toJson(t.asString))
+  )
+ 
+}
 
+sealed trait ItemType {
   
-  /** A dataset provided by an institution or indvidual.
-    * Examples: a dataset of geospatial features, a numimatics
-    * dataset, a corpus of literature.   
-    */
-  val DATASET = Value("DATASET")
-
+  val name: String
   
-  /** A geospatial feature.
-    * Examples: outline of an archaeological trench, a
-    * linestring of the course of a Roman road.
-    */
-  val FEATURE = Value("FEATURE")
-
+  val parent: Option[ItemType]
   
-  /** An object.
-    * Examples: a coin, an inscription, a work of literature.
-    */
-  val OBJECT  = Value("OBJECT")
+  lazy val asString: Seq[String] = parent match {
+    case Some(parent) => name +: parent.asString
+    case None => Seq(name)
+  }
   
-  
-  /** A time period, as listed in one ore more period authority lists.
-    * Example: "Aegean Bronze Age", as listed in PeriodO.
-    */
-  val PERIOD  = Value("PERIOD")
-  
-  
-  /** A person, as listed in one or more person authority lists.
-    * Example: Homer, as listed on VIAF.  
-    */
-  val PERSON  = Value("PERSON")
-  
-  /** A place, as listed in one ore more gazetteers.
-    * Example: Athens, as listed in Pleiades, DARE and Vici.
-    */
-  val PLACE   = Value("PLACE")
-  
-  
-  implicit val itemTypeFormat: Format[ItemType.Value] =
-    Format(
-      JsPath.read[JsString].map(json => ItemType.withName(json.value)),
-      Writes[ItemType.Value](r => Json.toJson(r.toString))
-    )
-
 }

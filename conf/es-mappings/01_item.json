@@ -1,63 +1,27 @@
 {
   "item": {
+    "dynamic": "false",
     "properties": {
-      "identifiers": { "type": "string", "index": "not_analyzed" },
+      "doc_id": { "type": "string", "index": "not_analyzed" },
       "item_type": { "type": "string", "index": "not_analyzed" },
-      "last_synced_at": { "type": "date", "format": "yyyy-MM-dd'T'HH:mm:ssZ" },
-      "last_changed_at": { "type": "date", "format": "yyyy-MM-dd'T'HH:mm:ssZ" },
-      "categories": {
-        "type": "nested",
-        "properties": {
-          "label": { "type": "string", "index": "not_analyzed" },
-          "uri": { "type": "string", "index": "not_analyzed" }
-        }
-      },
       "title": {
         "type": "string",
         "fields": {
            "raw": { "type": "string", "analyzer":"lowercase_keyword" }
         }
       },
-      "is_in_dataset": { "type": "string", "index": "not_analyzed" },
-      "is_part_of": { "type": "string", "index": "not_analyzed" },
-      "descriptions": {
-        "type": "nested",
-        "properties": {
-          "description": { "type": "string" },
-          "language": { "type": "string", "index": "not_analyzed" }
-        }
-      },
-      "homepage": { "type": "string", "index": "no" },
-      "license": { "type": "string", "index": "not_analyzed" },
-      "languages": { "type": "string", "index": "not_analyzed" },
-      "geometry": { "type": "geo_shape", "tree": "geohash", "precision": "50m" },
       "representative_point": { "type": "geo_point" },
       "temporal_bounds": {
-        "type": "object",
         "properties": {
           "from": { "type": "date", "format": "yyyy-MM-dd" },
           "to": { "type": "date", "format": "yyyy-MM-dd" }
         }
       },
-      "periods": { "type": "string", "index": "not_analyzed" },
-      "depictions": {
-        "type": "nested",
-        "properties": {
-          "url": { "type": "string", "index": "not_analyzed" },
-          "thumbnail": { "type": "string", "index": "not_analyzed" },
-          "caption": { "type": "string" },
-          "creator": { "type": "string" },
-          "created_at": { "type": "date", "format": "yyyy-MM-dd" },
-          "license": { "type": "string", "index": "not_analyzed" }
-        }
-      },
-      "root_uri": { "type": "string", "index": "not_analyzed" },
       "is_conflation_of": {
-        "type": "nested",
         "dynamic": "false",
         "properties": {
           "uri": { "type": "string", "index": "not_analyzed" },
-          "source_gazetteer": { "type": "string", "index": "not_analyzed" },
+          "identifiers": { "type": "string", "index": "not_analyzed" },
           "last_synced_at": { "type": "date", "format": "yyyy-MM-dd'T'HH:mm:ssZ" },
           "last_changed_at": { "type": "date", "format": "yyyy-MM-dd'T'HH:mm:ssZ" },
           "title": {
@@ -66,15 +30,42 @@
                "raw": { "type": "string", "analyzer":"lowercase_keyword" }
             }
           },
+          "is_in_dataset": { "type": "string", "index": "not_analyzed" },
+          "is_part_of": { "type": "string", "index": "not_analyzed" },
+          "categories": {
+            "properties": {
+              "label": { "type": "string", "index": "not_analyzed" },
+              "uri": { "type": "string", "index": "not_analyzed" }
+            }
+          },
           "descriptions": {
-            "type": "nested",
             "properties": {
               "description": { "type": "string" },
               "language": { "type": "string", "index": "not_analyzed" }
             }
           },
+          "homepage": { "type": "string", "index": "not_analyzed" },
+          "license": { "type": "string", "index": "not_analyzed" },
+          "languages": { "type": "string", "index": "not_analyzed" },
+          "depictions": {
+            "properties": {
+              "url": { "type": "string", "index": "not_analyzed" },
+              "thumbnail": { "type": "string", "index": "not_analyzed" },
+              "caption": { "type": "string" },
+              "creator": { "type": "string" },
+              "created_at": { "type": "date", "format": "yyyy-MM-dd" },
+              "license": { "type": "string", "index": "not_analyzed" }
+            }
+          },
+          "periods": { "type": "string", "index": "not_analyzed" },
+          "temporal_bounds": {
+            "properties": {
+              "from": { "type": "date", "format": "yyyy-MM-dd" },
+              "to": { "type": "date", "format": "yyyy-MM-dd" }
+            }
+          },
           "names": {
-            "type": "nested",
+            "dynamic": "false",
             "properties": {
               "name": {
                 "type": "string",
@@ -82,17 +73,10 @@
                   "raw": { "type": "string", "analyzer":"lowercase_keyword" }
                 }
               },
-              "language": { "type": "string", "index": "not_analyzed" }
+              "language": { "type": "string", "index": "not_analyzed" },
+              "is_romanized": { "type": "boolean" }
             }
           },
-          "temporal_bounds": {
-            "type": "object",
-            "properties": {
-              "from": { "type": "date", "format": "yyyy-MM-dd" },
-              "to": { "type": "date", "format": "yyyy-MM-dd" }
-            }
-          },
-          "place_types": { "type": "string", "index": "not_analyzed" },
           "close_matches": { "type": "string", "index": "not_analyzed" },
           "exact_matches": { "type": "string", "index": "not_analyzed" }
         }

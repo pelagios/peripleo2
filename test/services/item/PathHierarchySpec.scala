@@ -38,15 +38,14 @@ class PathHierarchySpec extends PlaySpec {
   "Single PathHierarchy" should {
     
     "properly serialize to JSON" in {
-      val serialized = Json.toJson(PathHierarchy.fromHierarchy(Some(SINGLE_HIERARCHY)))
+      val serialized = Json.toJson(PathHierarchy.fromHierarchy(SINGLE_HIERARCHY))
       serialized mustBe SINGLE_HIERARCHY_JSON
     }
     
     "be properly restored from JSON" in {
       val levels = SINGLE_HIERARCHY_JSON.value.map(_.as[JsString].value)
-      val parsed = PathHierarchy.toHierarchy(Some(levels))
-      parsed.isDefined mustBe true
-      parsed.get mustBe SINGLE_HIERARCHY
+      val parsed = PathHierarchy.toHierarchy(levels)
+      parsed mustBe SINGLE_HIERARCHY
     }
     
   }  
@@ -60,7 +59,7 @@ class PathHierarchySpec extends PlaySpec {
     
     "be properly restored from JSON" in {
       val levels = HIERARCHY_LIST_JSON.value.map(_.as[JsString].value)
-      val parsed = PathHierarchy.toHierarchies(Some(levels))
+      val parsed = PathHierarchy.toHierarchies(levels)
       parsed.size mustBe 2
       parsed.toSet mustBe HIERARCHY_LIST.toSet // equal, ignoring order
     }

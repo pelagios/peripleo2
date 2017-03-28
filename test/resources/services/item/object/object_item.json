@@ -1,40 +1,51 @@
 {
-  "identifiers": [
-    "7beabb84-37f1-4f18-8a74-b02143890bb7",
-    "http://numismatics.org/collection/1991.60.36"
-  ],
-  "item_type": "OBJECT",
-  "last_synced_at": "2017-02-03T11:18:21Z",
-  "last_changed_at": "2016-10-01T12:00:00Z",
-  "categories": [{
-    "label": "Archaeology",
-    "uri": "http://vocab.getty.edu/aat/300054328"
-  },{
-    "label": "Numismatics",
-    "uri": "http://vocab.getty.edu/aat/300054419"
-  }],
+  "doc_id": "2d78fbdc-d810-424b-a8d5-4bc5de5cc1ce",
+  "item_type": [ "OBJECT" ],
   "title": "Silver 4 drachm (tetradrachm), Cnossus, 200 BC - 67 BC. 1991.60.36",
-  "is_in_dataset": [
-    "ecbd9773-b60f-4dc1-bd86-f2cceb6548a1\u0007ANS Coins",
-    "ecbd9773-b60f-4dc1-bd86-f2cceb6548a1\u0007ANS Coins\u0007\u0007d6fdd35c-08b6-495b-ad4e-3f9256d30665\u0007Greek Collection"
-  ],
-  "descriptions": [{
-    "description": "An example object referencing one person and a findspot place."
-  }],
-  "homepage": "http://numismatics.org/collection/1991.60.36",
   "geometry": {
     "type": "Point",
     "coordinates": [ 25.163156, 35.297961 ]
   },
   "representative_point": [ 25.163156, 35.297961 ],
   "temporal_bounds": { "from": -200, "to": 67 },
-  "depictions": [{
-    "url": "http://numismatics.org/collectionimages/19501999/1991/1991.60.36.obv.width350.jpg",
-    "thumbnail": "http://numismatics.org/collectionimages/19501999/1991/1991.60.36.obv.width175.jpg",
-    "caption": "Obverse: Head of Apollo laureate"
-  }, {
-    "url": "http://numismatics.org/collectionimages/19501999/1991/1991.60.36.rev.width350.jpg",
-    "thumbnail": "http://numismatics.org/collectionimages/19501999/1991/1991.60.36.obv.width175.jpg",
-    "caption": "Reverse: Circular Labyrinth"
+  "is_conflation_of": [{
+    "uri": "http://numismatics.org/collection/1991.60.36",
+    "identifiers": [
+      "7beabb84-37f1-4f18-8a74-b02143890bb7",
+      "http://numismatics.org/collection/1991.60.36"
+    ],
+    "last_synced_at": "2017-02-03T11:18:21Z",
+    "last_changed_at": "2016-10-01T12:00:00Z",
+    "title": "Silver 4 drachm (tetradrachm), Cnossus, 200 BC - 67 BC. 1991.60.36",
+    "is_in_dataset": [
+      "ecbd9773-b60f-4dc1-bd86-f2cceb6548a1\u0007ANS Coins",
+      "ecbd9773-b60f-4dc1-bd86-f2cceb6548a1\u0007ANS Coins\u0007\u0007d6fdd35c-08b6-495b-ad4e-3f9256d30665\u0007Greek Collection"
+    ],
+    "categories": [{
+      "label": "Archaeology",
+      "uri": "http://vocab.getty.edu/aat/300054328"
+    },{
+      "label": "Numismatics",
+      "uri": "http://vocab.getty.edu/aat/300054419"
+    }],
+    "descriptions": [{
+      "description": "An example object referencing one person and a findspot place."
+    }],
+    "homepage": "http://numismatics.org/collection/1991.60.36",
+    "depictions": [{
+      "url": "http://numismatics.org/collectionimages/19501999/1991/1991.60.36.obv.width350.jpg",
+      "thumbnail": "http://numismatics.org/collectionimages/19501999/1991/1991.60.36.obv.width175.jpg",
+      "caption": "Obverse: Head of Apollo laureate"
+    }, {
+      "url": "http://numismatics.org/collectionimages/19501999/1991/1991.60.36.rev.width350.jpg",
+      "thumbnail": "http://numismatics.org/collectionimages/19501999/1991/1991.60.36.obv.width175.jpg",
+      "caption": "Reverse: Circular Labyrinth"
+    }],
+    "geometry": {
+      "type": "Point",
+      "coordinates": [ 25.163156, 35.297961 ]
+    },
+    "representative_point": [ 25.163156, 35.297961 ],
+    "temporal_bounds": { "from": -200, "to": 67 }
   }]
 }

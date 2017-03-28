@@ -7,14 +7,14 @@ import javax.inject.{ Inject, Singleton }
 import play.api.Logger
 import play.api.libs.json.Json
 import scala.concurrent.{ ExecutionContext, Future }
-import scala.language.postfixOps 
+import scala.language.{ postfixOps, reflectiveCalls } 
 import services.{ ES, HasBatchImport, Page }
-import services.item.place.Place
+import services.item.reference._
 import services.task.TaskType
 import org.elasticsearch.search.aggregations.bucket.terms.Terms
 
 @Singleton
-class ItemService @Inject() (val es: ES, implicit val ctx: ExecutionContext) extends HasBatchImport[(Item, Seq[Reference])] {
+class ItemService @Inject() (val es: ES, implicit val ctx: ExecutionContext) extends HasBatchImport[(Item, Seq[UnboundReference])] {
   
   import com.sksamuel.elastic4s.ElasticDsl.search // Otherwise there's ambiguity with the .search package!
 
@@ -24,22 +24,18 @@ class ItemService @Inject() (val es: ES, implicit val ctx: ExecutionContext) ext
     override def json(i: Item): String = Json.stringify(Json.toJson(i))
   }
 
-  implicit object ItemHitAs extends HitAs[(Item, String)] {
-    override def as(hit: RichSearchHit): (Item, String) = {
-      val item = Json.fromJson[Item](Json.parse(hit.sourceAsString)).get
-      val id = hit.getId
-      (item, id)
+  implicit object ItemHitAs extends HitAs[Item] {
+    override def as(hit: RichSearchHit): Item = {
+      Json.fromJson[Item](Json.parse(hit.sourceAsString)).get
     }
   }
-  
-  // TODO this method is duplicate in ItemService and PlaceService - refactor
-  
+    
   implicit object ReferenceIndexable extends Indexable[Reference] {
     override def json(r: Reference): String = Json.stringify(Json.toJson(r))
   }
   
   /** Keeps only references that resolve to an entity in Peripleo **/
-  private def filterResolvable(references: Seq[Reference]): Future[Seq[Reference]] =
+  private def filterResolvable(references: Seq[UnboundReference]): Future[Seq[Reference]] =
     if (references.isEmpty)
       Future.successful(Seq.empty[Reference])
     else
@@ -50,27 +46,27 @@ class ItemService @Inject() (val es: ES, implicit val ctx: ExecutionContext) ext
             // TODO we may need to limit this in some cases (literature!) 
             // TODO current max-size is 10.000 unique (!) references
             should (
-              references.map(_.uri).distinct.map(termQuery("identifiers", _))
+              references.map(_.uri).distinct.map(termQuery("is_conflation_of.identifiers", _))
             )
           }
         } start 0 limit ES.MAX_SIZE
       } map { response =>
-        // Re-write reference parentIds according to index content
-        val items = response.as[(Item, String)]
+        // Re-write reference docIds according to index content
+        val items = response.as[Item]
         references.flatMap { reference =>
-          items.find(_._1.identifiers.contains(reference.uri)).map { case (item, id) =>
-            reference.copy(rootUri = id)
+          items.find(_.identifiers.contains(reference.uri)).map { case item =>
+            reference.toReference(item.docId)
           }
         }
       }
 
-  def insertOrUpdateItem(item: Item, references: Seq[Reference]): Future[Boolean] = {
+  def insertOrUpdateItem(item: Item, references: Seq[UnboundReference]): Future[Boolean] = {
     val fFilterResolvable = filterResolvable(references)
     
     def fUpsert(resolvableReferences: Seq[Reference]) =
       es.client execute {
         bulk (
-          { update id item.identifiers.head in ES.PERIPLEO / ES.ITEM source item docAsUpsert } +: 
+          { update id item.docId.toString in ES.PERIPLEO / ES.ITEM source item docAsUpsert } +: 
             resolvableReferences.map { ref =>
               
               // TODO how to handle IDs for references, so we can update properly?
@@ -100,15 +96,18 @@ class ItemService @Inject() (val es: ES, implicit val ctx: ExecutionContext) ext
       * perhaps it's worth having a common "Entity" class, that has
       * only a small subset of the full item and/or a 'reference' sub-package
       * to keep things more orderly.  
+      * 
+      * TODO won't currently work - we need to retrieve by identifier not ElasticSearch ID
+      * 
       */
     def resolvePlaces(uris: Seq[String]) = {
       if (uris.isEmpty)
-        Future.successful(Seq.empty[Place])
+        Future.successful(Seq.empty[Item])
       else
         es.client execute {
           multiget ( uris.map(uri => get id uri from ES.PERIPLEO / ES.ITEM) )
         } map { _.responses.flatMap { _.response.map(_.getSourceAsString).map { json =>
-          Json.fromJson[Place](Json.parse(json)).get
+          Json.fromJson[Item](Json.parse(json)).get
         }}}
     }
     
@@ -144,7 +143,7 @@ class ItemService @Inject() (val es: ES, implicit val ctx: ExecutionContext) ext
       stats <- fStats
       // TODO horrible intermediate hack! Flattens place URIs from stats
       places <- resolvePlaces(stats.flatMap(_._2._2.map(_._1)).toSeq)
-    } yield(ReferenceStats.build(identifier, stats, places.toSet))
+    } yield(ReferenceStats.build(stats, places.toSet))
   }
   
   private def deleteByQuery(index: String, q: QueryDefinition): Future[Unit] = {
@@ -206,7 +205,7 @@ class ItemService @Inject() (val es: ES, implicit val ctx: ExecutionContext) ext
     
   }
     
-  override def importRecord(tuple: (Item, Seq[Reference])): Future[Boolean] =
+  override def importRecord(tuple: (Item, Seq[UnboundReference])): Future[Boolean] =
     insertOrUpdateItem(tuple._1, tuple._2)
   
 }

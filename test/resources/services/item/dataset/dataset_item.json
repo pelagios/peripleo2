@@ -1,21 +1,7 @@
 {
-  "identifiers": [ "http://opencontext.org/projects/4B5721E9-2BB3-423F-5D04-1B948FA65FAB" ],
-  "item_type": "DATASET",
+  "doc_id": "8bae2de5-a394-4fd0-bc61-4836e557c5a4",
+  "item_type": [ "DATASET", "DATASET_ANNOTATIONS" ],
   "title": "Missouri Site Files",
-  "last_synced_at": "2017-02-03T11:18:21Z",
-  "last_changed_at": "2014-05-19T12:00:00Z",
-  "categories": [{
-    "label": "Archaeology",
-    "uri": "http://vocab.getty.edu/aat/300054328"
-  }],
-  "is_part_of": [
-    "http://opencontext.org/projects/\u0007Open Context"
-  ],
-  "descriptions": [{
-    "description": "An example dataset with dummy geographical coverage. Some metadata borrowed from OpenContext."
-  }],
-  "homepage": "http://opencontext.org/projects/4B5721E9-2BB3-423F-5D04-1B948FA65FAB",
-  "representative_point": [ -38.3203125, 37.16031654673677 ],
   "geometry": {
     "type": "GeometryCollection",
     "geometries": [{
@@ -133,5 +119,143 @@
       ]
     }]
   },
-  "temporal_bounds": { "from": -1500000, "to": 1500 }
+  "representative_point": [ -38.3203125, 37.16031654673677 ],
+  "temporal_bounds": { "from": -1500000, "to": 1500 },
+  "is_conflation_of": [{
+    "uri": "http://opencontext.org/projects/4B5721E9-2BB3-423F-5D04-1B948FA65FAB",
+    "identifiers": [ "http://opencontext.org/projects/4B5721E9-2BB3-423F-5D04-1B948FA65FAB" ],
+    "last_synced_at": "2017-02-03T11:18:21Z",
+    "last_changed_at": "2014-05-19T12:00:00Z",
+    "title": "Missouri Site Files",
+    "is_part_of": [
+      "http://opencontext.org/projects/\u0007Open Context"
+    ],
+    "categories": [{
+      "label": "Archaeology",
+      "uri": "http://vocab.getty.edu/aat/300054328"
+    }],
+    "descriptions": [{
+      "description": "An example dataset with dummy geographical coverage. Some metadata borrowed from OpenContext."
+    }],
+    "homepage": "http://opencontext.org/projects/4B5721E9-2BB3-423F-5D04-1B948FA65FAB",
+    "geometry": {
+      "type": "GeometryCollection",
+      "geometries": [{
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -122.51953124999999,
+              36.1733569352216
+            ],[
+              -110.390625,
+              30.751277776257812
+            ],[
+              -95.80078125,
+              29.99300228455108
+            ],[
+              -86.1328125,
+              29.6880527498568
+            ],[
+              -81.38671875,
+              25.958044673317843
+            ],[
+              -79.453125,
+              24.686952411999155
+            ],[
+              -79.62890625,
+              30.751277776257812
+            ],[
+              -74.70703125,
+              36.03133177633187
+            ],[
+              -74.1796875,
+              39.36827914916014
+            ],[
+              -76.46484375,
+              41.902277040963696
+            ],[
+              -85.60546875,
+              45.336701909968134
+            ],[
+              -94.74609375,
+              41.77131167976407
+            ],[
+              -103.35937499999999,
+              43.58039085560784
+            ],[
+              -113.37890625,
+              43.197167282501276
+            ],[
+              -121.81640624999999,
+              40.3130432088809
+            ],[
+              -124.27734374999999,
+              39.639537564366684
+            ],[
+              -122.51953124999999,
+              36.1733569352216
+            ]
+          ]
+        ]
+      },{
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              0,
+              41.902277040963696
+            ],[
+              -8.96484375,
+              38.13455657705411
+            ],[
+              -7.734374999999999,
+              34.59704151614417
+            ],[
+              2.8125,
+              32.54681317351514
+            ],[
+              18.80859375,
+              29.99300228455108
+            ],[
+              26.71875,
+              29.84064389983441
+            ],[
+              33.57421875,
+              30.600093873550072
+            ],[
+              38.84765625,
+              33.7243396617476
+            ],[
+              40.25390625,
+              39.232253141714885
+            ],[
+              33.57421875,
+              40.3130432088809
+            ],[
+              26.54296875,
+              40.17887331434696
+            ],[
+              21.796875,
+              44.213709909702054
+            ],[
+              14.0625,
+              47.39834920035926
+            ],[
+              8.0859375,
+              45.82879925192134
+            ],[
+              1.9335937499999998,
+              44.465151013519616
+            ],[
+              0,
+              41.902277040963696
+            ]
+          ]
+        ]
+      }]
+    },
+    "representative_point": [ -38.3203125, 37.16031654673677 ],
+    "temporal_bounds": { "from": -1500000, "to": 1500 }
+  }]
 }

@@ -16,6 +16,7 @@ import scala.concurrent.ExecutionContext
 import services.task.TaskService
 import services.user.{ Role, UserService }
 import services.item._
+import services.item.reference.UnboundReference
 import services.item.place.PlaceService
 
 @Singleton
@@ -34,26 +35,29 @@ class GazetteerAdminController @Inject() (
   private def upsertGazetteerMeta(filename: String) = {
     val name = filename.substring(0, filename.indexOf('.'))
 
-    val gazetteer = Item(
-      Seq(name),
-      ItemType.AUTHORITY_LIST,
+    val gazetteer = ItemRecord(
       name,
-      Some(DateTime.now),
+      Seq(name),      
+      DateTime.now,
       None, // lastChangedAt
-      Seq.empty[Category],
-      Seq.empty[PathHierarchy], // isInDataset
+      name,
+      None, // isInDataset
       None, // isPartOf
+      Seq.empty[Category],
       Seq.empty[Description],
       None, // homepage
       None, // license
       Seq.empty[Language],
+      Seq.empty[Depiction],
       None, // geometry
       None, // representativePoint
-      None, // temporalBounds
       Seq.empty[String], // periods
-      Seq.empty[Depiction])
-
-    itemService.insertOrUpdateItem(gazetteer, Seq.empty[Reference])
+      None, // temporalBounds
+      Seq.empty[Name],
+      Seq.empty[String], // closeMatches
+      Seq.empty[String]) // exactMatches
+      
+    itemService.insertOrUpdateItem(Item.fromRecord(ItemType.DATASET.AUTHORITY.GAZETTEER, gazetteer), Seq.empty[UnboundReference])
   }
 
   def index = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>

@@ -6,27 +6,30 @@ import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
 import services.HasGeometry
-import services.item.{ Description, Depiction }
-import services.item.place.{ Gazetteer, GazetteerRecord, Name }
+import services.item._
 
 object GeoNamesCrosswalk extends BaseGeoJSONCrosswalk {
   
-  private val GEONAMES = Gazetteer("GeoNames")
-  
-  def fromJson(record: String): Option[GazetteerRecord] = super.fromJson[GeoNamesRecord](record, { geonames =>
-    GazetteerRecord(
-      geonames.uri,
-      GEONAMES,
+  def fromJson(record: String): Option[ItemRecord] = super.fromJson[GeoNamesRecord](record, { geonames =>
+    ItemRecord(
+      ItemRecord.normalizeURI(geonames.uri),
+      Seq(ItemRecord.normalizeURI(geonames.uri)),
       DateTime.now(),
       None, // lastChangedAt
       geonames.title,
+      Some(PathHierarchy("GeoNames", "GeoNames")),
+      None, // isPartOf
+      Seq.empty[Category], 
       geonames.description.map(d => Seq(new Description(d))).getOrElse(Seq.empty[Description]),
-      geonames.names,
+      None, // homepage
+      None, // license
+      geonames.names.flatMap(_.language),
+      Seq.empty[Depiction],
       geonames.features.headOption.map(_.geometry), // TODO compute union?
       geonames.representativePoint,
+      Seq.empty[String], // periods
       None, // temporalBounds
-      Seq.empty[Depiction],
-      Seq.empty[String], // place types
+      geonames.names,
       Seq.empty[String], // closeMatches
       Seq.empty[String]  // exactMatches
     )
@@ -37,8 +40,6 @@ object GeoNamesCrosswalk extends BaseGeoJSONCrosswalk {
 case class GeoNamesRecord(
 
   uri: String,
-
-  // TODO lastChangedAt
   
   title: String,
   
