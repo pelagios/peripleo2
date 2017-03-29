@@ -8,18 +8,17 @@ import play.api.libs.functional.syntax._
 import services.HasDate
 
 case class Task(
-  id: UUID,
-  job: Option[UUID],
-  taskType: TaskType,
-  classname: String,
-  caption: String,
-  spawnedBy: String,
-  spawnedAt: DateTime,
-  stoppedAt: Option[DateTime],
-  stoppedWith: Option[String],
-  status: TaskStatus.Value,
-  progress: Int
-)
+  id          : UUID,
+  job         : Option[UUID],
+  taskType    : TaskType,
+  classname   : String,
+  caption     : String,
+  spawnedBy   : String,
+  spawnedAt   : DateTime,
+  stoppedAt   : Option[DateTime],
+  stoppedWith : Option[String],
+  status      : TaskStatus.Value,
+  progress    : Int)
 
 object Task extends HasDate {
   
