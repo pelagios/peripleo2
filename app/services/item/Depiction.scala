@@ -7,20 +7,12 @@ import play.api.libs.functional.syntax._
 import services.HasDate
 
 case class Depiction(
-    
-  url: String,
-  
-  thumbnail: Option[String],
-  
-  caption: Option[String],
-  
-  creator: Option[String],
-  
-  createdAt: Option[DateTime],
-  
-  license: Option[String]
-  
-)
+  url       : String,
+  thumbnail : Option[String],
+  caption   : Option[String],
+  creator   : Option[String],
+  createdAt : Option[DateTime],
+  license   : Option[String])
 
 object Depiction extends HasDate {
   
