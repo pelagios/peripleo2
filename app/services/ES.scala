@@ -24,8 +24,6 @@ class ESModule extends AbstractModule {
 
 }
 
-trait HasES { def es: ES }
-
 /** Constants **/
 object ES extends ElasticSearchSanitizer {
 
