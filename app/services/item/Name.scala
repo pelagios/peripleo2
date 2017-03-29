@@ -5,7 +5,11 @@ import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
 import services.HasNullableBoolean
 
-case class Name(name: String, language: Option[Language] = None, isTransliterated: Boolean = false, isHistoric: Boolean = false)
+case class Name(
+  name             : String, 
+  language         : Option[Language] = None,
+  isTransliterated : Boolean = false, 
+  isHistoric       : Boolean = false)
 
 object Name extends HasNullableBoolean {
 
