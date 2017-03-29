@@ -81,7 +81,7 @@ abstract class BaseItemImporter(itemService: ItemService) {
   }
   
   /** Joins a record with a list of items **/
-  private def join(normalizedRecord: ItemRecord, items: Seq[Item]): Item = {
+  private def join(normalizedRecord: ItemRecord, items: Seq[Item], itemType: ItemType): Item = {
     // The general rule is that the "biggest item" (with highest number of records) determines
     // the docId and top-level properties of the conflated records
     val affectedItemsSorted = items.sortBy(- _.isConflationOf.size)
@@ -93,27 +93,24 @@ abstract class BaseItemImporter(itemService: ItemService) {
       case _ => None
     }
     
-    /***
-     * TODO ITEMTYPE!!!
-     */
-    Item.fromRecords(topItem.map(_.docId).getOrElse(UUID.randomUUID), ItemType.PLACE, allRecords)
+    Item.fromRecords(topItem.map(_.docId).getOrElse(UUID.randomUUID), itemType, allRecords)
   }
   
   /** Conflates a list of M records into N items (with N <= M), depending on how they are connected **/
-  private def conflate(normalizedRecords: Seq[ItemRecord], items: Seq[Item] = Seq.empty[Item]): Seq[Item] = {
+  private def conflate(normalizedRecords: Seq[ItemRecord], itemType: ItemType, items: Seq[Item] = Seq.empty[Item]): Seq[Item] = {
 
     // Conflates a single record
     def conflateOneRecord(r: ItemRecord, i: Seq[Item]): Seq[Item] = {
       val connectedItems= i.filter(_.isConflationOf.exists(_.isConnectedWith(r)))
       val unconnectedItems = items.diff(connectedItems)
-      join(r, connectedItems) +: unconnectedItems
+      join(r, connectedItems, itemType) +: unconnectedItems
     }
 
     if (normalizedRecords.isEmpty) {
       items
     } else {
       val conflatedItems = conflateOneRecord(normalizedRecords.head, items)
-      conflate(normalizedRecords.tail, conflatedItems)
+      conflate(normalizedRecords.tail, itemType, conflatedItems)
     }
   }
 
@@ -142,7 +139,7 @@ abstract class BaseItemImporter(itemService: ItemService) {
         val affectedReferences = affectedItems
           .flatMap(_.references) // All references connected to the affected items
 
-        val conflatedItems = conflate(affectedRecords :+ normalizedRecord)
+        val conflatedItems = conflate(affectedRecords :+ normalizedRecord, itemType)
         val conflatedReferences = 
           affectedItems.flatMap(_.references).map(_.unbind) ++ references
           
