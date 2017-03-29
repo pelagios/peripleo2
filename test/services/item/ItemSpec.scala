@@ -153,7 +153,7 @@ class ItemSpec extends PlaySpec with TestHelpers {
     "yield an equal item" in {
       val point = createPoint(14.02358, 48.31058)
 
-      val source = Item.fromRecord(ItemType.OBJECT, ItemRecord(
+      val source = Item.fromRecord(UUID.randomUUID, ItemType.OBJECT, ItemRecord(
         "http://numismatics.org/collection/1991.60.36",
         Seq("http://numismatics.org/collection/1991.60.36"),
         CURRENT_TIME,

@@ -1,15 +1,15 @@
 package services
 
 import com.google.inject.AbstractModule
-import com.sksamuel.elastic4s.{ ElasticClient, ElasticsearchClientUri }
 import com.sksamuel.elastic4s.ElasticDsl._
+import com.sksamuel.elastic4s.{ ElasticClient, ElasticsearchClientUri, QueryDefinition, RichSearchResponse }
 import java.io.File
 import javax.inject.{ Inject, Singleton }
 import org.elasticsearch.common.settings.Settings
 import play.api.{ Configuration, Logger }
 import play.api.inject.ApplicationLifecycle
 import scala.io.Source
-import scala.concurrent.Future
+import scala.concurrent.{ ExecutionContext, Future }
 import scala.concurrent.duration._
 import scala.util.{ Try, Success, Failure }
 import scala.concurrent.Await
@@ -145,6 +145,49 @@ class ES @Inject() (config: Configuration, lifecycle: ApplicationLifecycle) {
           mappings :+ (number, (name, json))
         }
       }).sortBy(_._1).map(_._2)
+      
+  /** A generic helper for deleting records by query **/
+  private[services] def deleteByQuery(index: String, q: QueryDefinition, parent: Option[String] = None)(implicit ctx: ExecutionContext): Future[Unit] = {
+    
+    def fetchNextBatch(scrollId: String): Future[RichSearchResponse] =
+      client execute {
+        search scroll scrollId keepAlive "1m"
+      }
+    
+    def deleteOneBatch(ids: Seq[String]): Future[Unit] =
+      client execute {
+        bulk (
+          parent match {
+            case Some(parentId) =>
+              ids.map { id => delete id id from ES.PERIPLEO / index parent parentId }
+
+            case None =>
+              ids.map { id => delete id id from ES.PERIPLEO / index }
+          }
+        )
+        // bulk ( ids.map { id => delete id id from ES.PERIPLEO / index } )
+      } map { _ => () }
+    
+    def deleteBatch(response: RichSearchResponse, cursor: Long = 0l): Future[Unit] = {
+      val ids = response.hits.map(_.getId)
+      val total = response.totalHits
+      
+      deleteOneBatch(ids).flatMap { _ =>
+        val deletedRecords = cursor + ids.size
+        if (deletedRecords < total) {
+          fetchNextBatch(response.scrollId).flatMap(deleteBatch(_, deletedRecords))
+        } else {
+          Future.successful((): Unit)
+        }
+      }
+    }
+    
+    client execute {
+      search in ES.PERIPLEO / index query q limit 50 scroll "1m"
+    } flatMap {
+      deleteBatch(_)
+    }
+  }
 
 }
 

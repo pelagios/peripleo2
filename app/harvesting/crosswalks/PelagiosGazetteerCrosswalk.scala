@@ -2,7 +2,6 @@ package harvesting.crosswalks
 
 import java.io.{ File, FileInputStream, InputStream }
 import services.item.{ Description, Depiction, Language, TemporalBounds }
-import services.item.place._
 import org.joda.time.{ DateTime, DateTimeZone }
 import org.pelagios.Scalagios
 import org.pelagios.api.PeriodOfTime

@@ -41,7 +41,7 @@ object Item extends HasGeometry {
   import PathHierarchy._
 
   /** Per convention, first in list determines docId and top-level properties **/
-  def fromRecords(itemType: ItemType, records: Seq[ItemRecord]) = {
+  def fromRecords(docId: UUID, itemType: ItemType, records: Seq[ItemRecord]) = {
 
     val temporalBoundsUnion = records.flatMap(_.temporalBounds) match {
       case bounds if bounds.size > 0 => Some(TemporalBounds.computeUnion(bounds))
@@ -53,7 +53,7 @@ object Item extends HasGeometry {
     def getFirst[T](seq: Seq[Option[T]]) = seq.flatten.headOption
 
     Item(
-      UUID.randomUUID,
+      docId,
       itemType,
       records.head.title,
       getFirst(records.map(_.geometry)),
@@ -64,9 +64,9 @@ object Item extends HasGeometry {
   }
 
   /** Shorthand that creates an item from a single record **/
-  def fromRecord(itemType: ItemType, record: ItemRecord) =
+  def fromRecord(docId: UUID, itemType: ItemType, record: ItemRecord) =
     Item(
-      UUID.randomUUID,
+      docId,
       itemType,
       record.title,
       record.geometry,

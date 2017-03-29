@@ -7,10 +7,11 @@ import java.util.zip.GZIPInputStream
 import play.api.Logger
 import scala.concurrent.{ Await, ExecutionContext, Future }
 import scala.concurrent.duration._
-import services.HasBatchImport
+import services.item.ItemType
+import services.item.importers.HasBatchImport
 import services.task.{ TaskService, TaskStatus }
 
-class DumpImporter(taskService: TaskService) extends BaseImporter {
+class DumpImporter(taskService: TaskService, itemType: ItemType) extends BaseImporter {
 
   private val MAX_BATCHES = 20
   
@@ -26,7 +27,7 @@ class DumpImporter(taskService: TaskService) extends BaseImporter {
   def importDump[T](caption: String, file: File, filename: String, crosswalk: InputStream => Seq[T], 
       service : HasBatchImport[T], username: String)(implicit ctx: ExecutionContext, system: ActorSystem): Future[Boolean] = {
     
-    val taskId = Await.result(taskService.insertTask(service.taskType, service.getClass.getName, caption, username), 10.seconds)
+    val taskId = Await.result(taskService.insertTask(service.TASK_TYPE, service.getClass.getName, caption, username), 10.seconds)
     taskService.updateStatus(taskId, TaskStatus.RUNNING)
     
     val fConvert: Future[Seq[T]] = Future {
@@ -42,7 +43,7 @@ class DumpImporter(taskService: TaskService) extends BaseImporter {
 
       batches.zipWithIndex.foldLeft(Future.successful(Seq.empty[T])) { case (f, (batch, idx)) =>
         f.flatMap { unrecoverable =>
-          service.importBatch(batch).flatMap { failed =>
+          service.importBatch(batch, itemType).flatMap { failed =>
             val progress = Math.ceil((idx + 1) * increment).toInt
             taskService.updateProgress(taskId, progress).map(_ => unrecoverable ++ failed)
           }

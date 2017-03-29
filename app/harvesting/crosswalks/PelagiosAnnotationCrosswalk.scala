@@ -29,15 +29,16 @@ object PelagiosAnnotationCrosswalk {
     if (thing.parts.isEmpty) thing.parts
     else thing.parts ++ thing.parts.flatMap(flattenThingHierarchy)
 
-  def fromRDF(filename: String, inDataset: PathHierarchy): InputStream => Seq[(Item, Seq[UnboundReference])] = {
+  def fromRDF(filename: String, inDataset: PathHierarchy): InputStream => Seq[(ItemRecord, Seq[UnboundReference])] = {
 
-    def convertAnnotatedThing(thing: AnnotatedThing): Seq[(Item, Seq[UnboundReference])] = {
+    def convertAnnotatedThing(thing: AnnotatedThing): Seq[(ItemRecord, Seq[UnboundReference])] = {
       val flattenedHierarchy = thing +: flattenThingHierarchy(thing)
       flattenedHierarchy.map { thing =>
 
         val references = thing.annotations.flatMap { _.places.headOption.map { placeUri =>
           val uri = ItemRecord.normalizeURI(placeUri)
           UnboundReference(
+            thing.uri,
             ReferenceType.PLACE,
             uri,
             None, // relation
@@ -68,7 +69,7 @@ object PelagiosAnnotationCrosswalk {
           Seq.empty[String], // closeMatches
           Seq.empty[String]) // exactMatches
 
-        (Item.fromRecord(ItemType.OBJECT, record), references)
+        (record, references)
       }
     }
 

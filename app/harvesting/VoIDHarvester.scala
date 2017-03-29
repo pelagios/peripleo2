@@ -11,13 +11,14 @@ import play.api.Logger
 import play.api.libs.ws.WSClient
 import play.api.libs.Files.TemporaryFile
 import scala.concurrent.{ Future, ExecutionContext }
-import services.item.{ ItemService, PathHierarchy, PathSegment }
+import services.item.{ ItemType, PathHierarchy, PathSegment }
+import services.item.importers.AnnotationImporter
 import services.task.TaskService
 
 // TODO progress tracking that covers the entire process?
 
 class VoIDHarvester @Inject() (
-  val itemService: ItemService,
+  val annotationImporter: AnnotationImporter,
   val taskService: TaskService,
   val ws: WSClient,
   implicit val materializer: Materializer, 
@@ -67,7 +68,7 @@ class VoIDHarvester @Inject() (
   /** Imports the datasets into the index **/
   private def importDatasets(rootDatasets: Iterable[Dataset]): Future[Boolean] = {
     val items = PelagiosVoIDCrosswalk.fromDatasets(rootDatasets.toSeq)
-    itemService.importBatch(items).map { _.size == 0 }
+    annotationImporter.importDatasets(items)
   }
   
   /** Imports annotations from the dumpfiles into the index **/
@@ -77,13 +78,13 @@ class VoIDHarvester @Inject() (
         val parents = PelagiosVoIDCrosswalk.findParents(dataset).reverse :+ dataset
         val pathHierarchy = PathHierarchy(parents.map(d => PathSegment(d.uri, d.title)))
           
-        val importer = new DumpImporter(taskService)
+        val importer = new DumpImporter(taskService, ItemType.OBJECT)
         importer.importDump(
           "Importing Pelagios annotations from " + tmp.file.getName,
           tmp.file,
           tmp.file.getName,
           PelagiosAnnotationCrosswalk.fromRDF(tmp.file.getName, pathHierarchy),
-          itemService,
+          annotationImporter,
           username
           /* TODO job_id */)
       }

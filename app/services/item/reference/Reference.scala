@@ -6,6 +6,8 @@ import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
 
 case class Reference(
+    
+  parentUri: String,
 
   referenceType: ReferenceType.Value,
 
@@ -19,7 +21,19 @@ case class Reference(
 
   depiction: Option[ReferenceDepiction]
 
-)
+) {
+  
+  /** An unbound version of this reference **/
+  lazy val unbind = UnboundReference(
+    parentUri,
+    referenceType,
+    referenceTo.uri,
+    relation,
+    homepage,
+    context,
+    depiction)
+
+}
 
 case class ReferenceTo(uri: String, docId: UUID)
 
@@ -28,6 +42,7 @@ case class ReferenceDepiction(url: String, thumbnail: Option[String])
 object Reference {
 
   implicit val referenceFormat: Format[Reference] = (
+    (JsPath \ "parent_uri").format[String] and
     (JsPath \ "reference_type").format[ReferenceType.Value] and
     (JsPath \ "reference_to").format[ReferenceTo] and
     (JsPath \ "relation").formatNullable[Relation.Value] and

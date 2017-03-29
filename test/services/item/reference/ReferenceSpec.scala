@@ -45,6 +45,7 @@ class ReferenceSpec extends PlaySpec with TestHelpers {
     "yield an equal reference" in {
 
       val source = Reference(
+        "http://www.example.com/objects/0001",
         ReferenceType.PLACE,
         ReferenceTo("http://pleiades.stoa.org/places/118543", UUID.randomUUID),
         Some(Relation.ATTESTATION),

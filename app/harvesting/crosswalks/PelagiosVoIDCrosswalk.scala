@@ -25,16 +25,15 @@ object PelagiosVoIDCrosswalk {
       case _ => parents
     }
 
-  def convertDataset(rootset: Dataset): Seq[(Item, Seq[UnboundReference])] = {
-
-    val datasets = flattenHierarchy(rootset).map { d =>
+  def convertDataset(rootset: Dataset): Seq[ItemRecord] =
+    flattenHierarchy(rootset).map { d =>
       val parentHierarchy =  {
         val parents = findParents(d).reverse
         if (parents.isEmpty) None
         else Some(PathHierarchy(parents.map(d => PathSegment(d.uri, d.title))))
       }
 
-      val record = ItemRecord(
+      ItemRecord(
         d.uri,
         Seq(d.uri),
         DateTime.now().withZone(DateTimeZone.UTC),
@@ -54,20 +53,14 @@ object PelagiosVoIDCrosswalk {
         Seq.empty[Name],
         Seq.empty[String], // closeMatches
         Seq.empty[String]) // exactMatches
-
-      Item.fromRecord(ItemType.DATASET.ANNOTATIONS, record)
     }
 
-    // We need to add an empty set of references, so it's compatible
-    // with the generic ItemService import interface
-    datasets.map((_, Seq.empty[UnboundReference]))
-  }
 
-  def fromRDF(filename: String): InputStream => Seq[(Item, Seq[UnboundReference])] =
+  def fromRDF(filename: String): InputStream => Seq[ItemRecord] =
     { stream: InputStream =>
       Scalagios.readVoID(stream, filename).flatMap(convertDataset).toSeq }
 
-  def fromDatasets(rootDatasets: Seq[Dataset]): Seq[(Item, Seq[UnboundReference])] =
+  def fromDatasets(rootDatasets: Seq[Dataset]): Seq[ItemRecord] =
     rootDatasets.flatMap(convertDataset)
 
 }

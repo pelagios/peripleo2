@@ -12,19 +12,19 @@ import jp.t2v.lab.play2.auth.AuthElement
 import org.joda.time.DateTime
 import play.api.{ Configuration, Logger }
 import play.api.mvc.Action
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ Future, ExecutionContext }
 import services.task.TaskService
 import services.user.{ Role, UserService }
 import services.item._
 import services.item.reference.UnboundReference
-import services.item.place.PlaceService
+import services.item.importers.PlaceImporter
 
 @Singleton
 class GazetteerAdminController @Inject() (
   val config: Configuration,
   val users: UserService,
   val itemService: ItemService,
-  val placeService: PlaceService,
+  val placeImporter: PlaceImporter,
   val taskService: TaskService,
   val materializer: Materializer,
   implicit val ctx: ExecutionContext,
@@ -56,7 +56,8 @@ class GazetteerAdminController @Inject() (
       Seq.empty[String], // closeMatches
       Seq.empty[String]) // exactMatches
       
-    itemService.insertOrUpdateItem(Item.fromRecord(ItemType.DATASET.AUTHORITY.GAZETTEER, gazetteer), Seq.empty[UnboundReference])
+    // itemService.insertOrUpdateItem(Item.fromRecord(ItemType.DATASET.AUTHORITY.GAZETTEER, gazetteer), Seq.empty[UnboundReference])
+    Future.successful(true)
   }
 
   def index = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>
@@ -78,37 +79,37 @@ class GazetteerAdminController @Inject() (
             if (formData.filename.contains(".ttl") || formData.filename.contains(".rdf")) {
               Logger.info("Importing Pelagios RDF/TTL dump")
               
-              val importer = new DumpImporter(taskService)
+              val importer = new DumpImporter(taskService, ItemType.PLACE)
               importer.importDump(
                 formData.filename + " (Pelagios Gazetteer RDF)",
                 formData.ref.file,
                 formData.filename,
                 PelagiosGazetteerCrosswalk.fromRDF(formData.filename),
-                placeService,
+                placeImporter,
                 loggedIn.username)
                 
             } else if (formData.filename.toLowerCase.contains("pleiades")) {
               Logger.info("Using Pleiades crosswalk")
               
-              val importer = new StreamImporter(taskService, materializer)
+              val importer = new StreamImporter(taskService, ItemType.PLACE, materializer)
               importer.importRecords(
                 formData.filename + " (Pleiades GeoJSON)",
                 formData.ref.file,
                 formData.filename,
                 PleiadesCrosswalk.fromJson,
-                placeService,
+                placeImporter,
                 loggedIn.username)
                 
             } else if (formData.filename.toLowerCase.contains("geonames")) {
               Logger.info("Using GeoNames crosswalk")
               
-              val importer = new StreamImporter(taskService, materializer)
+              val importer = new StreamImporter(taskService, ItemType.PLACE, materializer)
               importer.importRecords(
                 formData.filename + " (GeoNames GeoJSON)",
                 formData.ref.file,
                 formData.filename,
                 GeoNamesCrosswalk.fromJson,
-                placeService,
+                placeImporter,
                 loggedIn.username)
             }
 

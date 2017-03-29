@@ -8,10 +8,11 @@ import akka.util.ByteString
 import java.io.{ File, InputStream }
 import scala.concurrent.{ Await, ExecutionContext, Future }
 import scala.concurrent.duration._
-import services.HasBatchImport
+import services.item.ItemType
+import services.item.importers.HasBatchImport
 import services.task.{ TaskService, TaskStatus }
 
-class StreamImporter(taskService: TaskService, implicit val materializer: Materializer) extends BaseImporter {
+class StreamImporter(taskService: TaskService, itemType: ItemType, implicit val materializer: Materializer) extends BaseImporter {
 
   private val BATCH_SIZE = 200
 
@@ -30,7 +31,7 @@ class StreamImporter(taskService: TaskService, implicit val materializer: Materi
     val totalLines = countLines(file)
     var processedLines = 0
     
-    val taskId = Await.result(taskService.insertTask(service.taskType, service.getClass.getName, caption, username), 10.seconds)
+    val taskId = Await.result(taskService.insertTask(service.TASK_TYPE, service.getClass.getName, caption, username), 10.seconds)
     taskService.updateStatus(taskId, TaskStatus.RUNNING)
 
     val source = StreamConverters.fromInputStream(() => getStream(file, filename), 1024)
@@ -43,7 +44,7 @@ class StreamImporter(taskService: TaskService, implicit val materializer: Materi
 
     val importer = Sink.foreach[Seq[Option[T]]] { records =>
       val toImport = records.flatten
-      Await.result(service.importBatch(toImport), 10.minutes)
+      Await.result(service.importBatch(toImport, itemType), 10.minutes)
       
       processedLines += records.size
       val progress = Math.ceil(100 * processedLines.toDouble / totalLines).toInt

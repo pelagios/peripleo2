@@ -2,6 +2,7 @@ package services.item.reference
 
 import com.sksamuel.elastic4s.ElasticDsl._
 import com.sksamuel.elastic4s.source.Indexable
+import java.util.UUID
 import org.elasticsearch.search.aggregations.bucket.terms.Terms
 import play.api.libs.json.Json
 import scala.concurrent.Future
@@ -9,14 +10,13 @@ import services.ES
 import services.item.{ Item, ItemService }
 
 trait ReferenceService { self: ItemService =>
-
-  implicit object ReferenceIndexable extends Indexable[Reference] {
-    override def json(r: Reference): String = Json.stringify(Json.toJson(r))
-  }
-  
-  /** Keeps only references that resolve to an entity in the index **/
-  protected def filterResolvable(references: Seq[UnboundReference]): Future[Seq[Reference]] =
-    if (references.isEmpty)
+    
+  /** Turns unbound references into bound ones, filtering those that are unresolvable **/
+  private[item] def resolveReferences(unbound: Seq[UnboundReference]): Future[Seq[Reference]] = {
+    
+    import ItemService._
+    
+    if (unbound.isEmpty)
       Future.successful(Seq.empty[Reference])
     else
       es.client execute {
@@ -26,19 +26,19 @@ trait ReferenceService { self: ItemService =>
             // TODO we may need to limit this in some cases (literature!) 
             // TODO current max-size is 10.000 unique (!) references
             should (
-              references.map(_.uri).distinct.map(termQuery("is_conflation_of.identifiers", _))
+              unbound.map(_.uri).distinct.map(termQuery("is_conflation_of.identifiers", _))
             )
           }
         } start 0 limit ES.MAX_SIZE
       } map { response =>
-        // Re-write reference docIds according to index content
         val items = response.as[Item]
-        references.flatMap { reference =>
+        unbound.flatMap { reference =>
           items.find(_.identifiers.contains(reference.uri)).map { case item =>
             reference.toReference(item.docId)
           }
         }
       }
+  }
   
   def getReferenceStats(identifier: String): Future[ReferenceStats] = {
     

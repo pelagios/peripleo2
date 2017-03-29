@@ -2,6 +2,7 @@
   "reference": {
     "_parent": { "type": "item" },
     "properties": {
+      "parent_uri": { "type": "string", "index": "not_analyzed" },
       "reference_type": { "type": "string", "index": "not_analyzed" },
       "reference_to": {
         "properties": {

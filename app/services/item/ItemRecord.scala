@@ -86,6 +86,7 @@ object ItemRecord extends HasDate with HasNullableSeq with HasGeometry {
   /** Utility to create a cloned record, with all URIs normalized **/
   def normalize(i: ItemRecord) =
     i.copy(
+      uri = normalizeURI(i.uri),
       identifiers = i.identifiers.map(normalizeURI),
       closeMatches = i.closeMatches.map(normalizeURI),
       exactMatches = i.exactMatches.map(normalizeURI)
