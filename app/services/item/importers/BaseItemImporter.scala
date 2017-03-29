@@ -41,19 +41,20 @@ abstract class BaseItemImporter(itemService: ItemService) {
         
     // Existing references become unbound during the conflation stage, so we just
     // batch-delete all associated references (and re-insert below)
-    val fDeleteExistingReferences: Future[_] = 
+    val fDeleteExistingReferences = 
       es.deleteByQuery(ES.REFERENCE, termQuery("reference_to.doc_id", i.item.docId.toString), Some(i.item.docId.toString))
             
-    def fUpsert(item: Item, refs: Seq[Reference]): Future[_] =
+    def fUpsert(item: Item, refs: Seq[Reference]) = {
       es.client execute {
         bulk (
           // Upsert the item
-          { update id item.docId.toString in ES.PERIPLEO / ES.ITEM source item docAsUpsert } +: 
-          
-          // Insert the references
-          refs.map { ref => index into ES.PERIPLEO / ES.REFERENCE source ref parent item.docId.toString }
+          { update id item.docId.toString in ES.PERIPLEO / ES.ITEM source item docAsUpsert } +: refs.map { ref => 
+            
+            // Insert the references
+            index into ES.PERIPLEO / ES.REFERENCE source ref parent item.docId.toString }
         )
       }
+    }
       
     val f = for {
       resolvedReferences <- fFilterResolvable
@@ -63,7 +64,7 @@ abstract class BaseItemImporter(itemService: ItemService) {
     
     f.recover { case t: Throwable =>
       Logger.error("Error indexing item " + i.item.docId + ": " + t.getMessage)
-      // t.printStackTrace
+      t.printStackTrace
       false
     }
   }

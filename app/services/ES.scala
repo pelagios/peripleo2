@@ -165,21 +165,23 @@ class ES @Inject() (config: Configuration, lifecycle: ApplicationLifecycle) {
               ids.map { id => delete id id from ES.PERIPLEO / index }
           }
         )
-        // bulk ( ids.map { id => delete id id from ES.PERIPLEO / index } )
       } map { _ => () }
     
     def deleteBatch(response: RichSearchResponse, cursor: Long = 0l): Future[Unit] = {
       val ids = response.hits.map(_.getId)
       val total = response.totalHits
-      
-      deleteOneBatch(ids).flatMap { _ =>
-        val deletedRecords = cursor + ids.size
-        if (deletedRecords < total) {
-          fetchNextBatch(response.scrollId).flatMap(deleteBatch(_, deletedRecords))
-        } else {
-          Future.successful((): Unit)
+
+      if (ids.isEmpty)
+        Future.successful((): Unit)
+      else
+        deleteOneBatch(ids).flatMap { _ =>
+          val deletedRecords = cursor + ids.size
+          if (deletedRecords < total) {
+            fetchNextBatch(response.scrollId).flatMap(deleteBatch(_, deletedRecords))
+          } else {
+            Future.successful((): Unit)
+          }
         }
-      }
     }
     
     client execute {
