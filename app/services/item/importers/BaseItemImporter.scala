@@ -32,18 +32,18 @@ abstract class BaseItemImporter(itemService: ItemService) {
   private def insertOrUpdateItem(i: ItemWithUnboundReferences): Future[Boolean] = {
     // References that resolve to objects already in the index
     val fFilterResolvable = itemService.resolveReferences(i.references)
+    
+    // References that resolve to the item itself (in case of places, persons, periods)
+    val selfReferences = i.references.filter { ref =>
+      val identifiers = i.item.identifiers.toSet
+      identifiers.contains(ref.uri)
+    }.map(_.toReference(i.item.docId))
         
     // Existing references become unbound during the conflation stage, so we just
     // batch-delete all associated references (and re-insert below)
     val fDeleteExistingReferences: Future[_] = 
       es.deleteByQuery(ES.REFERENCE, termQuery("reference_to.doc_id", i.item.docId.toString), Some(i.item.docId.toString))
-      
-      
-        
-    /** TODO what about references that resolve to objects in this batch? (Places, Persons, Periods) **/
-      
-      
-      
+            
     def fUpsert(item: Item, refs: Seq[Reference]): Future[_] =
       es.client execute {
         bulk (
@@ -58,7 +58,7 @@ abstract class BaseItemImporter(itemService: ItemService) {
     val f = for {
       resolvedReferences <- fFilterResolvable
       _ <- fDeleteExistingReferences
-      _ <- fUpsert(i.item, resolvedReferences)
+      _ <- fUpsert(i.item, resolvedReferences ++ selfReferences)
     } yield true
     
     f.recover { case t: Throwable =>
