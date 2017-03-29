@@ -4,6 +4,19 @@ import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
 
+sealed trait ItemType {
+  
+  val name: String
+  
+  val parent: Option[ItemType]
+  
+  lazy val asString: Seq[String] = parent match {
+    case Some(parent) => parent.asString :+ name
+    case None => Seq(name)
+  }
+  
+}
+
 /** Item type taxonomy **/
 object ItemType {
   
@@ -50,17 +63,4 @@ object ItemType {
     Writes[ItemType](t => Json.toJson(t.asString))
   )
  
-}
-
-sealed trait ItemType {
-  
-  val name: String
-  
-  val parent: Option[ItemType]
-  
-  lazy val asString: Seq[String] = parent match {
-    case Some(parent) => parent.asString :+ name
-    case None => Seq(name)
-  }
-  
 }
