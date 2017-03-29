@@ -69,7 +69,7 @@ class ES @Inject() (config: Configuration, lifecycle: ApplicationLifecycle) {
       }, 3.seconds)
     ) match {
       case Success(_) => {
-        // Yes, there's a cluster - let's connect, shall we?
+        // Yes, there's a cluster! Let's use that one, shall we?
         Logger.info("Joining ElasticSearch cluster")
         remoteClient
       }
