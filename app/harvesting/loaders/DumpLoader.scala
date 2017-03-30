@@ -1,6 +1,7 @@
-package harvesting
+package harvesting.loaders
 
 import akka.actor.ActorSystem
+import harvesting.HasBatchImport
 import java.io.{ File, FileInputStream, InputStream }
 import java.util.UUID
 import java.util.zip.GZIPInputStream
@@ -8,10 +9,9 @@ import play.api.Logger
 import scala.concurrent.{ Await, ExecutionContext, Future }
 import scala.concurrent.duration._
 import services.item.ItemType
-import services.item.importers.HasBatchImport
 import services.task.{ TaskService, TaskStatus }
 
-class DumpImporter(taskService: TaskService, itemType: ItemType) extends BaseImporter {
+class DumpLoader(taskService: TaskService, itemType: ItemType) extends BaseLoader {
 
   private val MAX_BATCHES = 20
   

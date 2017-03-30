@@ -1,18 +1,18 @@
-package harvesting
+package harvesting.loaders
 
 import akka.Done
 import akka.actor.ActorSystem
 import akka.stream.{ ActorAttributes, ClosedShape, Materializer, Supervision }
 import akka.stream.scaladsl._
 import akka.util.ByteString
+import harvesting.HasBatchImport
 import java.io.{ File, InputStream }
 import scala.concurrent.{ Await, ExecutionContext, Future }
 import scala.concurrent.duration._
 import services.item.ItemType
-import services.item.importers.HasBatchImport
 import services.task.{ TaskService, TaskStatus }
 
-class StreamImporter(taskService: TaskService, itemType: ItemType, implicit val materializer: Materializer) extends BaseImporter {
+class StreamLoader(taskService: TaskService, itemType: ItemType, implicit val materializer: Materializer) extends BaseLoader {
 
   private val BATCH_SIZE = 200
 

@@ -3,7 +3,7 @@ package controllers.admin.authorities
 import akka.actor.ActorSystem
 import akka.stream.Materializer
 import controllers.{ BaseAuthController, WebJarAssets }
-import harvesting.{ DumpImporter, StreamImporter }
+import harvesting.loaders.{ DumpLoader, StreamLoader }
 import harvesting.crosswalks._
 import java.io.FileInputStream
 import java.util.UUID
@@ -79,7 +79,7 @@ class GazetteerAdminController @Inject() (
             if (formData.filename.contains(".ttl") || formData.filename.contains(".rdf")) {
               Logger.info("Importing Pelagios RDF/TTL dump")
               
-              val importer = new DumpImporter(taskService, ItemType.PLACE)
+              val importer = new DumpLoader(taskService, ItemType.PLACE)
               importer.importDump(
                 formData.filename + " (Pelagios Gazetteer RDF)",
                 formData.ref.file,
@@ -91,7 +91,7 @@ class GazetteerAdminController @Inject() (
             } else if (formData.filename.toLowerCase.contains("pleiades")) {
               Logger.info("Using Pleiades crosswalk")
               
-              val importer = new StreamImporter(taskService, ItemType.PLACE, materializer)
+              val importer = new StreamLoader(taskService, ItemType.PLACE, materializer)
               importer.importRecords(
                 formData.filename + " (Pleiades GeoJSON)",
                 formData.ref.file,
@@ -103,7 +103,7 @@ class GazetteerAdminController @Inject() (
             } else if (formData.filename.toLowerCase.contains("geonames")) {
               Logger.info("Using GeoNames crosswalk")
               
-              val importer = new StreamImporter(taskService, ItemType.PLACE, materializer)
+              val importer = new StreamLoader(taskService, ItemType.PLACE, materializer)
               importer.importRecords(
                 formData.filename + " (GeoNames GeoJSON)",
                 formData.ref.file,

@@ -3,6 +3,7 @@ package harvesting
 import akka.actor.ActorSystem
 import akka.stream.Materializer
 import harvesting.crosswalks._
+import harvesting.loaders.DumpLoader
 import java.io.FileInputStream
 import javax.inject.Inject
 import org.pelagios.Scalagios
@@ -78,7 +79,7 @@ class VoIDHarvester @Inject() (
         val parents = PelagiosVoIDCrosswalk.findParents(dataset).reverse :+ dataset
         val pathHierarchy = PathHierarchy(parents.map(d => (d.uri -> d.title)))
           
-        val importer = new DumpImporter(taskService, ItemType.OBJECT)
+        val importer = new DumpLoader(taskService, ItemType.OBJECT)
         importer.importDump(
           "Importing Pelagios annotations from " + tmp.file.getName,
           tmp.file,

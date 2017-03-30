@@ -1,12 +1,11 @@
 package services.item.importers
 
-import javax.inject.{ Inject, Singleton }
-import scala.concurrent.Future
+import harvesting.HasBatchImport
+import javax.inject.Inject
 import services.item.{ ItemRecord, ItemService, ItemType }
-import services.item.reference._
+import services.item.reference.{ ReferenceType, UnboundReference }
 import services.task.TaskType
 
-@Singleton
 class PlaceImporter @Inject() (
   itemService: ItemService
 ) extends BaseItemImporter(itemService) with HasBatchImport[ItemRecord] {

@@ -1,4 +1,4 @@
-package services.item.importers
+package harvesting
 
 import play.api.Logger
 import scala.concurrent.{ ExecutionContext, Future }
