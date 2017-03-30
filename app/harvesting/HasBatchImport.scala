@@ -6,8 +6,6 @@ import services.task.TaskType
 
 trait HasBatchImport[T] {
   
-  def TASK_TYPE: TaskType
-  
   private def MAX_RETRIES = 5 // Max times an update will be retried in case of failure
     
   private def importRecords(records: Seq[T], retries: Int = MAX_RETRIES)(implicit ctx: ExecutionContext): Future[Seq[T]] =

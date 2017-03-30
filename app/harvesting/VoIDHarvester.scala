@@ -14,7 +14,7 @@ import play.api.libs.Files.TemporaryFile
 import scala.concurrent.{ Future, ExecutionContext }
 import services.item.{ ItemService, ItemType, PathHierarchy }
 import services.item.importers.{ DatasetImporter, ItemImporter }
-import services.task.TaskService
+import services.task.{ TaskService, TaskType }
 
 // TODO progress tracking that covers the entire process?
 
@@ -26,6 +26,8 @@ class VoIDHarvester @Inject() (
   implicit val system: ActorSystem,
   implicit val ctx: ExecutionContext
 ) extends HasFileDownload {
+  
+  private val taskType = TaskType("DATASET_IMPORT")
   
   private def parseVoID(file: TemporaryFile) = Future {
     scala.concurrent.blocking {
@@ -80,7 +82,7 @@ class VoIDHarvester @Inject() (
         val parents = PelagiosVoIDCrosswalk.findParents(dataset).reverse :+ dataset
         val pathHierarchy = PathHierarchy(parents.map(d => (d.uri -> d.title)))
           
-        val loader = new DumpLoader(taskService)
+        val loader = new DumpLoader(taskService, taskType)
         loader.importDump(
           "Importing Pelagios annotations from " + tmp.file.getName,
           tmp.file,

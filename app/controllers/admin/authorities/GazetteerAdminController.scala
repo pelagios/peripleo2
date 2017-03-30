@@ -13,7 +13,7 @@ import org.joda.time.DateTime
 import play.api.{ Configuration, Logger }
 import play.api.mvc.Action
 import scala.concurrent.{ Future, ExecutionContext }
-import services.task.TaskService
+import services.task.{ TaskService, TaskType }
 import services.user.{ Role, UserService }
 import services.item._
 import services.item.reference.UnboundReference
@@ -30,6 +30,8 @@ class GazetteerAdminController @Inject() (
   implicit val system: ActorSystem,
   implicit val webjars: WebJarAssets
 ) extends BaseAuthorityAdminController(new DatasetImporter(itemService)) {
+  
+  private val taskType = TaskType("GAZETTEER_IMPORT")
 
   private def upsertGazetteerMeta(filename: String) = {    
     val name = filename.substring(0, filename.indexOf('.'))
@@ -61,7 +63,7 @@ class GazetteerAdminController @Inject() (
             if (formData.filename.contains(".ttl") || formData.filename.contains(".rdf")) {
               Logger.info("Importing Pelagios RDF/TTL dump")
               
-              new DumpLoader(taskService).importDump(
+              new DumpLoader(taskService, taskType).importDump(
                 formData.filename + " (Pelagios Gazetteer RDF)",
                 formData.ref.file,
                 formData.filename,
@@ -72,7 +74,7 @@ class GazetteerAdminController @Inject() (
             } else if (formData.filename.toLowerCase.contains("pleiades")) {
               Logger.info("Using Pleiades crosswalk")
               
-              new StreamLoader(taskService, materializer).importRecords(
+              new StreamLoader(taskService, taskType, materializer).importRecords(
                 formData.filename + " (Pleiades GeoJSON)",
                 formData.ref.file,
                 formData.filename,
@@ -83,7 +85,7 @@ class GazetteerAdminController @Inject() (
             } else if (formData.filename.toLowerCase.contains("geonames")) {
               Logger.info("Using GeoNames crosswalk")
               
-              new StreamLoader(taskService, materializer).importRecords(
+              new StreamLoader(taskService, taskType, materializer).importRecords(
                 formData.filename + " (GeoNames GeoJSON)",
                 formData.ref.file,
                 formData.filename,

@@ -4,12 +4,9 @@ import harvesting.HasBatchImport
 import javax.inject.Inject
 import services.item.{ ItemRecord, ItemService, ItemType }
 import services.item.reference.{ ReferenceType, UnboundReference }
-import services.task.TaskType
 
 /** Convenience wrapper around the BaseImporter, specifically for entity imports **/
 class EntityImporter(itemService: ItemService, itemType: ItemType) extends BaseImporter(itemService) with HasBatchImport[ItemRecord] {
-  
-  override val TASK_TYPE = TaskType("AUTHORITY_IMPORT_" + itemType)
   
   override val ITEM_TYPE = itemType
   
