@@ -30,8 +30,6 @@ case class Item private[item] (
 
 object Item extends HasGeometry {
 
-  import PathHierarchy._
-
   /** Per convention, first in list determines docId and top-level properties **/
   def fromRecords(docId: UUID, itemType: ItemType, records: Seq[ItemRecord]) = {
 
