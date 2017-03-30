@@ -84,31 +84,18 @@ object PleiadesName {
     (JsPath \ "start").readNullable[Int] and
     (JsPath \ "end").readNullable[Int]
   )(PleiadesName.apply _)
+  
 }
 
 case class PleiadesRecord(
-
-  uri: String,
-
-  history: Seq[HistoryRecord],
-
-  title: String,
-
-  description: Option[String],
-
-  names: Seq[PleiadesName],
-
-  features: Seq[Feature],
-
-  representativePoint: Option[Coordinate],
-
-  placeTypes: Seq[String]
-
-  // TODO close matches
-
-  // TODO exact matches
-
-)
+  uri                 : String,
+  history             : Seq[HistoryRecord],
+  title               : String,
+  description         : Option[String],
+  names               : Seq[PleiadesName],
+  features            : Seq[Feature],
+  representativePoint : Option[Coordinate],
+  placeTypes          : Seq[String])
 
 object PleiadesRecord extends HasGeometry {
 

@@ -8,7 +8,7 @@ import javax.inject.{ Inject, Singleton }
 import play.api.Configuration
 import scala.concurrent.ExecutionContext
 import services.user.{ Role, UserService }
-import services.item.{ ItemService, ItemType }
+import services.item.{ ItemService, ItemType, PathHierarchy }
 import services.item.importers.{ DatasetImporter, EntityImporter }
 import services.task.{ TaskService, TaskType }
 import harvesting.crosswalks.people.SimplePeopleCrosswalk
@@ -36,13 +36,14 @@ class PeopleAdminController @Inject() (
         
         // TODO temporary hack - should have proper URI + title
         val name = formdata.filename.substring(0, formdata.filename.indexOf('.'))
+        val dataset = PathHierarchy(name, name)
         
         upsertDatasetRecord(ItemType.DATASET.AUTHORITY.PEOPLE, name, name).map { success =>
           new StreamLoader(taskService, TaskType("AUTHORITY_IMPORT_PEOPLE"), materializer).importRecords(
             formdata.filename,
             formdata.ref.file,
             formdata.filename,
-            SimplePeopleCrosswalk.fromJson,
+            SimplePeopleCrosswalk.fromJson(dataset),
             importer,
             loggedIn.username)
         }

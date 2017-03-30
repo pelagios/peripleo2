@@ -37,24 +37,14 @@ object GeoNamesCrosswalk extends BaseGeoJSONCrosswalk {
 }
 
 case class GeoNamesRecord(
-
-  uri: String,
-
-  title: String,
-
-  description: Option[String],
-
-  names: Seq[Name],
-
-  features: Seq[Feature],
-
-  representativePoint: Option[Coordinate],
-
-  countryCode: Option[String],
-
-  population: Option[Long]
-
-)
+  uri                 : String,
+  title               : String,
+  description         : Option[String],
+  names               : Seq[Name],
+  features            : Seq[Feature],
+  representativePoint : Option[Coordinate],
+  countryCode         : Option[String],
+  population          : Option[Long])
 
 object GeoNamesRecord extends HasGeometry {
 
