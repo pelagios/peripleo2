@@ -6,21 +6,13 @@ import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
 
 case class Reference(
-    
-  parentUri: String,
-
-  referenceType: ReferenceType.Value,
-
-  referenceTo: ReferenceTo,
-
-  relation: Option[Relation.Value],
-
-  homepage: Option[String],
-
-  context: Option[String],
-
-  depiction: Option[ReferenceDepiction]
-
+  parentUri     : String,
+  referenceType : ReferenceType.Value,
+  referenceTo   : ReferenceTo,
+  relation      : Option[Relation.Value],
+  homepage      : Option[String],
+  context       : Option[String],
+  depiction     : Option[ReferenceDepiction]
 ) {
   
   /** An unbound version of this reference **/
