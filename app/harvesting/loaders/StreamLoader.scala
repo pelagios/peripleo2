@@ -12,7 +12,7 @@ import scala.concurrent.duration._
 import services.item.ItemType
 import services.task.{ TaskService, TaskStatus }
 
-class StreamLoader(taskService: TaskService, itemType: ItemType, implicit val materializer: Materializer) extends BaseLoader {
+class StreamLoader(taskService: TaskService, implicit val materializer: Materializer) extends BaseLoader {
 
   private val BATCH_SIZE = 200
 
@@ -44,7 +44,7 @@ class StreamLoader(taskService: TaskService, itemType: ItemType, implicit val ma
 
     val importer = Sink.foreach[Seq[Option[T]]] { records =>
       val toImport = records.flatten
-      Await.result(service.importBatch(toImport, itemType), 10.minutes)
+      Await.result(service.importBatch(toImport), 10.minutes)
       
       processedLines += records.size
       val progress = Math.ceil(100 * processedLines.toDouble / totalLines).toInt

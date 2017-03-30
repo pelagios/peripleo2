@@ -11,7 +11,7 @@ import scala.concurrent.duration._
 import services.item.ItemType
 import services.task.{ TaskService, TaskStatus }
 
-class DumpLoader(taskService: TaskService, itemType: ItemType) extends BaseLoader {
+class DumpLoader(taskService: TaskService) extends BaseLoader {
 
   private val MAX_BATCHES = 20
   
@@ -43,7 +43,7 @@ class DumpLoader(taskService: TaskService, itemType: ItemType) extends BaseLoade
 
       batches.zipWithIndex.foldLeft(Future.successful(Seq.empty[T])) { case (f, (batch, idx)) =>
         f.flatMap { unrecoverable =>
-          service.importBatch(batch, itemType).flatMap { failed =>
+          service.importBatch(batch).flatMap { failed =>
             val progress = Math.ceil((idx + 1) * increment).toInt
             taskService.updateProgress(taskId, progress).map(_ => unrecoverable ++ failed)
           }

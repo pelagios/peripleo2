@@ -8,21 +8,13 @@ import play.api.libs.functional.syntax._
 import services.{ HasDate, HasGeometry, HasNullableSeq }
 
 case class Item private[item] (
-
-  docId: UUID,
-
-  itemType: ItemType,
-
-  title: String,
-
-  geometry: Option[Geometry],
-
-  representativePoint: Option[Coordinate],
-
-  temporalBounds: Option[TemporalBounds],
-
-  isConflationOf: Seq[ItemRecord]
-
+  docId               : UUID,
+  itemType            : ItemType,
+  title               : String,
+  geometry            : Option[Geometry],
+  representativePoint : Option[Coordinate],
+  temporalBounds      : Option[TemporalBounds],
+  isConflationOf      : Seq[ItemRecord]
 ) {
 
   lazy val identifiers = isConflationOf.flatMap(_.identifiers)

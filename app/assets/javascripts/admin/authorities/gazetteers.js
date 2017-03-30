@@ -53,7 +53,7 @@ require([
     var progressList = new TaskProgressList(jQuery('.uploads')),
 
         gazetteerOverview =
-          new GazetteerOverview(jQuery('.overview table'), jQuery('.gazetter-count')),
+          new GazetteerOverview(jQuery('.overview table'), jQuery('.authorities-count')),
 
         queryProgress = function() {
           var retriesLeft = 3,

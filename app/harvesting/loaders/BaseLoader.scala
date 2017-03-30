@@ -3,7 +3,7 @@ package harvesting.loaders
 import java.io.{ File, FileInputStream }
 import java.util.zip.GZIPInputStream
 
-class BaseLoader {
+trait BaseLoader {
   
   protected def getStream(file: File, filename: String) =
     if (filename.endsWith(".gz")) new GZIPInputStream(new FileInputStream(file))

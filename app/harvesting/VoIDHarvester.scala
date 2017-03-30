@@ -12,14 +12,14 @@ import play.api.Logger
 import play.api.libs.ws.WSClient
 import play.api.libs.Files.TemporaryFile
 import scala.concurrent.{ Future, ExecutionContext }
-import services.item.{ ItemType, PathHierarchy }
-import services.item.importers.AnnotationImporter
+import services.item.{ ItemService, ItemType, PathHierarchy }
+import services.item.importers.{ DatasetImporter, ItemImporter }
 import services.task.TaskService
 
 // TODO progress tracking that covers the entire process?
 
 class VoIDHarvester @Inject() (
-  val annotationImporter: AnnotationImporter,
+  val itemService: ItemService,
   val taskService: TaskService,
   val ws: WSClient,
   implicit val materializer: Materializer, 
@@ -69,23 +69,24 @@ class VoIDHarvester @Inject() (
   /** Imports the datasets into the index **/
   private def importDatasets(rootDatasets: Iterable[Dataset]): Future[Boolean] = {
     val items = PelagiosVoIDCrosswalk.fromDatasets(rootDatasets.toSeq)
-    annotationImporter.importDatasets(items)
+    new DatasetImporter(itemService).importDatasets(items)
   }
   
   /** Imports annotations from the dumpfiles into the index **/
   private def importAnnotationDumps(dumps: Seq[(Dataset, Seq[TemporaryFile])], username: String): Future[Boolean] = {
+    val importer = new ItemImporter(itemService, ItemType.OBJECT)
     val fImports = dumps.flatMap { case (dataset, tmpFiles) =>
       tmpFiles.map { tmp =>
         val parents = PelagiosVoIDCrosswalk.findParents(dataset).reverse :+ dataset
         val pathHierarchy = PathHierarchy(parents.map(d => (d.uri -> d.title)))
           
-        val importer = new DumpLoader(taskService, ItemType.OBJECT)
-        importer.importDump(
+        val loader = new DumpLoader(taskService)
+        loader.importDump(
           "Importing Pelagios annotations from " + tmp.file.getName,
           tmp.file,
           tmp.file.getName,
           PelagiosAnnotationCrosswalk.fromRDF(tmp.file.getName, pathHierarchy),
-          annotationImporter,
+          importer,
           username
           /* TODO job_id */)
       }

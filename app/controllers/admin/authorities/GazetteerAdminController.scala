@@ -17,47 +17,26 @@ import services.task.TaskService
 import services.user.{ Role, UserService }
 import services.item._
 import services.item.reference.UnboundReference
-import services.item.importers.PlaceImporter
+import services.item.importers.{ DatasetImporter, EntityImporter }
 
 @Singleton
 class GazetteerAdminController @Inject() (
   val config: Configuration,
   val users: UserService,
   val itemService: ItemService,
-  val placeImporter: PlaceImporter,
   val taskService: TaskService,
   val materializer: Materializer,
   implicit val ctx: ExecutionContext,
   implicit val system: ActorSystem,
   implicit val webjars: WebJarAssets
-) extends BaseAuthController with AuthElement {
+) extends BaseAuthorityAdminController(new DatasetImporter(itemService)) {
 
-  private def upsertGazetteerMeta(filename: String) = {
+  private def upsertGazetteerMeta(filename: String) = {    
     val name = filename.substring(0, filename.indexOf('.'))
-
-    val gazetteer = ItemRecord(
-      name,
-      Seq(name),      
-      DateTime.now,
-      None, // lastChangedAt
-      name,
-      None, // isInDataset
-      None, // isPartOf
-      Seq.empty[Category],
-      Seq.empty[Description],
-      None, // homepage
-      None, // license
-      Seq.empty[Language],
-      Seq.empty[Depiction],
-      None, // geometry
-      None, // representativePoint
-      None, // temporalBounds
-      Seq.empty[Name],
-      Seq.empty[String], // closeMatches
-      Seq.empty[String]) // exactMatches
-      
-    // itemService.insertOrUpdateItem(Item.fromRecord(ItemType.DATASET.AUTHORITY.GAZETTEER, gazetteer), Seq.empty[UnboundReference])
-    Future.successful(true)
+    upsertDatasetRecord(
+      ItemType.DATASET.AUTHORITY.GAZETTEER,
+      name, // TODO should be a URI
+      name)
   }
 
   def index = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>
@@ -65,6 +44,9 @@ class GazetteerAdminController @Inject() (
   }
 
   def importGazetteer = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>
+    
+    val importer = new EntityImporter(itemService, ItemType.PLACE)
+    
     request.body.asMultipartFormData.flatMap(_.file("file")) match {
       case Some(formData) =>
         Logger.info("Importing gazetteer from " + formData.filename)
@@ -79,37 +61,34 @@ class GazetteerAdminController @Inject() (
             if (formData.filename.contains(".ttl") || formData.filename.contains(".rdf")) {
               Logger.info("Importing Pelagios RDF/TTL dump")
               
-              val importer = new DumpLoader(taskService, ItemType.PLACE)
-              importer.importDump(
+              new DumpLoader(taskService).importDump(
                 formData.filename + " (Pelagios Gazetteer RDF)",
                 formData.ref.file,
                 formData.filename,
                 PelagiosGazetteerCrosswalk.fromRDF(formData.filename),
-                placeImporter,
+                importer,
                 loggedIn.username)
                 
             } else if (formData.filename.toLowerCase.contains("pleiades")) {
               Logger.info("Using Pleiades crosswalk")
               
-              val importer = new StreamLoader(taskService, ItemType.PLACE, materializer)
-              importer.importRecords(
+              new StreamLoader(taskService, materializer).importRecords(
                 formData.filename + " (Pleiades GeoJSON)",
                 formData.ref.file,
                 formData.filename,
                 PleiadesCrosswalk.fromJson,
-                placeImporter,
+                importer,
                 loggedIn.username)
                 
             } else if (formData.filename.toLowerCase.contains("geonames")) {
               Logger.info("Using GeoNames crosswalk")
               
-              val importer = new StreamLoader(taskService, ItemType.PLACE, materializer)
-              importer.importRecords(
+              new StreamLoader(taskService, materializer).importRecords(
                 formData.filename + " (GeoNames GeoJSON)",
                 formData.ref.file,
                 formData.filename,
                 GeoNamesCrosswalk.fromJson,
-                placeImporter,
+                importer,
                 loggedIn.username)
             }
 

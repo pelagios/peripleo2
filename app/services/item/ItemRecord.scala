@@ -8,45 +8,25 @@ import play.api.libs.functional.syntax._
 import services.{ HasDate, HasGeometry, HasNullableSeq }
 
 case class ItemRecord(
-
-  uri: String,
-
-  identifiers: Seq[String],
-
-  lastSyncedAt: DateTime,
-
-  lastChangedAt: Option[DateTime],
-
-  title: String,
-
-  isInDataset: Option[PathHierarchy],
-
-  isPartOf: Option[PathHierarchy],
-
-  categories: Seq[Category],
-
-  descriptions: Seq[Description],
-
-  homepage: Option[String],
-
-  license: Option[String],
-
-  languages: Seq[Language],
-
-  depictions: Seq[Depiction],
-
-  geometry: Option[Geometry],
-
-  representativePoint: Option[Coordinate],
-
-  temporalBounds: Option[TemporalBounds],
-
-  names: Seq[Name],
-
-  closeMatches: Seq[String],
-
-  exactMatches: Seq[String]
-
+  uri                 : String,
+  identifiers         : Seq[String],
+  lastSyncedAt        : DateTime,
+  lastChangedAt       : Option[DateTime],
+  title               : String,
+  isInDataset         : Option[PathHierarchy],
+  isPartOf            : Option[PathHierarchy],
+  categories          : Seq[Category],
+  descriptions        : Seq[Description],
+  homepage            : Option[String],
+  license             : Option[String],
+  languages           : Seq[Language],
+  depictions          : Seq[Depiction],
+  geometry            : Option[Geometry],
+  representativePoint : Option[Coordinate],
+  temporalBounds      : Option[TemporalBounds],
+  names               : Seq[Name],
+  closeMatches        : Seq[String],
+  exactMatches        : Seq[String]
 ) {
 
   lazy val allMatches = closeMatches ++ exactMatches

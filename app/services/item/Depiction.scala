@@ -8,11 +8,11 @@ import services.HasDate
 
 case class Depiction(
   url       : String,
-  thumbnail : Option[String],
-  caption   : Option[String],
-  creator   : Option[String],
-  createdAt : Option[DateTime],
-  license   : Option[String])
+  thumbnail : Option[String]   = None,
+  caption   : Option[String]   = None,
+  creator   : Option[String]   = None,
+  createdAt : Option[DateTime] = None,
+  license   : Option[String]   = None)
 
 object Depiction extends HasDate {
   

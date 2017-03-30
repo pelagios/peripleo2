@@ -11,7 +11,9 @@ import services.item.reference.{ Reference, UnboundReference }
 import services.task.TaskType
 import services.item.ItemService.ItemWithUnboundReferences
 
-abstract class BaseItemImporter(itemService: ItemService) {
+abstract class BaseImporter(itemService: ItemService) {
+  
+  protected val ITEM_TYPE: ItemType
   
   val es = itemService.es
   
@@ -82,7 +84,7 @@ abstract class BaseItemImporter(itemService: ItemService) {
   }
   
   /** Joins a record with a list of items **/
-  private def join(normalizedRecord: ItemRecord, items: Seq[Item], itemType: ItemType): Item = {
+  private def join(normalizedRecord: ItemRecord, items: Seq[Item]): Item = {
     // The general rule is that the "biggest item" (with highest number of records) determines
     // the docId and top-level properties of the conflated records
     val affectedItemsSorted = items.sortBy(- _.isConflationOf.size)
@@ -94,29 +96,29 @@ abstract class BaseItemImporter(itemService: ItemService) {
       case _ => None
     }
     
-    Item.fromRecords(topItem.map(_.docId).getOrElse(UUID.randomUUID), itemType, allRecords)
+    Item.fromRecords(topItem.map(_.docId).getOrElse(UUID.randomUUID), ITEM_TYPE, allRecords)
   }
   
   /** Conflates a list of M records into N items (with N <= M), depending on how they are connected **/
-  private def conflate(normalizedRecords: Seq[ItemRecord], itemType: ItemType, items: Seq[Item] = Seq.empty[Item]): Seq[Item] = {
+  private def conflate(normalizedRecords: Seq[ItemRecord], items: Seq[Item] = Seq.empty[Item]): Seq[Item] = {
 
     // Conflates a single record
     def conflateOneRecord(r: ItemRecord, i: Seq[Item]): Seq[Item] = {
       val connectedItems= i.filter(_.isConflationOf.exists(_.isConnectedWith(r)))
       val unconnectedItems = items.diff(connectedItems)
-      join(r, connectedItems, itemType) +: unconnectedItems
+      join(r, connectedItems) +: unconnectedItems
     }
 
     if (normalizedRecords.isEmpty) {
       items
     } else {
       val conflatedItems = conflateOneRecord(normalizedRecords.head, items)
-      conflate(normalizedRecords.tail, itemType, conflatedItems)
+      conflate(normalizedRecords.tail, conflatedItems)
     }
   }
 
   /** Imports a single item record and connected references **/
-  protected def importRecord(tuple: (ItemRecord, Seq[UnboundReference]), itemType: ItemType): Future[Boolean] = tuple match { case (record, references) =>
+  protected def importRecord(tuple: (ItemRecord, Seq[UnboundReference])): Future[Boolean] = tuple match { case (record, references) =>
     
     // Helper to attach references to their matching parent items **/
     def groupReferences(items: Seq[Item], unbound: Seq[UnboundReference]): Seq[ItemWithUnboundReferences] =
@@ -140,7 +142,7 @@ abstract class BaseItemImporter(itemService: ItemService) {
         val affectedReferences = affectedItems
           .flatMap(_.references) // All references connected to the affected items
 
-        val conflatedItems = conflate(affectedRecords :+ normalizedRecord, itemType)
+        val conflatedItems = conflate(affectedRecords :+ normalizedRecord)
         val conflatedReferences = 
           affectedItems.flatMap(_.references).map(_.unbind) ++ references
           
