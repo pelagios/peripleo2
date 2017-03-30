@@ -2,21 +2,15 @@ package controllers.admin.authorities
 
 import akka.actor.ActorSystem
 import akka.stream.Materializer
-import controllers.{ BaseAuthController, WebJarAssets }
+import controllers.WebJarAssets
 import harvesting.loaders.{ DumpLoader, StreamLoader }
 import harvesting.crosswalks._
-import java.io.FileInputStream
-import java.util.UUID
 import javax.inject.{ Inject, Singleton }
-import jp.t2v.lab.play2.auth.AuthElement
-import org.joda.time.DateTime
 import play.api.{ Configuration, Logger }
-import play.api.mvc.Action
-import scala.concurrent.{ Future, ExecutionContext }
+import scala.concurrent.ExecutionContext
 import services.task.{ TaskService, TaskType }
 import services.user.{ Role, UserService }
-import services.item._
-import services.item.reference.UnboundReference
+import services.item.{ ItemService, ItemType }
 import services.item.importers.{ DatasetImporter, EntityImporter }
 
 @Singleton
