@@ -8,9 +8,9 @@ import play.api.libs.json._
 class PathHierarchySpec extends PlaySpec {
   
   private val SINGLE_HIERARCHY = PathHierarchy(Seq(
-    PathSegment("id01", "Root"),
-    PathSegment("id02", "Middle"),
-    PathSegment("id03", "Leaf")
+    ("id01" -> "Root"),
+    ("id02" -> "Middle"),
+    ("id03" -> "Leaf")
   ))
   private val SINGLE_HIERARCHY_JSON =
     Json.parse("[ \"id01\\u0007Root\", " + 
@@ -19,13 +19,13 @@ class PathHierarchySpec extends PlaySpec {
   
   private val HIERARCHY_LIST = Seq(
     PathHierarchy(Seq(
-      PathSegment("idA01", "RootA"),
-      PathSegment("idA02", "MiddleA"),
-      PathSegment("idA03", "LeafA"))),
+      ("idA01" -> "RootA"),
+      ("idA02" -> "MiddleA"),
+      ("idA03" -> "LeafA"))),
     PathHierarchy(Seq(
-      PathSegment("idB01", "RootB"),
-      PathSegment("idB02", "MiddleB"),
-      PathSegment("idB03", "LeafB"))))
+      ("idB01" -> "RootB"),
+      ("idB02" -> "MiddleB"),
+      ("idB03" -> "LeafB"))))
   private val HIERARCHY_LIST_JSON =
     Json.parse(
       "[ \"idA01\\u0007RootA\", " +

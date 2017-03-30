@@ -30,7 +30,7 @@ object PelagiosVoIDCrosswalk {
       val parentHierarchy =  {
         val parents = findParents(d).reverse
         if (parents.isEmpty) None
-        else Some(PathHierarchy(parents.map(d => PathSegment(d.uri, d.title))))
+        else Some(PathHierarchy(parents.map(d => (d.uri -> d.title))))
       }
 
       ItemRecord(

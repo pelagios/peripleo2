@@ -11,7 +11,7 @@ import play.api.Logger
 import play.api.libs.ws.WSClient
 import play.api.libs.Files.TemporaryFile
 import scala.concurrent.{ Future, ExecutionContext }
-import services.item.{ ItemType, PathHierarchy, PathSegment }
+import services.item.{ ItemType, PathHierarchy }
 import services.item.importers.AnnotationImporter
 import services.task.TaskService
 
@@ -76,7 +76,7 @@ class VoIDHarvester @Inject() (
     val fImports = dumps.flatMap { case (dataset, tmpFiles) =>
       tmpFiles.map { tmp =>
         val parents = PelagiosVoIDCrosswalk.findParents(dataset).reverse :+ dataset
-        val pathHierarchy = PathHierarchy(parents.map(d => PathSegment(d.uri, d.title)))
+        val pathHierarchy = PathHierarchy(parents.map(d => (d.uri -> d.title)))
           
         val importer = new DumpImporter(taskService, ItemType.OBJECT)
         importer.importDump(

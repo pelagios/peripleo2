@@ -24,7 +24,7 @@ class ItemSpec extends PlaySpec with TestHelpers {
       record.lastSyncedAt mustBe toDateTime("2017-02-03T11:18:21Z")
       record.lastChangedAt mustBe Some(toDateTime("2014-05-19T12:00:00Z"))
       record.categories mustBe Seq(Category("Archaeology", Some("http://vocab.getty.edu/aat/300054328")))
-      record.isPartOf mustBe Some(PathHierarchy(Seq(PathSegment("http://opencontext.org/projects/", "Open Context"))))
+      record.isPartOf mustBe Some(PathHierarchy(Seq(("http://opencontext.org/projects/" -> "Open Context"))))
       record.descriptions mustBe Seq(Description("An example dataset with dummy geographical coverage. Some metadata borrowed from OpenContext."))
       record.homepage mustBe Some("http://opencontext.org/projects/4B5721E9-2BB3-423F-5D04-1B948FA65FAB")
       record.representativePoint mustBe Some(new Coordinate(-38.3203125, 37.16031654673677))
@@ -50,8 +50,8 @@ class ItemSpec extends PlaySpec with TestHelpers {
         Category("Numismatics", Some("http://vocab.getty.edu/aat/300054419"))
       )
       record.isInDataset mustBe Some(PathHierarchy(Seq(
-        PathSegment("ecbd9773-b60f-4dc1-bd86-f2cceb6548a1", "ANS Coins"),
-        PathSegment("d6fdd35c-08b6-495b-ad4e-3f9256d30665", "Greek Collection")
+        ("ecbd9773-b60f-4dc1-bd86-f2cceb6548a1" -> "ANS Coins"),
+        ("d6fdd35c-08b6-495b-ad4e-3f9256d30665" -> "Greek Collection")
       )))
       record.temporalBounds mustBe Some(TemporalBounds(toDateTime("-200-01-01T00:00:00Z"), toDateTime("67-01-01T00:00:00Z")))
       record.depictions mustBe Seq(
@@ -103,7 +103,7 @@ class ItemSpec extends PlaySpec with TestHelpers {
       record.lastSyncedAt mustBe toDateTime("2017-02-03T11:18:21Z")
       record.lastChangedAt mustBe Some(toDateTime("2016-10-01T12:00:00Z"))
       record.title mustBe "Apollo"
-      record.isInDataset mustBe Some(PathHierarchy(Seq(PathSegment("d5e8e113-1552-4f47-9c06-1bb733c8e5be", "BM People"))))
+      record.isInDataset mustBe Some(PathHierarchy("d5e8e113-1552-4f47-9c06-1bb733c8e5be", "BM People"))
       record.homepage mustBe Some("http://collection.britishmuseum.org/resource?uri=http://collection.britishmuseum.org/id/person-institution/56988")
     }
 
