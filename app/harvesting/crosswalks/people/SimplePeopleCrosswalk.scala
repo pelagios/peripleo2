@@ -7,7 +7,7 @@ import play.api.libs.functional.syntax._
 import services.HasNullableSeq
 import services.item._
 
-/** Simple crosswalk for data about people. Not a crosswalk for data about simple people. **/
+/** Simple crosswalk for people data. Not a data crosswalk for simple people. **/
 object SimplePeopleCrosswalk {
   
   private def toItem(record: SimplePeopleRecord, dataset: PathHierarchy): ItemRecord =
