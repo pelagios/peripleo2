@@ -24,6 +24,8 @@ class Language private(val iso: String) {
 
 object Language {
   
+  // That's the reason we can't have Language as a case class - would 
+  // lead to conflicting method signatures 
   def apply(iso: String) = new Language(iso.toUpperCase)
   
   /** Alternative builder that returns Option instead of failing on invalid input **/
