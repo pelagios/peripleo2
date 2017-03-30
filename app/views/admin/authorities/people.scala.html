@@ -7,7 +7,9 @@
         <span class="authorities-count">-</span> Person Authorities
         <a href="#" class="btn new-upload" data-input="file">Upload New</a>
 
-
+        @helper.form(action = controllers.admin.authorities.routes.PeopleAdminController.importAuthorityFile(), 'enctype -> "multipart/form-data") {
+          <input type="file" id="file" name="file">
+        }
       </div>
 
       <div class="uploads"></div>
@@ -23,4 +25,9 @@
       <table></table>
     </div>
   </div>
+
+  <script src="@routes.WebJarAssets.at(webjars.locate("require.min.js"))" data-main="@routes.Assets.versioned("javascripts/admin/authorities/people.js")"></script>
+  @helper.javascriptRouter("jsRoutes")(
+    controllers.api.admin.routes.javascript.TaskAPIController.list
+  )
 }

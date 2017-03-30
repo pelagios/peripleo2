@@ -1,21 +1,29 @@
 package controllers.admin.authorities
 
-import controllers.{ BaseAuthController, WebJarAssets }
+import controllers.WebJarAssets
 import javax.inject.{ Inject, Singleton }
-import jp.t2v.lab.play2.auth.AuthElement
 import play.api.Configuration
-import play.api.mvc.Action
 import services.user.{ Role, UserService }
+import services.item.ItemService
+import services.item.importers.DatasetImporter
 
 @Singleton
 class PeopleAdminController @Inject() (
   val config: Configuration,
   val users: UserService,
+  val itemService: ItemService,
   implicit val webjars: WebJarAssets
-) extends BaseAuthController with AuthElement {
+) extends BaseAuthorityAdminController(new DatasetImporter(itemService)) {
 
   def index = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>
     Ok(views.html.admin.authorities.people())
+  }
+  
+  def importAuthorityFile = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>
+    
+    // TODO implement
+    
+    Ok
   }
 
 }

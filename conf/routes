@@ -18,6 +18,7 @@ GET     /admin/datasets/geodata                      controllers.admin.datasets.
 GET     /admin/authorities/gazetteers                controllers.admin.authorities.GazetteerAdminController.index
 POST    /admin/authorities/gazetteers                controllers.admin.authorities.GazetteerAdminController.importGazetteer
 GET     /admin/authorities/people                    controllers.admin.authorities.PeopleAdminController.index
+POST    /admin/authorities/people                    controllers.admin.authorities.PeopleAdminController.importAuthorityFile
 GET     /admin/authorities/periods                   controllers.admin.authorities.PeriodAdminController.index
 
 GET     /admin/analytics                             controllers.admin.analytics.AnalyticsAdminController.index
