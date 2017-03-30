@@ -32,14 +32,6 @@ object PathHierarchy {
   def fromHierarchies(hierarchies: Seq[PathHierarchy]): Seq[String] =
     hierarchies.flatMap(toList)
   
-  /** Builds the 'levels' for the path. Example: the path
-    * 
-    *    [ "root", "middle", "leaf" ]
-    * 
-    * is translated to the levels
-    * 
-    *    [ "root", "root{SEPARATOR}middle", "root{SEPARATOR}middle{SEPARATOR}leaf" ] 
-    */
   private def toList(hierarchy: PathHierarchy): Seq[String] =
     hierarchy.path.zipWithIndex.map { case (_, idx) =>
       hierarchy.path.take(idx + 1)
