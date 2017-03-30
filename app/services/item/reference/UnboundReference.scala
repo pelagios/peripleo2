@@ -5,21 +5,13 @@ import services.item.ItemRecord
 
 /** A helper to handle references during ingest, where there's no known reference UUID yet **/
 case class UnboundReference(
-    
-  parentUri: String,
-
-  referenceType: ReferenceType.Value,
-
-  uri: String,
-
-  relation: Option[Relation.Value],
-
-  homepage: Option[String],
-
-  context: Option[String],
-
-  depiction: Option[ReferenceDepiction]
-
+  parentUri     : String,
+  referenceType : ReferenceType.Value,
+  uri           : String,
+  relation      : Option[Relation.Value],
+  homepage      : Option[String],
+  context       : Option[String],
+  depiction     : Option[ReferenceDepiction]
 ) {
   
   lazy val normalize = this.copy(
