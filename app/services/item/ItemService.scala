@@ -54,11 +54,13 @@ class ItemService @Inject() (
   def findConnected(uris: Seq[String]): Future[Seq[ItemWithReferences]] = {
     val queryClause =
       bool {
-        should {
-          uris.map(uri => termQuery("is_conflation_of.identifiers" -> uri)) ++
-          uris.map(uri => termQuery("is_conflation_of.close_matches" -> uri)) ++
-          uris.map(uri => termQuery("is_conflation_of.exact_matches" -> uri))
-        }
+        filter (
+          should {
+            uris.map(uri => termQuery("is_conflation_of.identifiers" -> uri)) ++
+            uris.map(uri => termQuery("is_conflation_of.close_matches" -> uri)) ++
+            uris.map(uri => termQuery("is_conflation_of.exact_matches" -> uri))
+          }
+        )
       }
     
     val fItems: Future[Seq[Item]] = 
