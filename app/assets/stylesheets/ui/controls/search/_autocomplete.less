@@ -32,7 +32,7 @@
 
 .tt-suggestion::before {
   font-family:FontAwesome;
-  font-size:12px;
+  font-size:14px;
   line-height:18px;
   color:lighten(@light-grey-type, 5%);
   display:inline-block;
@@ -41,12 +41,16 @@
 }
 
 .tt-suggestion.text::before {
+  font-size:12px;
   content:'\f002';
 }
 
 .tt-suggestion.entity.PLACE::before {
-  font-size:14px;
   content:'\f041';
+}
+
+.tt-suggestion.entity.PERSON::before {
+  content:'\f007';
 }
 
 .tt-suggestion.entity.OBJECT::before {
