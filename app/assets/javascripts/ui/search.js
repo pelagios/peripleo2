@@ -9,7 +9,7 @@ define(['ui/common/hasEvents'], function(HasEvents) {
       // To throttle traffic, we'll stay idle between requests for this time in millis
       IDLE_MS = 200;
 
-  var API = function() {
+  var Search = function() {
 
     var self = this,
 
@@ -162,8 +162,8 @@ define(['ui/common/hasEvents'], function(HasEvents) {
 
     HasEvents.apply(this);
   };
-  API.prototype = Object.create(HasEvents.prototype);
+  Search.prototype = Object.create(HasEvents.prototype);
 
-  return API;
+  return Search;
 
 });

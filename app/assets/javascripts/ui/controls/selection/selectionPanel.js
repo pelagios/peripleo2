@@ -101,6 +101,7 @@ define([
               setReferences = function() {
                 // TODO load indicator
                 // TODO there will be more than just findspots in the future!
+                // TODO use a common API class for this
                 jsRoutes.controllers.api.ItemAPIController.getReferences(record.uri)
                   .ajax()
                   .done(function(response) {

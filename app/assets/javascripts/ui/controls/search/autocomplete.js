@@ -30,6 +30,7 @@ define(['ui/common/hasEvents'], function(HasEvents) {
         }
       },
       source: function(query, syncResults, asyncResults) {
+        // TODO use Play JS routing!
         jQuery.getJSON('/api/suggest?q=' + query, function(results) {
           asyncResults(results);
         });

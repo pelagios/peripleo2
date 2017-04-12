@@ -8,8 +8,8 @@ require([
   'ui/controls/search/searchPanel',
   'ui/controls/selection/selectionPanel',
   'ui/map/map',
-  'ui/api'
-], function(ResultList, SearchPanel, SelectionPanel, Map, API) {
+  'ui/search'
+], function(ResultList, SearchPanel, SelectionPanel, Map, Search) {
 
   jQuery(document).ready(function() {
     var body = jQuery(document.body),
@@ -26,7 +26,7 @@ require([
 
         resultList = new ResultList(controlsDiv),
 
-        api = new API(),
+        search = new Search(),
 
         onUpdate = function(response) {
           searchPanel.update(response);
@@ -40,16 +40,16 @@ require([
           console.log('direct select', option);
         };
 
-    searchPanel.on('open', api.enableAggregations);
-    searchPanel.on('close', api.disableAggregations);
-    searchPanel.on('queryChange', api.updateQuery);
-    searchPanel.on('timerangeChange', api.updateTimerange);
+    searchPanel.on('open', search.enableAggregations);
+    searchPanel.on('close', search.disableAggregations);
+    searchPanel.on('queryChange', search.updateQuery);
+    searchPanel.on('timerangeChange', search.updateTimerange);
     searchPanel.on('selectSuggestOption', onSelectSuggestOption);
 
     resultList.on('select', selectionPanel.show);
-    resultList.on('nextPage', api.loadNextPage);
+    resultList.on('nextPage', search.loadNextPage);
 
-    api.on('update', onUpdate);
+    search.on('update', onUpdate);
   });
 
 });
