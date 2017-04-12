@@ -130,9 +130,7 @@ abstract class BaseImporter(itemService: ItemService) {
     
     // Fetches affected items from the index and computes the new conflation
     def reconflateItems(normalizedRecord: ItemRecord, references: Seq[UnboundReference]): Future[(Seq[ItemWithReferences], Seq[ItemWithUnboundReferences])] = {
-      
-      val startTime = System.currentTimeMillis
-      
+      // val startTime = System.currentTimeMillis
       getAffectedItems(normalizedRecord).map(p => {
         // Sorted affected items by no. of records
         val affectedItems = p.sortBy(- _.item.isConflationOf.size)
@@ -148,7 +146,7 @@ abstract class BaseImporter(itemService: ItemService) {
         val conflatedReferences = 
           affectedItems.flatMap(_.references).map(_.unbind) ++ references
           
-        Logger.debug("Fetch & reconflation took " + (System.currentTimeMillis - startTime))
+        // Logger.debug("Fetch & reconflation took " + (System.currentTimeMillis - startTime))
 
         // Pass back places before and after conflation
         (affectedItems, groupReferences(conflatedItems, conflatedReferences))
@@ -158,9 +156,7 @@ abstract class BaseImporter(itemService: ItemService) {
     
     // Deletes items that will be merged into other items from the index
     def deleteMergedItems(itemsBefore: Seq[ItemWithReferences], itemsAfter: Seq[ItemWithUnboundReferences]): Future[Seq[UUID]] = {
-      
-      val startTime = System.currentTimeMillis
-      
+      // val startTime = System.currentTimeMillis
       Future.sequence {
         // List of associations (Record URI -> Parent Item docId) before conflation
         val recordToParentMappingBefore = itemsBefore.flatMap(i =>
@@ -177,20 +173,18 @@ abstract class BaseImporter(itemService: ItemService) {
         val toDelete = docIdsBefore diff docIdsAfter
         toDelete.map(docId => itemService.deleteById(docId).map(success => (docId, success)))
       } map { failed =>
-        Logger.debug("Deleting merged items took " + (System.currentTimeMillis - startTime))
+        // Logger.debug("Deleting merged items took " + (System.currentTimeMillis - startTime))
         failed.filter(!_._2).map(_._1) 
       }
     }
 
     // Stores the newly conflated items in the index
     def storeUpdatedItems(itemsAfter: Seq[ItemWithUnboundReferences]): Future[Seq[ItemWithUnboundReferences]] = {
-      
-      val startTime = System.currentTimeMillis
-      
+      // val startTime = System.currentTimeMillis
       Future.sequence {
         itemsAfter.map(i => insertOrUpdateItem(i).map((i, _)))
       } map { failed =>
-        Logger.debug("Storing updated items took " + (System.currentTimeMillis - startTime))
+        // Logger.debug("Storing updated items took " + (System.currentTimeMillis - startTime))
         failed.filter(!_._2).map(_._1) 
       }
     }

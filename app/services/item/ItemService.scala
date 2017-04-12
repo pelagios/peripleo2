@@ -53,7 +53,7 @@ class ItemService @Inject() (
     */
   def findConnected(uris: Seq[String]): Future[Seq[ItemWithReferences]] = {
     val queryClause =
-      bool {
+      constantScoreQuery {
         filter (
           should {
             uris.map(uri => termQuery("is_conflation_of.identifiers" -> uri)) ++
