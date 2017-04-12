@@ -43,6 +43,17 @@ class ItemService @Inject() (
   import ItemService._
   import com.sksamuel.elastic4s.ElasticDsl.search // Otherwise there's ambiguity with the .search package!
   
+  def findByIdentifier(identifier: String) =
+    es.client execute {
+      search in ES.PERIPLEO / ES.ITEM query {
+        constantScoreQuery {
+          filter(
+            must ( termQuery("is_conflation_of.identifiers" -> identifier) )
+          )
+        }
+      }
+    } map { _.as[Item].headOption }
+  
   /** Retrieves connected items.
     * 
     * Items are connected of they match any of the provided URIs in

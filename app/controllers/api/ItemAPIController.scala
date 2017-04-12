@@ -13,9 +13,11 @@ class ItemAPIController @Inject() (
   implicit val ctx: ExecutionContext
 ) extends Controller with HasPrettyPrintJSON {
   
-  def getItem(identifier: String) = Action { implicit request =>
-    // TODO implement
-    null
+  def getItem(identifier: String) = Action.async { implicit request =>
+    itemService.findByIdentifier(identifier).map {
+      case Some(item) => jsonOk(Json.toJson(item))
+      case None => NotFound
+    }
   }
   
   def getReferences(identifier: String) = Action.async { implicit request =>

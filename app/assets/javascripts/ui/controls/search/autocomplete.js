@@ -1,4 +1,7 @@
-define(['ui/common/hasEvents'], function(HasEvents) {
+define([
+  'ui/common/hasEvents',
+  'ui/api'
+], function(HasEvents, API) {
 
   var Autocomplete = function(form, input) {
     var self = this;
@@ -30,9 +33,10 @@ define(['ui/common/hasEvents'], function(HasEvents) {
         }
       },
       source: function(query, syncResults, asyncResults) {
-        // TODO use Play JS routing!
-        jQuery.getJSON('/api/suggest?q=' + query, function(results) {
+        API.suggest(query).done(function(results) {
           asyncResults(results);
+        }).fail(function(error) {
+          console.log(error);
         });
       }
     });

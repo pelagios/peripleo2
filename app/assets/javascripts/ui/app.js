@@ -8,8 +8,9 @@ require([
   'ui/controls/search/searchPanel',
   'ui/controls/selection/selectionPanel',
   'ui/map/map',
+  'ui/api',
   'ui/search'
-], function(ResultList, SearchPanel, SelectionPanel, Map, Search) {
+], function(ResultList, SearchPanel, SelectionPanel, Map, API, Search) {
 
   jQuery(document).ready(function() {
     var body = jQuery(document.body),
@@ -35,9 +36,14 @@ require([
         },
 
         onSelectSuggestOption = function(option) {
-          // TODO fetch via API
-          // TODO selectionPanel.show
-          console.log('direct select', option);
+          API.getItem(option.identifier).done(function(item) {
+            console.log(item);
+            selectionPanel.show(item);
+            // TODO show on map
+          }).fail(function(error) {
+            // TODO shouldn't happen unless connection or backend is down
+            // TODO show error popup
+          });
         };
 
     searchPanel.on('open', search.enableAggregations);

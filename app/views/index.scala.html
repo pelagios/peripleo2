@@ -15,7 +15,9 @@
   </head>
   <body>
     @helper.javascriptRouter("jsRoutes")(
-      controllers.api.routes.javascript.ItemAPIController.getReferences
+      controllers.api.routes.javascript.ItemAPIController.getItem,
+      controllers.api.routes.javascript.ItemAPIController.getReferences,
+      controllers.api.routes.javascript.SearchAPIController.suggest
     )
   </body>
 </html>
