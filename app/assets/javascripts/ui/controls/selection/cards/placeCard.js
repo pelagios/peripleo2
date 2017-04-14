@@ -30,6 +30,13 @@ define(['ui/controls/selection/cards/card'], function(Card) {
         });
 
         return parseResult;
+      },
+
+      distinct = function(arr) {
+        return arr.reduce(function(distinct, elem) {
+          if (distinct.indexOf(elem) < 0) distinct.push(elem);
+          return distinct;
+        }, []);
       };
 
   var PlaceCard  = function(parentEl, place) {
@@ -39,8 +46,8 @@ define(['ui/controls/selection/cards/card'], function(Card) {
           '<div class="info">' +
             '<h3></h3>' +
             '<ul class="identifiers"></ul>' +
-            '<p class="description"></p>' +
             '<p class="names"></p>' +
+            '<p class="description"></p>' +
             '<p class="temporal-bounds"></p>' +
           '</div>').appendTo(parentEl),
 
@@ -53,7 +60,7 @@ define(['ui/controls/selection/cards/card'], function(Card) {
         render = function() {
           var identifiers = self.getURIs(place).map(function(uri) { return parseURI(uri); }),
               descriptions = self.getDescriptions(place).map(function(d) { return d.description; }),
-              names = self.getNames(place).map(function(n) { return n.name; });
+              names = distinct(self.getNames(place).map(function(n) { return n.name; }));
 
           titleEl.html(place.title);
 
