@@ -1,8 +1,16 @@
 define([
-  'ui/common/formatting',
   'ui/common/hasEvents',
-  'ui/api'
-], function(Formatting, HasEvents, API) {
+  'ui/controls/selection/cards/datasetCard',
+  'ui/controls/selection/cards/objectCard',
+  'ui/controls/selection/cards/personCard',
+  'ui/controls/selection/cards/placeCard'
+], function(
+  HasEvents,
+  DatasetCard,
+  ObjectCard,
+  PersonCard,
+  PlaceCard
+) {
 
   var SLIDE_DURATION = 120;
 
@@ -13,114 +21,62 @@ define([
         element = jQuery(
           '<div id="current-selection">' +
             '<div class="depiction"></div>' +
-            '<div class="info">' +
-              '<p class="in-dataset"></p>' +
-              '<h3></h3>' +
-              '<p class="homepage"></p>' +
-              '<p class="temporal-bounds"></p>' +
-            '</div>' +
-            '<div class="references">' +
-            '</div>' +
+            '<div class="card"></div>' +
           '</div>').hide().appendTo(parentEl),
 
         depictionEl = element.find('.depiction').hide(),
-
-        titleEl = element.find('h3'),
-        homepageEl = element.find('.homepage'),
-        temporalBoundsEl = element.find('.temporal-bounds'),
-        inDatasetEl = element.find('.in-dataset'),
-
-        referencesEl = element.find('.references'),
+        cardEl = element.find('.card'),
 
         empty = function() {
           depictionEl.css('background-image', false);
-          homepageEl.empty();
-          temporalBoundsEl.empty();
-          inDatasetEl.empty();
+          cardEl.empty();
+        },
+
+        setDepiction = function(item) {
+          var isPanelVisible = depictionEl.is(':visible');
+
+              depictions = item.is_conflation_of.reduce(function(depictions, record) {
+                if (record.depictions) return depictions.concat(record.depictions);
+                else return depictions;
+              }, []);
+
+          if (depictions.length > 0) {
+            // TODO pre-load image & report in case of 404
+            depictionEl.css('background-image', 'url(' + depictions[0].url + ')');
+            if (!isPanelVisible)
+              depictionEl.velocity('slideDown', { duration: SLIDE_DURATION });
+          } else if (isPanelVisible) {
+            depictionEl.velocity('slideUp', { duration: SLIDE_DURATION });
+          }
         },
 
         show = function(item) {
-              // WARNING: for the moment, we assume items to have exactly one record!
-          var record = item.is_conflation_of[0],
-
-              visible = element.is(':visible'),
+          var visible = element.is(':visible'),
 
               slideAction = (visible && !item) ? 'slideUp' : // Open + deselect
-                       (!visible && item) ? 'slideDown' : false, // Closed + select
+                (!visible && item) ? 'slideDown' : false, // Closed + select
 
-              setDepiction = function() {
-                var isPanelVisible = depictionEl.is(':visible');
+              t = item.item_type;
 
-                if (record.depictions && record.depictions.length > 0) {
-                  var firstURL = record.depictions[0].url;
-
-                  // TODO pre-load image & report in case of 404
-                  depictionEl.css('background-image', 'url(' + firstURL + ')');
-
-                  if (!isPanelVisible)
-                    depictionEl.velocity('slideDown', { duration: SLIDE_DURATION });
-                } else if (isPanelVisible) {
-                  depictionEl.velocity('slideUp', { duration: SLIDE_DURATION });
-                }
-              },
-
-              // WARNING: for the moment, we assume items to have exactly one record!
-              setInfo = function() {
-                var title = (record.homepage) ?
-                              '<a href="' + record.homepage + '" target="_blank">' + item.title + '</a>' :
-                              item.title,
-
-                    // TODO we'll do this pre-processing step on the server later!
-                    datasetPath = function() {
-                      var last = record.is_in_dataset[record.is_in_dataset.length - 1],
-                          tuples = last.split('\u0007\u0007');
-
-                      return tuples.map(function(str) {
-                        var tuple = str.split('\u0007');
-                        return { 'id': tuple[0], 'title': tuple[1] };
-                      });
-                    };
-
-                titleEl.html(title);
-
-                if (record.homepage)
-                  homepageEl.html(record.homepage);
-
-                if (item.temporal_bounds) {
-                  if (item.temporal_bounds.from === item.temporal_bounds.to)
-                    temporalBoundsEl.html(Formatting.formatYear(item.temporal_bounds.from));
-                  else
-                    temporalBoundsEl.html(Formatting.formatYear(item.temporal_bounds.from) +
-                       ' - ' + Formatting.formatYear(item.temporal_bounds.to));
-                }
-
-                datasetPath().forEach(function(segment) {
-                  inDatasetEl.append('<span><a href="#">' + segment.title + '</a></span>');
-                });
-              },
-
-              setReferences = function() {
-                // TODO load indicator
-                API.getReferences(record.uri).done(function(response) {
-                  var places = response.PLACE,
-                      head = (places && places.length > 3) ? places.slice(0, 3) : places;
-
-                  if (head) {
-                    head.forEach(function(place) {
-                      referencesEl.html(
-                        '<p class="findspot">' + // TODO we will have more than just findspots in the future!
-                          '<span><a href="#" title="' + place.description + '">' + place.title + '</a></span>' +
-                        '</p>');
-                    });
-                  }
-                });
-              };
-
+          // Clear & set depicition in any case
           empty();
-          setDepiction();
-          setInfo();
-          setReferences();
+          setDepiction(item);
 
+          // Then defer to the appropriate card implementation
+          if (t.indexOf('PLACE') > -1) {
+            new PlaceCard(cardEl, item);
+          } else if (t.indexOf('OBJECT') > -1) {
+            new ObjectCard(cardEl, item);
+          } else if (t.indexOf('PERSON') > -1) {
+            new PersonCard(cardEl, item);
+          } else if (t.indexOf('DATASET') > -1) {
+            new DatasetCard(cardEl, item);
+          } else {
+            // TODO implement future types
+            console.log(item);
+          }
+
+          // Close/open as needed
           if (slideAction)
             element.velocity(slideAction, { duration: SLIDE_DURATION });
         };

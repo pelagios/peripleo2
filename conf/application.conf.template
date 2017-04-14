@@ -141,8 +141,8 @@ play.http {
   }
 
   ## Maximum size for file uploads
-  parser.maxDiskBuffer=200MB
-  
+  parser.maxDiskBuffer=1000MB
+
 }
 
 ## Netty Provider
