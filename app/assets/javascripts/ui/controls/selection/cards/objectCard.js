@@ -29,7 +29,7 @@ define([
                 '<a href="' + record.homepage + '" target="_blank">' + item.title + '</a>' :
                 item.title;
 
-          self.getDatasetPath(record).forEach(function(segment) {
+          self.getHierarchyPath(record.is_in_dataset).forEach(function(segment) {
             inDatasetEl.append('<span><a href="#">' + segment.title + '</a></span>');
           });
 
@@ -58,7 +58,6 @@ define([
         };
 
     Card.apply(this);
-
     renderInfo();
     renderReferences();
   };

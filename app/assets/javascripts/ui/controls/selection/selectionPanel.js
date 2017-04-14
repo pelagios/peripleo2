@@ -79,7 +79,17 @@ define([
           // Close/open as needed
           if (slideAction)
             element.velocity(slideAction, { duration: SLIDE_DURATION });
+        },
+
+        onSelect = function(e) {
+          var link = jQuery(e.target),
+              identifier = link.data('id');
+
+          self.fireEvent('select', identifier);
+          return false;
         };
+
+    element.on('click', '.destination', onSelect);
 
     this.show = show;
 

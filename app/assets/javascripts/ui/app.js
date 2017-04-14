@@ -35,8 +35,8 @@ require([
                   map.update(response);
         },
 
-        onSelectSuggestOption = function(option) {
-          API.getItem(option.identifier).done(function(item) {
+        onSelectByIdentifier = function(identifier) {
+          API.getItem(identifier).done(function(item) {
             selectionPanel.show(item);
             // TODO show on map
           }).fail(function(error) {
@@ -49,7 +49,9 @@ require([
     searchPanel.on('close', search.disableAggregations);
     searchPanel.on('queryChange', search.updateQuery);
     searchPanel.on('timerangeChange', search.updateTimerange);
-    searchPanel.on('selectSuggestOption', onSelectSuggestOption);
+    searchPanel.on('selectSuggestOption', onSelectByIdentifier);
+
+    selectionPanel.on('select', onSelectByIdentifier);
 
     resultList.on('select', selectionPanel.show);
     resultList.on('nextPage', search.loadNextPage);

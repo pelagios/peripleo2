@@ -35,7 +35,7 @@ define([
 
          onSelectOption = function(option) {
            if (option.identifier)
-             self.fireEvent('selectSuggestOption', option);
+             self.fireEvent('selectSuggestOption', option.identifier);
            else
              onSubmit();
          };

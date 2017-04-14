@@ -1,4 +1,7 @@
-define(['ui/common/formatting'], function(Formatting) {
+define([
+  'ui/common/formatting',
+  'ui/common/hasEvents'
+], function(Formatting, HasEvents) {
 
   var Card  = function() {
 
@@ -23,8 +26,8 @@ define(['ui/common/formatting'], function(Formatting) {
         },
 
         /** We'll do this pre-processing step on the server later! **/
-        getDatasetPath = function(record) {
-          var last = record.is_in_dataset[record.is_in_dataset.length - 1],
+        getHierarchyPath = function(path) {
+          var last = path[path.length - 1],
               tuples = last.split('\u0007\u0007');
 
           return tuples.map(function(str) {
@@ -40,12 +43,15 @@ define(['ui/common/formatting'], function(Formatting) {
             return Formatting.formatYear(bounds.from) + ' - ' + Formatting.formatYear(bounds.to);
         };
 
-    this.getDatasetPath = getDatasetPath;
+    this.getHierarchyPath = getHierarchyPath;
     this.formatTemporalBounds = formatTemporalBounds;
     this.getURIs = mapConflated('uri');
     this.getDescriptions = mapConflated('descriptions');
     this.getNames = mapConflated('names');
+
+    HasEvents.apply(this);
   };
+  Card.prototype = Object.create(HasEvents.prototype);
 
   return Card;
 

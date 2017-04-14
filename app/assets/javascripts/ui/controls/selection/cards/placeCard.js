@@ -82,7 +82,6 @@ define(['ui/controls/selection/cards/card'], function(Card) {
         };
 
     Card.apply(this);
-
     render();
   };
   PlaceCard.prototype = Object.create(Card.prototype);
