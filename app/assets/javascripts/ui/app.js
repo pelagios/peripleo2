@@ -37,7 +37,6 @@ require([
 
         onSelectSuggestOption = function(option) {
           API.getItem(option.identifier).done(function(item) {
-            console.log(item);
             selectionPanel.show(item);
             // TODO show on map
           }).fail(function(error) {

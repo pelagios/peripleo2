@@ -33,25 +33,6 @@
       padding:0;
     }
 
-    h3 {
-      font-size:16px;
-      font-weight:normal;
-      padding:2px 0;
-    }
-
-    h3 > a {
-      color:@dark-grey-type;
-      text-decoration:none;
-    }
-
-    h3 > a:hover {
-      text-decoration:underline;
-    }
-
-    p.homepage {
-      color:@ocean;
-    }
-
     p.in-dataset {
 
       a {
@@ -76,6 +57,47 @@
         content:''
       }
 
+    }
+
+    h3 {
+      font-size:16px;
+      font-weight:normal;
+      padding:2px 0;
+    }
+
+    h3 > a {
+      color:@dark-grey-type;
+      text-decoration:none;
+    }
+
+    h3 > a:hover {
+      text-decoration:underline;
+    }
+
+    ul.identifiers {
+
+      li, a {
+        display:inline-block;
+      }
+
+      li {
+        .rounded-corners(2px);
+        font-size:11px;
+        line-height:19px;
+        margin:4px 0;
+        
+        a {
+          padding:1px 6px;
+          text-decoration:none;
+          color:#fff;
+        }
+
+      }
+
+    }
+
+    p.homepage {
+      color:@ocean;
     }
 
   }

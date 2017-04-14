@@ -1,7 +1,11 @@
-define(['ui/common/formatting', 'ui/api'], function(Formatting, API) {
+define([
+  'ui/controls/selection/cards/card',
+  'ui/api'], function(Card, API) {
 
   var ObjectCard  = function(parentEl, item) {
-    var infoEl = jQuery(
+    var self = this,
+
+        infoEl = jQuery(
           '<div class="info">' +
             '<p class="in-dataset"></p>' +
             '<h3></h3>' +
@@ -23,35 +27,17 @@ define(['ui/common/formatting', 'ui/api'], function(Formatting, API) {
         renderInfo = function() {
           var title = (record.homepage) ?
                 '<a href="' + record.homepage + '" target="_blank">' + item.title + '</a>' :
-                item.title,
+                item.title;
 
-              // TODO we'll do this pre-processing step on the server later!
-              datasetPath = function() {
-                var last = record.is_in_dataset[record.is_in_dataset.length - 1],
-                    tuples = last.split('\u0007\u0007');
-
-                return tuples.map(function(str) {
-                  var tuple = str.split('\u0007');
-                  return { 'id': tuple[0], 'title': tuple[1] };
-                });
-              };
-
-          titleEl.html(title);
-
-          if (record.homepage)
-            homepageEl.html(record.homepage);
-
-          if (item.temporal_bounds) {
-            if (item.temporal_bounds.from === item.temporal_bounds.to)
-              tempBoundsEl.html(Formatting.formatYear(item.temporal_bounds.from));
-            else
-              tempBoundsEl.html(Formatting.formatYear(item.temporal_bounds.from) +
-                 ' - ' + Formatting.formatYear(item.temporal_bounds.to));
-          }
-
-          datasetPath().forEach(function(segment) {
+          self.getDatasetPath(record).forEach(function(segment) {
             inDatasetEl.append('<span><a href="#">' + segment.title + '</a></span>');
           });
+
+          titleEl.html(title);
+          if (record.homepage)
+            homepageEl.html(record.homepage);
+          if (item.temporal_bounds)
+            tempBoundsEl.html(self.formatTemporalBounds(item.temporal_bounds));
         },
 
         renderReferences = function() {
@@ -71,9 +57,12 @@ define(['ui/common/formatting', 'ui/api'], function(Formatting, API) {
           });
         };
 
+    Card.apply(this);
+
     renderInfo();
     renderReferences();
   };
+  ObjectCard.prototype = Object.create(Card.prototype);
 
   return ObjectCard;
 
