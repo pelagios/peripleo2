@@ -51,6 +51,11 @@ define(['ui/common/hasEvents'], function(HasEvents) {
           var url = '/api/search?limit=' + PAGE_SIZE;
 
           url = appendIfExists(searchArgs.query, 'q', url);
+
+          for (var f in searchArgs.filters) {
+            url += '&' + f + '=' + encodeURIComponent(searchArgs.filters[f]);
+          }
+
           url = appendIfExists(searchArgs.timerange.from, 'from', url);
           url = appendIfExists(searchArgs.timerange.to, 'to', url);
 
@@ -117,18 +122,25 @@ define(['ui/common/hasEvents'], function(HasEvents) {
           });
         },
 
+        clear = function() {
+          searchArgs.query = false;
+          searchArgs.filters = {};
+          searchArgs.timerange = { from: false, to : false };
+        },
+
         updateQuery = function(query) {
           searchArgs.query = query;
+          makeRequest();
+        },
+
+        updateFilters = function(diff) {
+          jQuery.extend(searchArgs.filters, diff);
           makeRequest();
         },
 
         updateTimerange = function(range) {
           searchArgs.timerange = range;
           makeRequest();
-        },
-
-        updateFilters = function(diff) {
-          jQuery.extend(searchArgs.filters, diff);
         },
 
         updateSettings = function(diff) {
@@ -152,9 +164,10 @@ define(['ui/common/hasEvents'], function(HasEvents) {
           });
         };
 
+    this.clear = clear;
     this.updateQuery = updateQuery;
-    this.updateTimerange = updateTimerange;
     this.updateFilters = updateFilters;
+    this.updateTimerange = updateTimerange;
     this.updateSettings = updateSettings;
     this.enableAggregations = enableAggregations;
     this.disableAggregations = disableAggregations;

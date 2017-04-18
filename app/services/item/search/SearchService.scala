@@ -115,11 +115,11 @@ class SearchService @Inject() (
             queryStringQuery(args.query.getOrElse("*")),
             hasChildQuery("reference") query { termQuery("context", args.query.getOrElse("*")) }
           )
-        ) // filter(buildFilters(args))
+        ) filter(buildFilters(args))
       }
     // TODO need to figure out how to design the query
     // TODO we want post-filtering for the time histogram, but not the other aggregations
-    } postFilter buildFilters(args) start args.offset limit args.limit aggregations buildAggregationDefinitions(args)
+    } /* postFilter buildFilters(args) */ start args.offset limit args.limit aggregations buildAggregationDefinitions(args)
 
   private def buildPlaceQuery(args: SearchArgs) =
     search in ES.PERIPLEO / ES.REFERENCE query {
@@ -146,7 +146,7 @@ class SearchService @Inject() (
 
   def query(args: SearchArgs): Future[RichResultPage] = {
     val startTime = System.currentTimeMillis
-
+    
     val fPlaceQuery = es.client execute {
       buildPlaceQuery(args)
     } map { response =>

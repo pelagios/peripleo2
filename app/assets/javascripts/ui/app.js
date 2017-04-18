@@ -39,8 +39,9 @@ require([
         onSelectByIdentifier = function(identifier) {
 
           var selectDataset = function(dataset) {
-                // TODO clear the current search, and replace with a dataset filter
-                console.log('foo');
+                var uri = dataset.is_conflation_of[0].uri;
+                search.clear();
+                search.updateFilters({ 'datasets': uri });
               };
 
           API.getItem(identifier).done(function(item) {
