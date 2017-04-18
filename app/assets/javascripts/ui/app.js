@@ -40,7 +40,7 @@ require([
 
           var selectDataset = function(dataset) {
                 var uri = dataset.is_conflation_of[0].uri;
-                search.clear();
+                search.clear(false);
                 search.updateFilters({ 'datasets': uri });
               };
 

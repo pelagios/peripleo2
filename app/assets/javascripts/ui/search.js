@@ -122,10 +122,15 @@ define(['ui/common/hasEvents'], function(HasEvents) {
           });
         },
 
-        clear = function() {
+        clear = function(refreshUI) {
+          var refresh = refreshUI !== false; // default true
+
           searchArgs.query = false;
           searchArgs.filters = {};
           searchArgs.timerange = { from: false, to : false };
+
+          if (refresh)
+            makeRequest();
         },
 
         updateQuery = function(query) {
