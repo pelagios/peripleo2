@@ -1,6 +1,7 @@
 define([
+  'ui/common/itemUtils',
   'ui/controls/selection/cards/card',
-  'ui/api'], function(Card, API) {
+  'ui/api'], function(ItemUtils, Card, API) {
 
   var ObjectCard  = function(parentEl, item) {
     var self = this,
@@ -29,7 +30,7 @@ define([
                 '<a href="' + record.homepage + '" target="_blank">' + item.title + '</a>' :
                 item.title;
 
-          self.getHierarchyPath(record.is_in_dataset).forEach(function(segment) {
+          ItemUtils.getHierarchyPath(record.is_in_dataset).forEach(function(segment) {
             inDatasetEl.append('<span><a href="#">' + segment.title + '</a></span>');
           });
 

@@ -1,11 +1,13 @@
 define([
   'ui/common/hasEvents',
+  'ui/common/itemUtils',
   'ui/controls/selection/cards/datasetCard',
   'ui/controls/selection/cards/objectCard',
   'ui/controls/selection/cards/personCard',
   'ui/controls/selection/cards/placeCard'
 ], function(
   HasEvents,
+  ItemUtils,
   DatasetCard,
   ObjectCard,
   PersonCard,
@@ -54,26 +56,29 @@ define([
           var visible = element.is(':visible'),
 
               slideAction = (visible && !item) ? 'slideUp' : // Open + deselect
-                (!visible && item) ? 'slideDown' : false, // Closed + select
-
-              t = item.item_type;
+                (!visible && item) ? 'slideDown' : false; // Closed + select
 
           // Clear & set depicition in any case
           empty();
           setDepiction(item);
 
           // Then defer to the appropriate card implementation
-          if (t.indexOf('PLACE') > -1) {
-            new PlaceCard(cardEl, item);
-          } else if (t.indexOf('OBJECT') > -1) {
-            new ObjectCard(cardEl, item);
-          } else if (t.indexOf('PERSON') > -1) {
-            new PersonCard(cardEl, item);
-          } else if (t.indexOf('DATASET') > -1) {
-            new DatasetCard(cardEl, item);
-          } else {
-            // TODO implement future types
-            console.log(item);
+          switch(ItemUtils.getItemType(item)) {
+            case 'PLACE':
+              new PlaceCard(cardEl, item);
+              break;
+            case 'OBJECT':
+              new ObjectCard(cardEl, item);
+              break;
+            case 'PERSON':
+              new PersonCard(cardEl, item);
+              break;
+            case 'DATASET':
+              new DatasetCard(cardEl, item);
+              break;
+            default:
+              // TODO implement future types
+              console.log(item);
           }
 
           // Close/open as needed

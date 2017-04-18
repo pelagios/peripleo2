@@ -25,17 +25,6 @@ define([
           };
         },
 
-        /** We'll do this pre-processing step on the server later! **/
-        getHierarchyPath = function(path) {
-          var last = path[path.length - 1],
-              tuples = last.split('\u0007\u0007');
-
-          return tuples.map(function(str) {
-            var tuple = str.split('\u0007');
-            return { 'id': tuple[0], 'title': tuple[1] };
-          });
-        },
-
         formatTemporalBounds = function(bounds) {
           if (bounds.from === bounds.to)
             return Formatting.formatYear(bounds.from);
@@ -43,7 +32,6 @@ define([
             return Formatting.formatYear(bounds.from) + ' - ' + Formatting.formatYear(bounds.to);
         };
 
-    this.getHierarchyPath = getHierarchyPath;
     this.formatTemporalBounds = formatTemporalBounds;
     this.getURIs = mapConflated('uri');
     this.getDescriptions = mapConflated('descriptions');

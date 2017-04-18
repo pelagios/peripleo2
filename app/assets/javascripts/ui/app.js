@@ -4,13 +4,14 @@ require.config({
 });
 
 require([
+  'ui/common/itemUtils',
   'ui/controls/results/resultList',
   'ui/controls/search/searchPanel',
   'ui/controls/selection/selectionPanel',
   'ui/map/map',
   'ui/api',
   'ui/search'
-], function(ResultList, SearchPanel, SelectionPanel, Map, API, Search) {
+], function(ItemUtils, ResultList, SearchPanel, SelectionPanel, Map, API, Search) {
 
   jQuery(document).ready(function() {
     var body = jQuery(document.body),
@@ -36,9 +37,21 @@ require([
         },
 
         onSelectByIdentifier = function(identifier) {
+
+          var selectDataset = function(dataset) {
+                // TODO clear the current search, and replace with a dataset filter
+                console.log('foo');
+              };
+
           API.getItem(identifier).done(function(item) {
             selectionPanel.show(item);
             // TODO show on map
+
+            switch(ItemUtils.getItemType(item)) {
+              case 'DATASET':
+                selectDataset(item);
+                break;
+            }
           }).fail(function(error) {
             // TODO shouldn't happen unless connection or backend is down
             // TODO show error popup

@@ -1,4 +1,7 @@
-define(['ui/controls/selection/cards/card'], function(Card) {
+define([
+  'ui/common/itemUtils',
+  'ui/controls/selection/cards/card'
+], function(ItemUtils, Card) {
 
   var DatasetCard  = function(parentEl, dataset) {
     var self = this,
@@ -21,7 +24,7 @@ define(['ui/controls/selection/cards/card'], function(Card) {
           var descriptions = self.getDescriptions(dataset);
 
           if (record.is_part_of)
-            self.getHierarchyPath(record.is_part_of).forEach(function(segment) {
+            ItemUtils.getHierarchyPath(record.is_part_of).forEach(function(segment) {
               partOfEl.append('<span>' +
                 '<a class="destination" data-id="' + segment.id + '" href="#">' + segment.title +
                 '</a></span>');
