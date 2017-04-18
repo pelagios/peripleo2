@@ -1,15 +1,26 @@
 package services.item.reference
 
 import com.sksamuel.elastic4s.ElasticDsl._
+import com.sksamuel.elastic4s.{ HitAs, RichSearchHit, RichSearchResponse }
 import com.sksamuel.elastic4s.source.Indexable
 import java.util.UUID
 import org.elasticsearch.search.aggregations.bucket.terms.Terms
+import play.api.Logger
 import play.api.libs.json.Json
 import scala.concurrent.Future
 import services.ES
 import services.item.{ Item, ItemService }
 
 trait ReferenceService { self: ItemService =>
+  
+  private implicit object ReferenceHitAs extends HitAs[(Reference, String, String)] {
+    override def as(hit: RichSearchHit): (Reference, String, String) = {
+      val id = hit.id
+      val parent = hit.field("_parent").value[String]
+      val ref = Json.fromJson[Reference](Json.parse(hit.sourceAsString)).get
+      (ref, id, parent)
+    }
+  }
     
   /** Turns unbound references into bound ones, filtering those that are unresolvable **/
   private[item] def resolveReferences(unbound: Seq[UnboundReference]): Future[Seq[Reference]] = {
@@ -40,29 +51,75 @@ trait ReferenceService { self: ItemService =>
       }
   }
   
-  def getReferenceStats(identifier: String): Future[ReferenceStats] = {
+  def rewriteReferencesTo(itemsBeforeUpdate: Seq[Item], itemsAfterUpdate: Seq[Item]): Future[Boolean] = {
     
-    /** TODO code duplication with SearchService!
-      * 
-      * We'll need to clean this up later, once we start introducing
-      * people and periods as resolvable entities. When we get there, 
-      * perhaps it's worth having a common "Entity" class, that has
-      * only a small subset of the full item and/or a 'reference' sub-package
-      * to keep things more orderly.  
-      * 
-      * TODO won't currently work - we need to retrieve by identifier not ElasticSearch ID
-      * 
-      */
-    def resolvePlaces(uris: Seq[String]) = {
-      if (uris.isEmpty)
-        Future.successful(Seq.empty[Item])
-      else
+    import ItemService._
+    
+    def fetchNextBatch(scrollId: String): Future[RichSearchResponse] =
+      es.client execute {
+        search scroll scrollId keepAlive "5m"
+      }
+    
+    def rewriteOne(ref: Reference, id: String, parent: String) = {
+      val oldDestination = itemsBeforeUpdate.find(_.identifiers.contains(ref.referenceTo.uri)).get.docId
+      val newDestination = itemsAfterUpdate.find(_.identifiers.contains(ref.referenceTo.uri)).get.docId
+
+      if (oldDestination != newDestination) {
+        Logger.debug("Rewriting reference: " + ref.referenceTo.uri)
+        val updatedReference = ref.rebind(newDestination)
         es.client execute {
-          multiget ( uris.map(uri => get id uri from ES.PERIPLEO / ES.ITEM) )
-        } map { _.responses.flatMap { _.response.map(_.getSourceAsString).map { json =>
-          Json.fromJson[Item](Json.parse(json)).get
-        }}}
+          bulk (
+            delete id id from ES.PERIPLEO / ES.REFERENCE parent parent, 
+            index into ES.PERIPLEO / ES.REFERENCE source updatedReference parent parent
+          )
+        } map { !_.hasFailures }
+      } else {
+        Future.successful(true)
+      }
     }
+    
+    def rewriteBatch(response: RichSearchResponse, cursor: Long = 0l): Future[Boolean] = {
+       val total = response.totalHits
+       val refs = response.as[(Reference, String, String)].toSeq
+       
+       if (refs.isEmpty) {
+         Future.successful(true)
+       } else {
+         val fSuccesses = Future.sequence(refs.map { case (ref, id, parent) => rewriteOne(ref, id, parent) })
+         fSuccesses.flatMap { successes =>
+           val success = !successes.exists(_ == false)
+           val rewrittenTags = cursor + refs.size
+           if (rewrittenTags < total)
+             fetchNextBatch(response.scrollId).flatMap { response =>
+               rewriteBatch(response, rewrittenTags).map { _ && success }
+             }
+           else
+             Future.successful(success)
+         }
+       }
+    }
+
+    if (itemsBeforeUpdate.size > 0) {
+      es.client execute {
+        search in ES.PERIPLEO / ES.REFERENCE query {
+          constantScoreQuery {
+            filter (
+              should (
+                itemsBeforeUpdate.map(item => termQuery("reference_to.doc_id", item.docId.toString))
+              )
+            )
+          }
+        } limit 50 scroll "5m"
+      } flatMap {
+        rewriteBatch(_)
+      }
+    } else {
+      // No need to update any GeoTags if no existing places were affected by the import
+      Future.successful(true)
+    }
+  }
+  
+  def getReferenceStats(identifier: String): Future[ReferenceStats] = {
     
     val fStats =
       es.client execute {
@@ -94,7 +151,7 @@ trait ReferenceService { self: ItemService =>
     for {
       stats <- fStats
       // TODO horrible intermediate hack! Flattens place URIs from stats
-      places <- resolvePlaces(stats.flatMap(_._2._2.map(_._1)).toSeq)
+      places <- ItemService.resolveItems(stats.flatMap(_._2._2.map(_._1)).toSeq)(self.es, self.ctx)
     } yield(ReferenceStats.build(stats, places.toSet))
   }
   

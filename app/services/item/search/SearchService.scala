@@ -9,12 +9,12 @@ import play.api.libs.json.Json
 import scala.concurrent.{ Future, ExecutionContext }
 import scala.language.reflectiveCalls
 import services.{ ES, Page }
-import services.item.Item
+import services.item.{ Item, ItemService }
 import org.elasticsearch.search.aggregations.bucket.histogram.InternalHistogram
 import services.item.search.filters.TermFilter
 
 @Singleton
-class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
+class SearchService @Inject() (implicit val es: ES, implicit val ctx: ExecutionContext) {
 
   private val dateFormatter = DateTimeFormat.forPattern("yyyy-MM-dd").withZone(DateTimeZone.UTC)
 
@@ -139,17 +139,6 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
         size 600
     ) // TODO sub-aggregate places vs people vs periods etc. to places only
 
-  private def resolvePlaces(uris: Seq[String]) = {
-    if (uris.isEmpty)
-      Future.successful(Seq.empty[Item])
-    else
-      es.client execute {
-        multiget ( uris.map(uri => get id uri from ES.PERIPLEO / ES.ITEM) )
-      } map { _.responses.flatMap { _.response.map(_.getSourceAsString).map { json =>
-        Json.fromJson[Item](Json.parse(json)).get
-      }}}
-  }
-
   def query(args: SearchArgs): Future[RichResultPage] = {
     val startTime = System.currentTimeMillis
 
@@ -194,7 +183,7 @@ class SearchService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
       val fResults = for {
         (totalHits, items, aggregations) <- fItemQuery
         placeCounts <- fPlaceQuery
-        places <- resolvePlaces(placeCounts.map(_._1))
+        places <- ItemService.resolveItems(placeCounts.map(_._1))
       } yield (totalHits, items, aggregations, placeCounts, places)
 
       fResults.map { case (totalHits, items, aggregations, placeCounts, places) =>

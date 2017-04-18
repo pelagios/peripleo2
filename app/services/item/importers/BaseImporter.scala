@@ -104,7 +104,7 @@ abstract class BaseImporter(itemService: ItemService) {
 
     // Conflates a single record
     def conflateOneRecord(r: ItemRecord, i: Seq[Item]): Seq[Item] = {
-      val connectedItems= i.filter(_.isConflationOf.exists(_.isConnectedWith(r)))
+      val connectedItems = i.filter(_.isConflationOf.exists(_.isConnectedWith(r)))
       val unconnectedItems = items.diff(connectedItems)
       join(r, connectedItems) +: unconnectedItems
     }
@@ -127,25 +127,44 @@ abstract class BaseImporter(itemService: ItemService) {
         val references = unbound.filter(ref => uris.contains(ref.parentUri))
         ItemWithUnboundReferences(item, references)
       }
-    
+
     // Fetches affected items from the index and computes the new conflation
     def reconflateItems(normalizedRecord: ItemRecord, references: Seq[UnboundReference]): Future[(Seq[ItemWithReferences], Seq[ItemWithUnboundReferences])] = {
       // val startTime = System.currentTimeMillis
-      getAffectedItems(normalizedRecord).map(p => {
+      getAffectedItems(normalizedRecord).map(i => {
         // Sorted affected items by no. of records
-        val affectedItems = p.sortBy(- _.item.isConflationOf.size)
+        val affectedItems = i.sortBy(- _.item.isConflationOf.size)
 
-        val affectedRecords = affectedItems
-          .flatMap(_.item.isConflationOf) // All item records contained in the affected places
-          .filter(_.uri != record.uri) // This record might update an existing record!
+        val records = {
+          // All records
+          val affectedRecords = affectedItems.flatMap(_.item.isConflationOf)
           
-        val affectedReferences = affectedItems
-          .flatMap(_.references) // All references connected to the affected items
-
-        val conflatedItems = conflate(affectedRecords :+ normalizedRecord)
+          // This record might update an existing one - find out where it is in the list
+          val replaceIdx = affectedRecords.indexWhere(_.uri == normalizedRecord.uri)
+          if (replaceIdx < 0)
+            affectedRecords :+ normalizedRecord
+          else
+            affectedRecords.patch(replaceIdx, Seq(normalizedRecord), 1)
+        }
+        
+        val conflatedItems = {
+          val itemsAfterConflation = conflate(records)
+          
+          // Optimization: in case we had one item before, and one item after conflation, 
+          // then conflation did nothing but add or update an additional record. In this case,
+          // retain the docId, so we don't need to rewrite references
+          if (affectedItems.size == 1 && itemsAfterConflation.size == 1) {
+            val before = affectedItems.head.item
+            val after = itemsAfterConflation.head
+            Seq(after.copy(docId = before.docId))
+          } else {
+            itemsAfterConflation
+          }
+        }
+        
         val conflatedReferences = 
           affectedItems.flatMap(_.references).map(_.unbind) ++ references
-          
+        
         // Logger.debug("Fetch & reconflation took " + (System.currentTimeMillis - startTime))
 
         // Pass back places before and after conflation
@@ -189,11 +208,18 @@ abstract class BaseImporter(itemService: ItemService) {
       }
     }
     
-    for {
+    val f = for {
       (itemsBefore, itemsAfter) <- reconflateItems(ItemRecord.normalize(record), references.map(_.normalize))
-      failedDeletes <- deleteMergedItems(itemsBefore, itemsAfter) 
-      failedUpdates <- if (failedDeletes.isEmpty) storeUpdatedItems(itemsAfter) else Future.successful(Seq.empty[ItemWithUnboundReferences])
-    } yield failedDeletes.isEmpty && failedUpdates.isEmpty 
+      failedUpdates <- storeUpdatedItems(itemsAfter)
+      if (failedUpdates.isEmpty)
+      failedDeletes <- deleteMergedItems(itemsBefore, itemsAfter)
+      if (failedDeletes.isEmpty)
+      referencesRewritten <- itemService.rewriteReferencesTo(itemsBefore.map(_.item), itemsAfter.map(_.item)) 
+    } yield referencesRewritten
+    
+    f.recover { case t: Throwable =>
+      false
+    }
   }  
   
 }

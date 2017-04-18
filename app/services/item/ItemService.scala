@@ -14,10 +14,12 @@ import services.task.TaskType
 
 object ItemService {
   
+  import com.sksamuel.elastic4s.ElasticDsl.search // Otherwise there's ambiguity with the .search package!
+
   case class ItemWithReferences(item: Item, references: Seq[Reference])
-  
+
   case class ItemWithUnboundReferences(item: Item, references: Seq[UnboundReference])
-  
+
   implicit object ItemIndexable extends Indexable[Item] {
     override def json(i: Item): String = Json.stringify(Json.toJson(i))
   }
@@ -27,11 +29,21 @@ object ItemService {
       Json.fromJson[Item](Json.parse(hit.sourceAsString)).get
     }
   }
-  
+
   implicit object ReferenceIndexable extends Indexable[Reference] {
     override def json(r: Reference): String = Json.stringify(Json.toJson(r))
   }
-  
+
+  def resolveItems(ids: Seq[String])(implicit es: ES, ctx: ExecutionContext): Future[Seq[Item]] =
+    if (ids.isEmpty)
+      Future.successful(Seq.empty[Item])
+    else
+      es.client execute {
+        multiget ( ids.map(id => get id id from ES.PERIPLEO / ES.ITEM ) )
+      } map {_.responses.flatMap { _.response.map(_.getSourceAsString).map { json =>
+        Json.fromJson[Item](Json.parse(json)).get
+      }}}
+
 }
 
 @Singleton
@@ -39,10 +51,10 @@ class ItemService @Inject() (
   val es: ES,
   implicit val ctx: ExecutionContext
 ) extends ReferenceService {
-  
+
   import ItemService._
-  import com.sksamuel.elastic4s.ElasticDsl.search // Otherwise there's ambiguity with the .search package!
-  
+  import com.sksamuel.elastic4s.ElasticDsl.search // Otherwise there's ambiguity with the .search package
+
   def findByIdentifier(identifier: String) =
     es.client execute {
       search in ES.PERIPLEO / ES.ITEM query {
@@ -53,14 +65,18 @@ class ItemService @Inject() (
         }
       }
     } map { _.as[Item].headOption }
-  
+
   /** Retrieves connected items.
-    * 
+    *
     * Items are connected of they match any of the provided URIs in
-    * their identifiers, close_match or exact_match fields. 
-    * 
+    * their identifiers, close_match or exact_match fields.
+    *
     * TODO make this method filter-able by item type
     * 
+    * TODO this method will only retrieve up to ES.MAX_SIZE references - however
+    * we *might* have items with more than that in extreme cases (e.g. will Strabo reference
+    * more than 10k unique places?)
+    *
     */
   def findConnected(uris: Seq[String]): Future[Seq[ItemWithReferences]] = {
     val queryClause =
@@ -96,28 +112,29 @@ class ItemService @Inject() (
       items.map(item =>
         ItemWithReferences(item, byParentId.get(item.docId).getOrElse(Seq.empty[Reference])))
     }
-      
+    
     for {
       items <- fItems
       references <- fReferences
     } yield group(items, references)
   }
-  
+    
   def deleteById(docId: UUID): Future[Boolean] = {
-    val fDeleteReferences = 
+    // Delete all references this item has (start operation right now, using 'val')
+    val fDeleteReferences =
       es.deleteByQuery(ES.REFERENCE, termQuery("reference_to.doc_id", docId.toString), Some(docId.toString))
-      
-    // Should start after delete is done
-    def fDeleteItem() = 
+
+    // Should start after delete is done (using 'def')
+    def fDeleteItem() =
       es.client execute {
         delete id docId.toString from ES.PERIPLEO / ES.ITEM
       }
-    
+
     val f= for {
       _ <- fDeleteReferences
       _ <- fDeleteItem()
     } yield true
-    
+
     f.recover { case t: Throwable =>
       Logger.error("Error deleting item " + docId + ": " + t.getMessage)
       // t.printStackTrace
@@ -126,29 +143,29 @@ class ItemService @Inject() (
   }
 
   def deleteByDataset(dataset: String) = {
-    
+
     def deleteReferences(): Future[Unit] =
       es.deleteByQuery(ES.REFERENCE, hasParentQuery(ES.ITEM) query {
-        termQuery("is_in_dataset", dataset) 
+        termQuery("is_in_dataset", dataset)
       })
-    
+
     def deleteObjects(): Future[Unit] =
       es.deleteByQuery(ES.ITEM, termQuery("is_in_dataset", dataset))
-    
+
     def deleteDatasets(): Future[Unit] =
-      es.deleteByQuery(ES.ITEM, bool { 
+      es.deleteByQuery(ES.ITEM, bool {
         should(
           termQuery("identifiers", dataset),
           termQuery("is_part_of", dataset)
         )
       })
-    
+
     for {
       _ <- deleteReferences
       _ <- deleteObjects
       _ <- deleteDatasets
     } yield ()
-    
+
   }
-      
+
 }

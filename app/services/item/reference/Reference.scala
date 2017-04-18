@@ -24,6 +24,9 @@ case class Reference(
     homepage,
     context,
     depiction)
+    
+  def rebind(destination: UUID): Reference =
+    this.copy(referenceTo = ReferenceTo(referenceTo.uri, destination))
 
 }
 
