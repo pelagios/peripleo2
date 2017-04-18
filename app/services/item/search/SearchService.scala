@@ -12,9 +12,14 @@ import services.{ ES, Page }
 import services.item.{ Item, ItemService }
 import org.elasticsearch.search.aggregations.bucket.histogram.InternalHistogram
 import services.item.search.filters.TermFilter
+import services.notification.NotificationService
 
 @Singleton
-class SearchService @Inject() (implicit val es: ES, implicit val ctx: ExecutionContext) {
+class SearchService @Inject() (
+  implicit val es: ES,
+  implicit val notifications: NotificationService,
+  implicit val ctx: ExecutionContext
+) {
 
   private val dateFormatter = DateTimeFormat.forPattern("yyyy-MM-dd").withZone(DateTimeZone.UTC)
 

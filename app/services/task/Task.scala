@@ -22,7 +22,7 @@ case class Task(
 
 object Task extends HasDate {
   
-  implicit val userFormat: Format[Task] = (
+  implicit val taskFormat: Format[Task] = (
     (JsPath \ "id").format[UUID] and
     (JsPath \ "job").formatNullable[UUID] and
     (JsPath \ "task_type").format[TaskType] and

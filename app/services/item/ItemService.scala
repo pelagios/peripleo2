@@ -5,11 +5,13 @@ import com.sksamuel.elastic4s.{ HitAs, RichSearchHit, RichSearchResponse, QueryD
 import com.sksamuel.elastic4s.source.Indexable
 import java.util.UUID
 import javax.inject.{ Inject, Singleton }
+import org.joda.time.DateTime
 import play.api.Logger
-import play.api.libs.json.Json
+import play.api.libs.json.{ Json, JsSuccess, JsError }
 import scala.concurrent.{ ExecutionContext, Future }
 import services.ES
 import services.item.reference.{ Reference, ReferenceService, UnboundReference }
+import services.notification._
 import services.task.TaskType
 
 object ItemService {
@@ -34,14 +36,23 @@ object ItemService {
     override def json(r: Reference): String = Json.stringify(Json.toJson(r))
   }
 
-  def resolveItems(ids: Seq[String])(implicit es: ES, ctx: ExecutionContext): Future[Seq[Item]] =
+  def resolveItems(ids: Seq[String])(implicit es: ES, notifications: NotificationService, ctx: ExecutionContext): Future[Seq[Item]] =
     if (ids.isEmpty)
       Future.successful(Seq.empty[Item])
     else
       es.client execute {
         multiget ( ids.map(id => get id id from ES.PERIPLEO / ES.ITEM ) )
-      } map {_.responses.flatMap { _.response.map(_.getSourceAsString).map { json =>
-        Json.fromJson[Item](Json.parse(json)).get
+      } map {_.responses.flatMap { _.response.flatMap { response =>
+        Json.fromJson[Item](Json.parse(response.getSourceAsString)) match {
+          case JsSuccess(item, _) => 
+            Some(item)
+            
+          case JsError(errors) =>
+            val msg = "Error resolving item: " + response.getId
+            Logger.error(msg)
+            notifications.insertNotification(Notification(NotificationType.SYSTEM_ERROR, DateTime.now, msg))
+            None
+        }
       }}}
 
 }
@@ -49,6 +60,7 @@ object ItemService {
 @Singleton
 class ItemService @Inject() (
   val es: ES,
+  implicit val notificationService: NotificationService,
   implicit val ctx: ExecutionContext
 ) extends ReferenceService {
 

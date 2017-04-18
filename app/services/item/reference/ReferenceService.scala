@@ -151,7 +151,7 @@ trait ReferenceService { self: ItemService =>
     for {
       stats <- fStats
       // TODO horrible intermediate hack! Flattens place URIs from stats
-      places <- ItemService.resolveItems(stats.flatMap(_._2._2.map(_._1)).toSeq)(self.es, self.ctx)
+      places <- ItemService.resolveItems(stats.flatMap(_._2._2.map(_._1)).toSeq)(self.es, self.notificationService, self.ctx)
     } yield(ReferenceStats.build(stats, places.toSet))
   }
   
