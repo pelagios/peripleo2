@@ -48,8 +48,6 @@ case class ItemRecord(
 
 object ItemRecord extends HasDate with HasNullableSeq with HasGeometry {
 
-  import PathHierarchy._
-
   /** Utility method to normalize a URI to a standard format
     *
     * Removes '#this' suffixes (e.g. used by Pleiades) and, by convention, trailing slashes.
@@ -78,10 +76,8 @@ object ItemRecord extends HasDate with HasNullableSeq with HasGeometry {
     (JsPath \ "last_synced_at").format[DateTime] and
     (JsPath \ "last_changed_at").formatNullable[DateTime] and
     (JsPath \ "title").format[String] and
-    (JsPath \ "is_in_dataset").formatNullable[Seq[String]]
-      .inmap[Option[PathHierarchy]](toOptHierarchy, fromOptHierarchy) and
-    (JsPath \ "is_part_of").formatNullable[Seq[String]]
-      .inmap[Option[PathHierarchy]](toOptHierarchy, fromOptHierarchy) and
+    (JsPath \ "is_in_dataset").formatNullable[PathHierarchy] and
+    (JsPath \ "is_part_of").formatNullable[PathHierarchy] and
     (JsPath \ "categories").formatNullable[Seq[Category]]
       .inmap[Seq[Category]](fromOptSeq[Category], toOptSeq[Category]) and
     (JsPath \ "descriptions").formatNullable[Seq[Description]]

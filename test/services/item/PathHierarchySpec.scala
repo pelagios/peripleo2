@@ -7,63 +7,32 @@ import play.api.libs.json._
 
 class PathHierarchySpec extends PlaySpec {
   
-  private val SINGLE_HIERARCHY = PathHierarchy(Seq(
+  private val HIERARCHY = PathHierarchy(Seq(
     ("id01" -> "Root"),
     ("id02" -> "Middle"),
     ("id03" -> "Leaf")
   ))
-  private val SINGLE_HIERARCHY_JSON =
-    Json.parse("[ \"id01\\u0007Root\", " + 
-                 "\"id01\\u0007Root\\u0007\\u0007id02\\u0007Middle\", " +
-                 "\"id01\\u0007Root\\u0007\\u0007id02\\u0007Middle\\u0007\\u0007id03\\u0007Leaf\" ]").as[JsArray]
-  
-  private val HIERARCHY_LIST = Seq(
-    PathHierarchy(Seq(
-      ("idA01" -> "RootA"),
-      ("idA02" -> "MiddleA"),
-      ("idA03" -> "LeafA"))),
-    PathHierarchy(Seq(
-      ("idB01" -> "RootB"),
-      ("idB02" -> "MiddleB"),
-      ("idB03" -> "LeafB"))))
-  private val HIERARCHY_LIST_JSON =
-    Json.parse(
-      "[ \"idA01\\u0007RootA\", " +
-        "\"idA01\\u0007RootA\\u0007\\u0007idA02\\u0007MiddleA\", " + 
-        "\"idA01\\u0007RootA\\u0007\\u0007idA02\\u0007MiddleA\\u0007\\u0007idA03\\u0007LeafA\", " +
-        "\"idB01\\u0007RootB\", " + 
-        "\"idB01\\u0007RootB\\u0007\\u0007idB02\\u0007MiddleB\", " +
-        "\"idB01\\u0007RootB\\u0007\\u0007idB02\\u0007MiddleB\\u0007\\u0007idB03\\u0007LeafB\" ]").as[JsArray]
+  private val HIERARCHY_JSON =
+    Json.parse("{" +
+                  "\"paths\": [ \"id01\\u0007Root\", " + 
+                                "\"id01\\u0007Root\\u0007\\u0007id02\\u0007Middle\", " +
+                                "\"id01\\u0007Root\\u0007\\u0007id02\\u0007Middle\\u0007\\u0007id03\\u0007Leaf\" ]," +
+                  "\"ids\": [\"id01\", \"id02\", \"id03\" ]" + 
+               "}").as[JsObject]
 
-  "Single PathHierarchy" should {
+  "The PathHierarchy" should {
     
     "properly serialize to JSON" in {
-      val serialized = Json.toJson(PathHierarchy.fromHierarchy(SINGLE_HIERARCHY))
-      serialized mustBe SINGLE_HIERARCHY_JSON
+      val serialized = Json.toJson(HIERARCHY)
+      serialized mustBe HIERARCHY_JSON
     }
     
     "be properly restored from JSON" in {
-      val levels = SINGLE_HIERARCHY_JSON.value.map(_.as[JsString].value)
-      val parsed = PathHierarchy.toHierarchy(levels)
-      parsed mustBe SINGLE_HIERARCHY
+      val parsed = Json.fromJson[PathHierarchy](HIERARCHY_JSON)
+      parsed.isSuccess mustBe true
+      parsed.get mustBe HIERARCHY
     }
     
   }  
-  
-  "The PathHierarchy list" should {
-    
-    "properly serialize to JSON" in {
-      val serialized = Json.toJson(PathHierarchy.fromHierarchies(HIERARCHY_LIST))
-      serialized mustBe HIERARCHY_LIST_JSON
-    }
-    
-    "be properly restored from JSON" in {
-      val levels = HIERARCHY_LIST_JSON.value.map(_.as[JsString].value)
-      val parsed = PathHierarchy.toHierarchies(levels)
-      parsed.size mustBe 2
-      parsed.toSet mustBe HIERARCHY_LIST.toSet // equal, ignoring order
-    }
-    
-  }
   
 }

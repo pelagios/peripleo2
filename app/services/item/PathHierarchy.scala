@@ -4,7 +4,17 @@ import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
 
-case class PathHierarchy(path: Seq[(String, String)])
+case class PathHierarchy(path: Seq[(String, String)]) {
+  
+  private lazy val paths: Seq[String] = 
+    path.zipWithIndex.map { case (_, idx) =>
+      path.take(idx + 1)
+        .map(t => t._1 + PathHierarchy.INNER_SEPARATOR + t._2)
+        .mkString(PathHierarchy.OUTER_SEPARATOR) }
+  
+  private lazy val ids: Seq[String] = path.map(_._1)
+  
+}
 
 object PathHierarchy {
   
@@ -17,39 +27,25 @@ object PathHierarchy {
   // For convenience, when the "hierarchy" is just one level  
   def apply(id: String, title: String) = new PathHierarchy(Seq((id, title)))
   
-  def toHierarchy(levels: Seq[String]): PathHierarchy = 
-    toHierarchies(levels).head
-  
-  def toOptHierarchy(maybeLevels: Option[Seq[String]]): Option[PathHierarchy] = 
-    maybeLevels.map(toHierarchies(_).head)
-    
-  def fromHierarchy(hierarchy: PathHierarchy): Seq[String] =
-    toList(hierarchy)
-
-  def fromOptHierarchy(hierarchy: Option[PathHierarchy]): Option[Seq[String]] =
-    hierarchy.map(toList)
-    
-  def fromHierarchies(hierarchies: Seq[PathHierarchy]): Seq[String] =
-    hierarchies.flatMap(toList)
-  
-  private def toList(hierarchy: PathHierarchy): Seq[String] =
-    hierarchy.path.zipWithIndex.map { case (_, idx) =>
-      hierarchy.path.take(idx + 1)
-        .map(t => t._1 + INNER_SEPARATOR + t._2)
-        .mkString(OUTER_SEPARATOR) }
-  
   /** Rebuilds the path from a list of levels **/
-  def toHierarchies(levels: Seq[String]): Seq[PathHierarchy] = {
-    // Find the root paths (i.e. those that don't contain a double-beep separator)
-    val roots = levels.filterNot(_.contains(OUTER_SEPARATOR))
-    roots.map { root =>
-      // For each root path, find the leaf path (i.e. the longest one starting with this root)
-      val thisPath = levels.filter(_.startsWith(root)).maxBy(_.size)
-      PathHierarchy(thisPath.split(OUTER_SEPARATOR).map { tuple =>
-        val idAndTitle = tuple.split(INNER_SEPARATOR)
-        (idAndTitle(0), idAndTitle(1)) 
-      })
-    }
+  def parse(serialized: Seq[String]): PathHierarchy = {
+    // Find the (first) root path (i.e. the one that doesn't contain a double-beep separator)
+    val root = serialized.filterNot(_.contains(OUTER_SEPARATOR)).head 
+    
+    // Find the leaf path (i.e. the longest one starting with the root)
+    val leafPath = serialized.filter(_.startsWith(root)).maxBy(_.size)
+    PathHierarchy(leafPath.split(OUTER_SEPARATOR).map { tuple =>
+      val idAndTitle = tuple.split(INNER_SEPARATOR)
+      (idAndTitle(0), idAndTitle(1)) 
+    })
   }
+  
+  implicit val pathHierarchyReads: Reads[PathHierarchy] =
+    (JsPath \ "paths").read[Seq[String]].map(serialized => PathHierarchy.parse(serialized))
+  
+  implicit val pathHierarchyWrites: Writes[PathHierarchy] = (
+    (JsPath \ "paths").write[Seq[String]] and
+    (JsPath \ "ids").write[Seq[String]]
+  )(p => (p.paths, p.ids))
 
 }

@@ -67,7 +67,7 @@ object Item extends HasGeometry {
   // Although this means a bit more code, we'll keep a separate Reader and Writer
   // for the item, so we can keep the autocomplete data out of the case class.
 
-  implicit val itemRead: Reads[Item] = (
+  implicit val itemReads: Reads[Item] = (
     (JsPath \ "doc_id").read[UUID] and
     (JsPath \ "item_type").read[ItemType] and
     (JsPath \ "title").read[String] and
