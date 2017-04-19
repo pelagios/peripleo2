@@ -53,7 +53,7 @@ define(['ui/common/hasEvents'], function(HasEvents) {
           url = appendIfExists(searchArgs.query, 'q', url);
 
           for (var f in searchArgs.filters) {
-            url += '&' + f + '=' + encodeURIComponent(searchArgs.filters[f]);
+            url += '&' + f + '=' + searchArgs.filters[f];
           }
 
           url = appendIfExists(searchArgs.timerange.from, 'from', url);

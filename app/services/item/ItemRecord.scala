@@ -66,6 +66,8 @@ object ItemRecord extends HasDate with HasNullableSeq with HasGeometry {
     i.copy(
       uri = normalizeURI(i.uri),
       identifiers = i.identifiers.map(normalizeURI),
+      isInDataset = i.isInDataset.map(_.normalize),
+      isPartOf = i.isPartOf.map(_.normalize),
       closeMatches = i.closeMatches.map(normalizeURI),
       exactMatches = i.exactMatches.map(normalizeURI)
     )

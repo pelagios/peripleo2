@@ -68,7 +68,7 @@ class SearchService @Inject() (
       Seq(
         args.filters.itemTypeFilter.map(termFilterDefinition("item_type", _)),
         args.filters.categoryFilter.map(termFilterDefinition("is_conflation_of.category", _)),
-        args.filters.datasetFilter.map(termFilterDefinition("is_conflation_of.is_in_dataset", _)),
+        args.filters.datasetFilter.map(termFilterDefinition("is_conflation_of.is_in_dataset.ids", _)),
         args.filters.languageFilter.map(termFilterDefinition("is_conflation_of.languages", _)),
         // Check for existing 'depictions' field iff hasDepictions is set to true
         { if (args.filters.hasDepiction.getOrElse(false)) Some(nestedQuery("depictions") query { existsQuery("depictions.url") }) else None }
