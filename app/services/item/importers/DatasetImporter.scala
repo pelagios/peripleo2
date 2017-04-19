@@ -6,11 +6,9 @@ import services.item.{ ItemRecord, ItemService, ItemType }
 import services.item.reference.UnboundReference
 
 /** Convenience wrapper around the BaseImporter, specifically for dataset record imports **/
-class DatasetImporter @Inject() (
-  itemService: ItemService
-) extends BaseImporter(itemService) with HasBatchImport[ItemRecord] {
+class DatasetImporter(itemService: ItemService, itemType: ItemType) extends BaseImporter(itemService) with HasBatchImport[ItemRecord] {
   
-  override val ITEM_TYPE = ItemType.DATASET
+  override val ITEM_TYPE = itemType
   
   def importDatasets(records: Seq[ItemRecord]) =
     importBatch(records).map { _.size == 0 }

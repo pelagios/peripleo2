@@ -23,14 +23,13 @@ class GazetteerAdminController @Inject() (
   implicit val ctx: ExecutionContext,
   implicit val system: ActorSystem,
   implicit val webjars: WebJarAssets
-) extends BaseAuthorityAdminController(new DatasetImporter(itemService)) {
+) extends BaseAuthorityAdminController(new DatasetImporter(itemService, ItemType.DATASET.AUTHORITY.GAZETTEER)) {
   
   private val taskType = TaskType("GAZETTEER_IMPORT")
 
   private def upsertGazetteerMeta(filename: String) = {    
     val name = filename.substring(0, filename.indexOf('.'))
     upsertDatasetRecord(
-      ItemType.DATASET.AUTHORITY.GAZETTEER,
       name, // TODO should be a URI
       name)
   }

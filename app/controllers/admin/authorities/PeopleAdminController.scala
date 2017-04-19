@@ -23,7 +23,7 @@ class PeopleAdminController @Inject() (
   implicit val ctx: ExecutionContext,
   implicit val system: ActorSystem,
   implicit val webjars: WebJarAssets
-) extends BaseAuthorityAdminController(new DatasetImporter(itemService)) {
+) extends BaseAuthorityAdminController(new DatasetImporter(itemService, ItemType.DATASET.AUTHORITY.PEOPLE)) {
 
   def index = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>
     Ok(views.html.admin.authorities.people())
@@ -38,7 +38,7 @@ class PeopleAdminController @Inject() (
         val name = formdata.filename.substring(0, formdata.filename.indexOf('.'))
         val dataset = PathHierarchy(name, name)
         
-        upsertDatasetRecord(ItemType.DATASET.AUTHORITY.PEOPLE, name, name).map { success =>
+        upsertDatasetRecord(name, name).map { success =>
           new StreamLoader(taskService, TaskType("AUTHORITY_IMPORT_PEOPLE"), materializer).importRecords(
             formdata.filename,
             formdata.ref.file,

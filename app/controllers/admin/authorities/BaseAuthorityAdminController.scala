@@ -11,7 +11,6 @@ abstract class BaseAuthorityAdminController(
 ) extends BaseAuthController with AuthElement {
   
   protected def upsertDatasetRecord(
-    datasetType   : ItemType,
     uri           : String,
     title         : String,
     descriptions  : Seq[Description] = Seq.empty[Description],
