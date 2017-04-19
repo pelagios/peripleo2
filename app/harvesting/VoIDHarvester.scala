@@ -16,8 +16,6 @@ import services.item.{ ItemService, ItemType, PathHierarchy }
 import services.item.importers.{ DatasetImporter, ItemImporter }
 import services.task.{ TaskService, TaskType }
 
-// TODO progress tracking that covers the entire process?
-
 class VoIDHarvester @Inject() (
   val itemService: ItemService,
   val taskService: TaskService,
@@ -26,6 +24,14 @@ class VoIDHarvester @Inject() (
   implicit val system: ActorSystem,
   implicit val ctx: ExecutionContext
 ) extends HasFileDownload {
+  
+  // Maximum number of datasets that are downloaded in parallel.
+  // Note that datasets != dumpfiles (one dataset may have many dumpfiles).
+  // But it's a start.
+  private val MAX_PARALLEL_DATASETS = 2
+  
+  // Wait time between HTTP requests
+  private val WAIT_TIME_MILLIS = 1000
   
   private val taskType = TaskType("DATASET_IMPORT")
   
@@ -44,21 +50,32 @@ class VoIDHarvester @Inject() (
     
     def fDownloadDatadumps(rootDatasets: Iterable[Dataset]) = {
       val datasets = rootDatasets.flatMap(PelagiosVoIDCrosswalk.flattenHierarchy).toSeq
+      val chunked = datasets.grouped(MAX_PARALLEL_DATASETS)
       
-      Future.sequence(datasets.map { dataset =>
-        val uris = dataset.datadumps
-        
-        // TODO track progress via task service
-        
-        Future.sequence(uris.map { uri => 
-          download(uri).map { file =>
-            Some(file)
-          } recover { case t: Throwable =>
-            Logger.warn("Skipping failed download: " + t.getMessage)
-            None
+      def downladBatch(batch: Seq[Dataset]): Future[Seq[(Dataset, Seq[TemporaryFile])]] = {
+        Logger.info("Downloading next batch of " + MAX_PARALLEL_DATASETS + " datasets")
+        Future.sequence(batch.map { dataset =>
+          val uris = dataset.datadumps
+          Future.sequence(uris.map { uri => 
+            download(uri).map { file =>
+              Thread.sleep(WAIT_TIME_MILLIS)
+              Some(file)
+            } recover { case t: Throwable =>
+              Logger.warn("Skipping failed download: " + t.getMessage)
+              None
+            }
+          }) map { tmpFiles => (dataset, tmpFiles.flatten) }
+        })
+      }
+      
+      chunked.foldLeft(Future.successful(Seq.empty[(Dataset, Seq[TemporaryFile])])) { case (f, batch) =>
+        // We'll download one batch in parallel
+        f.flatMap { allDownloads =>
+          downladBatch(batch).map { thisBatch =>
+            allDownloads ++ thisBatch
           }
-        }) map { tmpFiles => (dataset, tmpFiles.flatten) }
-      })
+        }
+      }
     }
     
     for {

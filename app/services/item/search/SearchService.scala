@@ -91,7 +91,7 @@ class SearchService @Inject() (
       if (args.settings.termAggregations)
         Seq(
           aggregation terms "by_type" field "item_type" size 20,
-          aggregation terms "by_dataset" field "is_conflation_of.is_in_dataset" size 20,
+          aggregation terms "by_dataset" field "is_conflation_of.is_in_dataset.paths" size 20,
           aggregation terms "by_language" field "is_conflation_of.languages" size 20)
       else
         Seq.empty[AbstractAggregationDefinition]
