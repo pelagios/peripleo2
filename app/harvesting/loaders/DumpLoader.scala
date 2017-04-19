@@ -64,6 +64,7 @@ class DumpLoader(taskService: TaskService, taskType: TaskType) extends BaseLoade
       }
     } recoverWith { case t: Throwable =>
       t.printStackTrace
+      Logger.error("Import failed for " + filename + " (" + file.getName + ")")
       taskService.setFailed(taskId, Some(t.getMessage)).map { _ =>
         system.scheduler.scheduleOnce(1.minute)(taskService.deleteById(taskId))
         false

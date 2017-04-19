@@ -94,8 +94,13 @@ class VoIDHarvester @Inject() (
       }
     }
     
-    Future.sequence(fImports).map(successes =>
-      !successes.exists(_ == false))
+    Future.sequence(fImports).map { successes =>
+      val failed = successes.filter(_ == false)
+      if (failed.size > 0)
+        Logger.error(failed.size + " dumps failed during import")
+        
+      !successes.exists(_ == false)
+    }
   }
   
   def harvest(voidURL: String, username: String) = {
