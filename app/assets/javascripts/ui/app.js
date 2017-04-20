@@ -63,8 +63,8 @@ require([
 
     searchPanel.on('open', state.openFilterPane);
     searchPanel.on('close', state.closeFilterPane);
-    searchPanel.on('queryChange', state.updateQuery);
-    searchPanel.on('timerangeChange', state.updateTimerange);
+    searchPanel.on('queryChange', state.setQuery);
+    searchPanel.on('timerangeChange', state.setTimerange);
     searchPanel.on('selectSuggestOption', onSelectByIdentifier);
 
     selectionPanel.on('select', onSelectByIdentifier);

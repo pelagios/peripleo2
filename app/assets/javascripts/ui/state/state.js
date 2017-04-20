@@ -13,37 +13,41 @@ define([
 
         clearSearch = function(refreshUI) {
           search.clear(refreshUI);
-          // TODO clear search args from URL bar
+
+          urlBar.setQuery();
+          urlBar.clearFilters();
+          urlBar.setTimerange();
+
           // TODO if refreshUI == true, record a step in the history
         },
 
-        updateQuery = function(query) {
-          search.updateQuery(query);
-          // TODO update URL bar
+        setQuery = function(query) {
+          search.setQuery(query);
+          urlBar.setQuery(query);
           // TODO record history step
         },
 
         updateFilters = function(diff) {
           search.updateFilters(diff);
-          // TODO update URL bar
+          urlBar.updateFilters(diff);
           // TODO record history step
         },
 
-        updateTimerange = function(range) {
-          search.updateTimerange(range);
-          // TODO update URL bar
+        setTimerange = function(range) {
+          search.setTimerange(range);
+          urlBar.setTimerange(range);
           // TODO record history step
         },
 
         openFilterPane = function() {
           search.setAggregationsEnabled(true);
-          // TODO update URL bar
+          urlBar.setFilterpaneOpen(true);
           // TODO should we treat this as a history step as well? (Probably...)
         },
 
         closeFilterPane = function() {
           search.setAggregationsEnabled(false);
-          // TODO update URL bar
+          urlBar.setFilterpaneOpen(false);
           // TODO should we treat this as a history step as well? (Probably...)
         },
 
@@ -53,17 +57,17 @@ define([
         },
 
         setSelection = function(item) {
-          // TODO update URL bar
+          urlBar.setSelection(item);
           // TODO record history step
         };
 
-    search.on('update', this.forwardEvent('update'));    
+    search.on('update', this.forwardEvent('update'));
 
     this.clearSearch = clearSearch;
     this.loadNextPage = search.loadNextPage;
-    this.updateQuery = updateQuery;
+    this.setQuery = setQuery;
     this.updateFilters = updateFilters;
-    this.updateTimerange = updateTimerange;
+    this.setTimerange = setTimerange;
     this.openFilterPane = openFilterPane;
     this.closeFilterPane = closeFilterPane;
     this.setLayerChanged = setLayerChanged;

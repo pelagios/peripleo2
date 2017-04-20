@@ -130,7 +130,7 @@ define(['ui/common/hasEvents'], function(HasEvents) {
             makeRequest();
         },
 
-        updateQuery = function(query) {
+        setQuery = function(query) {
           searchArgs.query = query;
           makeRequest();
         },
@@ -140,7 +140,7 @@ define(['ui/common/hasEvents'], function(HasEvents) {
           makeRequest();
         },
 
-        updateTimerange = function(range) {
+        setTimerange = function(range) {
           searchArgs.timerange = range;
           makeRequest();
         },
@@ -158,9 +158,9 @@ define(['ui/common/hasEvents'], function(HasEvents) {
         };
 
     this.clear = clear;
-    this.updateQuery = updateQuery;
+    this.setQuery = setQuery;
     this.updateFilters = updateFilters;
-    this.updateTimerange = updateTimerange;
+    this.setTimerange = setTimerange;
     this.updateSettings = updateSettings;
     this.setAggregationsEnabled = setAggregationsEnabled;
     this.loadNextPage = loadNextPage;
