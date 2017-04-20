@@ -4,9 +4,7 @@ define([
 ], function(ItemUtils, Card) {
 
   var DatasetCard  = function(parentEl, dataset) {
-    var self = this,
-
-        infoEl = jQuery(
+    var infoEl = jQuery(
           '<div class="info">' +
             '<p class="part-of"></p>' +
             '<h3></h3>' +
@@ -21,7 +19,7 @@ define([
         record = dataset.is_conflation_of[0],
 
         render = function() {
-          var descriptions = self.getDescriptions(dataset);
+          var descriptions = ItemUtils.getDescriptions(dataset);
 
           if (record.is_part_of)
             ItemUtils.getHierarchyPath(record.is_part_of).forEach(function(segment) {

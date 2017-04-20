@@ -1,6 +1,3 @@
-/**
- * TODO implement deferred handling, request throttling, etc.
- */
 define(['ui/common/hasEvents'], function(HasEvents) {
 
       /** Number of results per page **/

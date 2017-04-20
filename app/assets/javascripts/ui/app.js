@@ -9,9 +9,9 @@ require([
   'ui/controls/search/searchPanel',
   'ui/controls/selection/selectionPanel',
   'ui/map/map',
+  'ui/state/state',
   'ui/api',
-  'ui/search'
-], function(ItemUtils, ResultList, SearchPanel, SelectionPanel, Map, API, Search) {
+], function(ItemUtils, ResultList, SearchPanel, SelectionPanel, Map, State, API) {
 
   jQuery(document).ready(function() {
     var body = jQuery(document.body),
@@ -28,7 +28,7 @@ require([
 
         resultList = new ResultList(controlsDiv),
 
-        search = new Search(),
+        state = new State(),
 
         onUpdate = function(response) {
           searchPanel.update(response);
@@ -40,12 +40,14 @@ require([
 
           var selectDataset = function(dataset) {
                 var uri = dataset.is_conflation_of[0].uri;
-                search.clear(false);
-                search.updateFilters({ 'datasets': uri });
+                state.clearSearch(false);
+                state.updateFilters({ 'datasets': uri });
               };
 
           API.getItem(identifier).done(function(item) {
             selectionPanel.show(item);
+            state.setSelection(item);
+
             // TODO show on map
 
             switch(ItemUtils.getItemType(item)) {
@@ -59,18 +61,18 @@ require([
           });
         };
 
-    searchPanel.on('open', search.enableAggregations);
-    searchPanel.on('close', search.disableAggregations);
-    searchPanel.on('queryChange', search.updateQuery);
-    searchPanel.on('timerangeChange', search.updateTimerange);
+    searchPanel.on('open', state.openFilterPane);
+    searchPanel.on('close', state.closeFilterPane);
+    searchPanel.on('queryChange', state.updateQuery);
+    searchPanel.on('timerangeChange', state.updateTimerange);
     searchPanel.on('selectSuggestOption', onSelectByIdentifier);
 
     selectionPanel.on('select', onSelectByIdentifier);
 
     resultList.on('select', selectionPanel.show);
-    resultList.on('nextPage', search.loadNextPage);
+    resultList.on('nextPage', state.loadNextPage);
 
-    search.on('update', onUpdate);
+    state.on('update', onUpdate);
   });
 
 });

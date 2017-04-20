@@ -1,5 +1,25 @@
 define(function() {
 
+  /**
+   * Helper to map the list of conflated records to a list values of the given
+   * record property. (E.g. go from list of records to list of descriptions.)
+   */
+  var mapConflated = function(key) {
+    return function(item) {
+      var mapped = [];
+      item.is_conflation_of.map(function(record) {
+        var values = record[key];
+        if (values)
+          if (jQuery.isArray(values))
+            mapped = mapped.concat(values);
+          else
+            mapped.push(values);
+      });
+
+      return mapped;
+    };
+  };
+
   return {
 
     /** We'll do this pre-processing step on the server later! **/
@@ -27,7 +47,13 @@ define(function() {
       } else if (t.indexOf('DATASET') > -1) {
         return 'DATASET';
       }
-    }
+    },
+
+    getURIs : mapConflated('uri'),
+
+    getDescriptions : mapConflated('descriptions'),
+
+    getNames : mapConflated('names')
 
   };
 

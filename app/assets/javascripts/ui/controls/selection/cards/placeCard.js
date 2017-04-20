@@ -1,4 +1,7 @@
-define(['ui/controls/selection/cards/card'], function(Card) {
+define([
+  'ui/common/itemUtils',
+  'ui/controls/selection/cards/card'
+], function(ItemUtils, Card) {
 
   // TODO fetch this information from the server, so we can feed it from the DB
   var KNOWN_GAZETTEERS = [
@@ -58,9 +61,9 @@ define(['ui/controls/selection/cards/card'], function(Card) {
         tempBoundsEl  = infoEl.find('.temporal-bounds'),
 
         render = function() {
-          var identifiers = self.getURIs(place).map(function(uri) { return parseURI(uri); }),
-              descriptions = self.getDescriptions(place).map(function(d) { return d.description; }),
-              names = distinct(self.getNames(place).map(function(n) { return n.name; }));
+          var identifiers = ItemUtils.getURIs(place).map(function(uri) { return parseURI(uri); }),
+              descriptions = ItemUtils.getDescriptions(place).map(function(d) { return d.description; }),
+              names = distinct(ItemUtils.getNames(place).map(function(n) { return n.name; }));
 
           titleEl.html(place.title);
 
