@@ -1,4 +1,4 @@
-define([], function() {
+define(['ui/common/itemUtils'], function(ItemUtils) {
 
   var URLBar = function() {
 
@@ -10,32 +10,43 @@ define([], function() {
             return key + '=' + val;
           });
 
-          history.pushState(null, null, '#' + segment);
+          history.pushState(null, null, '#' + segment.join('&'));
         },
 
         setQuery = function(query) {
-
+          if (query)
+            segments.q = query;
+          else
+            delete segments.q;
+          updateNow();
         },
 
         updateFilters = function(diff) {
-
+          // TODO
         },
 
         clearFilters = function() {
-
+          // TODO
         },
 
         setTimerange = function(range) {
-
+          if (range) {
+            segments.from = range.from;
+            segments.to = range.to;
+          } else {
+            delete segments.from;
+            delete segments.to;
+          }
+          updateNow();
         },
 
         setSelection = function(item) {
-          // if (item)
-          //   segments.selected = encodeURIComponent(ItemUtils.getURIs(item)[0]);
-          // else
-          //   delete segments.selected;
+          if (item)
+            segments.selected = encodeURIComponent(ItemUtils.getURIs(item)[0]);
+          else
+            delete segments.selected;
 
-          // updateNow();
+          updateNow();
         },
 
         setFilterpaneOpen = function(open) {

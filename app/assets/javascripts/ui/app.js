@@ -30,14 +30,23 @@ require([
 
         state = new State(),
 
-        onUpdate = function(response) {
+        onStateUpdate = function(response) {
           searchPanel.update(response);
            resultList.update(response);
                   map.update(response);
         },
 
-        onSelectByIdentifier = function(identifier) {
+        /** An item was selected (e.g. via the result list) **/
+        onSelectItem = function(item) {
+          // TODO can we get this to match with the callback in onSelectIdentifier?
+          selectionPanel.show(item);
+          state.setSelection(item);
 
+          // TODO show on map
+        },
+
+        /** An identifier was selected (e.g. via suggestions) - fetch item **/
+        onSelectIdentifier = function(identifier) {
           var selectDataset = function(dataset) {
                 var uri = dataset.is_conflation_of[0].uri;
                 state.clearSearch(false);
@@ -65,14 +74,14 @@ require([
     searchPanel.on('close', state.closeFilterPane);
     searchPanel.on('queryChange', state.setQuery);
     searchPanel.on('timerangeChange', state.setTimerange);
-    searchPanel.on('selectSuggestOption', onSelectByIdentifier);
+    searchPanel.on('selectSuggestOption', onSelectIdentifier);
 
-    selectionPanel.on('select', onSelectByIdentifier);
+    selectionPanel.on('select', onSelectIdentifier);
 
-    resultList.on('select', selectionPanel.show);
+    resultList.on('select', onSelectItem);
     resultList.on('nextPage', state.loadNextPage);
 
-    state.on('update', onUpdate);
+    state.on('update', onStateUpdate);
   });
 
 });

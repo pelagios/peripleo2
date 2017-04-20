@@ -1,9 +1,8 @@
 define([
   'ui/common/hasEvents',
-  'ui/common/itemUtils',
   'ui/state/search',
   'ui/state/urlBar'
-], function(HasEvents, ItemUtils, Search, URLBar) {
+], function(HasEvents, Search, URLBar) {
 
   var State = function() {
 
