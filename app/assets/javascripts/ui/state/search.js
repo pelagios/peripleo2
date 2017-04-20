@@ -150,19 +150,10 @@ define(['ui/common/hasEvents'], function(HasEvents) {
           makeRequest();
         },
 
-        // Shorthand
-        enableAggregations = function() {
+        setAggregationsEnabled = function(enabled) {
           updateSettings({
-            timeHistogram    : true,
-            termAggregations : true,
-          });
-        },
-
-        // Shorthand
-        disableAggregations = function() {
-          updateSettings({
-            timeHistogram    : false,
-            termAggregations : false,
+            timeHistogram    : enabled,
+            termAggregations : enabled,
           });
         };
 
@@ -171,8 +162,7 @@ define(['ui/common/hasEvents'], function(HasEvents) {
     this.updateFilters = updateFilters;
     this.updateTimerange = updateTimerange;
     this.updateSettings = updateSettings;
-    this.enableAggregations = enableAggregations;
-    this.disableAggregations = disableAggregations;
+    this.setAggregationsEnabled = setAggregationsEnabled;
     this.loadNextPage = loadNextPage;
 
     HasEvents.apply(this);
