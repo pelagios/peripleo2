@@ -1,53 +1,57 @@
 define([
   'ui/common/hasEvents',
   'ui/state/search',
-  'ui/state/urlBar'
-], function(HasEvents, Search, URLBar) {
+  'ui/state/history'
+], function(HasEvents, Search, History) {
 
   var State = function() {
 
+        // TODO initial search state needs to be defined from URL bar
     var search = new Search(),
 
-        urlBar = new URLBar(),
+        // TODO Initial state from URL bar
+        history = new History(),
+
+        // TODO Initial state from URL bar
+        // TODO trigger upstream event in case there are non-default settings in page load
+        uiState = {
+          filterPaneOpen: false
+        },
+
+        pushState = function() {
+          history.pushState(search.getCurrentArgs(), jQuery.extend({}, uiState));
+        },
 
         clearSearch = function(refreshUI) {
-          search.clear(refreshUI);
-
-          urlBar.setQuery();
-          urlBar.clearFilters();
-          urlBar.setTimerange();
-
-          // TODO if refreshUI == true, record a step in the history
+          search.clearSearch(refreshUI);
+          if (refreshUI) pushState();
         },
 
         setQuery = function(query) {
           search.setQuery(query);
-          urlBar.setQuery(query);
-          // TODO record history step
+          pushState();
         },
 
         updateFilters = function(diff) {
           search.updateFilters(diff);
-          urlBar.updateFilters(diff);
-          // TODO record history step
+          pushState();
         },
 
         setTimerange = function(range) {
           search.setTimerange(range);
-          urlBar.setTimerange(range);
-          // TODO record history step
+          pushState();
         },
 
         openFilterPane = function() {
+          uiState.filterPaneOpen = true;
           search.setAggregationsEnabled(true);
-          urlBar.setFilterpaneOpen(true);
-          // TODO should we treat this as a history step as well? (Probably...)
+          pushState();
         },
 
         closeFilterPane = function() {
+          uiState.filterPaneOpen = false;
           search.setAggregationsEnabled(false);
-          urlBar.setFilterpaneOpen(false);
-          // TODO should we treat this as a history step as well? (Probably...)
+          pushState();
         },
 
         setLayerChanged = function(name) {
@@ -56,7 +60,7 @@ define([
         },
 
         setSelection = function(item) {
-          urlBar.setSelection(item);
+          // urlBar.setSelection(item);
           // TODO record history step
         };
 

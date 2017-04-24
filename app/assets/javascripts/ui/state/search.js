@@ -38,6 +38,11 @@ define(['ui/common/hasEvents'], function(HasEvents) {
         // Did additional requests arrive while busy?
         requestPending = false,
 
+        /** Returns (a clone of) the current search args **/
+        getCurrentArgs = function() {
+          return jQuery.extend({}, searchArgs);
+        },
+
         // DRY helper
         appendIfExists = function(param, key, url) {
           if (param) return url + '&' + key + '=' + param;
@@ -158,12 +163,13 @@ define(['ui/common/hasEvents'], function(HasEvents) {
         };
 
     this.clear = clear;
-    this.setQuery = setQuery;
-    this.updateFilters = updateFilters;
-    this.setTimerange = setTimerange;
-    this.updateSettings = updateSettings;
-    this.setAggregationsEnabled = setAggregationsEnabled;
+    this.getCurrentArgs = getCurrentArgs;
     this.loadNextPage = loadNextPage;
+    this.setAggregationsEnabled = setAggregationsEnabled;
+    this.setQuery = setQuery;
+    this.setTimerange = setTimerange;
+    this.updateFilters = updateFilters;
+    this.updateSettings = updateSettings;
 
     HasEvents.apply(this);
   };
