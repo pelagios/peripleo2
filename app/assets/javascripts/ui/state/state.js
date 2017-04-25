@@ -8,15 +8,15 @@ define([
 
     var self = this,
 
-        search = new Search(), // TODO set initial search state from URL bar
-
-        history = new History(),
-
         // TODO set initial state from URL bar
         // TODO trigger upstream event in case there are non-default settings in URL bar
         uiState = {
           filterPaneOpen: false
         },
+
+        search = new Search(), // TODO set initial search state from URL bar
+
+        history = new History(),
 
         pushState = function() {
           history.pushState(search.getCurrentArgs(), jQuery.extend({}, uiState));

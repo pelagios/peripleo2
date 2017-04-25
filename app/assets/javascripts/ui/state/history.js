@@ -1,34 +1,39 @@
 define([
   'ui/common/hasEvents',
-  'ui/common/itemUtils'
-], function(HasEvents, ItemUtils) {
+  'ui/common/itemUtils',
+  'ui/state/urlBar'
+], function(HasEvents, ItemUtils, URLBar) {
 
   var History = function() {
 
     var self = this,
 
-        buildURLHash = function(searchState, uiState) {
-          var urlParams = {},
+        parseURLHash = function() {
+          var hash = window.location.hash,
+              keysVals = (hash.indexOf('#') === 0) ? hash.substring(1).split('&') : false,
+              segments = {};
 
-              setIfDefined = function(arg, name) {
-                if (arg) urlParams[name] = arg;
-              };
+          if (keysVals) {
+            keysVals.forEach(function(keyVal) {
+              var asArray = keyVal.split('='),
+                  key = asArray[0],
+                  value = asArray[1];
 
-          setIfDefined(searchState.query, 'q');
-          // TODO filters
-          setIfDefined(searchState.timerange.from, 'from');
-          setIfDefined(searchState.timerange.to, 'to');
-          // TODO selection
-          setIfDefined(uiState.filterPaneOpen, 'filters');
+              segments[key] = value;
+            });
 
-          return jQuery.map(urlParams, function(val, key) {
-            return key + '=' + val;
-          }).join('&');
+            return {
+              search: {},
+              ui: {
+
+              }
+            };
+          }
         },
 
         pushState = function(searchState, uiState) {
           var state = { search: searchState, ui: uiState },
-              hash = buildURLHash(searchState, uiState);
+              hash = URLBar.toHash(state);
 
           window.history.pushState(state, null, '#' + hash);
         },
