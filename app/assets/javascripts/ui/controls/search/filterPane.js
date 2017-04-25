@@ -49,7 +49,7 @@ define([
 
         setOpen = function(open) {
           var visible = body.is(':visible');
-          if (visible != open) togglePane(); 
+          if (visible != open) togglePane();
         };
 
     timeHistogram.on('selectionChange', this.forwardEvent('timerangeChange'));

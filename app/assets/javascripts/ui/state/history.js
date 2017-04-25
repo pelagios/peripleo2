@@ -8,29 +8,6 @@ define([
 
     var self = this,
 
-        parseURLHash = function() {
-          var hash = window.location.hash,
-              keysVals = (hash.indexOf('#') === 0) ? hash.substring(1).split('&') : false,
-              segments = {};
-
-          if (keysVals) {
-            keysVals.forEach(function(keyVal) {
-              var asArray = keyVal.split('='),
-                  key = asArray[0],
-                  value = asArray[1];
-
-              segments[key] = value;
-            });
-
-            return {
-              search: {},
-              ui: {
-
-              }
-            };
-          }
-        },
-
         pushState = function(searchState, uiState) {
           var state = { search: searchState, ui: uiState },
               hash = URLBar.toHash(state);

@@ -1,12 +1,17 @@
 define([
   'ui/common/hasEvents',
   'ui/state/search',
-  'ui/state/history'
-], function(HasEvents, Search, History) {
+  'ui/state/history',
+  'ui/state/urlBar'
+], function(HasEvents, Search, History, URLBar) {
 
   var State = function() {
 
     var self = this,
+
+        search = new Search(), // TODO set initial search state from URL bar
+
+        history = new History(),
 
         // TODO set initial state from URL bar
         // TODO trigger upstream event in case there are non-default settings in URL bar
@@ -14,9 +19,10 @@ define([
           filterPaneOpen: false
         },
 
-        search = new Search(), // TODO set initial search state from URL bar
-
-        history = new History(),
+        init = function() {
+          setState(URLBar.parseHash());
+          pushState();
+        },
 
         pushState = function() {
           history.pushState(search.getCurrentArgs(), jQuery.extend({}, uiState));
@@ -75,8 +81,7 @@ define([
     search.on('response', this.forwardEvent('searchResponse'));
     history.on('changeState', setState);
 
-    pushState(); // Push initial state
-
+    this.init = init;
     this.clearSearch = clearSearch;
     this.loadNextPage = search.loadNextPage;
     this.setQuery = setQuery;

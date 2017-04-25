@@ -6,7 +6,39 @@ define([], function() {
   return {
 
     parseHash : function() {
-      // TODO return state object from current hash
+      var hash = window.location.hash,
+          keysVals = (hash.indexOf('#') === 0) ? hash.substring(1).split('&') : false,
+          segments = {};
+
+      if (keysVals) {
+        keysVals.forEach(function(keyVal) {
+          var asArray = keyVal.split('='),
+              key = asArray[0],
+              value = asArray[1];
+
+          segments[key] = value;
+        });
+
+        return {
+          search: {
+            query : segments.q,
+            timerange : {
+              from : parseInt(segments.from),
+              to   : parseInt(segments.to)
+            },
+            settings : {
+              timeHistogram    : segments.filters,
+              termAggregations : false,
+              topPlaces        : true
+            }
+          },
+          ui: {
+            filterPaneOpen : segments.filters
+          }
+        };
+      } else {
+        return undefined;
+      }
     },
 
     toHash : function(state) {
