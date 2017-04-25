@@ -17,7 +17,6 @@ object TopPlaces {
     def logError(triedIds: Seq[String], resolvedIds: Seq[String]) = {
       val failedIds = triedIds diff resolvedIds
       Logger.error("Error resolving places")
-      Logger.error("  tried : " + triedIds.mkString(", "))
       Logger.error("  failed: " + failedIds.mkString(", "))
       Logger.error(failedIds.size + " out of " + triedIds.size)
       

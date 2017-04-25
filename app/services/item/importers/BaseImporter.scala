@@ -158,6 +158,11 @@ abstract class BaseImporter(itemService: ItemService) {
             val after = itemsAfterConflation.head
             Seq(after.copy(docId = before.docId))
           } else {
+            if (affectedItems.size > 0) {
+              Logger.info("Re-conflating " + affectedItems.size + " items to " + itemsAfterConflation.size + " items")
+              Logger.info("  before: " + affectedItems.map(_.item.docId).mkString(", "))
+              Logger.info("  after:  " + itemsAfterConflation.map(_.docId).mkString(", "))
+            }
             itemsAfterConflation
           }
         }
@@ -212,12 +217,13 @@ abstract class BaseImporter(itemService: ItemService) {
       (itemsBefore, itemsAfter) <- reconflateItems(ItemRecord.normalize(record), references.map(_.normalize))
       failedUpdates <- storeUpdatedItems(itemsAfter)
       if (failedUpdates.isEmpty)
-      failedDeletes <- deleteMergedItems(itemsBefore, itemsAfter)
-      if (failedDeletes.isEmpty)
       referencesRewritten <- itemService.rewriteReferencesTo(itemsBefore.map(_.item), itemsAfter.map(_.item)) 
-    } yield referencesRewritten
+      if (referencesRewritten)
+      failedDeletes <- deleteMergedItems(itemsBefore, itemsAfter)
+    } yield failedDeletes.isEmpty
     
     f.recover { case t: Throwable =>
+      t.printStackTrace()
       false
     }
   }  
