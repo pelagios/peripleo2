@@ -23,8 +23,8 @@ define([], function() {
           search: {
             query : segments.q,
             timerange : {
-              from : parseInt(segments.from),
-              to   : parseInt(segments.to)
+              from : segments.from,
+              to   : segments.to
             },
             settings : {
               timeHistogram    : segments.filters,

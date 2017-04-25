@@ -88,7 +88,6 @@ require([
 
     state.on('searchResponse', onSearchResponse);
     state.on('stateUpdate', onStateUpdate);
-    
     state.init();
   });
 

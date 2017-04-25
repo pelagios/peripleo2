@@ -20,7 +20,8 @@ define([
         },
 
         init = function() {
-          setState(URLBar.parseHash());
+          var initialState = URLBar.parseHash();
+          setState(initialState);
           pushState();
         },
 

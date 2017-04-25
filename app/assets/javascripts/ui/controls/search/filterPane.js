@@ -30,7 +30,7 @@ define([
           if (aggregation) return aggregation.buckets;
         },
 
-        togglePane = function() {
+        togglePane = function(e) {
           var visible = body.is(':visible'),
               action = (visible) ? 'slideUp' : 'slideDown';
 
@@ -48,8 +48,11 @@ define([
         },
 
         setOpen = function(open) {
-          var visible = body.is(':visible');
-          if (visible != open) togglePane();
+          var visible = body.is(':visible'),
+              action = (visible) ? 'slideUp' : 'slideDown';
+
+          if ((visible && !open) || (!visible && open))
+            body.velocity(action, { duration: SLIDE_DURATION });
         };
 
     timeHistogram.on('selectionChange', this.forwardEvent('timerangeChange'));
