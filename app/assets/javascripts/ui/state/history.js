@@ -5,7 +5,9 @@ define([
 
   var History = function() {
 
-    var buildURLHash = function(searchState, uiState) {
+    var self = this,
+
+        buildURLHash = function(searchState, uiState) {
           var urlParams = {},
 
               setIfDefined = function(arg, name) {
@@ -32,7 +34,7 @@ define([
         },
 
         onStateBack = function(e) {
-          console.log(e.originalEvent.state);
+          self.fireEvent('changeState', e.originalEvent.state);
         };
 
     jQuery(window).bind('popstate', onStateBack);

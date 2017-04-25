@@ -101,7 +101,7 @@ define(['ui/common/hasEvents'], function(HasEvents) {
 
               request = function() {
                 jQuery.getJSON(buildFirstPageQuery(), function(response) {
-                  self.fireEvent('update', response);
+                  self.fireEvent('response', response);
                 }).always(handlePending);
               };
 
@@ -119,9 +119,14 @@ define(['ui/common/hasEvents'], function(HasEvents) {
 
             // TODO different events for new result vs. next page?
 
-            // self.fireEvent('update', response);
+            // self.fireEvent('response', response);
             // console.log(response);
           });
+        },
+
+        set = function(args) {
+          searchArgs = args;
+          makeRequest();
         },
 
         clear = function(refreshUI) {
@@ -165,6 +170,7 @@ define(['ui/common/hasEvents'], function(HasEvents) {
     this.clear = clear;
     this.getCurrentArgs = getCurrentArgs;
     this.loadNextPage = loadNextPage;
+    this.set = set;
     this.setAggregationsEnabled = setAggregationsEnabled;
     this.setQuery = setQuery;
     this.setTimerange = setTimerange;

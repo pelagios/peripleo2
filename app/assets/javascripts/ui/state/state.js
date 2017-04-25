@@ -6,20 +6,28 @@ define([
 
   var State = function() {
 
-        // TODO initial search state needs to be defined from URL bar
-    var search = new Search(),
+    var self = this,
 
-        // TODO Initial state from URL bar
+        search = new Search(), // TODO set initial search state from URL bar
+
         history = new History(),
 
-        // TODO Initial state from URL bar
-        // TODO trigger upstream event in case there are non-default settings in page load
+        // TODO set initial state from URL bar
+        // TODO trigger upstream event in case there are non-default settings in URL bar
         uiState = {
           filterPaneOpen: false
         },
 
         pushState = function() {
           history.pushState(search.getCurrentArgs(), jQuery.extend({}, uiState));
+        },
+
+        setState = function(state) {
+          if (state) {
+            uiState = state.ui;
+            search.set(state.search);
+            self.fireEvent('stateUpdate', state);
+          }
         },
 
         clearSearch = function(refreshUI) {
@@ -64,7 +72,10 @@ define([
           // TODO record history step
         };
 
-    search.on('update', this.forwardEvent('update'));
+    search.on('response', this.forwardEvent('searchResponse'));
+    history.on('changeState', setState);
+
+    pushState(); // Push initial state
 
     this.clearSearch = clearSearch;
     this.loadNextPage = search.loadNextPage;

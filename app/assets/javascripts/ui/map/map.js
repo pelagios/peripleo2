@@ -28,12 +28,17 @@ define([
 
         topPlacesLayer = new TopPlacesLayer(map),
 
-        update = function(searchResponse) {
+        setResponse = function(searchResponse) {
           itemLayer.update(searchResponse.items);
           topPlacesLayer.update(searchResponse.top_places);
+        },
+
+        setState = function(state) {
+
         };
 
-    this.update = update;
+    this.setResponse = setResponse;
+    this.setState = setState;
 
     HasEvents.apply(this);
   };

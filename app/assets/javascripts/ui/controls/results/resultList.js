@@ -47,7 +47,7 @@ define([
           }
         },
 
-        update = function(response) {
+        setResponse = function(response) {
           var isMoreAvailable = response.total > (response.offset + response.limit);
 
           if (isMoreAvailable) waitSpinner.show();
@@ -60,7 +60,7 @@ define([
     element.on('click', 'li', onSelect);
     element.scroll(onScroll);
 
-    this.update = update;
+    this.setResponse = setResponse;
 
     HasEvents.apply(this);
   };

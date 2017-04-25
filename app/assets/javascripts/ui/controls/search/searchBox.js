@@ -38,10 +38,18 @@ define([
              self.fireEvent('selectSuggestOption', option.identifier);
            else
              onSubmit();
+         },
+
+         /** Sets the query string - does NOT fire a change event **/
+         setQuery = function(query) {
+           if (query) searchBoxInput.val(query);
+           else searchBoxInput.val('');
          };
 
     searchBoxForm.submit(onSubmit);
     autocomplete.on('selectOption', onSelectOption);
+
+    this.setQuery = setQuery;
 
     HasEvents.apply(this);
   };

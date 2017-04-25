@@ -14,8 +14,13 @@ define([
 
         filterPane = new FilterPane(element),
 
-        update = function(searchResponse) {
-          filterPane.update(searchResponse);
+        setResponse = function(searchResponse) {
+          filterPane.setResponse(searchResponse);
+        },
+
+        setState = function(state) {
+          searchBox.setQuery(state.search.query);
+          filterPane.setOpen(state.ui.filterPaneOpen);
         };
 
     searchBox.on('change', this.forwardEvent('queryChange'));
@@ -25,7 +30,8 @@ define([
     filterPane.on('close', this.forwardEvent('close'));
     filterPane.on('timerangeChange', this.forwardEvent('timerangeChange'));
 
-    this.update = update;
+    this.setResponse = setResponse;
+    this.setState = setState;
 
     HasEvents.apply(this);
   };

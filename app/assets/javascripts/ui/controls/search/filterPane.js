@@ -40,17 +40,23 @@ define([
           else self.fireEvent('open');
         },
 
-        update = function(response) {
+        setResponse = function(response) {
           footer.update(response);
           if (response.aggregations) {
             timeHistogram.update(getAggregation(response, 'by_time'));
           }
+        },
+
+        setOpen = function(open) {
+          var visible = body.is(':visible');
+          if (visible != open) togglePane(); 
         };
 
     timeHistogram.on('selectionChange', this.forwardEvent('timerangeChange'));
     footer.on('toggle', togglePane);
 
-    this.update = update;
+    this.setOpen = setOpen;
+    this.setResponse = setResponse;
 
     HasEvents.apply(this);
   };

@@ -30,10 +30,15 @@ require([
 
         state = new State(),
 
-        onStateUpdate = function(response) {
-          searchPanel.update(response);
-           resultList.update(response);
-                  map.update(response);
+        onSearchResponse = function(response) {
+          searchPanel.setResponse(response);
+           resultList.setResponse(response);
+                  map.setResponse(response);
+        },
+
+        onStateUpdate = function(state) {
+          searchPanel.setState(state);
+                  map.setState(state);
         },
 
         /** An item was selected (e.g. via the result list) **/
@@ -81,7 +86,8 @@ require([
     resultList.on('select', onSelectItem);
     resultList.on('nextPage', state.loadNextPage);
 
-    state.on('update', onStateUpdate);
+    state.on('searchResponse', onSearchResponse);
+    state.on('stateUpdate', onStateUpdate);
   });
 
 });
