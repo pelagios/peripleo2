@@ -72,7 +72,11 @@ trait ReferenceService { self: ItemService =>
             delete id id from ES.PERIPLEO / ES.REFERENCE parent parent, 
             index into ES.PERIPLEO / ES.REFERENCE source updatedReference parent parent
           )
-        } map { !_.hasFailures }
+        } map { !_.hasFailures 
+        } recover { case t: Throwable =>
+          t.printStackTrace()
+          false
+        }
       } else {
         Future.successful(true)
       }

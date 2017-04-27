@@ -144,7 +144,10 @@ class ES @Inject() (config: Configuration, lifecycle: ApplicationLifecycle) {
         }
       }).sortBy(_._1).map(_._2)
       
-  /** A generic helper for deleting records by query **/
+  /** A generic helper for deleting records by query 
+    *
+    * TODO Failure tracing: Future[Boolean]  
+    */
   private[services] def deleteByQuery(index: String, q: QueryDefinition, parent: Option[String] = None)(implicit ctx: ExecutionContext): Future[Unit] = {
     
     def fetchNextBatch(scrollId: String): Future[RichSearchResponse] =

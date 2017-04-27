@@ -123,8 +123,11 @@ class ItemService @Inject() (
     
   def deleteById(docId: UUID): Future[Boolean] = {
     // Delete all references this item has (start operation right now, using 'val')
+    
+    // TODO need to trace fails more thoroughly in this case
+    
     val fDeleteReferences =
-      es.deleteByQuery(ES.REFERENCE, termQuery("reference_to.doc_id", docId.toString), Some(docId.toString))
+      es.deleteByQuery(ES.REFERENCE, termQuery("parent_id", docId.toString), Some(docId.toString))
 
     // Should start after delete is done (using 'def')
     def fDeleteItem() =
