@@ -13,7 +13,17 @@ import services.item.ItemService.ItemWithUnboundReferences
 
 abstract class BaseImporter(itemService: ItemService) {
 
+  /** The ItemType this importer should set for new items **/
   protected val ITEM_TYPE: ItemType
+  
+  /**
+   *  If true, the importer will reject items that have 0 resolvable references.
+   *  This is normally desired behavior. (E.g. we don't want place references
+   *  in the system we can't map.) But not in all cases. (E.g. we want to allow
+   *  dataset items, even though the dataset items don't carry references
+   *  themselves.
+   */
+  protected val REJECT_IF_NO_REFERENCES: Boolean
 
   val es = itemService.es
 
@@ -23,15 +33,13 @@ abstract class BaseImporter(itemService: ItemService) {
 
   private def MAX_URIS_IN_QUERY = 100 // Max URIs we will concatenate to an OR query
 
-  def insertOrUpdateItem(item: Item, references: Seq[UnboundReference]): Future[Boolean] =
-    insertOrUpdateItem(ItemWithUnboundReferences(item, references))
-
   /** The bare-bones code for upserting an item and its references
     *
     * TODO at the moment, this works for items - but not for references!
     *
     */
   private def insertOrUpdateItem(i: ItemWithUnboundReferences): Future[Boolean] = {
+    
     // References that resolve to objects already in the index
     val fFilterResolvable = itemService.resolveReferences(i.references)
 
@@ -40,25 +48,66 @@ abstract class BaseImporter(itemService: ItemService) {
       val identifiers = i.item.identifiers.toSet
       identifiers.contains(ref.uri)
     }.map(_.toReference(i.item.docId))
+    
+    // Filter references, keeping only those that are not already indexed
+    def indexableReferences(selfReferences: Seq[Reference], resolvableReferences: Seq[Reference]) = {
 
-    def fUpsert(item: Item, refs: Seq[Reference]) = {
-      es.client execute {
-        bulk (
-          // Upsert the item
-          { update id item.docId.toString in ES.PERIPLEO / ES.ITEM source item docAsUpsert } +: refs.map { ref =>
+      // If a reference is i) a self-reference AND ii) resolvable, it's already indexed!
+      val dontIndex = selfReferences.distinct intersect resolvableReferences.distinct
 
-            // Insert the references
-            index into ES.PERIPLEO / ES.REFERENCE source ref parent item.docId.toString }
-        )
+      // If we had an item merge, resolvable self-references my point to the old doc_id. Rebind.
+      val rebound = resolvableReferences.map { reference =>
+        if (reference.parentUri == reference.referenceTo.uri)
+          reference.rebind(i.item.docId)
+        else 
+          reference
       }
+      
+      // All refs, minus those indexed already - that's what we need to index
+      val all = (selfReferences ++ rebound).distinct
+      all diff dontIndex
     }
+    
+    def fUpsert(item: Item, maybeVersion: Option[Long], refs: Seq[Reference]) =   
+      if (REJECT_IF_NO_REFERENCES && refs.size == 0) {
+        Logger.warn("Skipping item with 0 resolvable references")
+        i.references.foreach(ref => Logger.warn(ref.toString))
+        Future.successful(true)
+      } else {
+        val upsertItem = maybeVersion match {
+          case Some(version) => update id item.docId.toString in ES.PERIPLEO / ES.ITEM source item version version
+          case None => index into ES.PERIPLEO / ES.ITEM id item.docId.toString source item
+        }
+              
+        if (refs.size > 10) {
+          Logger.warn("Inserting " + refs.size + " references to index")
+          Logger.warn(refs.map(_.referenceTo.docId).mkString(", "))
+        }
+              
+        es.client execute {
+          // Failures will occasionally happen here due version conflicts (ES optimistic locking!).
+          // Note that in this case, the bulk insert will produce orphaned References! We could
+          // separate insert of Item and References, and only insert the References in case the item insert
+          // was successful. But we'd sacrifice some performance because of two insert requests instead of
+          // one. Therefore, we accept the orphaned References at this point, and clean them up later
+          // in the Reference-rewrite stage (cf. ReferenceService).
+          bulk ( upsertItem +: refs.map(ref => index into ES.PERIPLEO / ES.REFERENCE source ref parent item.docId.toString) )
+        } map { result =>
+          // Note: it seems we cannot reliably roll back Reference inserts following a version conflict. Immediately 
+          // after insert, they are not necessarily indexed, so a delete request will just fail.
+          if (result.hasFailures) {
+            result.failures.foreach(result => Logger.error(result.failureMessage))
+            Logger.error("Error indexing item: " + i.item.docId)
+          }       
+          !result.hasFailures
+        }
+      }
 
     val f = for {
       resolvedReferences <- fFilterResolvable
-      // _ <- fDeleteExistingReferences
-      _ <- fUpsert(i.item, resolvedReferences ++ selfReferences)
-    } yield true
-
+      success <- fUpsert(i.item, i.maybeVersion, indexableReferences(selfReferences, resolvedReferences))
+    } yield success
+    
     f.recover { case t: Throwable =>
       Logger.error("Error indexing item " + i.item.docId + ": " + t.getMessage)
       t.printStackTrace
@@ -116,17 +165,19 @@ abstract class BaseImporter(itemService: ItemService) {
   protected def importRecord(tuple: (ItemRecord, Seq[UnboundReference])): Future[Boolean] = tuple match { case (record, references) =>
 
     // Helper to attach references to their matching parent items **/
-    def groupReferences(items: Seq[Item], unbound: Seq[UnboundReference]): Seq[ItemWithUnboundReferences] =
-      items.map { item =>
-        val uris = item.isConflationOf.flatMap(_.identifiers).toSet
+    def groupReferences(items: Seq[(Item, Option[Long])], unbound: Seq[UnboundReference]): Seq[ItemWithUnboundReferences] =
+      items.map { case (item, version) =>
+        val uris = item.identifiers.toSet
         val references = unbound.filter(ref => uris.contains(ref.parentUri))
-        ItemWithUnboundReferences(item, references)
+        ItemWithUnboundReferences(item, version, references)
       }
 
     // Fetches affected items from the index and computes the new conflation
     def reconflateItems(normalizedRecord: ItemRecord, references: Seq[UnboundReference]): Future[(Seq[ItemWithReferences], Seq[ItemWithUnboundReferences])] = {
+      
       // val startTime = System.currentTimeMillis
       getAffectedItems(normalizedRecord).map(i => {
+        
         // Sorted affected items by no. of records
         val affectedItems = i.sortBy(- _.item.isConflationOf.size)
 
@@ -142,31 +193,26 @@ abstract class BaseImporter(itemService: ItemService) {
             affectedRecords.patch(replaceIdx, Seq(normalizedRecord), 1)
         }
 
-        val conflatedItems = {
+        val conflatedItems: Seq[(Item, Option[Long])] = {
+          
           val itemsAfterConflation = conflate(records)
 
-          if (affectedItems.size > 0 && affectedItems.size != itemsAfterConflation.size) {
+          if (affectedItems.size > 0 && affectedItems.size != itemsAfterConflation.size)
             Logger.info("Re-conflating " + affectedItems.size + " items to " + itemsAfterConflation.size + " items")
-            Logger.info("  before: " + affectedItems.map(_.item.docId).mkString(", "))
-            Logger.info("  after:  " + itemsAfterConflation.map(_.docId).mkString(", "))
-          }
 
           // Optimization: in case multiple items are merged into one,
           // retain docId, so we need to rewrite fewer references
           if (affectedItems.size > 0 && itemsAfterConflation.size == 1) {
-            val oneBefore = affectedItems.head.item
+            val oneBefore = affectedItems.head
             val after = itemsAfterConflation.head
-            Seq(after.copy(docId = oneBefore.docId))
+            Seq((after.copy(docId = oneBefore.item.docId), Some(oneBefore.version)))
           } else {
-            itemsAfterConflation
+            itemsAfterConflation.map((_, None))
           }
         }
 
-        val conflatedReferences =
-          affectedItems.flatMap(_.references).map(_.unbind) ++ references
-
-        // Logger.debug("Fetch & reconflation took " + (System.currentTimeMillis - startTime))
-
+        val conflatedReferences = affectedItems.flatMap(_.references).map(_.unbind) ++ references
+        
         // Pass back places before and after conflation
         (affectedItems, groupReferences(conflatedItems, conflatedReferences))
       })
@@ -199,11 +245,9 @@ abstract class BaseImporter(itemService: ItemService) {
 
     // Stores the newly conflated items in the index
     def storeUpdatedItems(itemsAfter: Seq[ItemWithUnboundReferences]): Future[Seq[ItemWithUnboundReferences]] = {
-      // val startTime = System.currentTimeMillis
       Future.sequence {
         itemsAfter.map(i => insertOrUpdateItem(i).map((i, _)))
       } map { failed =>
-        // Logger.debug("Storing updated items took " + (System.currentTimeMillis - startTime))
         failed.filter(!_._2).map(_._1)
       }
     }

@@ -11,7 +11,7 @@
   "index" : {
     "translog": {
       "durability": "async",
-      "sync_interval": "60s"
+      "sync_interval": "20s"
      }
   }
 }

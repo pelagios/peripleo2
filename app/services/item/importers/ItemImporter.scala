@@ -13,4 +13,7 @@ class ItemImporter @Inject() (
   
   override val ITEM_TYPE = itemType 
   
+  // Reject items unless they carry at least one resolvable reference
+  override val REJECT_IF_NO_REFERENCES = true 
+  
 }

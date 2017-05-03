@@ -10,6 +10,10 @@ class EntityImporter(itemService: ItemService, itemType: ItemType) extends BaseI
   
   override val ITEM_TYPE = itemType
   
+  // Entities always carry a single self-reference, so 
+  // should never be relevant, unless in case something breaks
+  override val REJECT_IF_NO_REFERENCES = true 
+  
   private val REFERENCE_TYPE = itemType match {
     case ItemType.PLACE  => ReferenceType.PLACE
     case ItemType.PERSON => ReferenceType.PERSON

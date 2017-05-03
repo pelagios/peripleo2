@@ -17,17 +17,18 @@ object ItemService {
   
   import com.sksamuel.elastic4s.ElasticDsl.search // Otherwise there's ambiguity with the .search package!
 
-  case class ItemWithReferences(item: Item, references: Seq[Reference])
+  case class ItemWithReferences(item: Item, version: Long, references: Seq[Reference])
 
-  case class ItemWithUnboundReferences(item: Item, references: Seq[UnboundReference])
+  case class ItemWithUnboundReferences(item: Item, maybeVersion: Option[Long], references: Seq[UnboundReference])
 
   implicit object ItemIndexable extends Indexable[Item] {
     override def json(i: Item): String = Json.stringify(Json.toJson(i))
   }
 
-  implicit object ItemHitAs extends HitAs[Item] {
-    override def as(hit: RichSearchHit): Item = {
-      Json.fromJson[Item](Json.parse(hit.sourceAsString)).get
+  implicit object ItemHitAs extends HitAs[(Item, Long)] {
+    override def as(hit: RichSearchHit): (Item, Long) = {
+      val item = Json.fromJson[Item](Json.parse(hit.sourceAsString)).get
+      (item, hit.version)
     }
   }
 
@@ -66,7 +67,7 @@ class ItemService @Inject() (
           )
         }
       }
-    } map { _.as[Item].headOption }
+    } map { _.as[(Item, Long)].headOption.map(_._1) }
 
   /** Retrieves connected items.
     *
@@ -92,16 +93,16 @@ class ItemService @Inject() (
         )
       }
     
-    val fItems: Future[Seq[Item]] = 
+    val fItems: Future[Seq[(Item, Long)]] = 
       es.client execute {
-        search in ES.PERIPLEO / ES.ITEM query queryClause limit ES.MAX_SIZE
-      } map { _.as[Item].toSeq }
+        search in ES.PERIPLEO / ES.ITEM query queryClause version true limit ES.MAX_SIZE
+      } map { _.as[(Item, Long)].toSeq }
     
     // It seems Elastic4s doesn't support inner hits on hasParentQueries at v2.4 :-(
     val fReferences: Future[Seq[(Reference, UUID)]] =
       es.client execute {
         search in ES.PERIPLEO / ES.REFERENCE query {
-          hasParentQuery(ES.ITEM) query queryClause 
+          hasParentQuery(ES.ITEM) query queryClause
         } limit ES.MAX_SIZE
       } map { _.hits.toSeq.map { hit =>
         val reference = Json.fromJson[Reference](Json.parse(hit.sourceAsString)).get
@@ -109,10 +110,10 @@ class ItemService @Inject() (
         (reference, parentId)
       }}
     
-    def group(items: Seq[Item], references: Seq[(Reference, UUID)]): Seq[ItemWithReferences] = {
+    def group(items: Seq[(Item, Long)], references: Seq[(Reference, UUID)]): Seq[ItemWithReferences] = {
       val byParentId = references.groupBy(_._2).mapValues(_.map(_._1))
-      items.map(item =>
-        ItemWithReferences(item, byParentId.get(item.docId).getOrElse(Seq.empty[Reference])))
+      items.map { case (item, version) =>
+        ItemWithReferences(item, version, byParentId.get(item.docId).getOrElse(Seq.empty[Reference])) }
     }
     
     for {
@@ -123,9 +124,6 @@ class ItemService @Inject() (
     
   def deleteById(docId: UUID): Future[Boolean] = {
     // Delete all references this item has (start operation right now, using 'val')
-    
-    // TODO need to trace fails more thoroughly in this case
-    
     val fDeleteReferences =
       es.deleteByQuery(ES.REFERENCE, termQuery("parent_id", docId.toString), Some(docId.toString))
 
@@ -133,12 +131,13 @@ class ItemService @Inject() (
     def fDeleteItem() =
       es.client execute {
         delete id docId.toString from ES.PERIPLEO / ES.ITEM
-      }
+      } map { _.isFound }
 
-    val f= for {
-      _ <- fDeleteReferences
-      _ <- fDeleteItem()
-    } yield true
+    val f = for {
+      deleteRefsSuccess <- fDeleteReferences
+      if (deleteRefsSuccess)
+      deleteItemSuccess <- fDeleteItem()
+    } yield deleteItemSuccess
 
     f.recover { case t: Throwable =>
       Logger.error("Error deleting item " + docId + ": " + t.getMessage)
@@ -149,15 +148,15 @@ class ItemService @Inject() (
 
   def deleteByDataset(dataset: String) = {
 
-    def deleteReferences(): Future[Unit] =
+    def deleteReferences(): Future[Boolean] =
       es.deleteByQuery(ES.REFERENCE, hasParentQuery(ES.ITEM) query {
         termQuery("is_in_dataset", dataset)
       })
 
-    def deleteObjects(): Future[Unit] =
+    def deleteObjects(): Future[Boolean] =
       es.deleteByQuery(ES.ITEM, termQuery("is_in_dataset", dataset))
 
-    def deleteDatasets(): Future[Unit] =
+    def deleteDatasets(): Future[Boolean] =
       es.deleteByQuery(ES.ITEM, bool {
         should(
           termQuery("identifiers", dataset),
@@ -166,10 +165,10 @@ class ItemService @Inject() (
       })
 
     for {
-      _ <- deleteReferences
-      _ <- deleteObjects
-      _ <- deleteDatasets
-    } yield ()
+      s1 <- deleteReferences
+      s2 <- deleteObjects
+      s3 <- deleteDatasets
+    } yield s1 && s2 && s3
 
   }
 

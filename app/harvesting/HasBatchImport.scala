@@ -6,7 +6,9 @@ import services.task.TaskType
 
 trait HasBatchImport[T] {
   
-  private def MAX_RETRIES = 5 // Max times an update will be retried in case of failure
+  private val MAX_RETRIES = 5 // Max times an update will be retried in case of failure
+  
+  private val BACKOFF_MS = 1000
     
   private def importRecords(records: Seq[T], retries: Int = MAX_RETRIES)(implicit ctx: ExecutionContext): Future[Seq[T]] =
     records.foldLeft(Future.successful(Seq.empty[T])) { case (f, record) =>
@@ -20,10 +22,23 @@ trait HasBatchImport[T] {
       Logger.info("Imported " + (records.size - failedRecords.size) + " records") 
       if (failedRecords.size > 0 && retries > 0) {
         Logger.warn(failedRecords.size + " gazetteer records failed to import - retrying")
+        
+        // Start first retry immediately and then increases wait time for each subsequent retry 
+        val backoff = (MAX_RETRIES - retries) * BACKOFF_MS  
+        if (backoff > 0) {
+          Logger.info("Waiting... " + backoff + "ms")
+          Thread.sleep(backoff)
+        }
+        
+        Logger.debug("Retrying now.")
         importRecords(failedRecords, retries - 1)
       } else {
-        if (failedRecords.size > 0) Logger.error(failedRecords.size + " gazetteer records failed without recovery")
-        else Logger.info("No failed imports")
+        if (failedRecords.size > 0) {
+          Logger.error(failedRecords.size + " gazetteer records failed without recovery")
+          failedRecords.foreach(record =>  Logger.error(record.toString))
+        } else {
+          Logger.info("No failed imports")
+        }
         Future.successful(failedRecords)
       }
     }

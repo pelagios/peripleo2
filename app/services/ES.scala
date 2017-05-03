@@ -144,18 +144,15 @@ class ES @Inject() (config: Configuration, lifecycle: ApplicationLifecycle) {
         }
       }).sortBy(_._1).map(_._2)
       
-  /** A generic helper for deleting records by query 
-    *
-    * TODO Failure tracing: Future[Boolean]  
-    */
-  private[services] def deleteByQuery(index: String, q: QueryDefinition, parent: Option[String] = None)(implicit ctx: ExecutionContext): Future[Unit] = {
+  /** A generic helper for deleting records by query **/
+  private[services] def deleteByQuery(index: String, q: QueryDefinition, parent: Option[String] = None)(implicit ctx: ExecutionContext): Future[Boolean] = {
     
     def fetchNextBatch(scrollId: String): Future[RichSearchResponse] =
       client execute {
         search scroll scrollId keepAlive "1m"
       }
     
-    def deleteOneBatch(ids: Seq[String]): Future[Unit] =
+    def deleteOneBatch(ids: Seq[String]): Future[Boolean] =
       client execute {
         bulk (
           parent match {
@@ -166,21 +163,26 @@ class ES @Inject() (config: Configuration, lifecycle: ApplicationLifecycle) {
               ids.map { id => delete id id from ES.PERIPLEO / index }
           }
         )
-      } map { _ => () }
+      } map { result =>
+        if (result.hasFailures)
+          Logger.error("Error deleting by query: " + result.failures.map(_.failureMessage).mkString("\n"))
+          
+        !result.hasFailures 
+      }
     
-    def deleteBatch(response: RichSearchResponse, cursor: Long = 0l): Future[Unit] = {
+    def deleteBatch(response: RichSearchResponse, cursor: Long = 0l): Future[Boolean] = {
       val ids = response.hits.map(_.getId)
       val total = response.totalHits
 
       if (ids.isEmpty)
-        Future.successful((): Unit)
+        Future.successful(true)
       else
-        deleteOneBatch(ids).flatMap { _ =>
+        deleteOneBatch(ids).flatMap { success =>
           val deletedRecords = cursor + ids.size
           if (deletedRecords < total) {
-            fetchNextBatch(response.scrollId).flatMap(deleteBatch(_, deletedRecords))
+            fetchNextBatch(response.scrollId).flatMap(deleteBatch(_, deletedRecords).map(_ && success))
           } else {
-            Future.successful((): Unit)
+            Future.successful(success)
           }
         }
     }
