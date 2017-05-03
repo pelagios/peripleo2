@@ -85,7 +85,7 @@ trait ReferenceService { self: ItemService =>
           
           es.client execute {
             delete id id from ES.PERIPLEO / ES.REFERENCE parent parent
-          } map { _ => false } recover { case t: Throwable => false }
+          } map { _ => true } recover { case t: Throwable => false }
       }
 
     def rewriteBatch(response: RichSearchResponse, cursor: Long = 0l): Future[Boolean] = {
