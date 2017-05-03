@@ -11,7 +11,7 @@ class DatasetImporter(itemService: ItemService, itemType: ItemType) extends Base
   override val ITEM_TYPE = itemType
   
   // Datasets never carry references
-  override val REJECT_IF_NO_REFERENCES = false
+  override val REJECT_IF_NO_INDEXABLE_REFERENCES = false
   
   def importDatasets(records: Seq[ItemRecord]) =
     importBatch(records).map { _.size == 0 }

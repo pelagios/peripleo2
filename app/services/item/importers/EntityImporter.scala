@@ -10,9 +10,12 @@ class EntityImporter(itemService: ItemService, itemType: ItemType) extends BaseI
   
   override val ITEM_TYPE = itemType
   
-  // Entities always carry a single self-reference, so 
-  // should never be relevant, unless in case something breaks
-  override val REJECT_IF_NO_REFERENCES = true 
+  // Entities always carry a single self-reference, so this wouldn't matter. However,
+  // we'll set this flag to FALSE to account for the following case: 
+  // in case of error and retry, the self-reference may already be in the index from 
+  // the previous try. In this case, we want to index the item even if it has 0
+  // indexable references.
+  override val REJECT_IF_NO_INDEXABLE_REFERENCES = false 
   
   private val REFERENCE_TYPE = itemType match {
     case ItemType.PLACE  => ReferenceType.PLACE

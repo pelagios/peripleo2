@@ -23,7 +23,7 @@ abstract class BaseImporter(itemService: ItemService) {
    *  dataset items, even though the dataset items don't carry references
    *  themselves.
    */
-  protected val REJECT_IF_NO_REFERENCES: Boolean
+  protected val REJECT_IF_NO_INDEXABLE_REFERENCES: Boolean
 
   val es = itemService.es
 
@@ -55,7 +55,7 @@ abstract class BaseImporter(itemService: ItemService) {
       // If a reference is i) a self-reference AND ii) resolvable, it's already indexed!
       val dontIndex = selfReferences.distinct intersect resolvableReferences.distinct
 
-      // If we had an item merge, resolvable self-references my point to the old doc_id. Rebind.
+      // If we had an item merge, resolvable self-references may point to the old doc_id. Rebind.
       val rebound = resolvableReferences.map { reference =>
         if (reference.parentUri == reference.referenceTo.uri)
           reference.rebind(i.item.docId)
@@ -69,7 +69,7 @@ abstract class BaseImporter(itemService: ItemService) {
     }
     
     def fUpsert(item: Item, maybeVersion: Option[Long], refs: Seq[Reference]) =   
-      if (REJECT_IF_NO_REFERENCES && refs.size == 0) {
+      if (REJECT_IF_NO_INDEXABLE_REFERENCES && refs.size == 0) {
         Logger.warn("Skipping item with 0 resolvable references")
         i.references.foreach(ref => Logger.warn(ref.toString))
         Future.successful(true)
