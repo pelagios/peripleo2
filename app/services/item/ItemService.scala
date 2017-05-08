@@ -14,7 +14,7 @@ import services.item.reference.{ Reference, ReferenceService, UnboundReference }
 import services.task.TaskType
 
 object ItemService {
-  
+
   import com.sksamuel.elastic4s.ElasticDsl.search // Otherwise there's ambiguity with the .search package!
 
   case class ItemWithReferences(item: Item, version: Long, references: Seq[Reference])
@@ -62,8 +62,8 @@ class ItemService @Inject() (
     es.client execute {
       search in ES.PERIPLEO / ES.ITEM query {
         constantScoreQuery {
-          filter(
-            must ( termQuery("is_conflation_of.identifiers" -> identifier) )
+          filter (
+            termQuery("is_conflation_of.identifiers" -> identifier)
           )
         }
       }
@@ -75,7 +75,7 @@ class ItemService @Inject() (
     * their identifiers, close_match or exact_match fields.
     *
     * TODO make this method filter-able by item type
-    * 
+    *
     * TODO this method will only retrieve up to ES.MAX_SIZE references - however
     * we *might* have items with more than that in extreme cases (e.g. will Strabo reference
     * more than 10k unique places?)
@@ -92,12 +92,12 @@ class ItemService @Inject() (
           }
         )
       }
-    
-    val fItems: Future[Seq[(Item, Long)]] = 
+
+    val fItems: Future[Seq[(Item, Long)]] =
       es.client execute {
         search in ES.PERIPLEO / ES.ITEM query queryClause version true limit ES.MAX_SIZE
       } map { _.as[(Item, Long)].toSeq }
-    
+
     // It seems Elastic4s doesn't support inner hits on hasParentQueries at v2.4 :-(
     val fReferences: Future[Seq[(Reference, UUID)]] =
       es.client execute {
@@ -109,19 +109,19 @@ class ItemService @Inject() (
         val parentId = UUID.fromString(hit.field("_parent").value[String])
         (reference, parentId)
       }}
-    
+
     def group(items: Seq[(Item, Long)], references: Seq[(Reference, UUID)]): Seq[ItemWithReferences] = {
       val byParentId = references.groupBy(_._2).mapValues(_.map(_._1))
       items.map { case (item, version) =>
         ItemWithReferences(item, version, byParentId.get(item.docId).getOrElse(Seq.empty[Reference])) }
     }
-    
+
     for {
       items <- fItems
       references <- fReferences
     } yield group(items, references)
   }
-    
+
   def deleteById(docId: UUID): Future[Boolean] = {
     // Delete all references this item has (start operation right now, using 'val')
     val fDeleteReferences =
