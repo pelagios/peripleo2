@@ -17,10 +17,10 @@ define([], function() {
 
       },
 
-      CANVAS_WIDTH = 8 * STYLE.GLOW_RADIUS / 3,
+      ICON_SIZE = 8 * STYLE.GLOW_RADIUS / 3,
 
       BASE_SVG = (function() {
-        var w = CANVAS_WIDTH / 2,
+        var w = ICON_SIZE / 2,
 
             s = STYLE.DOT_SIZE, // Shorthand
 
@@ -52,7 +52,7 @@ define([], function() {
 
       SELECTED_SVG = (function() {
         var svg = BASE_SVG.clone(),
-            offset = CANVAS_WIDTH / 2,
+            offset = ICON_SIZE / 2,
             glow = jQuery('<circle></circle>');
 
         glow.attr('cx', offset);
@@ -82,28 +82,35 @@ define([], function() {
         return svg;
       })(),
 
-      BASE_SVG_URL = 'data:image/svg+xml;base64,' + btoa(BASE_SVG.prop('outerHTML')),
+      ICON = L.icon({
+        iconUrl: 'data:image/svg+xml;base64,' + btoa(BASE_SVG.prop('outerHTML')),
+        iconSize: [ ICON_SIZE, ICON_SIZE ]
+      }),
 
-      SELECTED_SVG_URL = 'data:image/svg+xml;base64,' + btoa(SELECTED_SVG.prop('outerHTML'));
+      SELECTED_ICON = L.icon({
+        iconUrl: 'data:image/svg+xml;base64,' + btoa(SELECTED_SVG.prop('outerHTML')),
+        iconSize: [ ICON_SIZE, ICON_SIZE ]
+      });
 
   var PointMarker = function(latlng) {
 
-    var icon = L.icon({
-          iconUrl: SELECTED_SVG_URL,
-          iconSize: [ CANVAS_WIDTH, CANVAS_WIDTH ],
-          iconAnchor: [ CANVAS_WIDTH / 2, CANVAS_WIDTH / 2 ],
-          popupAnchor: [ CANVAS_WIDTH / 2, CANVAS_WIDTH / 2 ]
-        }),
+    var marker = L.marker(latlng, { icon: ICON } ),
 
-        marker = L.marker(latlng, { icon: icon } ),
+        isSelected = false,
 
         addTo = function(layer) {
           marker.addTo(layer);
+        },
+
+        onClick = function() {
+          isSelected = !isSelected;
+          if (isSelected)
+            marker.setIcon(SELECTED_ICON);
+          else
+            marker.setIcon(ICON);
         };
 
-    marker.on('click', function() {
-      // TODO 
-    });
+    marker.on('click', onClick);
 
     this.addTo = addTo;
   };
