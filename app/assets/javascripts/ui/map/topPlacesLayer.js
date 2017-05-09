@@ -8,10 +8,11 @@ define([
 
   var TopPlacesLayer = function(map) {
 
-    var markers = L.featureGroup().addTo(map),
+    var self = this,
 
-        // We only support single selection for now
-        currentSelection = false,
+        markers = L.featureGroup().addTo(map),
+
+        currentSelection = false, // We only support single selection for now
 
         clearLayer = function() {
           markers.clearLayers();
@@ -27,14 +28,14 @@ define([
               place = marker.place,
               isSelected = marker.isSelected();
 
-          console.log(place, { selected: isSelected });
-
           if (isSelected) {
             clearSelection();
             currentSelection = marker;
-          } else {
+            self.fireEvent('select', place);
+          } else if (currentSelection) {
             clearSelection();
             currentSelection = false;
+            self.fireEvent('select');
           }
         },
 

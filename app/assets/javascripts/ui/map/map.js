@@ -17,7 +17,10 @@ define([
   };
 
   var Map = function(containerDiv) {
-    var map = L.map(containerDiv, {
+
+    var self = this,
+
+        map = L.map(containerDiv, {
           center: [ 48, 16 ],
           zoom: 4,
           zoomControl: false,
@@ -36,6 +39,9 @@ define([
         setState = function(state) {
 
         };
+
+    // Forward selections up the hierarchy chain
+    topPlacesLayer.on('select', this.forwardEvent('selectPlace'));
 
     this.setResponse = setResponse;
     this.setState = setState;

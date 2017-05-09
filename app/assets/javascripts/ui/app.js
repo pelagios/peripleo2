@@ -73,7 +73,13 @@ require([
             // TODO shouldn't happen unless connection or backend is down
             // TODO show error popup
           });
+        },
+
+        onSelectPlace = function(place) {
+
         };
+
+    map.on('selectPlace', onSelectPlace);
 
     searchPanel.on('open', state.openFilterPane);
     searchPanel.on('close', state.closeFilterPane);
