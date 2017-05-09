@@ -1,7 +1,7 @@
 define([
-  'ui/common/itemUtils',
-  'ui/controls/selection/cards/card'
-], function(ItemUtils, Card) {
+  'ui/common/hasEvents',
+  'ui/common/itemUtils'
+], function(HasEvents, ItemUtils) {
 
   var DatasetCard  = function(parentEl, dataset) {
     var infoEl = jQuery(
@@ -33,10 +33,10 @@ define([
             descriptionEl.html(descriptions[0].description);
         };
 
-    Card.apply(this);
+    HasEvents.apply(this);
     render();
   };
-  DatasetCard.prototype = Object.create(Card.prototype);
+  DatasetCard.prototype = Object.create(HasEvents.prototype);
 
   return DatasetCard;
 

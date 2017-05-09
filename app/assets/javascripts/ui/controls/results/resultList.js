@@ -1,6 +1,7 @@
 define([
-  'ui/common/hasEvents'
-], function(HasEvents) {
+  'ui/common/hasEvents',
+  'ui/controls/results/templates'
+], function(HasEvents, Templates) {
 
   var ResultList = function(parentEl) {
 
@@ -26,11 +27,7 @@ define([
         isMoreAvailable = true,
 
         createRow = function(item) {
-          var el = jQuery(
-                '<li>' +
-                  '<h3>' + item.title + '</h3>' +
-                '</li>').appendTo(listEl);
-
+          var el = Templates.createRow(item).appendTo(listEl);
           el.data('item', item);
         },
 

@@ -1,7 +1,8 @@
 define([
-  'ui/common/itemUtils',
-  'ui/controls/selection/cards/card'
-], function(ItemUtils, Card) {
+  'ui/common/formatting',
+  'ui/common/hasEvents',
+  'ui/common/itemUtils'
+], function(Formatting, HasEvents, ItemUtils) {
 
   // TODO fetch this information from the server, so we can feed it from the DB
   var KNOWN_GAZETTEERS = [
@@ -43,9 +44,7 @@ define([
       };
 
   var PlaceCard  = function(parentEl, place) {
-    var self = this,
-
-        infoEl = jQuery(
+    var infoEl = jQuery(
           '<div class="info">' +
             '<h3></h3>' +
             '<ul class="identifiers"></ul>' +
@@ -81,13 +80,13 @@ define([
           namesEl.html(names.join(', '));
 
           if (place.temporal_bounds)
-            tempBoundsEl.html(self.formatTemporalBounds(place.temporal_bounds));
+            tempBoundsEl.html(Formatting.formatTemporalBounds(place.temporal_bounds));
         };
 
-    Card.apply(this);
+    HasEvents.apply(this);
     render();
   };
-  PlaceCard.prototype = Object.create(Card.prototype);
+  PlaceCard.prototype = Object.create(HasEvents.prototype);
 
   return PlaceCard;
 

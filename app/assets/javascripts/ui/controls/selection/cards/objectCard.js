@@ -1,12 +1,11 @@
 define([
+  'ui/common/formatting',
+  'ui/common/hasEvents',
   'ui/common/itemUtils',
-  'ui/controls/selection/cards/card',
-  'ui/api'], function(ItemUtils, Card, API) {
+  'ui/api'], function(Formatting, HasEvents, ItemUtils, API) {
 
   var ObjectCard  = function(parentEl, item) {
-    var self = this,
-
-        infoEl = jQuery(
+    var infoEl = jQuery(
           '<div class="info">' +
             '<p class="in-dataset"></p>' +
             '<h3></h3>' +
@@ -38,7 +37,7 @@ define([
           if (record.homepage)
             homepageEl.html(record.homepage);
           if (item.temporal_bounds)
-            tempBoundsEl.html(self.formatTemporalBounds(item.temporal_bounds));
+            tempBoundsEl.html(Formatting.formatTemporalBounds(item.temporal_bounds));
         },
 
         renderReferences = function() {
@@ -58,11 +57,11 @@ define([
           });
         };
 
-    Card.apply(this);
+    HasEvents.apply(this);
     renderInfo();
     renderReferences();
   };
-  ObjectCard.prototype = Object.create(Card.prototype);
+  ObjectCard.prototype = Object.create(HasEvents.prototype);
 
   return ObjectCard;
 
