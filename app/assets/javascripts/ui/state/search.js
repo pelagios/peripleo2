@@ -14,7 +14,7 @@ define(['ui/common/hasEvents'], function(HasEvents) {
 
           query: false,
 
-          filters: {},
+          filters: {}, // key -> [ value, value, value, ...]
 
           timerange: { from: false, to : false },
 

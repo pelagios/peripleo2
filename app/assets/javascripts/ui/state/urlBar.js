@@ -22,6 +22,7 @@ define([], function() {
         return {
           search: {
             query : segments.q,
+            filters : {}, // TODO
             timerange : {
               from : segments.from,
               to   : segments.to

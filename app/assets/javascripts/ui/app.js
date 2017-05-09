@@ -76,7 +76,12 @@ require([
         },
 
         onSelectPlace = function(place) {
-          
+          if (place) {
+            var uri = ItemUtils.getURIs(place)[0];
+            state.updateFilters({ places : [ uri ] });
+          } else {
+            state.updateFilters({ places : false });
+          }
         };
 
     map.on('selectPlace', onSelectPlace);
