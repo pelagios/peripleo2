@@ -45,6 +45,7 @@ require([
         onSelectItem = function(item) {
           // TODO can we get this to match with the callback in onSelectIdentifier?
           selectionPanel.show(item);
+          resultList.setSelectedItem(item);
           state.setSelection(item);
 
           // TODO show on map
@@ -79,11 +80,13 @@ require([
           if (place) {
             var uri = ItemUtils.getURIs(place)[0],
                 filter = { places : [ uri ] },
-                onetimeSettings = { topPlaces: false }; 
+                onetimeSettings = { topPlaces: false };
 
             state.updateFilters(filter, onetimeSettings)
               .done(function(results) {
-                selectionPanel.show(results.items[0]);
+                var firstItem = results.items[0];
+                resultList.setSelectedItem(firstItem);
+                selectionPanel.show(firstItem);
               });
           } else {
             state.updateFilters({ places : false });
