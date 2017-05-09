@@ -42,19 +42,22 @@ define([
           if (refreshUI) pushState();
         },
 
-        setQuery = function(query) {
-          search.setQuery(query);
+        setQuery = function(query, opt_onetime_settings) {
+          var promise = search.setQuery(query, opt_onetime_settings);
           pushState();
+          return promise;
         },
 
-        updateFilters = function(diff) {
-          search.updateFilters(diff);
+        updateFilters = function(diff, opt_onetime_settings) {
+          var promise = search.updateFilters(diff, opt_onetime_settings);
           pushState();
+          return promise;
         },
 
-        setTimerange = function(range) {
-          search.setTimerange(range);
+        setTimerange = function(range, opt_onetime_settings) {
+          var promise = search.setTimerange(range, opt_onetime_settings);
           pushState();
+          return promise;
         },
 
         openFilterPane = function() {

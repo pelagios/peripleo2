@@ -77,10 +77,17 @@ require([
 
         onSelectPlace = function(place) {
           if (place) {
-            var uri = ItemUtils.getURIs(place)[0];
-            state.updateFilters({ places : [ uri ] });
+            var uri = ItemUtils.getURIs(place)[0],
+                filter = { places : [ uri ] },
+                onetimeSettings = { topPlaces: false }; 
+
+            state.updateFilters(filter, onetimeSettings)
+              .done(function(results) {
+                selectionPanel.show(results.items[0]);
+              });
           } else {
             state.updateFilters({ places : false });
+            selectionPanel.hide();
           }
         };
 

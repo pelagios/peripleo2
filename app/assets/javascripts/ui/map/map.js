@@ -33,7 +33,8 @@ define([
 
         setResponse = function(searchResponse) {
           itemLayer.update(searchResponse.items);
-          topPlacesLayer.update(searchResponse.top_places);
+          if (searchResponse.top_places)
+            topPlacesLayer.update(searchResponse.top_places);
         },
 
         setState = function(state) {

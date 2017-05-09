@@ -64,9 +64,12 @@ define(['ui/common/hasEvents'], function(HasEvents) {
           return url;
         },
 
-        buildFirstPageQuery = function() {
+        buildFirstPageQuery = function(opt_onetime_settings) {
           var url = buildBaseQuery(),
-              settings = searchArgs.settings;
+              settings = (opt_onetime_settings) ?
+                // Run this query with transient one-time settings
+                jQuery.extend({}, searchArgs.settings, opt_onetime_settings) :
+                searchArgs.settings;
 
           // First page query includes aggregations
           url = appendIfExists(settings.timeHistogram, 'time_histogram', url);
@@ -84,9 +87,11 @@ define(['ui/common/hasEvents'], function(HasEvents) {
           return buildBaseQuery() + '&offset=' + (currentOffset + PAGE_SIZE);
         },
 
-        makeRequest = function() {
+        makeRequest = function(opt_onetime_settings) {
 
-          var handlePending = function() {
+          var deferred = jQuery.Deferred(),
+
+              handlePending = function() {
                 if (requestPending) {
                   request();
                   requestPending = false;
@@ -103,8 +108,9 @@ define(['ui/common/hasEvents'], function(HasEvents) {
               },
 
               request = function() {
-                jQuery.getJSON(buildFirstPageQuery(), function(response) {
+                jQuery.getJSON(buildFirstPageQuery(opt_onetime_settings), function(response) {
                   self.fireEvent('searchResponse', response);
+                  deferred.resolve(response);
                 }).always(handlePending);
               };
 
@@ -114,6 +120,8 @@ define(['ui/common/hasEvents'], function(HasEvents) {
             busy = true;
             request();
           }
+
+          return deferred.promise(this);
         },
 
         loadNextPage = function() {
@@ -139,28 +147,28 @@ define(['ui/common/hasEvents'], function(HasEvents) {
             makeRequest();
         },
 
-        setQuery = function(query) {
+        setQuery = function(query, opt_onetime_settings) {
           searchArgs.query = query;
-          makeRequest();
+          return makeRequest(opt_onetime_settings);
         },
 
-        updateFilters = function(diff) {
+        updateFilters = function(diff, opt_onetime_settings) {
           jQuery.extend(searchArgs.filters, diff);
-          makeRequest();
+          return makeRequest(opt_onetime_settings);
         },
 
-        setTimerange = function(range) {
+        setTimerange = function(range, opt_onetime_settings) {
           searchArgs.timerange = range;
-          makeRequest();
+          return makeRequest(opt_onetime_settings);
         },
 
         updateSettings = function(diff) {
           jQuery.extend(searchArgs.settings, diff);
-          makeRequest();
+          return makeRequest();
         },
 
         setAggregationsEnabled = function(enabled) {
-          updateSettings({
+          return updateSettings({
             timeHistogram    : enabled,
             termAggregations : enabled,
           });
