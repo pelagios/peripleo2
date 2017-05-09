@@ -111,33 +111,27 @@ define([], function() {
         iconSize: [ ICON_SIZE, ICON_SIZE ]
       });
 
-  var PointMarker = function(latlng) {
+  var AnimatedMarker = function(latlng) {
 
-    var marker = L.marker(latlng, { icon: ICON } ),
+    var self = this,
 
         isSelected = false,
 
-        addTo = function(layer) {
-          marker.addTo(layer);
-        },
-
         animate = function(anim, iconAfter) {
-          marker.setIcon(L.icon({
+          self.setIcon(L.icon({
             iconUrl: 'data:image/svg+xml;base64,' + btoa(anim.prop('outerHTML')),
             iconSize: [ ICON_SIZE, ICON_SIZE ]
           }));
 
           // After animation, remove
           setTimeout(function() {
-            marker.setIcon(iconAfter);
+            self.setIcon(iconAfter);
           }, 200);
         },
 
         onClick = function() {
-          if (isSelected)
-            deselect();
-          else
-            select();
+          if (isSelected) deselect();
+          else select();
         },
 
         select = function() {
@@ -154,12 +148,15 @@ define([], function() {
           }
         };
 
-    marker.on('click', onClick);
+    self.on('click', onClick);
 
-    this.addTo = addTo;
+    this.isSelected = function() { return isSelected; };
     this.deselect = deselect;
-  };
 
-  return PointMarker;
+    L.Marker.apply(this, [ latlng, { icon: ICON } ]);
+  };
+  AnimatedMarker.prototype = Object.create(L.Marker.prototype);
+
+  return AnimatedMarker;
 
 });

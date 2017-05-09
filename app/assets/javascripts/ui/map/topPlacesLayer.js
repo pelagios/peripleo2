@@ -1,8 +1,8 @@
 define([
   'ui/common/hasEvents',
-  'ui/map/pointMarker',
+  'ui/map/animatedMarker',
   'ui/map/styles'
-], function(HasEvents, PointMarker, Styles) {
+], function(HasEvents, AnimatedMarker, Styles) {
 
   // TODO does it make sense to have a common Layer parent class?
 
@@ -10,8 +10,32 @@ define([
 
     var markers = L.featureGroup().addTo(map),
 
-        clear = function() {
+        // We only support single selection for now
+        currentSelection = false,
+
+        clearLayer = function() {
           markers.clearLayers();
+        },
+
+        clearSelection = function() {
+          if (currentSelection)
+            currentSelection.deselect();
+        },
+
+        onMarkerClicked = function(e) {
+          var marker = e.target,
+              place = marker.place,
+              isSelected = marker.isSelected();
+
+          console.log(place, { selected: isSelected });
+
+          if (isSelected) {
+            clearSelection();
+            currentSelection = marker;
+          } else {
+            clearSelection();
+            currentSelection = false;
+          }
         },
 
         createMarker = function(place) {
@@ -21,15 +45,15 @@ define([
               pt = (firstRecord.representative_point) ? firstRecord.representative_point : false;
 
           if (pt) {
-            // L.marker( [ pt[1], pt[0] ], { icon: myIcon } ).addTo(markers);
-            new PointMarker([ pt[1], pt[0] ]).addTo(markers);
-            // L.circleMarker([ pt[1], pt[0] ], Styles.POINT.RED).addTo(markers);
+            marker = new AnimatedMarker([ pt[1], pt[0] ]).addTo(markers);
+            marker.on('click', onMarkerClicked);
+            marker.place = place;
           }
+
         },
 
         update = function(topPlaces) {
-          // console.log(topPlaces);
-          clear();
+          clearLayer();
           topPlaces.forEach(createMarker);
         };
 
