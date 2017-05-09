@@ -1,0 +1,90 @@
+.item-info {
+  background-color:#fff;
+  padding:16px 12px;
+  font-size:13px;
+  line-height:150%;
+
+  * {
+    color:@dark-grey-type;
+    overflow:hidden;
+    margin:0;
+    padding:0;
+  }
+
+  .item-in-dataset, .item-part-of {
+    color:@light-grey-type;
+
+    a {
+      color:@light-grey-type;
+      text-decoration:none;
+    }
+
+    a:hover {
+      color:@light-grey-type-hover;
+      text-decoration:underline;
+    }
+
+    span::after {
+      color:@light-grey-type;
+      font-family:FontAwesome;
+      font-size:14px;
+      content:'\f105';
+      padding:0 3px 0 4px;
+    }
+
+  }
+
+  .item-in-dataset span:last-child:after {
+    content:''
+  }
+
+  .item-title {
+    font-size:16px;
+    font-weight:normal;
+    padding:2px 0;
+  }
+
+  .item-title > a {
+    color:@dark-grey-type;
+    text-decoration:none;
+  }
+
+  .item-title > a:hover {
+    text-decoration:underline;
+  }
+
+  .item-homepage {
+    color:@ocean;
+  }
+
+  ul.place-identifiers {
+
+    li, a {
+      display:inline-block;
+    }
+
+    li {
+      .rounded-corners(2px);
+      font-size:11px;
+      line-height:19px;
+      margin:4px 2px;
+
+      a {
+        padding:1px 6px;
+        text-decoration:none;
+        color:#fff;
+      }
+
+    }
+
+    li:first-child { margin-left: 0 }
+    li:last-child { margin-right:0; }
+
+  }
+
+  .place-names {
+    white-space:nowrap;
+    text-overflow:ellipsis;
+  }
+
+}

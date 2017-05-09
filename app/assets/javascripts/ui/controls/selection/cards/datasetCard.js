@@ -5,15 +5,15 @@ define([
 
   var DatasetCard  = function(parentEl, dataset) {
     var infoEl = jQuery(
-          '<div class="info">' +
-            '<p class="part-of"></p>' +
-            '<h3></h3>' +
-            '<p class="description"></p>' +
+          '<div class="item-info">' +
+            '<p class="item-part-of"></p>' +
+            '<h3 class="item-title"></h3>' +
+            '<p class="item-description"></p>' +
           '</div>').appendTo(parentEl),
 
-        partOfEl      = infoEl.find('.part-of'),
-        titleEl       = infoEl.find('h3'),
-        descriptionEl = infoEl.find('.description'),
+        partOfEl      = infoEl.find('.item-part-of'),
+        titleEl       = infoEl.find('.item-title'),
+        descriptionEl = infoEl.find('.item-description'),
 
         // TODO safe to assume that datasets only have one record
         record = dataset.is_conflation_of[0],

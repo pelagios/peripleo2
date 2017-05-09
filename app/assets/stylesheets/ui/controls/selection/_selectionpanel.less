@@ -1,8 +1,8 @@
+@import "../_iteminfo.less";
+
 #current-selection {
   margin-top:4px;
   position:relative;
-  font-size:13px;
-  line-height:150%;
   overflow:hidden;
   flex-shrink:0;
   .box-shadow(0, 0, 8px, 0, rgba(0,0,0,0.25));
@@ -20,95 +20,7 @@
     border-bottom:1px solid @light-grey-border;
   }
 
-  .info {
-    background-color:#fff;
-    padding:16px 12px;
-
-    * {
-      color:@dark-grey-type;
-      overflow:hidden;
-      margin:0;
-      padding:0;
-    }
-
-    p.in-dataset, p.part-of {
-
-      a {
-        color:@light-grey-type;
-        text-decoration:none;
-      }
-
-      a:hover {
-        color:@light-grey-type-hover;
-        text-decoration:underline;
-      }
-
-      span::after {
-        color:@light-grey-type;
-        font-family:FontAwesome;
-        font-size:14px;
-        content:'\f105';
-        padding:0 3px 0 4px;
-      }
-
-    }
-
-    p.in-dataset span:last-child:after {
-      content:''
-    }
-
-    h3 {
-      font-size:16px;
-      font-weight:normal;
-      padding:2px 0;
-    }
-
-    h3 > a {
-      color:@dark-grey-type;
-      text-decoration:none;
-    }
-
-    h3 > a:hover {
-      text-decoration:underline;
-    }
-
-    ul.identifiers {
-
-      li, a {
-        display:inline-block;
-      }
-
-      li {
-        .rounded-corners(2px);
-        font-size:11px;
-        line-height:19px;
-        margin:4px 2px;
-
-        a {
-          padding:1px 6px;
-          text-decoration:none;
-          color:#fff;
-        }
-
-      }
-
-      li:first-child { margin-left: 0 }
-      li:last-child { margin-right:0; }
-
-    }
-
-    p.names {
-      white-space:nowrap;
-      text-overflow:ellipsis;
-    }
-
-    p.homepage {
-      color:@ocean;
-    }
-
-  }
-
-  .references {
+  .item-references {
     padding:2px 12px;
     background-color:@blueish-white;
     border-top:1px solid @light-grey-border;
@@ -127,8 +39,6 @@
       }
 
     }
-
-
 
     .findspot::before {
       font-family:FontAwesome;

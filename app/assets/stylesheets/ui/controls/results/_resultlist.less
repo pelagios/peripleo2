@@ -13,22 +13,25 @@
   }
 
   li {
-    padding:8px 10px;
-    border-bottom:1px solid @blueish-white;
     cursor:pointer;
-    color:@dark-grey-type;
-
-    h3 {
-      font-size:13px;
-      font-weight:normal;
-      margin:0;
-      padding:0;
-      line-height:140%;
-    }
-
+    position:relative;
   }
 
-  li:last-child {
+  .item-thumbnail {
+    position:absolute;
+    width:80px;
+    height:100%;
+    box-sizing:border-box;
+    background-color:@blueish-white;
+    border-bottom:1px solid darken(@blueish-white, 4%);
+  }
+
+  .item-info {
+    margin-left:80px;
+    border-bottom:1px solid @blueish-white;
+  }
+
+  li:last-child > .item-thumbnail, li:last-child > .item-info {
     border:none;
   }
 

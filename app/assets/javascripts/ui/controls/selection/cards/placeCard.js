@@ -45,19 +45,19 @@ define([
 
   var PlaceCard  = function(parentEl, place) {
     var infoEl = jQuery(
-          '<div class="info">' +
-            '<h3></h3>' +
-            '<ul class="identifiers"></ul>' +
-            '<p class="names"></p>' +
-            '<p class="description"></p>' +
-            '<p class="temporal-bounds"></p>' +
+          '<div class="item-info">' +
+            '<h3 class="item-title"></h3>' +
+            '<ul class="place-identifiers"></ul>' +
+            '<p class="place-names"></p>' +
+            '<p class="item-description"></p>' +
+            '<p class="item-temporal-bounds"></p>' +
           '</div>').appendTo(parentEl),
 
-        titleEl       = infoEl.find('h3'),
-        identifiersEl = infoEl.find('.identifiers'),
-        descriptionEl = infoEl.find('.description'),
-        namesEl       = infoEl.find('.names'),
-        tempBoundsEl  = infoEl.find('.temporal-bounds'),
+        titleEl       = infoEl.find('.item-title'),
+        identifiersEl = infoEl.find('.place-identifiers'),
+        namesEl       = infoEl.find('.place-names'),
+        descriptionEl = infoEl.find('.item-description'),
+        tempBoundsEl  = infoEl.find('.item-temporal-bounds'),
 
         render = function() {
           var identifiers = ItemUtils.getURIs(place).map(function(uri) { return parseURI(uri); }),

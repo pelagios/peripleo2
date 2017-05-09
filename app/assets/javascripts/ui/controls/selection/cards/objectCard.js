@@ -6,20 +6,20 @@ define([
 
   var ObjectCard  = function(parentEl, item) {
     var infoEl = jQuery(
-          '<div class="info">' +
-            '<p class="in-dataset"></p>' +
-            '<h3></h3>' +
-            '<p class="homepage"></p>' +
-            '<p class="temporal-bounds"></p>' +
+          '<div class="item-info">' +
+            '<p class="item-in-dataset"></p>' +
+            '<h3 class="item-title"></h3>' +
+            '<p class="item-homepage"></p>' +
+            '<p class="item-temporal-bounds"></p>' +
           '</div>').appendTo(parentEl),
 
-        inDatasetEl  = infoEl.find('.in-dataset'),
-        titleEl      = infoEl.find('h3'),
-        homepageEl   = infoEl.find('.homepage'),
-        tempBoundsEl = infoEl.find('.temporal-bounds'),
+        inDatasetEl  = infoEl.find('.item-in-dataset'),
+        titleEl      = infoEl.find('.item-title'),
+        homepageEl   = infoEl.find('.item-homepage'),
+        tempBoundsEl = infoEl.find('.item-temporal-bounds'),
 
         referencesEl = jQuery(
-          '<div class="references"></div>').appendTo(parentEl),
+          '<div class="item-references"></div>').appendTo(parentEl),
 
         // TODO we'll assume that objects only have one record for now
         record = item.is_conflation_of[0],

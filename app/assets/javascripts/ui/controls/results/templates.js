@@ -1,21 +1,25 @@
-define(['ui/common/itemUtils'], function(ItemUtils) {
+define([
+  'ui/common/formatting',
+  'ui/common/itemUtils'
+], function(Formatting, ItemUtils) {
 
   var BASE_TEMPLATE =
         '<li>' +
-          '<h3></h3>' +
-          '<p class="temporal-bounds"></p>' +
-          '<p class="in-dataset"></p>' +
+          '<div class="item-thumbnail"></div>' +
+          '<div class="item-info">' +
+            '<h3 class="item-title"></h3>' +
+            '<p class="item-temporal-bounds"></p>' +
+            '<p class="item-in-dataset"></p>' +
+          '</div>' +
         '</li>',
 
       baseTemplate = function(item) {
         var li = jQuery(BASE_TEMPLATE);
 
-        li.find('h3').html(item.title);
-        
-        // li.find('.in-dataset').html('foo');
+        li.find('.item-title').html(item.title);
 
-        // if (temporalBounds)
-        //   li.find('.temporal-bounds').html(Formatting.formatTemporalBounds(temporalBounds));
+        if (item.temporal_bounds)
+          li.find('.item-temporal-bounds').html(Formatting.formatTemporalBounds(item.temporal_bounds));
 
         return li;
       },
@@ -25,7 +29,14 @@ define(['ui/common/itemUtils'], function(ItemUtils) {
       },
 
       createObjectRow = function(item) {
-        return baseTemplate(item);
+        var li = baseTemplate(item),
+
+            // We'll assume items to have a single record for now
+            inDataset = ItemUtils.getHierarchyPath(item.is_conflation_of[0].is_in_dataset);
+
+        // Only display top-level dataset
+        li.find('.item-in-dataset').html(inDataset[0].title);
+        return li;
       },
 
       createPersonRow = function(item) {
