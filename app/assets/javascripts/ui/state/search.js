@@ -73,6 +73,9 @@ define(['ui/common/hasEvents'], function(HasEvents) {
           url = appendIfExists(settings.termAggregations, 'facets', url);
           url = appendIfExists(settings.topPlaces, 'top_places', url);
 
+          // Reset offset for subsequent next page queries
+          currentOffset = 0;
+
           return url;
         },
 
@@ -101,7 +104,7 @@ define(['ui/common/hasEvents'], function(HasEvents) {
 
               request = function() {
                 jQuery.getJSON(buildFirstPageQuery(), function(response) {
-                  self.fireEvent('response', response);
+                  self.fireEvent('searchResponse', response);
                 }).always(handlePending);
               };
 
@@ -116,11 +119,7 @@ define(['ui/common/hasEvents'], function(HasEvents) {
         loadNextPage = function() {
           jQuery.getJSON(buildNextPageQuery(), function(response) {
             currentOffset = response.offset;
-
-            // TODO different events for new result vs. next page?
-
-            // self.fireEvent('response', response);
-            // console.log(response);
+            self.fireEvent('nextPageResponse', response);
           });
         },
 

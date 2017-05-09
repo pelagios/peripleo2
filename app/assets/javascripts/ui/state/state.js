@@ -79,7 +79,9 @@ define([
           // TODO record history step
         };
 
-    search.on('response', this.forwardEvent('searchResponse'));
+    search.on('searchResponse', this.forwardEvent('searchResponse'));
+    search.on('nextPageResponse', this.forwardEvent('nextPageResponse'));
+
     history.on('changeState', setState);
 
     this.init = init;

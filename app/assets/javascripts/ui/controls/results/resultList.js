@@ -16,7 +16,11 @@ define([
 
         waitSpinner = element.find('.rl-wait').hide(),
 
+        // Flag to record whether page load is currently in progress
         waitingForNextPage = false,
+
+        // Flag to record whether more search result pages are available
+        isMoreAvailable = true,
 
         createRow = function(item) {
           var el = jQuery(
@@ -24,8 +28,6 @@ define([
                   '<h3>' + item.title + '</h3>' +
                 '</li>').appendTo(listEl);
 
-          // TODO should we really bind to the DOM element?
-          // TODO or just use data-id and then GET via the API?
           el.data('item', item);
         },
 
@@ -37,29 +39,45 @@ define([
         },
 
         onScroll = function() {
-          var scrollPos = element.scrollTop() + element.innerHeight(),
-              scrollBottom = element[0].scrollHeight - waitSpinner.outerHeight();
+          if (isMoreAvailable) {
+            var scrollPos = element.scrollTop() + element.innerHeight(),
+                scrollBottom = element[0].scrollHeight - waitSpinner.outerHeight();
 
-          if (scrollPos >= scrollBottom && !waitingForNextPage) {
-            // Keep a flag, so that no more requests are fired before the next page arrives
-            waitingForNextPage = true;
-            self.fireEvent('nextPage');
+            if (scrollPos >= scrollBottom && !waitingForNextPage) {
+              // Keep a flag, so that no more requests are fired before the next page arrives
+              waitingForNextPage = true;
+              self.fireEvent('nextPage');
+            }
           }
         },
 
-        setResponse = function(response) {
-          var isMoreAvailable = response.total > (response.offset + response.limit);
+        renderResponse = function(response, append) {
+          isMoreAvailable = response.total > (response.offset + response.limit);
 
           if (isMoreAvailable) waitSpinner.show();
           else waitSpinner.hide();
 
-          listEl.empty();
+          if (!append) {
+            listEl.empty();
+            listEl.scrollTop(0);
+          }
+
           response.items.forEach(createRow);
+        },
+
+        setResponse = function(response) {
+          renderResponse(response, false);
+        },
+
+        appendPage = function(response) {
+          renderResponse(response, true);
+          waitingForNextPage = false;
         };
 
     element.on('click', 'li', onSelect);
     element.scroll(onScroll);
 
+    this.appendPage = appendPage;
     this.setResponse = setResponse;
 
     HasEvents.apply(this);
