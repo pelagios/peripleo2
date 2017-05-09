@@ -63,14 +63,30 @@ class SearchService @Inject() (
           // TODO support open intervals
       }
     }.getOrElse(Seq.empty[RangeQueryDefinition])
+    
+    def placeFilterDefinition() = {
+      
+      def filterByURI(uri: String) = 
+        hasChildQuery(ES.REFERENCE) query { termQuery("reference_to.uri" -> uri) }
+        
+      args.filters.placeFilter.map { filter =>
+        if (filter.values.size == 1)
+          // One Place URIs - just add a single hasChild clause
+          filterByURI(filter.values.head)   
+        else
+          // Multiple Place URIs - add a should block, so that URIs are OR'ed
+          // TODO maybe support AND later? But needs extra treatment in SearchArgs object
+          should { filter.values.map(filterByURI(_)) }
+      }
+    }
 
     val filterClauses =
       Seq(
         args.filters.itemTypeFilter.map(termFilterDefinition("item_type", _)),
         args.filters.categoryFilter.map(termFilterDefinition("is_conflation_of.category", _)),
         args.filters.datasetFilter.map(termFilterDefinition("is_conflation_of.is_in_dataset.ids", _)),
-        args.filters.languageFilter.map(termFilterDefinition("is_conflation_of.languages", _)),
-        // Check for existing 'depictions' field iff hasDepictions is set to true
+        args.filters.languageFilter.map(termFilterDefinition("is_conflation_of.languages", _)),        
+        placeFilterDefinition(),
         { if (args.filters.hasDepiction.getOrElse(false)) Some(nestedQuery("depictions") query { existsQuery("depictions.url") }) else None }
       ).flatten ++ timerangeFilterDefinition()
 
@@ -146,7 +162,7 @@ class SearchService @Inject() (
 
   def query(args: SearchArgs): Future[RichResultPage] = {
     val startTime = System.currentTimeMillis
-    
+      
     val fPlaceQuery = es.client execute {
       buildPlaceQuery(args)
     } map { response =>

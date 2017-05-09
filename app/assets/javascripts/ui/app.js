@@ -76,14 +76,7 @@ require([
         },
 
         onSelectPlace = function(place) {
-          // When the user selects a place (=marker on the map), we want to bring up
-          // the first search result in the list located there. Since places are based on
-          // facets, the item(s) on that place MAY OR MAY NOT be in the current search result
-          // list yet.
-
-
-          // TODO is !resultList.hasFullyLoaded() -> load via API
-
+          
         };
 
     map.on('selectPlace', onSelectPlace);
