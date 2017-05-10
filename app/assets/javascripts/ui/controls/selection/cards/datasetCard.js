@@ -6,12 +6,12 @@ define([
   var DatasetCard  = function(parentEl, dataset) {
     var infoEl = jQuery(
           '<div class="item-info">' +
-            '<p class="item-part-of"></p>' +
+            '<p class="item-is-in"></p>' +
             '<h3 class="item-title"></h3>' +
             '<p class="item-description"></p>' +
           '</div>').appendTo(parentEl),
 
-        partOfEl      = infoEl.find('.item-part-of'),
+        partOfEl      = infoEl.find('.item-is-in'),
         titleEl       = infoEl.find('.item-title'),
         descriptionEl = infoEl.find('.item-description'),
 

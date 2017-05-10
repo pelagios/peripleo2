@@ -7,13 +7,13 @@ define([
   var ObjectCard  = function(parentEl, item) {
     var infoEl = jQuery(
           '<div class="item-info">' +
-            '<p class="item-in-dataset"></p>' +
+            '<p class="item-is-in"></p>' +
             '<h3 class="item-title"></h3>' +
             '<p class="item-homepage"></p>' +
             '<p class="item-temporal-bounds"></p>' +
           '</div>').appendTo(parentEl),
 
-        inDatasetEl  = infoEl.find('.item-in-dataset'),
+        inDatasetEl  = infoEl.find('.item-is-in'),
         titleEl      = infoEl.find('.item-title'),
         homepageEl   = infoEl.find('.item-homepage'),
         tempBoundsEl = infoEl.find('.item-temporal-bounds'),

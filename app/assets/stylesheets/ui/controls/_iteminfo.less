@@ -11,7 +11,7 @@
     text-overflow:ellipsis;
   }
 
-  .item-in-dataset, .item-part-of {
+  .item-is-in {
     color:@light-grey-type;
 
     a {
@@ -34,17 +34,19 @@
 
   }
 
-  .item-in-dataset {
+  .place-ids {
+    display:inline-flex;
+    align-items:center;
 
-    .place-minilink {
+    .place-id {
       display:inline-block;
-      background-color:#9ca4b1;
+      color:#fff;
+      background-color:#69a9d5;
       width:16px;
       height:16px;
       line-height:17px;
       margin:0 3px 0 1px;
       .rounded-corners(100%);
-      color:#fff;
       text-align:center;
       font-family:Roboto;
       font-weight:bold;
@@ -53,14 +55,14 @@
       margin-bottom:1px;
     }
 
-    .place-minilink:hover {
-      color:#fff;
-      text-decoration:none;
+    .place-more-ids {
+      color:@ocean;
+      padding-left:5px;
     }
 
   }
 
-  .item-in-dataset span:last-child:after {
+  .item-is-in span:last-child:after {
     content:''
   }
 

@@ -9,8 +9,9 @@ define([
           '<div class="item-icon"></div>' +
           '<div class="item-info">' +
             '<h3 class="item-title"></h3>' +
+            '<p class="item-description"></p>' +
             '<p class="item-temporal-bounds"></p>' +
-            '<p class="item-in-dataset"></p>' +
+            '<p class="item-is-in"></p>' +
           '</div>' +
         '</li>',
 
@@ -20,9 +21,13 @@ define([
       ICON_DATASET = '<span class="icon stroke7">&#xe674;</span>',
 
       baseTemplate = function(item) {
-        var li = jQuery(BASE_TEMPLATE);
+        var li = jQuery(BASE_TEMPLATE),
+            descriptions = ItemUtils.getDescriptions(item);
 
         li.find('.item-title').html(item.title);
+
+        if (descriptions.length > 0)
+          li.find('.item-description').html(descriptions[0].description);
 
         if (item.temporal_bounds)
           li.find('.item-temporal-bounds').html(Formatting.formatTemporalBounds(item.temporal_bounds));
@@ -34,29 +39,30 @@ define([
         var li = baseTemplate(item),
             icon = li.find('.item-icon'),
 
-            inDatasetEl = li.find('.item-in-dataset'),
+            placeIds = jQuery('<p class="place-ids"></p>').insertAfter(li.find('.item-title')),
 
-            gazetteerRefs = ItemUtils.getURIs(item).map(function(uri) {
-              return PlaceUtils.parseURI(uri);
-            }),
+            refs = ItemUtils.getURIs(item).map(function(uri) { return PlaceUtils.parseURI(uri); }),
 
-            formatRef = function(ref) {
-              if (ref.shortcode)
-                return '<a class="place-minilink" href="' + ref.uri + '" title="' +
-                  ref.shortcode + ':' + ref.id + '" style="background-color:' +
-                  ref.color + '" target="_blank">' + ref.initial + '</a>';
-              else
-                // Really shouldn't happen in practice since it looks ugly
-                return '<a class="place-minilink" href="' + ref.uri + '" title="' +
-                  ref.uri + '" target="_blank">?</a>';
+            appendRefs = function(refs) {
+              refs.forEach(function(ref) {
+                if (ref.isKnownGazetteer) {
+                  placeIds.append('<span class="place-id" title="' + ref.shortcode + ':' + ref.id +
+                  '">' + ref.initial + '</span>');
+                } else {
+                  placeIds.append('<span class="place-id" title="' + ref.uri + '">?</span>');
+                }
+              });
             };
 
         icon.addClass('place');
         icon.html(ICON_PLACE);
 
-        gazetteerRefs.forEach(function(ref) {
-          inDatasetEl.append(formatRef(ref));
-        });
+        if (refs.length < 8) {
+          appendRefs(refs);
+        } else {
+          appendRefs(refs.slice(1, 8));
+          placeIds.append('<span class="place-more-ids">and ' + (refs.length - 8) + ' more...</span>');
+        }
 
         return li;
       },
@@ -73,7 +79,7 @@ define([
         icon.html(ICON_OBJECT);
 
         // Only display top-level dataset
-        li.find('.item-in-dataset').html(inDataset[0].title);
+        li.find('.item-is-in').html(inDataset[0].title);
         return li;
       },
 
@@ -88,10 +94,19 @@ define([
 
       createDatasetRow = function(item) {
         var li = baseTemplate(item),
-            icon = li.find('.item-icon');
+            icon = li.find('.item-icon'),
+
+            // We'll assume datasets to have a single record for now
+            record = item.is_conflation_of[0],
+
+            isPartOf = (record.is_part_of) ? ItemUtils.getHierarchyPath(record.is_part_of) : false;
 
         icon.addClass('dataset');
         icon.html(ICON_DATASET);
+
+        if (isPartOf)
+          li.find('.item-is-in').html(isPartOf[0].title);
+
         return li;
       };
 
