@@ -34,7 +34,30 @@
 
   }
 
-  .place-ids {
+  .item-is-in span:last-child:after {
+    content:''
+  }
+
+  .item-title {
+    font-size:16px;
+    font-weight:normal;
+    padding:2px 0;
+  }
+
+  .item-title > a {
+    color:@dark-grey-type;
+    text-decoration:none;
+  }
+
+  .item-title > a:hover {
+    text-decoration:underline;
+  }
+
+  .item-homepage {
+    color:@ocean;
+  }
+
+  .place-ids-small {
     display:inline-flex;
     align-items:center;
 
@@ -63,30 +86,7 @@
 
   }
 
-  .item-is-in span:last-child:after {
-    content:''
-  }
-
-  .item-title {
-    font-size:16px;
-    font-weight:normal;
-    padding:2px 0;
-  }
-
-  .item-title > a {
-    color:@dark-grey-type;
-    text-decoration:none;
-  }
-
-  .item-title > a:hover {
-    text-decoration:underline;
-  }
-
-  .item-homepage {
-    color:@ocean;
-  }
-
-  ul.place-identifiers {
+  .place-ids {
 
     li, a {
       display:inline-block;

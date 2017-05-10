@@ -16,14 +16,14 @@ define([
     var infoEl = jQuery(
           '<div class="item-info">' +
             '<h3 class="item-title"></h3>' +
-            '<ul class="place-identifiers"></ul>' +
+            '<ul class="place-ids"></ul>' +
             '<p class="place-names"></p>' +
             '<p class="item-description"></p>' +
             '<p class="item-temporal-bounds"></p>' +
           '</div>').appendTo(parentEl),
 
         titleEl       = infoEl.find('.item-title'),
-        identifiersEl = infoEl.find('.place-identifiers'),
+        identifiersEl = infoEl.find('.place-ids'),
         namesEl       = infoEl.find('.place-names'),
         descriptionEl = infoEl.find('.item-description'),
         tempBoundsEl  = infoEl.find('.item-temporal-bounds'),

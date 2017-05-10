@@ -39,7 +39,7 @@ define([
         var li = baseTemplate(item),
             icon = li.find('.item-icon'),
 
-            placeIds = jQuery('<p class="place-ids"></p>').insertAfter(li.find('.item-title')),
+            placeIds = jQuery('<p class="place-ids-small"></p>').insertAfter(li.find('.item-title')),
 
             refs = ItemUtils.getURIs(item).map(function(uri) { return PlaceUtils.parseURI(uri); }),
 
