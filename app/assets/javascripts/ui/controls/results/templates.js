@@ -1,7 +1,8 @@
 define([
   'ui/common/formatting',
-  'ui/common/itemUtils'
-], function(Formatting, ItemUtils) {
+  'ui/common/itemUtils',
+  'ui/common/placeUtils'
+], function(Formatting, ItemUtils, PlaceUtils) {
 
   var BASE_TEMPLATE =
         '<li>' +
@@ -25,7 +26,30 @@ define([
       },
 
       createPlaceRow = function(item) {
-        return baseTemplate(item);
+        var li = baseTemplate(item),
+
+            inDatasetEl = li.find('.item-in-dataset'),
+
+            gazetteerRefs = ItemUtils.getURIs(item).map(function(uri) {
+              return PlaceUtils.parseURI(uri);
+            }),
+
+            formatRef = function(ref) {
+              if (ref.shortcode)
+                return '<a class="place-minilink" href="' + ref.uri + '" title="' +
+                  ref.shortcode + ':' + ref.id + '" style="background-color:' +
+                  ref.color + '" target="_blank">' + ref.initial + '</a>';
+              else
+                // Really shouldn't happen in practice since it looks ugly
+                return '<a class="place-minilink" href="' + ref.uri + '" title="' +
+                  ref.uri + '" target="_blank">?</a>';
+            };
+
+        gazetteerRefs.forEach(function(ref) {
+          inDatasetEl.append(formatRef(ref));
+        });
+
+        return li;
       },
 
       createObjectRow = function(item) {

@@ -1,6 +1,5 @@
 .item-info {
   background-color:#fff;
-  padding:16px 12px;
   font-size:13px;
   line-height:150%;
 
@@ -9,6 +8,8 @@
     overflow:hidden;
     margin:0;
     padding:0;
+    white-space:nowrap;
+    text-overflow:ellipsis;
   }
 
   .item-in-dataset, .item-part-of {
@@ -30,6 +31,32 @@
       font-size:14px;
       content:'\f105';
       padding:0 3px 0 4px;
+    }
+
+  }
+
+  .item-in-dataset {
+
+    .place-minilink {
+      display:inline-block;
+      background-color:#9ca4b1;
+      width:16px;
+      height:16px;
+      line-height:17px;
+      margin:0 3px 0 1px;
+      .rounded-corners(100%);
+      color:#fff;
+      text-align:center;
+      font-family:Roboto;
+      font-weight:bold;
+      font-size:11px;
+      text-decoration:none;
+      margin-bottom:1px;
+    }
+
+    .place-minilink:hover {
+      color:#fff;
+      text-decoration:none;
     }
 
   }
