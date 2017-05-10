@@ -2,9 +2,9 @@ define(function() {
 
   // TODO fetch this information from the server, so we can feed it from the DB
   var KNOWN_GAZETTEERS = [
-        { shortcode: 'pleiades', initial: 'P', color: '#1f77b4', url_patterns: [ 'http://pleiades.stoa.org/places/' ] },
-        { shortcode: 'dare',     initial: 'D', color: '#ff7f0e', url_patterns: [ 'http://dare.ht.lu.se/places/' ] },
-        { shortcode: 'geonames', initial: 'G', color: '#2ca02c', url_patterns: ['http://sws.geonames.org/'] }
+        { shortcode: 'pleiades', initial: 'P', color: '#5b9ec4', url_patterns: [ 'http://pleiades.stoa.org/places/' ] },
+        { shortcode: 'dare',     initial: 'D', color: '#9e9ac8', url_patterns: [ 'http://dare.ht.lu.se/places/' ] },
+        { shortcode: 'geonames', initial: 'G', color: '#74c476', url_patterns: ['http://sws.geonames.org/'] }
       ];
 
   return {
@@ -22,9 +22,9 @@ define(function() {
           if (uri.indexOf(pattern) === 0) {
             parseResult.isKnownGazetteer = true;
             parseResult.shortcode = g.shortcode;
+            parseResult.id = uri.substring(pattern.length);
             parseResult.initial = g.initial;
             parseResult.color = g.color;
-            parseResult.id = uri.substring(pattern.length);
             cont = false;
             return cont;
           }

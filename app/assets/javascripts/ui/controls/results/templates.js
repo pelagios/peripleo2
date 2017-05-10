@@ -47,7 +47,7 @@ define([
               refs.forEach(function(ref) {
                 if (ref.isKnownGazetteer) {
                   placeIds.append('<span class="place-id" title="' + ref.shortcode + ':' + ref.id +
-                  '">' + ref.initial + '</span>');
+                  '" style="background-color:' + ref.color + '">' + ref.initial + '</span>');
                 } else {
                   placeIds.append('<span class="place-id" title="' + ref.uri + '">?</span>');
                 }
@@ -55,6 +55,7 @@ define([
             };
 
         icon.addClass('place');
+        icon.prop('title', 'Place');
         icon.html(ICON_PLACE);
 
         if (refs.length < 8) {
@@ -76,6 +77,7 @@ define([
 
         // TODO use different icons, depending on item type
         icon.addClass('object');
+        icon.prop('title', 'Object');
         icon.html(ICON_OBJECT);
 
         // Only display top-level dataset
@@ -88,6 +90,7 @@ define([
             icon = li.find('.item-icon');
 
         icon.addClass('person');
+        icon.prop('title', 'Person');
         icon.html(ICON_PERSON);
         return li;
       },
@@ -102,6 +105,7 @@ define([
             isPartOf = (record.is_part_of) ? ItemUtils.getHierarchyPath(record.is_part_of) : false;
 
         icon.addClass('dataset');
+        icon.prop('title', 'Dataset');
         icon.html(ICON_DATASET);
 
         if (isPartOf)
