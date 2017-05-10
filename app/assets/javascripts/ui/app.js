@@ -94,6 +94,8 @@ require([
           }
         };
 
+    // controlsDiv.resizable({ handles: 'e' });
+
     map.on('selectPlace', onSelectPlace);
 
     searchPanel.on('open', state.openFilterPane);
