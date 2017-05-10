@@ -6,13 +6,18 @@ define([
 
   var BASE_TEMPLATE =
         '<li>' +
-          '<div class="item-thumbnail"></div>' +
+          '<div class="item-icon"></div>' +
           '<div class="item-info">' +
             '<h3 class="item-title"></h3>' +
             '<p class="item-temporal-bounds"></p>' +
             '<p class="item-in-dataset"></p>' +
           '</div>' +
         '</li>',
+
+      ICON_PLACE = '<span class="icon stroke7">&#xe638;</span>',
+      ICON_OBJECT = '<span class="icon stroke7">&#xe6af;</span>',
+      ICON_PERSON = '<span class="icon tonicons">&#xe863;</span>',
+      ICON_DATASET = '<span class="icon stroke7">&#xe674;</span>',
 
       baseTemplate = function(item) {
         var li = jQuery(BASE_TEMPLATE);
@@ -27,6 +32,7 @@ define([
 
       createPlaceRow = function(item) {
         var li = baseTemplate(item),
+            icon = li.find('.item-icon'),
 
             inDatasetEl = li.find('.item-in-dataset'),
 
@@ -45,6 +51,9 @@ define([
                   ref.uri + '" target="_blank">?</a>';
             };
 
+        icon.addClass('place');
+        icon.html(ICON_PLACE);
+
         gazetteerRefs.forEach(function(ref) {
           inDatasetEl.append(formatRef(ref));
         });
@@ -54,9 +63,14 @@ define([
 
       createObjectRow = function(item) {
         var li = baseTemplate(item),
+            icon = li.find('.item-icon'),
 
             // We'll assume items to have a single record for now
             inDataset = ItemUtils.getHierarchyPath(item.is_conflation_of[0].is_in_dataset);
+
+        // TODO use different icons, depending on item type
+        icon.addClass('object');
+        icon.html(ICON_OBJECT);
 
         // Only display top-level dataset
         li.find('.item-in-dataset').html(inDataset[0].title);
@@ -64,11 +78,21 @@ define([
       },
 
       createPersonRow = function(item) {
-        return baseTemplate(item);
+        var li = baseTemplate(item),
+            icon = li.find('.item-icon');
+
+        icon.addClass('person');
+        icon.html(ICON_PERSON);
+        return li;
       },
 
       createDatasetRow = function(item) {
-        return baseTemplate(item);
+        var li = baseTemplate(item),
+            icon = li.find('.item-icon');
+
+        icon.addClass('dataset');
+        icon.html(ICON_DATASET);
+        return li;
       };
 
   return {

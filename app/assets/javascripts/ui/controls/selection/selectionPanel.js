@@ -86,6 +86,12 @@ define([
             element.velocity(slideAction, { duration: SLIDE_DURATION });
         },
 
+        hide = function() {
+          if (element.is(':visible')) {
+            element.velocity('slideUp', { duration: SLIDE_DURATION });
+          }
+        },
+
         onSelect = function(e) {
           var link = jQuery(e.target),
               identifier = link.data('id');
@@ -97,6 +103,7 @@ define([
     element.on('click', '.destination', onSelect);
 
     this.show = show;
+    this.hide = hide;
 
     HasEvents.apply(this);
   };
