@@ -40,7 +40,7 @@ define([
         },
 
         clearSearch = function(refreshUI) {
-          search.clearSearch(refreshUI);
+          search.clear(refreshUI);
           if (refreshUI) pushState();
         },
 

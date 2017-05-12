@@ -94,9 +94,7 @@ require([
                 var uri = ItemUtils.getURIs(place)[0],
                     filter = { places : [ uri ] },
                     onetimeSettings = { topPlaces: false };
-
-                console.log('selecting place');
-
+                    
                 state.updateFilters(filter, onetimeSettings)
                   .done(function(results) {
                     selectItem(results.items[0]);
