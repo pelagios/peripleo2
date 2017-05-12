@@ -13,6 +13,8 @@ define([
 
         history = new History(),
 
+        currentSelection = false,
+
         // TODO set initial state from URL bar
         // TODO trigger upstream event in case there are non-default settings in URL bar
         uiState = {
@@ -26,7 +28,7 @@ define([
         },
 
         pushState = function() {
-          history.pushState(search.getCurrentArgs(), jQuery.extend({}, uiState));
+          history.pushState(search.getCurrentArgs(), currentSelection, jQuery.extend({}, uiState));
         },
 
         setState = function(state) {
@@ -78,8 +80,8 @@ define([
         },
 
         setSelection = function(item) {
-          // urlBar.setSelection(item);
-          // TODO record history step
+          currentSelection = item.is_conflation_of[0].uri;
+          pushState();
         };
 
     search.on('searchResponse', this.forwardEvent('searchResponse'));

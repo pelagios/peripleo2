@@ -8,8 +8,8 @@ define([
 
     var self = this,
 
-        pushState = function(searchState, uiState) {
-          var state = { search: searchState, ui: uiState },
+        pushState = function(searchState, selection, uiState) {
+          var state = { search: searchState, selection: selection, ui: uiState },
               hash = URLBar.toHash(state);
 
           window.history.pushState(state, null, '#' + hash);

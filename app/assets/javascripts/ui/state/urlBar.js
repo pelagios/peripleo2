@@ -33,6 +33,7 @@ define([], function() {
               topPlaces        : true
             }
           },
+          selected: decodeURIComponent(segments.selected),
           ui: {
             filterPaneOpen : segments.filters
           }
@@ -46,14 +47,14 @@ define([], function() {
       var urlParams = {},
 
           setIfDefined = function(arg, name) {
-            if (arg) urlParams[name] = arg;
+            if (arg) urlParams[name] = encodeURIComponent(arg);
           };
 
       setIfDefined(state.search.query, 'q');
       // TODO filters
       setIfDefined(state.search.timerange.from, 'from');
       setIfDefined(state.search.timerange.to, 'to');
-      // TODO selection
+      setIfDefined(state.selection, 'selected');
       setIfDefined(state.ui.filterPaneOpen, 'filters');
 
       return jQuery.map(urlParams, function(val, key) {

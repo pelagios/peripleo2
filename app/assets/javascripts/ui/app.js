@@ -41,6 +41,9 @@ require([
         onStateUpdate = function(state) {
           searchPanel.setState(state);
                   map.setState(state);
+
+          if (state.selected)
+            onSelectIdentifier(state.selected);
         },
 
         deselect = function() {
@@ -127,6 +130,10 @@ require([
 
         /** An identifier was selected (e.g. via suggestions) - fetch item **/
         onSelectIdentifier = function(identifier) {
+
+          // Clear search results
+
+
           API.getItem(identifier)
             .done(onSelectItem)
             .fail(function(error) {
