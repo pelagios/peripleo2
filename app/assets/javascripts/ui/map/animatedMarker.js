@@ -13,7 +13,7 @@ define([], function() {
 
         GLOW_RADIUS    : 25,
         GLOW_FILL      : 'rgba(255, 0, 0, 0.4)',
-        GLOW_BLURRED   : true
+        GLOW_BLURRED   : false
 
       },
 

@@ -30,6 +30,8 @@ require([
 
         state = new State(),
 
+        currentSelection = false,
+
         onSearchResponse = function(response) {
           searchPanel.setResponse(response);
            resultList.setResponse(response);
@@ -41,62 +43,101 @@ require([
                   map.setState(state);
         },
 
-        /** An item was selected (e.g. via the result list) **/
-        onSelectItem = function(item) {
-          // TODO can we get this to match with the callback in onSelectIdentifier?
-          selectionPanel.show(item);
-          resultList.setSelectedItem(item);
-          state.setSelection(item);
+        deselect = function() {
+          var deselectItem = function(item) {
+                selectionPanel.hide();
+                currentSelection = false;
+              },
 
-          // TODO show on map
+              deselectPlace = function(item) {
+                state.updateFilters({ places : false });
+                deselectItem(item);
+              };
+
+          if (currentSelection)
+            switch(ItemUtils.getItemType(currentSelection)) {
+              case 'PLACE':
+                deselectItem(currentSelection);
+                break;
+              case 'OBJECT':
+                deselectItem(currentSelection);
+                break;
+              case 'PERSON':
+                deselectItem(currentSelection);
+                break;
+              case 'DATASET':
+                selectDataset(currentSelection);
+                break;
+            }
         },
 
-        /** An identifier was selected (e.g. via suggestions) - fetch item **/
-        onSelectIdentifier = function(identifier) {
-          var selectDataset = function(dataset) {
+        /** An item was selected (e.g. via the result list) **/
+        onSelectItem = function(item) {
+
+              // Common select functionality
+          var selectItem = function(item) {
+                currentSelection = item;
+
+                selectionPanel.show(item);
+                resultList.setSelectedItem(item);
+                state.setSelection(item);
+
+                // TODO show on map
+
+              },
+
+              // Filter search (once) by this Place
+              selectPlace = function(place) {
+                var uri = ItemUtils.getURIs(place)[0],
+                    filter = { places : [ uri ] },
+                    onetimeSettings = { topPlaces: false };
+
+                state.updateFilters(filter, onetimeSettings)
+                  .done(function(results) {
+                    selectItem(results.items[0]);
+                  });
+              },
+
+              // Apply a filter to show everything in this dataset
+              selectDataset = function(dataset) {
                 var uri = dataset.is_conflation_of[0].uri;
+                selectItem(dataset);
                 state.clearSearch(false);
                 state.updateFilters({ 'datasets': uri });
               };
 
-          API.getItem(identifier).done(function(item) {
-            selectionPanel.show(item);
-            state.setSelection(item);
-
-            // TODO show on map
-
+          if (item)
             switch(ItemUtils.getItemType(item)) {
+              case 'PLACE':
+                selectItem(item);
+                break;
+              case 'OBJECT':
+                selectItem(item);
+                break;
+              case 'PERSON':
+                selectItem(item);
+                break;
               case 'DATASET':
                 selectDataset(item);
                 break;
             }
-          }).fail(function(error) {
-            // TODO shouldn't happen unless connection or backend is down
-            // TODO show error popup
-          });
+          else
+            deselect();
         },
 
-        onSelectPlace = function(place) {
-          if (place) {
-            var uri = ItemUtils.getURIs(place)[0],
-                filter = { places : [ uri ] },
-                onetimeSettings = { topPlaces: false };
-
-            state.updateFilters(filter, onetimeSettings)
-              .done(function(results) {
-                var firstItem = results.items[0];
-                resultList.setSelectedItem(firstItem);
-                selectionPanel.show(firstItem);
-              });
-          } else {
-            state.updateFilters({ places : false });
-            selectionPanel.hide();
-          }
+        /** An identifier was selected (e.g. via suggestions) - fetch item **/
+        onSelectIdentifier = function(identifier) {
+          API.getItem(identifier)
+            .done(onSelectItem)
+            .fail(function(error) {
+              // TODO shouldn't happen unless connection or backend is down
+              // TODO show error popup
+            });
         };
 
     // controlsDiv.resizable({ handles: 'e' });
 
-    map.on('selectPlace', onSelectPlace);
+    map.on('selectPlace', onSelectItem);
 
     searchPanel.on('open', state.openFilterPane);
     searchPanel.on('close', state.closeFilterPane);
