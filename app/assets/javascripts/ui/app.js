@@ -95,6 +95,8 @@ require([
                     filter = { places : [ uri ] },
                     onetimeSettings = { topPlaces: false };
 
+                console.log('selecting place');
+
                 state.updateFilters(filter, onetimeSettings)
                   .done(function(results) {
                     selectItem(results.items[0]);
@@ -112,7 +114,7 @@ require([
           if (item)
             switch(ItemUtils.getItemType(item)) {
               case 'PLACE':
-                selectItem(item);
+                selectPlace(item);
                 break;
               case 'OBJECT':
                 selectItem(item);
