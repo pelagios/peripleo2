@@ -84,8 +84,19 @@ require([
 
               // Common select functionality
           var selectItem = function(item) {
-                currentSelection = item;
+                // TODO fetch items referenced by this item (places, people, periods)
+                // API.getReferences(record.uri).done(function(response) { ... });
 
+                // TODO then:
+
+                // state.setSelectedItem(item);
+                // resultList.setSelectedItem(item);
+                // selectionPanel.show(item, references)
+                // map.setSelectedItem(item, references);
+
+                // currentSelection = { item: item, references: references }
+
+                currentSelection = item;
                 selectionPanel.show(item);
                 resultList.setSelectedItem(item);
                 state.setSelectedItem(item);
