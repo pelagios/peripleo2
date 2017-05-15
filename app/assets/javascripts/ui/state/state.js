@@ -44,6 +44,13 @@ define([
           if (refreshUI) pushState();
         },
 
+        // TODO Rename to setQueryPhrase
+        // TODO use config object instead
+        // { updateState: false | true }
+        // TODO do we really need one-time settings?
+        // TODO they are currently used only when selecting a place: an additional query
+        // TODO is fired with the place as filter, but with topPlaces suppressed
+        // TODO can we get around that in a cleaner way?
         setQuery = function(query, opt_onetime_settings) {
           var promise = search.setQuery(query, opt_onetime_settings);
           pushState();
@@ -79,7 +86,7 @@ define([
           // TODO should we treat this as a history step as well? (Probably...)
         },
 
-        setSelection = function(item) {
+        setSelectedItem = function(item) {
           currentSelection = item.is_conflation_of[0].uri;
           pushState();
         };
@@ -98,7 +105,7 @@ define([
     this.openFilterPane = openFilterPane;
     this.closeFilterPane = closeFilterPane;
     this.setLayerChanged = setLayerChanged;
-    this.setSelection = setSelection;
+    this.setSelectedItem = setSelectedItem;
 
     HasEvents.apply(this);
   };

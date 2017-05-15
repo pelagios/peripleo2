@@ -31,7 +31,7 @@ define([
 
         topPlacesLayer = new TopPlacesLayer(map),
 
-        setResponse = function(searchResponse) {
+        setSearchResponse = function(searchResponse) {
           itemLayer.update(searchResponse.items);
           if (searchResponse.top_places)
             topPlacesLayer.update(searchResponse.top_places);
@@ -39,13 +39,25 @@ define([
 
         setState = function(state) {
 
+        },
+
+        setSelectedItem = function(item, places) {
+          // Various possibilities (more than one can apply)
+          // - the item could be linked to one or more of the top places
+          //   (in this case we don't know the place - but the selection panel already runs a
+          //   a query - refactor so that this happens in the app?)
+          // - the item may have geometry itself (at the moment, this isn't shown)
+          // - the item might not be on the map at all (direct selection from autosuggest)
+          //   in this case (again) a request for (top) places for the item needs to be
+          //   made in advance
         };
 
     // Forward selections up the hierarchy chain
     topPlacesLayer.on('select', this.forwardEvent('selectPlace'));
 
-    this.setResponse = setResponse;
     this.setState = setState;
+    this.setSearchResponse = setSearchResponse;
+    this.setSelectedItem = setSelectedItem;
 
     HasEvents.apply(this);
   };

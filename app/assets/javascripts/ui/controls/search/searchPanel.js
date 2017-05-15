@@ -14,7 +14,7 @@ define([
 
         filterPane = new FilterPane(element),
 
-        setResponse = function(searchResponse) {
+        setSearchResponse = function(searchResponse) {
           filterPane.setResponse(searchResponse);
         },
 
@@ -30,7 +30,7 @@ define([
     filterPane.on('close', this.forwardEvent('close'));
     filterPane.on('timerangeChange', this.forwardEvent('timerangeChange'));
 
-    this.setResponse = setResponse;
+    this.setSearchResponse = setSearchResponse;
     this.setState = setState;
 
     HasEvents.apply(this);

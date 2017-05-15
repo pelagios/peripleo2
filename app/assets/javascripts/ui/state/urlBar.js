@@ -8,7 +8,11 @@ define([], function() {
     parseHash : function() {
       var hash = window.location.hash,
           keysVals = (hash.indexOf('#') === 0) ? hash.substring(1).split('&') : false,
-          segments = {};
+          segments = {},
+
+          decodeIfDefined = function(arg) {
+            return (arg) ? decodeURIComponent(arg) : undefined;
+          };
 
       if (keysVals) {
         keysVals.forEach(function(keyVal) {
@@ -33,7 +37,7 @@ define([], function() {
               topPlaces        : true
             }
           },
-          selected: decodeURIComponent(segments.selected),
+          selected: decodeIfDefined(segments.selected),
           ui: {
             filterPaneOpen : segments.filters
           }

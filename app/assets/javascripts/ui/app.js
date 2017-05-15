@@ -33,9 +33,9 @@ require([
         currentSelection = false,
 
         onSearchResponse = function(response) {
-          searchPanel.setResponse(response);
-           resultList.setResponse(response);
-                  map.setResponse(response);
+          searchPanel.setSearchResponse(response);
+           resultList.setSearchResponse(response);
+                  map.setSearchResponse(response);
         },
 
         onStateUpdate = function(state) {
@@ -74,7 +74,12 @@ require([
             }
         },
 
-        /** An item was selected (e.g. via the result list) **/
+        /**
+         * An item was selected, either via:
+         * - the result list
+         * - a map marker
+         * - through autosuggest->identifier->API fetch
+         */
         onSelectItem = function(item) {
 
               // Common select functionality
@@ -83,10 +88,11 @@ require([
 
                 selectionPanel.show(item);
                 resultList.setSelectedItem(item);
-                state.setSelection(item);
+                state.setSelectedItem(item);
 
-                // TODO show on map
-
+                // If the selection happend through the map, the marker may be
+                // highlighted already - but no problem, the map can handle this situation
+                map.setSelectedItem(item);
               },
 
               // Filter search (once) by this Place
@@ -94,7 +100,7 @@ require([
                 var uri = ItemUtils.getURIs(place)[0],
                     filter = { places : [ uri ] },
                     onetimeSettings = { topPlaces: false };
-                    
+
                 state.updateFilters(filter, onetimeSettings)
                   .done(function(results) {
                     selectItem(results.items[0]);
@@ -131,8 +137,8 @@ require([
         /** An identifier was selected (e.g. via suggestions) - fetch item **/
         onSelectIdentifier = function(identifier) {
 
-          // Clear search results
-
+          // TODO remove query from state (but without firing a new request!)
+          // TODO state.setQueryPhrase(false, { updateState: false });
 
           API.getItem(identifier)
             .done(onSelectItem)

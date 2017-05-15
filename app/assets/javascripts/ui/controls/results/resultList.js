@@ -65,7 +65,7 @@ define([
           response.items.forEach(createRow);
         },
 
-        setResponse = function(response) {
+        setSearchResponse = function(response) {
           renderResponse(response, false);
         },
 
@@ -101,7 +101,7 @@ define([
     element.scroll(onScroll);
 
     this.appendPage = appendPage;
-    this.setResponse = setResponse;
+    this.setSearchResponse = setSearchResponse;
     this.setSelectedItem = setSelectedItem;
 
     HasEvents.apply(this);
