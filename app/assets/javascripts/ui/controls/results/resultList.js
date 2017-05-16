@@ -72,29 +72,6 @@ define([
         appendPage = function(response) {
           renderResponse(response, true);
           waitingForNextPage = false;
-        },
-
-        // The result list hides the selected element, so that
-        // it doesn't appear twice in the UI
-        setSelectedItem = function(newSelection) {
-          // Un-hide previously selected element
-          if (currentSelection)
-            currentSelection.show();
-
-          if (newSelection) {
-            listEl.find('li').each(function(idx, li) {
-              var el = jQuery(li),
-                  item = el.data('item');
-
-              if (item.doc_id === newSelection.doc_id) {
-                el.hide();
-                currentSelection = el;
-                return false;
-              }
-            });
-          } else {
-            currentSelection = false;
-          }
         };
 
     element.on('click', 'li', onSelect);
@@ -102,7 +79,6 @@ define([
 
     this.appendPage = appendPage;
     this.setSearchResponse = setSearchResponse;
-    this.setSelectedItem = setSelectedItem;
 
     HasEvents.apply(this);
   };
