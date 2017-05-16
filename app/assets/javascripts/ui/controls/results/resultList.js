@@ -26,6 +26,9 @@ define([
         // Flag to record whether more search result pages are available
         isMoreAvailable = true,
 
+        // See .setSelectedItem below
+        lastScrollTop = 0,
+
         createRow = function(item) {
           var el = Templates.createRow(item).appendTo(listEl);
           el.data('item', item);
@@ -39,6 +42,8 @@ define([
         },
 
         onScroll = function() {
+          lastScrollTop = element.scrollTop();
+
           if (isMoreAvailable) {
             var scrollPos = element.scrollTop() + element.innerHeight(),
                 scrollBottom = element[0].scrollHeight - waitSpinner.outerHeight();
@@ -69,6 +74,13 @@ define([
           renderResponse(response, false);
         },
 
+        setSelectedItem = function(item) {
+          // We currently don't do anything with the selected item. However, unfortunately,
+          // the element's scroll position jumps when a selection is made due (flexbox...).
+          // Therefore we force the scroll position back to what it was before selection
+          element.scrollTop(lastScrollTop);
+        },
+
         appendPage = function(response) {
           renderResponse(response, true);
           waitingForNextPage = false;
@@ -79,6 +91,7 @@ define([
 
     this.appendPage = appendPage;
     this.setSearchResponse = setSearchResponse;
+    this.setSelectedItem = setSelectedItem;
 
     HasEvents.apply(this);
   };

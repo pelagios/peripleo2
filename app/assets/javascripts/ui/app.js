@@ -90,7 +90,8 @@ require([
                 API.getReferences(uri).done(function(references) {
                   state.setSelectedItem(item);
                   selectionPanel.show(item, references);
-
+                  resultList.setSelectedItem(item);
+                  
                   // Note: selection may have happend through the map, so technically no
                   // need for this - but the map is designed to handle this situation
                   map.setSelectedItem(item, references.PLACE);
