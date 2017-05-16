@@ -32,6 +32,12 @@ define([
 
         topPlacesLayer = new TopPlacesLayer(map),
 
+        // Conveniently, this means a click on the base map, not a marker - deselect!
+        onClick = function(e) {
+          topPlacesLayer.clearSelection();
+          self.fireEvent('selectPlace');
+        },
+
         setSearchResponse = function(searchResponse) {
           itemLayer.update(searchResponse.items);
           if (searchResponse.top_places)
@@ -53,6 +59,8 @@ define([
 
           topPlacesLayer.selectByURIs(placeURIs);
         };
+
+    map.on('click', onClick);
 
     // Forward selections up the hierarchy chain
     topPlacesLayer.on('select', this.forwardEvent('selectPlace'));

@@ -61,7 +61,7 @@ require([
           if (currentSelection)
             switch(ItemUtils.getItemType(currentSelection)) {
               case 'PLACE':
-                deselectItem(currentSelection);
+                deselectPlace(currentSelection);
                 break;
               case 'OBJECT':
                 deselectItem(currentSelection);
@@ -91,7 +91,7 @@ require([
                   state.setSelectedItem(item);
                   selectionPanel.show(item, references);
                   resultList.setSelectedItem(item);
-                  
+
                   // Note: selection may have happend through the map, so technically no
                   // need for this - but the map is designed to handle this situation
                   map.setSelectedItem(item, references.PLACE);

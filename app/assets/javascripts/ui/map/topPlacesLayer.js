@@ -121,6 +121,7 @@ define([
           }
         };
 
+    this.clearSelection = clearSelection;
     this.update = update;
     this.selectByURIs = selectByURIs;
 
