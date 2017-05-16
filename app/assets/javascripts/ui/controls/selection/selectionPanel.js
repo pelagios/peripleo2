@@ -87,9 +87,8 @@ define([
         },
 
         hide = function() {
-          if (element.is(':visible')) {
+          if (element.is(':visible'))
             element.velocity('slideUp', { duration: SLIDE_DURATION });
-          }
         },
 
         onSelect = function(e) {

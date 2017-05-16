@@ -33,9 +33,10 @@ require([
         currentSelection = false,
 
         onSearchResponse = function(response) {
-          searchPanel.setSearchResponse(response);
-           resultList.setSearchResponse(response);
-                  map.setSearchResponse(response);
+          selectionPanel.hide();
+             searchPanel.setSearchResponse(response);
+              resultList.setSearchResponse(response);
+                     map.setSearchResponse(response);
         },
 
         onStateUpdate = function(state) {
@@ -151,8 +152,6 @@ require([
               // TODO show error popup
             });
         };
-
-    // controlsDiv.resizable({ handles: 'e' });
 
     map.on('selectPlace', onSelectItem);
 
