@@ -1,8 +1,9 @@
 define([
   'ui/common/hasEvents',
+  'ui/common/itemUtils',
   'ui/map/animatedMarker',
   'ui/map/styles'
-], function(HasEvents, AnimatedMarker, Styles) {
+], function(HasEvents, ItemUtils, AnimatedMarker, Styles) {
 
   // TODO does it make sense to have a common Layer parent class?
 
@@ -12,15 +13,29 @@ define([
 
         markers = L.featureGroup().addTo(map),
 
-        currentSelection = false, // We only support single selection for now
+        markerIndex = {},
+
+        // A list of AnimatedMarkers
+        currentSelection = [],
 
         clearLayer = function() {
+          markerIndex = {};
           markers.clearLayers();
         },
 
         clearSelection = function() {
-          if (currentSelection)
-            currentSelection.deselect();
+          currentSelection.forEach(function(marker) {
+            marker.deselect();
+          });
+        },
+
+        isEqualToCurrentSelection = function(markers) {
+          if (markers.length !== currentSelection.length)
+            return false;
+
+          return markers.filter(function(m) {
+            return currentSelection.indexOf(m) < 0;
+          }).length === 0;
         },
 
         onMarkerClicked = function(e) {
@@ -30,11 +45,11 @@ define([
 
           if (isSelected) {
             clearSelection();
-            currentSelection = marker;
+            currentSelection = [ marker ];
             self.fireEvent('select', place);
-          } else if (currentSelection) {
+          } else {
             clearSelection();
-            currentSelection = false;
+            currentSelection = [];
             self.fireEvent('select');
           }
         },
@@ -43,7 +58,9 @@ define([
 
           // TODO for testing only!
           var firstRecord = place.is_conflation_of[0],
-              pt = (firstRecord.representative_point) ? firstRecord.representative_point : false;
+              pt = (firstRecord.representative_point) ? firstRecord.representative_point : false,
+              uris = ItemUtils.getURIs(place),
+              marker;
 
           if (pt) {
             marker = new AnimatedMarker([ pt[1], pt[0] ]).addTo(markers);
@@ -51,14 +68,33 @@ define([
             marker.place = place;
           }
 
+          uris.forEach(function(uri) {
+            markerIndex[uri] = marker;
+          });
         },
 
         update = function(topPlaces) {
           clearLayer();
           topPlaces.forEach(createMarker);
+        },
+
+        selectByURIs = function(uris) {
+          var selection = uris.map(function(uri) {
+                return markerIndex[uri];
+              }).filter(function(n) { return n !== undefined; });
+
+          if (!isEqualToCurrentSelection(selection)) {
+            clearSelection();
+            currentSelection = selection;
+
+            selection.forEach(function(marker) {
+              marker.select();
+            });
+          }
         };
 
     this.update = update;
+    this.selectByURIs = selectByURIs;
 
     HasEvents.apply(this);
   };

@@ -12,7 +12,7 @@ define([
         }, []);
       };
 
-  var PlaceCard  = function(parentEl, place) {
+  var PlaceCard  = function(parentEl, place, references) {
     var infoEl = jQuery(
           '<div class="item-info">' +
             '<h3 class="item-title"></h3>' +

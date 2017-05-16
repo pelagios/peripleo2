@@ -84,26 +84,20 @@ require([
 
               // Common select functionality
           var selectItem = function(item) {
-                // TODO fetch items referenced by this item (places, people, periods)
-                // API.getReferences(record.uri).done(function(response) { ... });
+                var uri = ItemUtils.getURIs(item)[0];
 
-                // TODO then:
+                API.getReferences(uri).done(function(references) {
+                  state.setSelectedItem(item);
+                  resultList.setSelectedItem(item);
+                  selectionPanel.show(item, references);
 
-                // state.setSelectedItem(item);
-                // resultList.setSelectedItem(item);
-                // selectionPanel.show(item, references)
-                // map.setSelectedItem(item, references);
+                  // Note: selection may have happend through the map, so technically no
+                  // need for this - but the map is designed to handle this situation
+                  map.setSelectedItem(item, references.PLACE);
 
-                // currentSelection = { item: item, references: references }
-
-                currentSelection = item;
-                selectionPanel.show(item);
-                resultList.setSelectedItem(item);
-                state.setSelectedItem(item);
-
-                // If the selection happend through the map, the marker may be
-                // highlighted already - but no problem, the map can handle this situation
-                map.setSelectedItem(item);
+                  // TODO currentSelection = { item: item, references: references }
+                  currentSelection = item;
+                });
               },
 
               // Filter search (once) by this Place

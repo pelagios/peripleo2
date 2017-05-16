@@ -151,6 +151,7 @@ define([], function() {
     self.on('click', onClick);
 
     this.isSelected = function() { return isSelected; };
+    this.select = select;
     this.deselect = deselect;
 
     L.Marker.apply(this, [ latlng, { icon: ICON } ]);

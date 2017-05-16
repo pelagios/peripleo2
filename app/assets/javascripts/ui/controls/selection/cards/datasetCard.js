@@ -3,7 +3,7 @@ define([
   'ui/common/itemUtils'
 ], function(HasEvents, ItemUtils) {
 
-  var DatasetCard  = function(parentEl, dataset) {
+  var DatasetCard  = function(parentEl, dataset, references) {
     var infoEl = jQuery(
           '<div class="item-info">' +
             '<p class="item-is-in"></p>' +

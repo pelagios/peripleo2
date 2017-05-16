@@ -1,10 +1,9 @@
 define([
   'ui/common/formatting',
   'ui/common/hasEvents',
-  'ui/common/itemUtils',
-  'ui/api'], function(Formatting, HasEvents, ItemUtils, API) {
+  'ui/common/itemUtils'], function(Formatting, HasEvents, ItemUtils) {
 
-  var ObjectCard  = function(parentEl, item) {
+  var ObjectCard  = function(parentEl, item, references) {
     var infoEl = jQuery(
           '<div class="item-info">' +
             '<p class="item-is-in"></p>' +
@@ -41,20 +40,17 @@ define([
         },
 
         renderReferences = function() {
-          // TODO load indicator
-          API.getReferences(record.uri).done(function(response) {
-            var places = response.PLACE,
-                head = (places && places.length > 3) ? places.slice(0, 3) : places;
+          var places = references.PLACE,
+              head = (places && places.length > 3) ? places.slice(0, 3) : places;
 
-            if (head) {
-              head.forEach(function(place) {
-                referencesEl.html(
-                  '<p class="findspot">' + // TODO we will have more than just findspots in the future!
-                    '<span><a href="#" title="' + place.description + '">' + place.title + '</a></span>' +
-                  '</p>');
-              });
-            }
-          });
+          if (head) {
+            head.forEach(function(place) {
+              referencesEl.html(
+                '<p class="findspot">' + // TODO we will have more than just findspots in the future!
+                  '<span><a href="#" title="' + place.description + '">' + place.title + '</a></span>' +
+                '</p>');
+            });
+          }
         };
 
     HasEvents.apply(this);

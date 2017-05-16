@@ -1,8 +1,9 @@
 define([
   'ui/common/hasEvents',
+  'ui/common/itemUtils',
   'ui/map/itemLayer',
   'ui/map/topPlacesLayer'
-], function(HasEvents, ItemLayer, TopPlacesLayer) {
+], function(HasEvents, ItemUtils, ItemLayer, TopPlacesLayer) {
 
   // TODO can we make these configurable? Cf. E-ARK demo (where we used a JSON file)
   var BASE_LAYERS = {
@@ -41,15 +42,16 @@ define([
 
         },
 
-        setSelectedItem = function(item, places) {
-          // Various possibilities (more than one can apply)
-          // - the item could be linked to one or more of the top places
-          //   (in this case we don't know the place - but the selection panel already runs a
-          //   a query - refactor so that this happens in the app?)
-          // - the item may have geometry itself (at the moment, this isn't shown)
-          // - the item might not be on the map at all (direct selection from autosuggest)
-          //   in this case (again) a request for (top) places for the item needs to be
-          //   made in advance
+        setSelectedItem = function(item, placeReferences) {
+          var placeURIs = placeReferences.map(function(ref) {
+                return ref.identifiers[0];
+              });
+
+          // TODO rethink all possible situtations
+          // TODO - what if the places are not in the topPlaceLayer yet (happens for autosuggest selections!)
+          // TODO - the item may have geometry itself
+
+          topPlacesLayer.selectByURIs(placeURIs);
         };
 
     // Forward selections up the hierarchy chain

@@ -52,7 +52,7 @@ define([
           }
         },
 
-        show = function(item) {
+        show = function(item, references) {
           var visible = element.is(':visible'),
 
               slideAction = (visible && !item) ? 'slideUp' : // Open + deselect
@@ -65,16 +65,16 @@ define([
           // Then defer to the appropriate card implementation
           switch(ItemUtils.getItemType(item)) {
             case 'PLACE':
-              new PlaceCard(cardEl, item);
+              new PlaceCard(cardEl, item, references);
               break;
             case 'OBJECT':
-              new ObjectCard(cardEl, item);
+              new ObjectCard(cardEl, item, references);
               break;
             case 'PERSON':
-              new PersonCard(cardEl, item);
+              new PersonCard(cardEl, item, references);
               break;
             case 'DATASET':
-              new DatasetCard(cardEl, item);
+              new DatasetCard(cardEl, item, references);
               break;
             default:
               // TODO implement future types
