@@ -2,8 +2,6 @@ define([], function() {
 
   var STYLE = {
 
-        DOT_SIZE       : 4,
-
         STROKE_COLOR   : '#a64a40',
         STROKE_OPACITY : 1,
         STROKE_WIDTH   : 1.5,
@@ -17,12 +15,14 @@ define([], function() {
 
       },
 
-      ICON_SIZE = 8 * STYLE.GLOW_RADIUS / 3,
+      canvasSize = function(markerSize) {
+        // TODO scale with size
+        return 8  * STYLE.GLOW_RADIUS / 3;
+      },
 
-      BASE_SVG = (function() {
-        var w = ICON_SIZE / 2,
-
-            s = STYLE.DOT_SIZE, // Shorthand
+      baseSVG = function(size) {
+            // TODO scale with size
+        var w = canvasSize(size),
 
             svg = jQuery(
               '<svg xmlns="http://www.w3.org/2000/svg" version="1.1">' +
@@ -32,13 +32,13 @@ define([], function() {
 
             path = svg.find('path'),
 
-            x = w - STYLE.DOT_SIZE / 2 - STYLE.STROKE_WIDTH,
+            x = (w - size) / 2 - STYLE.STROKE_WIDTH,
 
-            d = 'M' + x + ',' + w + 'a' + s + ',' + s +' 0 1,0 '+ (2 * s) + ',0 a' +
-              s + ',' + s + ' 0 1,0 -' + (2 * s) + ',0';
+            d = 'M' + x + ',' + (w / 2) + 'a' + size + ',' + size +' 0 1,0 '+ (2 * size) + ',0 a' +
+              size + ',' + size + ' 0 1,0 -' + (2 * size) + ',0';
 
-        svg.attr('width', 2 * w);
-        svg.attr('height', 2 * w);
+        svg.attr('width', w);
+        svg.attr('height', w);
 
         path.attr('stroke', STYLE.STROKE_COLOR);
         path.attr('stroke-opacity', STYLE.STROKE_OPACITY);
@@ -48,11 +48,11 @@ define([], function() {
         path.attr('d', d);
 
         return svg;
-      })(),
+      },
 
-      SELECTED_SVG = (function() {
-        var svg = BASE_SVG.clone(),
-            offset = ICON_SIZE / 2,
+      selectedSVG = function(baseSVG) {
+        var svg = baseSVG.clone(),
+            offset = svg.attr('width') / 2,
             glow = jQuery('<circle></circle>');
 
         glow.attr('cx', offset);
@@ -76,10 +76,10 @@ define([], function() {
         }
 
         return svg;
-      })(),
+      },
 
-      GROW_ANIM = (function() {
-        var svg = SELECTED_SVG.clone(),
+      growAnim = function(selectedSVG) {
+        var svg = selectedSVG.clone(),
             glow = svg.find('circle');
 
         glow.append(jQuery.parseXML(
@@ -87,10 +87,10 @@ define([], function() {
           'to="' + STYLE.GLOW_RADIUS  +'"></animate>').documentElement);
 
         return svg;
-      })(),
+      },
 
-      SHRINK_ANIM = (function() {
-        var svg = SELECTED_SVG.clone(),
+      shrinkAnim = function(selectedSVG) {
+        var svg = selectedSVG.clone(),
             glow = svg.find('circle');
 
         glow.attr('r', 0);
@@ -99,28 +99,38 @@ define([], function() {
           'from="' + STYLE.GLOW_RADIUS + '" to="0"></animate>').documentElement);
 
         return svg;
-      })(),
+      };
 
-      ICON = L.icon({
-        iconUrl: 'data:image/svg+xml;base64,' + btoa(BASE_SVG.prop('outerHTML')),
-        iconSize: [ ICON_SIZE, ICON_SIZE ]
-      }),
-
-      ICON_SELECTED = L.icon({
-        iconUrl: 'data:image/svg+xml;base64,' + btoa(SELECTED_SVG.prop('outerHTML')),
-        iconSize: [ ICON_SIZE, ICON_SIZE ]
-      });
-
-  var AnimatedMarker = function(latlng) {
+  var AnimatedMarker = function(latlng, size) {
 
     var self = this,
 
         isSelected = false,
 
+        CANVAS_SIZE = canvasSize(size),
+
+        BASE_SVG = baseSVG(size),
+
+        SELECTED_SVG = selectedSVG(BASE_SVG),
+
+        GROW_ANIM = growAnim(SELECTED_SVG),
+
+        SHRINK_ANIM = shrinkAnim(SELECTED_SVG),
+
+        ICON = L.icon({
+          iconUrl: 'data:image/svg+xml;base64,' + btoa(BASE_SVG.prop('outerHTML')),
+          iconSize: [ CANVAS_SIZE, CANVAS_SIZE ]
+        }),
+
+        ICON_SELECTED = L.icon({
+          iconUrl: 'data:image/svg+xml;base64,' + btoa(SELECTED_SVG.prop('outerHTML')),
+          iconSize: [ CANVAS_SIZE, CANVAS_SIZE ]
+        }),
+
         animate = function(anim, iconAfter) {
           self.setIcon(L.icon({
             iconUrl: 'data:image/svg+xml;base64,' + btoa(anim.prop('outerHTML')),
-            iconSize: [ ICON_SIZE, ICON_SIZE ]
+            iconSize: [ CANVAS_SIZE, CANVAS_SIZE ]
           }));
 
           // After animation, remove
