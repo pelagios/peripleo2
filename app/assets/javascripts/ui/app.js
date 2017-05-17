@@ -119,17 +119,18 @@ require([
               // To do this, we need to:
               // - issue a search request, filtered by the place
               // - select the first item in the search response
-              // We DON'T want:
-              // - the rest of the UI state (and history) to update after the request
+              // But we DON'T want:
+              // - the request to show up in the history
+              // - the rest of the UI to change
               // - the place filter to remain active after the request
               selectPlace = function(place) {
                 var uri = ItemUtils.getURIs(place)[0],
                     filter = { places : [ uri ] };
 
-                state.updateFilters(filter, { updateState: false })
+                state.updateFilters(filter, { pushState: false })
                   .done(function(results) {
                     selectItem(results.items[0]);
-                    state.updateFilters({ places: false }, { updateState: false });
+                    state.updateFilters({ places: false }, { pushState: false, makeRequest: false });
                   });
               },
 
@@ -162,10 +163,6 @@ require([
 
         /** An identifier was selected (e.g. via suggestions) - fetch item **/
         onSelectIdentifier = function(identifier) {
-
-          // TODO remove query from state (but without firing a new request!)
-          // TODO state.setQueryPhrase(false, { updateState: false });
-
           API.getItem(identifier)
             .done(onSelectItem)
             .fail(function(error) {

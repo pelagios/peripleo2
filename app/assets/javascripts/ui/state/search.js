@@ -55,7 +55,8 @@ define([], function() {
           url = appendIfExists(searchArgs.query, 'q', url);
 
           for (var f in searchArgs.filters) {
-            url += '&' + f + '=' + encodeURIComponent(searchArgs.filters[f]);
+            if (searchArgs.filters[f])
+              url += '&' + f + '=' + encodeURIComponent(searchArgs.filters[f]);
           }
 
           url = appendIfExists(searchArgs.timerange.from, 'from', url);
@@ -136,12 +137,12 @@ define([], function() {
           return makeRequest();
         },
 
-        clear = function(makeRequest) {
+        clear = function(makeReq) {
           searchArgs.query = false;
           searchArgs.filters = {};
           searchArgs.timerange = { from: false, to : false };
 
-          if (makeRequest)
+          if (makeReq)
             return makeRequest();
         },
 
@@ -150,9 +151,10 @@ define([], function() {
           return makeRequest();
         },
 
-        updateFilters = function(diff) {
+        updateFilters = function(diff, makeReq) {
           jQuery.extend(searchArgs.filters, diff);
-          return makeRequest();
+          if (makeReq)
+            return makeRequest();
         },
 
         setTimerange = function(range) {

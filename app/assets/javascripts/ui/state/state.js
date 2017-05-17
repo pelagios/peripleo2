@@ -39,9 +39,10 @@ define([
           }
         },
 
-        clearSearch = function(opt_pushState) {
-          var pushState = opt_pushState !== false, // default true
-              promise = search.clear(pushState);
+        clearSearch = function(options) {
+          var pushState = (options) ? options.pushState !== false : true, // default true
+              makeRequest = (options) ? options.makeRequest !== false : true,
+              promise = search.clear(makeRequest);
 
           if (pushState) pushState();
           return promise;
@@ -53,9 +54,11 @@ define([
           return promise;
         },
 
-        updateFilters = function(diff, opt_config) {
-          var pushState = (opt_config) ? opt_config.pushState : true,
-              promise = search.updateFilters(diff);
+        // TODO remove redundancy with clearSearch
+        updateFilters = function(diff, options) {
+          var pushState = (options) ? options.pushState !== false : true, // default true
+              makeRequest = (options) ? options.makeRequest !== false : true,
+              promise = search.updateFilters(diff, makeRequest);
 
           if (pushState) pushState();
           return promise;

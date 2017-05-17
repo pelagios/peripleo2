@@ -66,8 +66,10 @@ class SearchService @Inject() (
     
     def placeFilterDefinition() = {
       
-      def filterByURI(uri: String) = 
+      def filterByURI(uri: String) = {
+        // Need to expand and/or search by doc_id
         hasChildQuery(ES.REFERENCE) query { termQuery("reference_to.uri" -> uri) }
+      }
         
       args.filters.placeFilter.map { filter =>
         if (filter.values.size == 1)
