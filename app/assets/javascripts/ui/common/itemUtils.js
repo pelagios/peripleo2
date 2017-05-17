@@ -1,26 +1,63 @@
 define(function() {
 
-  /**
-   * Helper to map the list of conflated records to a list values of the given
-   * record property. (E.g. go from list of records to list of descriptions.)
-   */
-  var mapConflated = function(key) {
-    return function(item) {
-      var mapped = [];
-      item.is_conflation_of.map(function(record) {
-        var values = record[key];
-        if (values)
-          if (jQuery.isArray(values))
-            mapped = mapped.concat(values);
-          else
-            mapped.push(values);
-      });
+  // TODO fetch this information from the server, so we can feed it from the DB
+  var KNOWN_AUTHORITIES = [
+        // Places
+        { shortcode: 'pleiades', initial: 'P', color: '#5b9ec4', url_patterns: [ 'http://pleiades.stoa.org/places/' ] },
+        { shortcode: 'dare',     initial: 'D', color: '#9e9ac8', url_patterns: [ 'http://dare.ht.lu.se/places/' ] },
+        { shortcode: 'geonames', initial: 'G', color: '#74c476', url_patterns: ['http://sws.geonames.org/'] },
 
-      return mapped;
-    };
-  };
+        // People
+        { shortcode: 'europeana', initial: 'e', color: '#1676aa', url_patterns: ['http://data.europeana.eu/agent/base/'] }
+      ],
+
+      /**
+       * Helper to map the list of conflated records to a list values of the given
+       * record property. (E.g. go from list of records to list of descriptions.)
+       */
+      mapConflated = function(key) {
+        return function(item) {
+          var mapped = [];
+          item.is_conflation_of.map(function(record) {
+            var values = record[key];
+            if (values)
+              if (jQuery.isArray(values))
+                mapped = mapped.concat(values);
+              else
+                mapped.push(values);
+          });
+
+          return mapped;
+        };
+      };
 
   return {
+
+    /**
+     * Parses an entity URI (place, person, etc.) and determines the appropriate authority ID
+     * shortcode and signature color.
+     */
+    parseEntityURI : function(uri) {
+      var parseResult = { uri: uri };
+
+      jQuery.each(KNOWN_AUTHORITIES, function(i, auth) {
+        var cont = true;
+        jQuery.each(auth.url_patterns, function(j, pattern) {
+          if (uri.indexOf(pattern) === 0) {
+            parseResult.isKnownAuthority = true;
+            parseResult.shortcode = auth.shortcode;
+            parseResult.id = uri.substring(pattern.length);
+            parseResult.initial = auth.initial;
+            parseResult.color = auth.color;
+            cont = false;
+            return cont;
+          }
+        });
+        return cont;
+      });
+
+      return parseResult;
+    },
 
     /** We'll do this pre-processing step on the server later! **/
     getHierarchyPath : function(hierarchy) {

@@ -21,10 +21,19 @@ define([
         descriptionEl = infoEl.find('.item-description'),
 
         render = function() {
-          var descriptions = ItemUtils.getDescriptions(person).map(function(d) { return d.description; }),
+          var identifiers = ItemUtils.getURIs(person).map(function(uri) { return ItemUtils.parseEntityURI(uri); }),
+              descriptions = ItemUtils.getDescriptions(person).map(function(d) { return d.description; }),
               birthDate, deathDate;
 
           titleEl.html(person.title);
+
+          identifiers.forEach(function(id) {
+            var formatted = (id.shortcode) ? id.shortcode + ':' + id.id : id.uri,
+                li = jQuery('<li><a href="' + id.uri + '" target="_blank">' + formatted + '</a></li>');
+
+            if (id.color) li.css('background-color', id.color);
+            identifiersEl.append(li);
+          });
 
           if (person.temporal_bounds) {
             birthDate = Formatting.formatDate(person.temporal_bounds.from);

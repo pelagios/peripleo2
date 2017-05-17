@@ -1,9 +1,8 @@
 define([
   'ui/common/formatting',
   'ui/common/hasEvents',
-  'ui/common/itemUtils',
-  'ui/common/placeUtils'
-], function(Formatting, HasEvents, ItemUtils, PlaceUtils) {
+  'ui/common/itemUtils'
+], function(Formatting, HasEvents, ItemUtils) {
 
   var distinct = function(arr) {
         return arr.reduce(function(distinct, elem) {
@@ -16,7 +15,7 @@ define([
     var infoEl = jQuery(
           '<div class="item-info">' +
             '<h3 class="item-title"></h3>' +
-            '<ul class="place-ids"></ul>' +
+            '<ul class="item-identifiers"></ul>' +
             '<p class="place-names"></p>' +
             '<p class="item-description"></p>' +
             '<p class="item-temporal-bounds"></p>' +
@@ -29,7 +28,7 @@ define([
         tempBoundsEl  = infoEl.find('.item-temporal-bounds'),
 
         render = function() {
-          var identifiers = ItemUtils.getURIs(place).map(function(uri) { return PlaceUtils.parseURI(uri); }),
+          var identifiers = ItemUtils.getURIs(place).map(function(uri) { return ItemUtils.parseEntityURI(uri); }),
               descriptions = ItemUtils.getDescriptions(place).map(function(d) { return d.description; }),
               names = distinct(ItemUtils.getNames(place).map(function(n) { return n.name; }));
 
@@ -53,7 +52,7 @@ define([
         };
 
     HasEvents.apply(this);
-    
+
     render();
   };
   PlaceCard.prototype = Object.create(HasEvents.prototype);

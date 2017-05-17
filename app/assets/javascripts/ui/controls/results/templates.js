@@ -1,8 +1,7 @@
 define([
   'ui/common/formatting',
-  'ui/common/itemUtils',
-  'ui/common/placeUtils'
-], function(Formatting, ItemUtils, PlaceUtils) {
+  'ui/common/itemUtils'
+], function(Formatting, ItemUtils) {
 
   var BASE_TEMPLATE =
         '<li>' +
@@ -35,36 +34,38 @@ define([
         return li;
       },
 
-      createPlaceRow = function(item) {
-        var li = baseTemplate(item),
-            icon = li.find('.item-icon'),
+      /** Code for rendering the identifer bubbles on places and persons **/
+      appendIdentifiers = function(el, item) {
+        var identifiers = ItemUtils.getURIs(item).map(function(uri) { return ItemUtils.parseEntityURI(uri); }),
 
-            placeIds = jQuery('<p class="place-ids-small"></p>').insertAfter(li.find('.item-title')),
-
-            refs = ItemUtils.getURIs(item).map(function(uri) { return PlaceUtils.parseURI(uri); }),
-
-            appendRefs = function(refs) {
-              refs.forEach(function(ref) {
-                if (ref.isKnownGazetteer) {
-                  placeIds.append('<span class="place-id" title="' + ref.shortcode + ':' + ref.id +
-                  '" style="background-color:' + ref.color + '">' + ref.initial + '</span>');
+            append = function(ids) {
+              ids.forEach(function(id) {
+                if (id.isKnownAuthority) {
+                  el.append('<span class="item-id ' + id.shortcode + '" title="' + id.shortcode + ':' + id.id +
+                    '" style="background-color:' + id.color + '">' + id.initial + '</span>');
                 } else {
-                  placeIds.append('<span class="place-id" title="' + ref.uri + '">?</span>');
+                  el.append('<span class="item-id" title="' + id.uri + '">?</span>');
                 }
               });
             };
 
+        if (identifiers.length < 8) {
+          append(identifiers);
+        } else {
+          append(identifiers.slice(1, 8));
+          el.append('<span class="item-more-ids">and ' + (identifiers.length - 8) + ' more...</span>');
+        }
+      },
+
+      createPlaceRow = function(item) {
+        var li = baseTemplate(item),
+            icon = li.find('.item-icon'),
+            identifiersEl = jQuery('<p class="item-identifiers-small"></p>').insertAfter(li.find('.item-title'));
+
         icon.addClass('place');
         icon.prop('title', 'Place');
         icon.html(ICON_PLACE);
-
-        if (refs.length < 8) {
-          appendRefs(refs);
-        } else {
-          appendRefs(refs.slice(1, 8));
-          placeIds.append('<span class="place-more-ids">and ' + (refs.length - 8) + ' more...</span>');
-        }
-
+        appendIdentifiers(identifiersEl, item);
         return li;
       },
 
@@ -87,11 +88,13 @@ define([
 
       createPersonRow = function(item) {
         var li = baseTemplate(item),
-            icon = li.find('.item-icon');
+            icon = li.find('.item-icon'),
+            identifiersEl = jQuery('<p class="item-identifiers-small"></p>').insertAfter(li.find('.item-title'));
 
         icon.addClass('person');
         icon.prop('title', 'Person');
         icon.html(ICON_PERSON);
+        appendIdentifiers(identifiersEl, item);
         return li;
       },
 
