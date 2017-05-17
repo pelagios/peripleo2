@@ -40,11 +40,11 @@ define([
         },
 
         clearSearch = function(options) {
-          var pushState = (options) ? options.pushState !== false : true, // default true
+          var pState = (options) ? options.pushState !== false : true, // default true
               makeRequest = (options) ? options.makeRequest !== false : true,
               promise = search.clear(makeRequest);
 
-          if (pushState) pushState();
+          if (pState) pushState();
           return promise;
         },
 
@@ -56,11 +56,11 @@ define([
 
         // TODO remove redundancy with clearSearch
         updateFilters = function(diff, options) {
-          var pushState = (options) ? options.pushState !== false : true, // default true
+          var pState = (options) ? options.pushState !== false : true, // default true
               makeRequest = (options) ? options.makeRequest !== false : true,
               promise = search.updateFilters(diff, makeRequest);
 
-          if (pushState) pushState();
+          if (pState) pushState();
           return promise;
         },
 

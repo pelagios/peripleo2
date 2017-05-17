@@ -22,7 +22,7 @@ define([
           '</div>').appendTo(parentEl),
 
         titleEl       = infoEl.find('.item-title'),
-        identifiersEl = infoEl.find('.place-ids'),
+        identifiersEl = infoEl.find('.item-identifiers'),
         namesEl       = infoEl.find('.place-names'),
         descriptionEl = infoEl.find('.item-description'),
         tempBoundsEl  = infoEl.find('.item-temporal-bounds'),
