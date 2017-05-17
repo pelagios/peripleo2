@@ -13,7 +13,7 @@ object SimplePeopleCrosswalk {
   private def toItem(record: SimplePeopleRecord, dataset: PathHierarchy): ItemRecord =
     ItemRecord(
       record.uri,
-      record.identifiers,
+      Seq(record.uri),
       DateTime.now,
       None, // lastChangedAt
       record.title,
@@ -23,11 +23,12 @@ object SimplePeopleCrosswalk {
       record.descriptions,
       None, None, // homepage, license
       Seq.empty[Language],
-      Seq.empty[Depiction],
+      record.depiction.map(uri => Seq(Depiction(uri))).getOrElse(Seq.empty[Depiction]),
       None, None, // geometry, representativePoint
-      None, // TODO temporalBounds
+      record.temporalBounds,
       record.names,
-      Seq.empty[String], Seq.empty[String])
+      record.closeMatches,
+      Seq.empty[String])
   
   def fromJson(dataset: PathHierarchy)(record: String): Option[ItemRecord] = {
     Json.fromJson[SimplePeopleRecord](Json.parse(record)) match {
@@ -44,19 +45,23 @@ object SimplePeopleCrosswalk {
 
 case class SimplePeopleRecord(
   uri            : String,
-  identifiers    : Seq[String],
   title          : String,
   descriptions   : Seq[Description],
-  names          : Seq[Name])
+  names          : Seq[Name],
+  depiction      : Option[String],
+  temporalBounds : Option[TemporalBounds],
+  closeMatches   : Seq[String])
 
 object SimplePeopleRecord {
 
   implicit val simplePeopleRecordReads: Reads[SimplePeopleRecord] = (
     (JsPath \ "uri").read[String] and
-    (JsPath \ "identifiers").read[Seq[String]] and
     (JsPath \ "title").read[String] and
     (JsPath \ "descriptions").readNullable[Seq[Description]].map(_.getOrElse(Seq.empty[Description])) and
-    (JsPath \ "names").readNullable[Seq[Name]].map(_.getOrElse(Seq.empty[Name]))
+    (JsPath \ "names").readNullable[Seq[Name]].map(_.getOrElse(Seq.empty[Name])) and
+    (JsPath \ "depiction").readNullable[String] and
+    (JsPath \ "temporal_bounds").readNullable[TemporalBounds] and
+    (JsPath \ "closeMatches").read[Seq[String]]
   )(SimplePeopleRecord.apply _)
 
 }
