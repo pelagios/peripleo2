@@ -13,6 +13,14 @@ require([
   'ui/api',
 ], function(ItemUtils, ResultList, SearchPanel, SelectionPanel, Map, State, API) {
 
+  /**
+   * A composition helper that puts a function in sequences with a jQuery deferred function.
+   * I.e. function b is called after function a is .done(), with the results of a as input.
+   */
+  var seq = function(a, b) {
+    return function(arg) { a(arg).done(b); };
+  };
+
   jQuery(document).ready(function() {
     var body = jQuery(document.body),
 
@@ -39,7 +47,8 @@ require([
                      map.setSearchResponse(response);
         },
 
-        onStateUpdate = function(state) {
+        // Happens on 'Back' button, or on page load (when URL params are set)
+        onStateChange = function(state) {
           searchPanel.setState(state);
                   map.setState(state);
 
@@ -101,15 +110,21 @@ require([
                 });
               },
 
-              // Filter search (once) by this Place
+              // Selecting a place should select the first item at this place.
+              // To do this, we need to:
+              // - issue a search request, filtered by the place
+              // - select the first item in the search response
+              // We DON'T want:
+              // - the rest of the UI state (and history) to update after the request
+              // - the place filter to remain active after the request
               selectPlace = function(place) {
                 var uri = ItemUtils.getURIs(place)[0],
-                    filter = { places : [ uri ] },
-                    onetimeSettings = { topPlaces: false };
+                    filter = { places : [ uri ] };
 
-                state.updateFilters(filter, onetimeSettings)
+                state.updateFilters(filter, { updateState: false })
                   .done(function(results) {
                     selectItem(results.items[0]);
+                    state.updateFilters({ places: false }, { updateState: false });
                   });
               },
 
@@ -156,21 +171,23 @@ require([
 
     map.on('selectPlace', onSelectItem);
 
-    searchPanel.on('open', state.openFilterPane);
-    searchPanel.on('close', state.closeFilterPane);
-    searchPanel.on('queryChange', state.setQuery);
-    searchPanel.on('timerangeChange', state.setTimerange);
+    searchPanel.on('open', seq(function() { return state.setFilterPaneOpen(true); }, onSearchResponse));
+    // TODO this will internally fire a new search request - but that's not really needed!
+    searchPanel.on('close', seq(function() { return state.setFilterPaneOpen(false); }, onSearchResponse));
+    searchPanel.on('queryChange', seq(state.setQueryPhrase, onSearchResponse));
+    searchPanel.on('timerangeChange', seq(state.setTimerange, onSearchResponse));
     searchPanel.on('selectSuggestOption', onSelectIdentifier);
 
     selectionPanel.on('select', onSelectIdentifier);
 
     resultList.on('select', onSelectItem);
-    resultList.on('nextPage', state.loadNextPage);
+    resultList.on('nextPage', seq(state.loadNextPage, resultList.appendPage));
 
-    state.on('searchResponse', onSearchResponse);
-    state.on('nextPageResponse', resultList.appendPage);
+    // TODO handle these via promises
+    // state.on('searchResponse', onSearchResponse);
+    // state.on('nextPageResponse', resultList.appendPage);
 
-    state.on('stateUpdate', onStateUpdate);
+    state.on('stateChange', onStateChange);
     state.init();
   });
 

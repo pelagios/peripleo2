@@ -15,8 +15,6 @@ define([
 
         currentSelection = false,
 
-        // TODO set initial state from URL bar
-        // TODO trigger upstream event in case there are non-default settings in URL bar
         uiState = {
           filterPaneOpen: false
         },
@@ -35,50 +33,41 @@ define([
           if (state) {
             uiState = state.ui;
             search.set(state.search);
-            self.fireEvent('stateUpdate', state);
+            self.fireEvent('stateChange', state);
           }
         },
 
         clearSearch = function(refreshUI) {
-          search.clear(refreshUI);
+          var promise = search.clear(refreshUI);
           if (refreshUI) pushState();
+          return promise;
         },
 
-        // TODO Rename to setQueryPhrase
-        // TODO use config object instead
-        // { updateState: false | true }
-        // TODO do we really need one-time settings?
-        // TODO they are currently used only when selecting a place: an additional query
-        // TODO is fired with the place as filter, but with topPlaces suppressed
-        // TODO can we get around that in a cleaner way?
-        setQuery = function(query, opt_onetime_settings) {
-          var promise = search.setQuery(query, opt_onetime_settings);
+        setQueryPhrase = function(query) {
+          var promise = search.setQuery(query);
           pushState();
           return promise;
         },
 
-        updateFilters = function(diff, opt_onetime_settings) {
-          var promise = search.updateFilters(diff, opt_onetime_settings);
+        updateFilters = function(diff) {
+          var updateState = (opt_config) ? opt_config.updateState : true,
+              promise = search.updateFilters(diff, !updateState);
+
+          if (updateState) pushState();
+          return promise;
+        },
+
+        setTimerange = function(range) {
+          var promise = search.setTimerange(range);
           pushState();
           return promise;
         },
 
-        setTimerange = function(range, opt_onetime_settings) {
-          var promise = search.setTimerange(range, opt_onetime_settings);
+        setFilterPaneOpen = function(open) {
+          uiState.filterPaneOpen = open;
+          var promise = search.setAggregationsEnabled(open);
           pushState();
           return promise;
-        },
-
-        openFilterPane = function() {
-          uiState.filterPaneOpen = true;
-          search.setAggregationsEnabled(true);
-          pushState();
-        },
-
-        closeFilterPane = function() {
-          uiState.filterPaneOpen = false;
-          search.setAggregationsEnabled(false);
-          pushState();
         },
 
         setLayerChanged = function(name) {
@@ -91,19 +80,19 @@ define([
           pushState();
         };
 
-    search.on('searchResponse', this.forwardEvent('searchResponse'));
-    search.on('nextPageResponse', this.forwardEvent('nextPageResponse'));
+    // TODO handle via promises
+    // search.on('searchResponse', this.forwardEvent('searchResponse'));
+    // search.on('nextPageResponse', this.forwardEvent('nextPageResponse'));
 
     history.on('changeState', setState);
 
     this.init = init;
     this.clearSearch = clearSearch;
     this.loadNextPage = search.loadNextPage;
-    this.setQuery = setQuery;
+    this.setQueryPhrase = setQueryPhrase;
     this.updateFilters = updateFilters;
     this.setTimerange = setTimerange;
-    this.openFilterPane = openFilterPane;
-    this.closeFilterPane = closeFilterPane;
+    this.setFilterPaneOpen = setFilterPaneOpen;
     this.setLayerChanged = setLayerChanged;
     this.setSelectedItem = setSelectedItem;
 

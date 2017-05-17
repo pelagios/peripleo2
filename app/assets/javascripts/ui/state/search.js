@@ -1,4 +1,4 @@
-define(['ui/common/hasEvents'], function(HasEvents) {
+define([], function() {
 
       /** Number of results per page **/
   var PAGE_SIZE = 20,
@@ -64,12 +64,9 @@ define(['ui/common/hasEvents'], function(HasEvents) {
           return url;
         },
 
-        buildFirstPageQuery = function(opt_onetime_settings) {
+        buildFirstPageQuery = function() {
           var url = buildBaseQuery(),
-              settings = (opt_onetime_settings) ?
-                // Run this query with transient one-time settings
-                jQuery.extend({}, searchArgs.settings, opt_onetime_settings) :
-                searchArgs.settings;
+              settings = searchArgs.settings;
 
           // First page query includes aggregations
           url = appendIfExists(settings.timeHistogram, 'time_histogram', url);
@@ -87,7 +84,7 @@ define(['ui/common/hasEvents'], function(HasEvents) {
           return buildBaseQuery() + '&offset=' + (currentOffset + PAGE_SIZE);
         },
 
-        makeRequest = function(opt_onetime_settings) {
+        makeRequest = function() {
 
           var deferred = jQuery.Deferred(),
 
@@ -108,8 +105,7 @@ define(['ui/common/hasEvents'], function(HasEvents) {
               },
 
               request = function() {
-                jQuery.getJSON(buildFirstPageQuery(opt_onetime_settings), function(response) {
-                  self.fireEvent('searchResponse', response);
+                jQuery.getJSON(buildFirstPageQuery(), function(response) {
                   deferred.resolve(response);
                 }).always(handlePending);
               };
@@ -125,10 +121,14 @@ define(['ui/common/hasEvents'], function(HasEvents) {
         },
 
         loadNextPage = function() {
+          var deferred = jQuery.Deferred();
+
           jQuery.getJSON(buildNextPageQuery(), function(response) {
             currentOffset = response.offset;
-            self.fireEvent('nextPageResponse', response);
+            deferred.resolve(response);
           });
+
+          return deferred.promise(this);
         },
 
         set = function(args) {
@@ -136,6 +136,7 @@ define(['ui/common/hasEvents'], function(HasEvents) {
           makeRequest();
         },
 
+        // TODO promise
         clear = function(refreshUI) {
           var refresh = refreshUI !== false; // default true
 
@@ -147,19 +148,19 @@ define(['ui/common/hasEvents'], function(HasEvents) {
             makeRequest();
         },
 
-        setQuery = function(query, opt_onetime_settings) {
+        setQuery = function(query) {
           searchArgs.query = query;
-          return makeRequest(opt_onetime_settings);
+          return makeRequest();
         },
 
-        updateFilters = function(diff, opt_onetime_settings) {
+        updateFilters = function(diff, preventDefault) {
           jQuery.extend(searchArgs.filters, diff);
-          return makeRequest(opt_onetime_settings);
+          return makeRequest(preventDefault);
         },
 
-        setTimerange = function(range, opt_onetime_settings) {
+        setTimerange = function(range) {
           searchArgs.timerange = range;
-          return makeRequest(opt_onetime_settings);
+          return makeRequest();
         },
 
         updateSettings = function(diff) {
@@ -183,10 +184,7 @@ define(['ui/common/hasEvents'], function(HasEvents) {
     this.setTimerange = setTimerange;
     this.updateFilters = updateFilters;
     this.updateSettings = updateSettings;
-
-    HasEvents.apply(this);
   };
-  Search.prototype = Object.create(HasEvents.prototype);
 
   return Search;
 
