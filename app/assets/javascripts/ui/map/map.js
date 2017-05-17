@@ -49,9 +49,10 @@ define([
         },
 
         setSelectedItem = function(item, placeReferences) {
-          var placeURIs = placeReferences.map(function(ref) {
-                return ref.identifiers[0];
-              });
+          // The item won't necessarily have place references
+          var placeURIs = (placeReferences) ?
+                placeReferences.map(function(ref) { return ref.identifiers[0]; }) :
+                [];
 
           // TODO rethink all possible situtations
           // TODO - what if the places are not in the topPlaceLayer yet (happens for autosuggest selections!)

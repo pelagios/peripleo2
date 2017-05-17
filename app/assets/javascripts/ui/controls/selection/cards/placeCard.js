@@ -53,6 +53,7 @@ define([
         };
 
     HasEvents.apply(this);
+    
     render();
   };
   PlaceCard.prototype = Object.create(HasEvents.prototype);

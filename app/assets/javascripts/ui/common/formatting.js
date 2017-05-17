@@ -1,9 +1,23 @@
 define([], function() {
 
+  var MONTH_NAMES_SHORT = [
+    'Jan', 'Feb', 'Mar', 'Apr',
+    'May', 'Jun', 'Jul', 'Aug',
+    'Sept', 'Oct', 'Nov', 'Dec' ];
+
   return {
 
     formatNumber : function(n) {
       return numeral(n).format('0,0');
+    },
+
+    formatDate : function(date) {
+      var d = (date instanceof Date) ? date : new Date(Date.parse(date)),
+          day = d.getDate(),
+          month = d.getMonth(),
+          year = d.getFullYear();
+
+      return MONTH_NAMES_SHORT[month] + ' ' + day + ', ' + year;
     },
 
     formatYear : function(dateOrYear) {
