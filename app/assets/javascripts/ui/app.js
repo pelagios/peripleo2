@@ -167,13 +167,22 @@ require([
               // TODO shouldn't happen unless connection or backend is down
               // TODO show error popup
             });
+        },
+
+        onOpenFilterPane = function() {
+          state.setFilterPaneOpen(true).done(onSearchResponse);
+        },
+
+        onCloseFilterPane = function() {
+          // TODO this will internally fire a new search request (whose response
+          // TODO gets ignored) - that's not really needed!
+          state.setFilterPaneOpen(false);
         };
 
     map.on('selectPlace', onSelectItem);
 
-    searchPanel.on('open', seq(function() { return state.setFilterPaneOpen(true); }, onSearchResponse));
-    // TODO this will internally fire a new search request - but that's not really needed!
-    searchPanel.on('close', seq(function() { return state.setFilterPaneOpen(false); }, onSearchResponse));
+    searchPanel.on('open', onOpenFilterPane);
+    searchPanel.on('close', onCloseFilterPane);
     searchPanel.on('queryChange', seq(state.setQueryPhrase, onSearchResponse));
     searchPanel.on('timerangeChange', seq(state.setTimerange, onSearchResponse));
     searchPanel.on('selectSuggestOption', onSelectIdentifier);
@@ -182,10 +191,6 @@ require([
 
     resultList.on('select', onSelectItem);
     resultList.on('nextPage', seq(state.loadNextPage, resultList.appendPage));
-
-    // TODO handle these via promises
-    // state.on('searchResponse', onSearchResponse);
-    // state.on('nextPageResponse', resultList.appendPage);
 
     state.on('stateChange', onStateChange);
     state.init();

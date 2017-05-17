@@ -80,10 +80,6 @@ define([
           pushState();
         };
 
-    // TODO handle via promises
-    // search.on('searchResponse', this.forwardEvent('searchResponse'));
-    // search.on('nextPageResponse', this.forwardEvent('nextPageResponse'));
-
     history.on('changeState', setState);
 
     this.init = init;

@@ -133,7 +133,7 @@ define([], function() {
 
         set = function(args) {
           searchArgs = args;
-          makeRequest();
+          return makeRequest();
         },
 
         // TODO promise
@@ -145,7 +145,7 @@ define([], function() {
           searchArgs.timerange = { from: false, to : false };
 
           if (refresh)
-            makeRequest();
+            return makeRequest();
         },
 
         setQuery = function(query) {
