@@ -39,9 +39,11 @@ define([
           }
         },
 
-        clearSearch = function(refreshUI) {
-          var promise = search.clear(refreshUI);
-          if (refreshUI) pushState();
+        clearSearch = function(opt_pushState) {
+          var pushState = opt_pushState !== false, // default true
+              promise = search.clear(pushState);
+
+          if (pushState) pushState();
           return promise;
         },
 
@@ -51,11 +53,11 @@ define([
           return promise;
         },
 
-        updateFilters = function(diff) {
-          var updateState = (opt_config) ? opt_config.updateState : true,
-              promise = search.updateFilters(diff, !updateState);
+        updateFilters = function(diff, opt_config) {
+          var pushState = (opt_config) ? opt_config.pushState : true,
+              promise = search.updateFilters(diff);
 
-          if (updateState) pushState();
+          if (pushState) pushState();
           return promise;
         },
 

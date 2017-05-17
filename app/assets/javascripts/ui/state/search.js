@@ -136,15 +136,12 @@ define([], function() {
           return makeRequest();
         },
 
-        // TODO promise
-        clear = function(refreshUI) {
-          var refresh = refreshUI !== false; // default true
-
+        clear = function(makeRequest) {
           searchArgs.query = false;
           searchArgs.filters = {};
           searchArgs.timerange = { from: false, to : false };
 
-          if (refresh)
+          if (makeRequest)
             return makeRequest();
         },
 
@@ -153,9 +150,9 @@ define([], function() {
           return makeRequest();
         },
 
-        updateFilters = function(diff, preventDefault) {
+        updateFilters = function(diff) {
           jQuery.extend(searchArgs.filters, diff);
-          return makeRequest(preventDefault);
+          return makeRequest();
         },
 
         setTimerange = function(range) {
