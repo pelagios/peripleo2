@@ -48,12 +48,17 @@ require([
         },
 
         // Happens on 'Back' button, or on page load (when URL params are set)
-        onStateChange = function(state) {
+        onStateChange = function(e) {
+          var state = e.state, // The state, as manipulated by the user (or set by the URL)
+              request = e.request; // Promise of the search request triggered by the state change
+
           searchPanel.setState(state);
                   map.setState(state);
 
           if (state.selected)
             onSelectIdentifier(state.selected);
+
+          request.done(onSearchResponse);
         },
 
         deselect = function() {

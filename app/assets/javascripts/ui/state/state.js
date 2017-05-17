@@ -32,8 +32,10 @@ define([
         setState = function(state) {
           if (state) {
             uiState = state.ui;
-            search.set(state.search);
-            self.fireEvent('stateChange', state);
+            self.fireEvent('stateChange', {
+              state   : state,
+              request : search.set(state.search)
+            });
           }
         },
 
