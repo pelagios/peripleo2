@@ -26,7 +26,7 @@ require([
 
         mapDiv = jQuery('<div id="map"></div>').appendTo(body),
 
-        controlsDiv = jQuery('<div id="controls"></div>').appendTo(body),
+        controlsDiv = jQuery('<div id="search-controls"></div>').appendTo(body),
 
         map = new Map(mapDiv[0]),
 

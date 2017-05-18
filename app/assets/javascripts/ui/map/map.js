@@ -9,14 +9,14 @@ define([
   // TODO can we make these configurable? Cf. E-ARK demo (where we used a JSON file)
   var BASE_LAYERS = {
 
-    AWMC : L.tileLayer('http://a.tiles.mapbox.com/v3/isawnyu.map-knmctlkh/{z}/{x}/{y}.png', {
-             attribution: 'Tiles &copy; <a href="http://mapbox.com/" target="_blank">MapBox</a> | ' +
-               'Data &copy; <a href="http://www.openstreetmap.org/" target="_blank">OpenStreetMap</a> and contributors, CC-BY-SA | '+
-               'Tiles and Data &copy; 2013 <a href="http://www.awmc.unc.edu" target="_blank">AWMC</a> ' +
-               '<a href="http://creativecommons.org/licenses/by-nc/3.0/deed.en_US" target="_blank">CC-BY-NC 3.0</a>'
-           })
+        AWMC : L.tileLayer('http://a.tiles.mapbox.com/v3/isawnyu.map-knmctlkh/{z}/{x}/{y}.png', {
+                 attribution: 'Tiles &copy; <a href="http://mapbox.com/" target="_blank">MapBox</a> | ' +
+                   'Data &copy; <a href="http://www.openstreetmap.org/" target="_blank">OpenStreetMap</a> and contributors, CC-BY-SA | '+
+                   'Tiles and Data &copy; 2013 <a href="http://www.awmc.unc.edu" target="_blank">AWMC</a> ' +
+                   '<a href="http://creativecommons.org/licenses/by-nc/3.0/deed.en_US" target="_blank">CC-BY-NC 3.0</a>'
+               })
 
-  };
+      };
 
   var Map = function(containerDiv) {
 
@@ -29,11 +29,24 @@ define([
           layers: [ BASE_LAYERS.AWMC ]
         }),
 
+        controlsEl = jQuery(
+          '<div id="map-controls">' +
+            '<div class="control layers icon" title="Change base layer">&#xf0c9;</div>' +
+            '<div class="zoom">' +
+              '<div class="control zoom-in" title="Zoom in">+</div>' +
+              '<div class="control zoom-out" title="Zoom out">&ndash;</div>' +
+            '</div>' +
+          '</div>').appendTo(document.body),
+
         itemLayer = new ItemLayer(map),
 
         topPlacesLayer = new TopPlacesLayer(map),
 
         layerSwitcher = new LayerSwitcher(),
+
+        btnLayers  = controlsEl.find('.layers'),
+        btnZoomIn  = controlsEl.find('.zoom-in'),
+        btnZoomOut = controlsEl.find('.zoom-out'),
 
         // Conveniently, this means a click on the base map, not a marker - deselect!
         onClick = function(e) {
@@ -63,6 +76,11 @@ define([
 
           topPlacesLayer.selectByURIs(placeURIs);
         };
+
+    // btnLayers.click(function() { layerSwitcher.open(); });
+    
+    btnZoomIn.click(function() { map.zoomIn(); });
+    btnZoomOut.click(function() { map.zoomOut(); });
 
     map.on('click', onClick);
 
