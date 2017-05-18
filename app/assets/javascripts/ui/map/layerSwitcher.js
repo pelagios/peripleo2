@@ -9,7 +9,7 @@ define(['ui/common/hasEvents'], function(HasEvents) {
             '<div class="ls-wrapper">' +
               '<div class="layerswitcher">' +
                 '<div class="ls-header">' +
-                  '<h2>Base Maps</h2>' +
+                  '<h2>Select Base Map</h2>' +
                   '<button class="icon tonicons cancel">&#xe897;</button>' +
                 '</div>' +
                 '<div class="ls-body">' +
@@ -51,11 +51,15 @@ define(['ui/common/hasEvents'], function(HasEvents) {
 
               onSelect = function(e) {
                 var target = jQuery(e.target),
+                    a = target.closest('a'),
                     li = target.closest('li'),
                     layerName = li.data('name');
 
-                self.fireEvent('changeLayer', layerName);
-                close();
+                // Don't trigger select if the click was on a link
+                if (a.length === 0) {
+                  self.fireEvent('changeLayer', layerName);
+                  close();
+                }
               };
 
           switcher.draggable({ handle: handle });
