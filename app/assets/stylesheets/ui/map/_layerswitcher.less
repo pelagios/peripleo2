@@ -19,9 +19,8 @@
 .layerswitcher {
   overflow:hidden;
   height:430px;
-  position:absolute;
+  position:relative;
   top:10%;
-  bottom:10%;
   right:0;
   left:0;
   margin:auto;
@@ -39,13 +38,18 @@
     cursor:move;
 
     h2 {
+      font-size:16px;
       font-weight:normal;
-      line-height:42px;
-      font-size:17px;
+      padding:2px 0;
+      color:@dark-grey-type;
+      line-height:13px;
       margin-left:15px;
     }
 
     button.cancel {
+      outline:none;
+      background:none;
+      border:none;
       color:@light-grey-type;
       font-size:18px;
       margin:0;
@@ -64,7 +68,6 @@
     bottom:0;
     left:0;
     right:0;
-    background-color:@blueish-white;
   }
 
   ul, h3, p {
@@ -105,7 +108,7 @@
 
     p {
       font-size:15px;
-      color:@dark-grey-type;
+      color:@light-grey-type;
       line-height:19px;
     }
 

@@ -77,8 +77,7 @@ define([
           topPlacesLayer.selectByURIs(placeURIs);
         };
 
-    // btnLayers.click(function() { layerSwitcher.open(); });
-    
+    btnLayers.click(function() { layerSwitcher.open(); });
     btnZoomIn.click(function() { map.zoomIn(); });
     btnZoomOut.click(function() { map.zoomOut(); });
 

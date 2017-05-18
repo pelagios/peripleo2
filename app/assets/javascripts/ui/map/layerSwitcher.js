@@ -10,7 +10,7 @@ define(['ui/common/hasEvents'], function(HasEvents) {
               '<div class="layerswitcher">' +
                 '<div class="ls-header">' +
                   '<h2>Base Maps</h2>' +
-                  '<button class="nostyle outline-icon cancel">&#xe897;</button>' +
+                  '<button class="icon tonicons cancel">&#xe897;</button>' +
                 '</div>' +
                 '<div class="ls-body">' +
                   '<ul>' +
@@ -44,7 +44,24 @@ define(['ui/common/hasEvents'], function(HasEvents) {
             '</div>' +
           '</div>').hide().appendTo(document.body),
 
-        btnCancel = element.find('.cancel'),
+        init = function() {
+          var switcher = element.find('.layerswitcher'),
+              handle   = element.find('.ls-header'),
+              cancel   = element.find('.cancel'),
+
+              onSelect = function(e) {
+                var target = jQuery(e.target),
+                    li = target.closest('li'),
+                    layerName = li.data('name');
+
+                self.fireEvent('changeLayer', layerName);
+                close();
+              };
+
+          switcher.draggable({ handle: handle });
+          element.on('click', 'li', onSelect);
+          cancel.click(close);
+        },
 
         open = function() {
           element.show();
@@ -54,16 +71,7 @@ define(['ui/common/hasEvents'], function(HasEvents) {
           element.hide();
         };
 
-    btnCancel.click(close);
-
-    element.on('click', 'li', function(e) {
-      var target = jQuery(e.target),
-          li = target.closest('li'),
-          layerName = li.data('name');
-
-      self.fireEvent('changeLayer', layerName);
-      close();
-    });
+    init();
 
     this.open = open;
 
