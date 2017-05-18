@@ -29,7 +29,7 @@ case class SearchFilters(
   
   languageFilter: Option[TermFilter],
   
-  placeFilter: Option[TermFilter],
+  placeFilter: Option[PlaceFilter],
   
   dateRangeFilter: Option[DateRangeFilter],
   
@@ -122,7 +122,7 @@ object SearchArgs {
       buildTermFilter("categories", "ex_categories", q),
       buildTermFilter("datasets", "ex_datasets", q),
       buildTermFilter("langs", "ex_langs", q),
-      getArg("places", q).map(uris => TermFilter(split(uris), TermFilter.ONLY)),
+      getArg("places", q).map(uris => PlaceFilter(split(uris), TermFilter.ONLY)),
       buildDateRangeFilter(q),
       buildSpatialFilter(q),
       getArg("has_images", q).map(_.toBoolean),

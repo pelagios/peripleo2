@@ -1,10 +1,8 @@
 package services.item.search
 
 import com.sksamuel.elastic4s.ElasticDsl._
-import com.sksamuel.elastic4s.{ AbstractAggregationDefinition, HitAs, RangeQueryDefinition, RichSearchHit }
+import com.sksamuel.elastic4s._
 import javax.inject.{ Inject, Singleton }
-import org.joda.time.{ DateTime, DateTimeZone }
-import org.joda.time.format.DateTimeFormat
 import play.api.libs.json.Json
 import scala.concurrent.{ Future, ExecutionContext }
 import scala.language.reflectiveCalls
@@ -20,11 +18,7 @@ class SearchService @Inject() (
   implicit val notifications: NotificationService,
   implicit val ctx: ExecutionContext
 ) {
-
-  private val dateFormatter = DateTimeFormat.forPattern("yyyy-MM-dd").withZone(DateTimeZone.UTC)
-
-  private def formatDate(dt: DateTime) = dateFormatter.print(dt.withZone(DateTimeZone.UTC))
-
+  
   private def histogramScript(interval: Int) =
     s"""
      f = doc['temporal_bounds.from']
@@ -40,68 +34,38 @@ class SearchService @Inject() (
       Json.fromJson[Item](Json.parse(hit.sourceAsString)).get
   }
 
-  private def buildFilters(args: SearchArgs) = {
+  private def buildFilters(args: SearchArgs): Future[BoolQueryDefinition] = {
 
-    def termFilterDefinition(field: String, filter: TermFilter) = {
-      val filters = filter.values.map(termQuery(field, _))
-      filter.setting match {
-        case TermFilter.ONLY => should(filters)
-        case TermFilter.EXCLUDE => not(filters)
-      }
+    def build(placeFilterDefinition: Option[QueryDefinition] = None) = {
+      val filterClauses =
+        Seq(
+          args.filters.itemTypeFilter.map(_.filterDefinition("item_type")),
+          args.filters.categoryFilter.map(_.filterDefinition("is_conflation_of.category")),
+          args.filters.datasetFilter.map(_.filterDefinition("is_conflation_of.is_in_dataset.ids")),
+          args.filters.languageFilter.map(_.filterDefinition("is_conflation_of.languages")),
+          placeFilterDefinition,
+          { if (args.filters.hasDepiction.getOrElse(false)) Some(nestedQuery("depictions") query { existsQuery("depictions.url") }) else None }
+        ).flatten ++
+          args.filters.dateRangeFilter.map(_.filterDefinition).getOrElse(Seq.empty[RangeQueryDefinition])
+  
+      val notClauses = Seq(
+        // Check for missing 'depicitions' field iff hasDepicitions is set to false
+        { if (!args.filters.hasDepiction.getOrElse(true)) Some(nestedQuery("depictions") query { existsQuery("depictions.url") }) else None },
+        { if (args.filters.rootOnly) Some(existsQuery("is_part_of")) else None  }
+      ).flatten 
+  
+      if (notClauses.size > 0)
+        bool { must(filterClauses) not (notClauses) }
+      else
+        bool { must(filterClauses) }
     }
-
-    def timerangeFilterDefinition() = args.filters.dateRangeFilter.map { filter =>
-      (filter.from, filter.to) match {
-        case (Some(from), Some(to)) =>
-          Seq(
-            rangeQuery("temporal_bounds.from").to(formatDate(to)),
-            rangeQuery("temporal_bounds.to").from(formatDate(from))
-          )
-
-        case _ =>
-          Seq()
-          // TODO support open intervals
-      }
-    }.getOrElse(Seq.empty[RangeQueryDefinition])
     
-    def placeFilterDefinition() = {
-      
-      def filterByURI(uri: String) = {
-        // Need to expand and/or search by doc_id
-        hasChildQuery(ES.REFERENCE) query { termQuery("reference_to.uri" -> uri) }
-      }
-        
-      args.filters.placeFilter.map { filter =>
-        if (filter.values.size == 1)
-          // One Place URIs - just add a single hasChild clause
-          filterByURI(filter.values.head)   
-        else
-          // Multiple Place URIs - add a should block, so that URIs are OR'ed
-          // TODO maybe support AND later? But needs extra treatment in SearchArgs object
-          should { filter.values.map(filterByURI(_)) }
-      }
+    args.filters.placeFilter match {
+      // Different handling required depending on whether there's a place filter or not
+      case Some(placeFilter) => placeFilter.filterDefinition().map(f => build(Some(f)))
+      case None => Future.successful(build())
     }
-
-    val filterClauses =
-      Seq(
-        args.filters.itemTypeFilter.map(termFilterDefinition("item_type", _)),
-        args.filters.categoryFilter.map(termFilterDefinition("is_conflation_of.category", _)),
-        args.filters.datasetFilter.map(termFilterDefinition("is_conflation_of.is_in_dataset.ids", _)),
-        args.filters.languageFilter.map(termFilterDefinition("is_conflation_of.languages", _)),        
-        placeFilterDefinition(),
-        { if (args.filters.hasDepiction.getOrElse(false)) Some(nestedQuery("depictions") query { existsQuery("depictions.url") }) else None }
-      ).flatten ++ timerangeFilterDefinition()
-
-    val notClauses = Seq(
-      // Check for missing 'depicitions' field iff hasDepicitions is set to false
-      { if (!args.filters.hasDepiction.getOrElse(true)) Some(nestedQuery("depictions") query { existsQuery("depictions.url") }) else None },
-      { if (args.filters.rootOnly) Some(existsQuery("is_part_of")) else None  }
-    ).flatten
-
-    if (notClauses.size > 0)
-      bool { must(filterClauses) not (notClauses) }
-    else
-      bool { must(filterClauses) }
+    
   }
 
   private def buildAggregationDefinitions(args: SearchArgs) = {
@@ -125,7 +89,7 @@ class SearchService @Inject() (
     termAggregations ++ timeHistogramAggregations
   }
 
-  private def buildItemQuery(args: SearchArgs) =
+  private def buildItemQuery(args: SearchArgs, filter: QueryDefinition) =
     search in ES.PERIPLEO / ES.ITEM query {
       bool {
         must (
@@ -133,13 +97,13 @@ class SearchService @Inject() (
             queryStringQuery(args.query.getOrElse("*")),
             hasChildQuery("reference") query { termQuery("context", args.query.getOrElse("*")) }
           )
-        ) filter(buildFilters(args))
+        ) filter(filter)
       }
     // TODO need to figure out how to design the query
     // TODO we want post-filtering for the time histogram, but not the other aggregations
     } /* postFilter buildFilters(args) */ start args.offset limit args.limit aggregations buildAggregationDefinitions(args)
 
-  private def buildPlaceQuery(args: SearchArgs) =
+  private def buildPlaceQuery(args: SearchArgs, filter: QueryDefinition) =
     search in ES.PERIPLEO / ES.REFERENCE query {
       bool {
         must (
@@ -149,9 +113,7 @@ class SearchService @Inject() (
           )
         ) filter {
           bool {
-            must(
-              hasParentQuery("item") query buildFilters(args)
-            )
+            must( hasParentQuery("item") query filter )
           }
         }
       }
@@ -163,60 +125,65 @@ class SearchService @Inject() (
     ) // TODO sub-aggregate places vs people vs periods etc. to places only
 
   def query(args: SearchArgs): Future[RichResultPage] = {
-    val startTime = System.currentTimeMillis
       
-    val fPlaceQuery = es.client execute {
-      buildPlaceQuery(args)
-    } map { response =>
-      Aggregation.parseTerms(response.aggregations.get("by_place")).buckets
-    }
+    val startTime = System.currentTimeMillis
+    
+    // Building filters is an async process as some may require expansion
+    buildFilters(args).flatMap { filters =>
+      
+      val fPlaceQuery =
+        es.client execute { buildPlaceQuery(args, filters) } map { response =>
+          Aggregation.parseTerms(response.aggregations.get("by_place")).buckets
+        }
 
-    val fItemQuery = es.client execute {
-      buildItemQuery(args)
-    } map { response =>
-      val items = response.as[Item].toSeq
-      val aggregations = {
-        Option(response.aggregations) match {
-          case Some(aggs) =>
-            val histogram =
-              (Option(aggs.get("by_century")), Option(aggs.get("by_decade"))) match {
-                case (Some(_), Some(_)) =>
-                  val byCentury = Aggregation.parseHistogram(aggs.get("by_century"), "by_time")
-                  val byDecade = Aggregation.parseHistogram(aggs.get("by_decade"), "by_time")
-                  if (byCentury.buckets.size >= 40) Some(byCentury) else Some(byDecade)
-
-                case _ => None
-            }
-
-            Seq(
-              Option(response.aggregations.get("by_type")).map(Aggregation.parseTerms),
-              Option(response.aggregations.get("by_dataset")).map(Aggregation.parseTerms),
-              Option(response.aggregations.get("by_language")).map(Aggregation.parseTerms),
-              histogram
-            ).flatten
-
-          case None => Seq.empty[Aggregation]
+      val fItemQuery = es.client execute {
+        buildItemQuery(args, filters)
+      } map { response =>
+        val items = response.as[Item].toSeq
+        val aggregations = {
+          Option(response.aggregations) match {
+            case Some(aggs) =>
+              val histogram =
+                (Option(aggs.get("by_century")), Option(aggs.get("by_decade"))) match {
+                  case (Some(_), Some(_)) =>
+                    val byCentury = Aggregation.parseHistogram(aggs.get("by_century"), "by_time")
+                    val byDecade = Aggregation.parseHistogram(aggs.get("by_decade"), "by_time")
+                    if (byCentury.buckets.size >= 40) Some(byCentury) else Some(byDecade)
+  
+                  case _ => None
+              }
+  
+              Seq(
+                Option(response.aggregations.get("by_type")).map(Aggregation.parseTerms),
+                Option(response.aggregations.get("by_dataset")).map(Aggregation.parseTerms),
+                Option(response.aggregations.get("by_language")).map(Aggregation.parseTerms),
+                histogram
+              ).flatten
+  
+            case None => Seq.empty[Aggregation]
+          }
+        }
+  
+        (response.totalHits, items, aggregations)
+      }
+      
+      if (args.settings.topPlaces) {
+        val fResults = for {
+          (totalHits, items, aggregations) <- fItemQuery
+          placeCounts <- fPlaceQuery
+          places <- ItemService.resolveItems(placeCounts.map(_._1))
+        } yield (totalHits, items, aggregations, placeCounts, places)
+  
+        fResults.map { case (totalHits, items, aggregations, placeCounts, places) =>
+          val topPlaces = TopPlaces.build(placeCounts, places)
+          RichResultPage(System.currentTimeMillis - startTime, totalHits, args.offset, args.limit, items, aggregations, Some(topPlaces))
+        }
+      } else {
+        fItemQuery.map { case (totalHits, items, aggregations) =>
+          RichResultPage(System.currentTimeMillis - startTime, totalHits, args.offset, args.limit, items, aggregations, None)
         }
       }
-
-      (response.totalHits, items, aggregations)
-    }
-
-    if (args.settings.topPlaces) {
-      val fResults = for {
-        (totalHits, items, aggregations) <- fItemQuery
-        placeCounts <- fPlaceQuery
-        places <- ItemService.resolveItems(placeCounts.map(_._1))
-      } yield (totalHits, items, aggregations, placeCounts, places)
-
-      fResults.map { case (totalHits, items, aggregations, placeCounts, places) =>
-        val topPlaces = TopPlaces.build(placeCounts, places)
-        RichResultPage(System.currentTimeMillis - startTime, totalHits, args.offset, args.limit, items, aggregations, Some(topPlaces))
-      }
-    } else {
-      fItemQuery.map { case (totalHits, items, aggregations) =>
-        RichResultPage(System.currentTimeMillis - startTime, totalHits, args.offset, args.limit, items, aggregations, None)
-      }
+      
     }
   }
 
