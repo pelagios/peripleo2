@@ -2,8 +2,9 @@ define([
   'ui/common/hasEvents',
   'ui/common/itemUtils',
   'ui/map/itemLayer',
+  'ui/map/layerSwitcher',
   'ui/map/topPlacesLayer'
-], function(HasEvents, ItemUtils, ItemLayer, TopPlacesLayer) {
+], function(HasEvents, ItemUtils, ItemLayer, LayerSwitcher, TopPlacesLayer) {
 
   // TODO can we make these configurable? Cf. E-ARK demo (where we used a JSON file)
   var BASE_LAYERS = {
@@ -31,6 +32,8 @@ define([
         itemLayer = new ItemLayer(map),
 
         topPlacesLayer = new TopPlacesLayer(map),
+
+        layerSwitcher = new LayerSwitcher(),
 
         // Conveniently, this means a click on the base map, not a marker - deselect!
         onClick = function(e) {
