@@ -35,8 +35,8 @@ define([], function() {
         // Are we currently waiting for an API response?
         busy = false,
 
-        // Did additional requests arrive while busy?
-        requestPending = false,
+        // Last pending request that arrived while busy
+        pendingRequest = false,
 
         /** Returns (a clone of) the current search args **/
         getCurrentArgs = function() {
@@ -90,13 +90,13 @@ define([], function() {
           var deferred = jQuery.Deferred(),
 
               handlePending = function() {
-                if (requestPending) {
-                  request();
+                if (pendingRequest) {
+                  request(pendingRequest);
                   requestPending = false;
                 } else {
                   // Throttling: no request pending right now? Wait a bit
                   setTimeout(function() {
-                    if (requestPending)
+                    if (pendingRequest)
                       handlePending();
                     else
                       // Still nothing? Clear busy flag.
@@ -105,17 +105,17 @@ define([], function() {
                 }
               },
 
-              request = function() {
+              request = function(deferred) {
                 jQuery.getJSON(buildFirstPageQuery(), function(response) {
                   deferred.resolve(response);
                 }).always(handlePending);
               };
 
           if (busy) {
-            requestPending = true;
+            requestPending = deferred;
           } else {
             busy = true;
-            request();
+            request(deferred);
           }
 
           return deferred.promise(this);
