@@ -81,6 +81,13 @@ class SearchService @Inject() (
     itemBaseQuery(args, filter) limit 0 aggregations Seq(
         aggregation histogram "by_decade" script histogramScript(10) interval 10,
         aggregation histogram "by_century" script histogramScript(100) interval 100)
+  
+  def parseAggregtions(response: RichSearchResponse) =
+    Option(response.aggregations) match {
+      case Some(aggs) =>
+        
+      case None => Seq.empty[Aggregation]
+    }
 
   def query(args: SearchArgs): Future[RichResultPage] = {
       
@@ -98,29 +105,17 @@ class SearchService @Inject() (
         buildItemQuery(args, filter.withDateRangeFilter)
       } map { response =>
         val items = response.as[Item].toSeq
-        val aggregations = {
+        val aggregations =
           Option(response.aggregations) match {
-            case Some(aggs) =>
-              val histogram =
-                (Option(aggs.get("by_century")), Option(aggs.get("by_decade"))) match {
-                  case (Some(_), Some(_)) =>
-                    val byCentury = Aggregation.parseHistogram(aggs.get("by_century"), "by_time")
-                    val byDecade = Aggregation.parseHistogram(aggs.get("by_decade"), "by_time")
-                    if (byCentury.buckets.size >= 40) Some(byCentury) else Some(byDecade)
-  
-                  case _ => None
-              }
-  
+            case Some(aggs) =>  
               Seq(
                 Option(response.aggregations.get("by_type")).map(Aggregation.parseTerms),
                 Option(response.aggregations.get("by_dataset")).map(Aggregation.parseTerms),
-                Option(response.aggregations.get("by_language")).map(Aggregation.parseTerms),
-                histogram
+                Option(response.aggregations.get("by_language")).map(Aggregation.parseTerms)
               ).flatten
   
             case None => Seq.empty[Aggregation]
           }
-        }
   
         (response.totalHits, items, aggregations)
       }
@@ -128,22 +123,29 @@ class SearchService @Inject() (
       val fHistogramQuery =
         if (args.settings.timeHistogram)
           es.client execute { buildTimeHistogramQuery(args, filter.withoutDateRangeFilter) } map { response =>
-            // TODO build histogram
+            val byCentury = Aggregation.parseHistogram(response.aggregations.get("by_century"), "by_time")
+            val byDecade = Aggregation.parseHistogram(response.aggregations.get("by_decade"), "by_time")
+            if (byCentury.buckets.size >= 40) Some(byCentury) else Some(byDecade)
           }
         else
-          Future.successful(())
+          Future.successful(None)
       
       if (args.settings.topPlaces) {
         val fResults = for {
           (totalHits, items, aggregations) <- fItemQuery
           placeCounts <- fPlaceQuery
-          _ <- fHistogramQuery
+          histogram <- fHistogramQuery
           places <- ItemService.resolveItems(placeCounts.map(_._1))
-        } yield (totalHits, items, aggregations, placeCounts, places)
+        } yield (totalHits, items, aggregations, placeCounts, histogram, places)
   
-        fResults.map { case (totalHits, items, aggregations, placeCounts, places) =>
+        fResults.map { case (totalHits, items, aggregations, placeCounts, histogram, places) =>
           val topPlaces = TopPlaces.build(placeCounts, places)
-          RichResultPage(System.currentTimeMillis - startTime, totalHits, args.offset, args.limit, items, aggregations, Some(topPlaces))
+          val aggs = histogram match {
+            case Some(h) => aggregations :+ h
+            case None => aggregations
+          }
+          
+          RichResultPage(System.currentTimeMillis - startTime, totalHits, args.offset, args.limit, items, aggs, Some(topPlaces))
         }
       } else {
         fItemQuery.map { case (totalHits, items, aggregations) =>
