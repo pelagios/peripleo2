@@ -98,7 +98,7 @@ define([
         },
 
         /** User clicked a direct link to a different item **/
-        onSelectItem = function(e) {
+        onSelectDestination = function(e) {
           var identifier = onSelect(e);
           self.fireEvent('select', identifier);
           return false;
@@ -107,12 +107,12 @@ define([
         /** User clicked a referenced item, in order to trigger a filtered search **/
         onSelectReference = function(e) {
           var identifier = onSelect(e);
-          console.log(identifier);
+          self.fireEvent('filterBy', identifier);
           return false;
         };
 
-    element.on('click', '.item', onSelectItem);
-    element.on('click', '.reference', onSelectReference);
+    element.on('click', '.destination', onSelectDestination);
+    element.on('click', '.filter', onSelectReference);
 
     this.show = show;
     this.hide = hide;

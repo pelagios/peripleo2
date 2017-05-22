@@ -17,9 +17,7 @@ require([
    * A composition helper that puts a function in sequences with a jQuery deferred function.
    * I.e. function b is called after function a is .done(), with the results of a as input.
    */
-  var seq = function(a, b) {
-    return function(arg) { a(arg).done(b); };
-  };
+  var seq = function(a, b) { return function(arg) { a(arg).done(b); }; };
 
   jQuery(document).ready(function() {
     var body = jQuery(document.body),
@@ -207,6 +205,11 @@ require([
             });
         },
 
+        onFilterByReference = function(identifier) {
+          // TODO
+          console.log('filtered search: ' + identifier);
+        },
+
         onOpenFilterPane = function() {
           state.setFilterPaneOpen(true).done(onSearchResponse);
         },
@@ -226,6 +229,7 @@ require([
     searchPanel.on('selectSuggestOption', onSelectIdentifier);
 
     selectionPanel.on('select', onSelectIdentifier);
+    selectionPanel.on('filterBy', onFilterByReference);
 
     resultList.on('select', onSelectItem);
     resultList.on('nextPage', seq(state.loadNextPage, resultList.appendPage));

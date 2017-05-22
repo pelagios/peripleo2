@@ -28,7 +28,10 @@ define([
                 item.title;
 
           ItemUtils.getHierarchyPath(record.is_in_dataset).forEach(function(segment) {
-            inDatasetEl.append('<span><a href="#">' + segment.title + '</a></span>');
+            inDatasetEl.append(
+              '<span><a class="destination" data-id="' + segment.id + '" href="#">' +
+                segment.title +
+              '</a></span>');
           });
 
           titleEl.html(title);
@@ -54,8 +57,9 @@ define([
                   label = (count > 2) ? 'results' : 'result',
 
                   moreResults = (count > 1) ?
-                    '<span class="more"> · <a href="#">' + Formatting.formatNumber(count - 1) + ' more ' + label + '</a></span>' :
-                    '';
+                    '<span class="more"> · <a class="filter" data-id="' + counts[0].identifier + '" href="#">' +
+                      Formatting.formatNumber(count - 1) + ' more ' + label +
+                    '</a></span>' : '';
 
               referencesEl.append(
                 '<p class="ref-place">' +
