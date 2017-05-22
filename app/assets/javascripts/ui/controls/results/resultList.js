@@ -9,8 +9,14 @@ define([
 
         element = jQuery(
           '<div id="result-list">' +
-            '<ul></ul>' +
-            '<div class="rl-wait"><img src="/assets/images/wait-circle.gif"/></div>' +
+            '<div class="rl-header">' +
+              '<span class="results-local">4 results at Athenae</span> · ' +
+              '<span class="results-all">Show all (19)</span>' +
+            '</div>' +
+            '<div class="rl-body">' +
+              '<ul></ul>' +
+              '<div class="rl-wait"><img src="/assets/images/wait-circle.gif"/></div>' +
+            '</div>' +
           '</div>').appendTo(parentEl),
 
         listEl = element.find('ul'),
