@@ -55,7 +55,7 @@ define([
                   label = (count > 2) ? 'results' : 'result',
 
                   moreResults = (count > 1) ?
-                    '<span class="more"> · <a href="#">' + (count - 1) + ' more ' + label + '</a></span>' :
+                    '<span class="more"> · <a href="#">' + Formatting.formatNumber(count - 1) + ' more ' + label + '</a></span>' :
                     '';
 
               referencesEl.append(
