@@ -19,6 +19,10 @@ define([
             '</div>' +
           '</div>').appendTo(parentEl),
 
+        headerEl = element.find('.rl-header').hide(),
+
+        bodyEl = element.find('.rl-body'),
+
         listEl = element.find('ul'),
 
         waitSpinner = element.find('.rl-wait').hide(),
@@ -48,11 +52,11 @@ define([
         },
 
         onScroll = function() {
-          lastScrollTop = element.scrollTop();
+          lastScrollTop = bodyEl.scrollTop();
 
           if (isMoreAvailable) {
-            var scrollPos = element.scrollTop() + element.innerHeight(),
-                scrollBottom = element[0].scrollHeight - waitSpinner.outerHeight();
+            var scrollPos = bodyEl.scrollTop() + bodyEl.innerHeight(),
+                scrollBottom = bodyEl[0].scrollHeight - waitSpinner.outerHeight();
 
             if (scrollPos >= scrollBottom && !waitingForNextPage) {
               // Keep a flag, so that no more requests are fired before the next page arrives
@@ -70,7 +74,7 @@ define([
 
           if (!append) {
             listEl.empty();
-            listEl.scrollTop(0);
+            bodyEl.scrollTop(0);
           }
 
           response.items.forEach(createRow);
@@ -84,7 +88,7 @@ define([
           // We currently don't do anything with the selected item. However, unfortunately,
           // the element's scroll position jumps when a selection is made due (flexbox...).
           // Therefore we force the scroll position back to what it was before selection
-          element.scrollTop(lastScrollTop);
+          bodyEl.scrollTop(lastScrollTop);
         },
 
         appendPage = function(response) {
@@ -92,8 +96,8 @@ define([
           waitingForNextPage = false;
         };
 
-    element.on('click', 'li', onSelect);
-    element.scroll(onScroll);
+    bodyEl.on('click', 'li', onSelect);
+    bodyEl.scroll(onScroll);
 
     this.appendPage = appendPage;
     this.setSearchResponse = setSearchResponse;
