@@ -206,8 +206,10 @@ require([
         },
 
         onFilterByReference = function(identifier) {
-          // TODO
-          console.log('filtered search: ' + identifier);
+          // TODO support filter by person | period
+          state.updateFilters({ places : [ identifier ] }).done(function(results) {
+            resultList.setLocalResponse(results);
+          });
         },
 
         onOpenFilterPane = function() {

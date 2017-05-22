@@ -3,6 +3,8 @@ define([
   'ui/controls/results/templates'
 ], function(HasEvents, Templates) {
 
+  var SLIDE_DURATION = 120;
+
   var ResultList = function(parentEl) {
 
     var self = this,
@@ -84,6 +86,12 @@ define([
           renderResponse(response, false);
         },
 
+        setLocalResponse = function(response) {
+          // headerEl.velocity('slideDown', { duration: SLIDE_DURATION });
+          // TODO remember original result count!
+          // TODO re-render the list
+        },
+
         setSelectedItem = function(item) {
           // We currently don't do anything with the selected item. However, unfortunately,
           // the element's scroll position jumps when a selection is made due (flexbox...).
@@ -101,6 +109,7 @@ define([
 
     this.appendPage = appendPage;
     this.setSearchResponse = setSearchResponse;
+    this.setLocalResponse = setLocalResponse;
     this.setSelectedItem = setSelectedItem;
 
     HasEvents.apply(this);
