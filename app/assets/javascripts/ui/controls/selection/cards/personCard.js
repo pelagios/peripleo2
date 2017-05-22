@@ -1,8 +1,7 @@
 define([
   'ui/common/formatting',
-  'ui/common/hasEvents',
   'ui/common/itemUtils'
-], function(Formatting, HasEvents, ItemUtils) {
+], function(Formatting, ItemUtils) {
 
   var PersonCard  = function(parentEl, person, references) {
     var infoEl = jQuery(
@@ -47,11 +46,8 @@ define([
             descriptionEl.html(descriptions[0]);
         };
 
-    HasEvents.apply(this);
-
     render();
   };
-  PersonCard.prototype = Object.create(HasEvents.prototype);
 
   return PersonCard;
 

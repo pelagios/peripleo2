@@ -1,8 +1,7 @@
 define([
   'ui/common/formatting',
-  'ui/common/hasEvents',
   'ui/common/itemUtils'
-], function(Formatting, HasEvents, ItemUtils) {
+], function(Formatting, ItemUtils) {
 
   var distinct = function(arr) {
         return arr.reduce(function(distinct, elem) {
@@ -51,11 +50,8 @@ define([
             tempBoundsEl.html(Formatting.formatTemporalBounds(place.temporal_bounds));
         };
 
-    HasEvents.apply(this);
-
     render();
   };
-  PlaceCard.prototype = Object.create(HasEvents.prototype);
 
   return PlaceCard;
 

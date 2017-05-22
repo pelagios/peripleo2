@@ -91,15 +91,28 @@ define([
             element.velocity('slideUp', { duration: SLIDE_DURATION });
         },
 
+        /** Common selection code **/
         onSelect = function(e) {
-          var link = jQuery(e.target),
-              identifier = link.data('id');
+          var link = jQuery(e.target);
+          return link.data('id');
+        },
 
+        /** User clicked a direct link to a different item **/
+        onSelectItem = function(e) {
+          var identifier = onSelect(e);
           self.fireEvent('select', identifier);
+          return false;
+        },
+
+        /** User clicked a referenced item, in order to trigger a filtered search **/
+        onSelectReference = function(e) {
+          var identifier = onSelect(e);
+          console.log(identifier);
           return false;
         };
 
-    element.on('click', '.destination', onSelect);
+    element.on('click', '.item', onSelectItem);
+    element.on('click', '.reference', onSelectReference);
 
     this.show = show;
     this.hide = hide;
