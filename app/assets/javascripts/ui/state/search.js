@@ -92,7 +92,7 @@ define([], function() {
               handlePending = function() {
                 if (pendingRequest) {
                   request(pendingRequest);
-                  requestPending = false;
+                  pendingRequest = false;
                 } else {
                   // Throttling: no request pending right now? Wait a bit
                   setTimeout(function() {
@@ -112,7 +112,7 @@ define([], function() {
               };
 
           if (busy) {
-            requestPending = deferred;
+            pendingRequest = deferred;
           } else {
             busy = true;
             request(deferred);

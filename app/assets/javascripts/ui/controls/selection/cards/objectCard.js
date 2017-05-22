@@ -45,8 +45,8 @@ define([
 
           if (head) {
             head.forEach(function(place) {
-              referencesEl.html(
-                '<p class="findspot">' + // TODO we will have more than just findspots in the future!
+              referencesEl.append(
+                '<p class="ref-place">' +
                   '<span><a href="#" title="' + place.description + '">' + place.title + '</a></span>' +
                 '</p>');
             });

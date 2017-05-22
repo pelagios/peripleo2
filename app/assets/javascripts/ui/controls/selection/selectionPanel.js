@@ -52,7 +52,7 @@ define([
           }
         },
 
-        show = function(item, references) {
+        show = function(item, references, resultCounts) {
           var visible = element.is(':visible'),
 
               slideAction = (visible && !item) ? 'slideUp' : // Open + deselect

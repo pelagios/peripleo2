@@ -99,11 +99,47 @@ require([
 
               // Common select functionality
           var selectItem = function(item) {
-                var uri = ItemUtils.getURIs(item)[0];
 
-                API.getReferences(uri).done(function(references) {
+                var uri = ItemUtils.getURIs(item)[0],
+
+                    fetchResultCountForReference = function(uri) {
+                      var filter = { places : [ uri ] };
+
+                      return state.updateFilters(filter, { pushState: false })
+                        .then(function(results) {
+                          state.updateFilters({ places: false }, { pushState: false, makeRequest: false });
+                          return { 'identifier' : uri, 'resultCount' : results.total };
+                        });
+                    },
+
+                    fetchReferences = API.getReferences(uri).then(function(references) {
+                      // Run filtered searches for the first two references of each type,
+                      // so we can display info in the UI
+                      var places = (references.PLACE) ? references.PLACE.slice(0, 3) : false,
+
+                          fPlaceCounts; // TODO support persona and period references
+
+                      if (places) {
+                        fPlaceCounts = places.map(function(place) {
+                          return fetchResultCountForReference(place.identifiers[0]);
+                        });
+
+                        return jQuery.when.apply(jQuery, fPlaceCounts).then(function() {
+                          return { references: references, resultCounts: arguments };
+                        });
+                      } else {
+                        return jQuery.Deferred().resolve(this).then(function() {
+                          return { references: references, resultCounts: [] };
+                        });
+                      }
+                    });
+
+                fetchReferences.done(function(result) {
+                  var references = result.references,
+                      resultCounts = result.resultCounts;
+
                   state.setSelectedItem(item);
-                  selectionPanel.show(item, references);
+                  selectionPanel.show(item, references, resultCounts);
                   resultList.setSelectedItem(item);
 
                   // Note: selection may have happend through the map, so technically no
@@ -115,8 +151,8 @@ require([
                 });
               },
 
-              // Selecting a place should select the first item at this place.
-              // To do this, we need to:
+              // Selecting a place should select the first ITEM at this place, rather then
+              // the place itself. To do this, we need to:
               // - issue a search request, filtered by the place
               // - select the first item in the search response
               // But we DON'T want:
@@ -127,10 +163,10 @@ require([
                 var uri = ItemUtils.getURIs(place)[0],
                     filter = { places : [ uri ] };
 
-                state.updateFilters(filter, { pushState: false })
-                  .done(function(results) {
-                    selectItem(results.items[0]);
+                return state.updateFilters(filter, { pushState: false })
+                  .then(function(results) {
                     state.updateFilters({ places: false }, { pushState: false, makeRequest: false });
+                    return results.items[0];
                   });
               },
 
@@ -145,7 +181,7 @@ require([
           if (item)
             switch(ItemUtils.getItemType(item)) {
               case 'PLACE':
-                selectPlace(item);
+                selectPlace(item).then(selectItem);
                 break;
               case 'OBJECT':
                 selectItem(item);
