@@ -48,7 +48,12 @@ class SearchService @Inject() (
       aggregation
         terms "by_place"
         field "reference_to.doc_id"
-        size 600
+        size 600,
+        
+      aggregation
+        terms "by_relation"
+        field "relation"
+        size 10
     ) // TODO sub-aggregate places vs people vs periods etc. to places only
   
   /** Common query components used to build item result and time histogram **/
@@ -79,15 +84,8 @@ class SearchService @Inject() (
  
   private def buildTimeHistogramQuery(args: SearchArgs, filter: QueryDefinition) =
     itemBaseQuery(args, filter) limit 0 aggregations Seq(
-        aggregation histogram "by_decade" script histogramScript(10) interval 10,
-        aggregation histogram "by_century" script histogramScript(100) interval 100)
-  
-  def parseAggregtions(response: RichSearchResponse) =
-    Option(response.aggregations) match {
-      case Some(aggs) =>
-        
-      case None => Seq.empty[Aggregation]
-    }
+      aggregation histogram "by_decade" script histogramScript(10) interval 10,
+      aggregation histogram "by_century" script histogramScript(100) interval 100)
 
   def query(args: SearchArgs): Future[RichResultPage] = {
       
@@ -98,6 +96,7 @@ class SearchService @Inject() (
       
       val fPlaceQuery =
         es.client execute { buildPlaceQuery(args, filter.withDateRangeFilter) } map { response =>
+          // TODO build by-relation aggregation (it's already included in the response)
           Aggregation.parseTerms(response.aggregations.get("by_place")).buckets
         }
 
