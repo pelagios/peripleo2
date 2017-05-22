@@ -65,16 +65,16 @@ define([
           // Then defer to the appropriate card implementation
           switch(ItemUtils.getItemType(item)) {
             case 'PLACE':
-              new PlaceCard(cardEl, item, references);
+              new PlaceCard(cardEl, item, references, resultCounts);
               break;
             case 'OBJECT':
-              new ObjectCard(cardEl, item, references);
+              new ObjectCard(cardEl, item, references, resultCounts);
               break;
             case 'PERSON':
-              new PersonCard(cardEl, item, references);
+              new PersonCard(cardEl, item, references, resultCounts);
               break;
             case 'DATASET':
-              new DatasetCard(cardEl, item, references);
+              new DatasetCard(cardEl, item, references, resultCounts);
               break;
             default:
               // TODO implement future types

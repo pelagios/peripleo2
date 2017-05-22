@@ -3,7 +3,7 @@ define([
   'ui/common/hasEvents',
   'ui/common/itemUtils'], function(Formatting, HasEvents, ItemUtils) {
 
-  var ObjectCard  = function(parentEl, item, references) {
+  var ObjectCard  = function(parentEl, item, references, resultCounts) {
     var infoEl = jQuery(
           '<div class="item-info">' +
             '<p class="item-is-in"></p>' +
@@ -40,14 +40,29 @@ define([
         },
 
         renderReferences = function() {
+
           var places = references.PLACE,
               head = (places && places.length > 3) ? places.slice(0, 3) : places;
 
           if (head) {
             head.forEach(function(place) {
+              var counts = jQuery.grep(resultCounts, function(r) {
+                    return place.identifiers.indexOf(r.identifier) > -1;
+                  }),
+
+                  count = (counts.length > 0) ? counts[0].resultCount : 0,
+
+                  label = (count > 2) ? 'results' : 'result',
+
+                  moreResults = (count > 1) ?
+                    '<span class="more"> · <a href="#">' + (count - 1) + ' more ' + label + '</a></span>' :
+                    '';
+
               referencesEl.append(
                 '<p class="ref-place">' +
-                  '<span><a href="#" title="' + place.description + '">' + place.title + '</a></span>' +
+                  '<span class="title"><a href="#">' +
+                    place.title +
+                  '</a></span>' + moreResults +
                 '</p>');
             });
           }
