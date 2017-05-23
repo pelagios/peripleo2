@@ -205,10 +205,10 @@ require([
             });
         },
 
-        onFilterByReference = function(identifier) {
+        onFilterByReference = function(reference) {
           // TODO support filter by person | period
-          state.updateFilters({ places : [ identifier ] }).done(function(results) {
-            resultList.setLocalResponse(results);
+          state.updateFilters({ places : [ reference.identifiers[0] ] }).done(function(results) {
+            resultList.setLocalResponse(results, reference);
           });
         },
 

@@ -8,17 +8,30 @@
   overflow:hidden;
 
   .rl-header {
-    background-color:#fff;
-    padding: 14px 10px 11px 10px;
-    border-bottom:1px solid fade(#000, 6%);
+    background-color:@blueish-white;
+    padding: 14px 12px 11px 12px;
+    border-bottom:1px solid @light-grey-border;
     flex-shrink:0;
 
+    a { text-decoration:none; }
+    a:hover { text-decoration:underline; }
+
     .results-local {
-      color:@light-grey-type-hover
+      color:@light-grey-type-hover;
+      a { color:@light-grey-type-hover; }
+    }
+
+    .results-local::before {
+      font-family:FontAwesome;
+      font-size:14px;
+      content:'\f0b0';
+      padding-right:5px;
     }
 
     .results-all {
-      color:@ocean;
+      position:absolute;
+      right:12px;
+      a { color:@ocean; }
     }
 
   }

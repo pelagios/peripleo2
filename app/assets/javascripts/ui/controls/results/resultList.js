@@ -12,8 +12,8 @@ define([
         element = jQuery(
           '<div id="result-list">' +
             '<div class="rl-header">' +
-              '<span class="results-local">4 results at Athenae</span> · ' +
-              '<span class="results-all">Show all (19)</span>' +
+              '<span class="results-local"></span>' +
+              '<span class="results-all"><a href="#">View all results</a></span>' +
             '</div>' +
             '<div class="rl-body">' +
               '<ul></ul>' +
@@ -22,12 +22,11 @@ define([
           '</div>').appendTo(parentEl),
 
         headerEl = element.find('.rl-header').hide(),
+        headerResultsLocalEl = headerEl.find('.results-local'),
 
         bodyEl = element.find('.rl-body'),
-
-        listEl = element.find('ul'),
-
-        waitSpinner = element.find('.rl-wait').hide(),
+        listEl = bodyEl.find('ul'),
+        waitSpinner = bodyEl.find('.rl-wait').hide(),
 
         // To keep track of the current selection
         currentSelection = false,
@@ -86,10 +85,11 @@ define([
           renderResponse(response, false);
         },
 
-        setLocalResponse = function(response) {
-          // headerEl.velocity('slideDown', { duration: SLIDE_DURATION });
-          // TODO remember original result count!
-          // TODO re-render the list
+        setLocalResponse = function(response, reference) {
+          headerResultsLocalEl.html(
+            response.total + ' results for <a href="#">' + reference.title + '</a>');
+          headerEl.velocity('slideDown', { duration: SLIDE_DURATION });
+          renderResponse(response, false);
         },
 
         setSelectedItem = function(item) {

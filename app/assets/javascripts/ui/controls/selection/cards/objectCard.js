@@ -52,21 +52,32 @@ define([
                     return place.identifiers.indexOf(r.identifier) > -1;
                   }),
 
-                  count = (counts.length > 0) ? counts[0].resultCount : 0,
+                  moreResultsEl = (function() {
+                    // Show 'more results' link of there's at least 1 more result
+                    if (counts.length > 0 && counts[0].resultCount > 1) {
+                      var moreCount = counts[0].resultCount - 1,
+                          label = (moreCount > 1) ? 'results' : 'result',
+                          el = jQuery(
+                            '<span class="more"> · ' +
+                              '<a class="filter" href="#">' + moreCount + ' more ' + label + '</a>' +
+                            '<span>');
 
-                  label = (count > 2) ? 'results' : 'result',
+                      el.find('a').data('reference', place);
+                      return el;
+                    } else {
+                      return false;
+                    }
+                  })(),
 
-                  moreResults = (count > 1) ?
-                    '<span class="more"> · <a class="filter" data-id="' + counts[0].identifier + '" href="#">' +
-                      Formatting.formatNumber(count - 1) + ' more ' + label +
-                    '</a></span>' : '';
+                  refEl = jQuery(
+                    '<p class="ref-place">' +
+                      '<span class="title"><a href="#">' + place.title + '</a></span>' +
+                    '</p>');
 
-              referencesEl.append(
-                '<p class="ref-place">' +
-                  '<span class="title"><a href="#">' +
-                    place.title +
-                  '</a></span>' + moreResults +
-                '</p>');
+              if (moreResultsEl) // Append the 'more results link' if there is one
+                refEl.append(moreResultsEl);
+
+              referencesEl.append(refEl);
             });
           }
         };
