@@ -13,7 +13,7 @@ define([
           '<div id="result-list">' +
             '<div class="rl-header">' +
               '<span class="results-local"></span>' +
-              '<span class="results-all"><a href="#">View all results</a></span>' +
+              '<span class="results-all"><a href="#">All results</a></span>' +
             '</div>' +
             '<div class="rl-body">' +
               '<ul></ul>' +

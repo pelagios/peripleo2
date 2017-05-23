@@ -16,22 +16,30 @@
     a { text-decoration:none; }
     a:hover { text-decoration:underline; }
 
+    span::before {
+      font-family:FontAwesome;
+      font-size:14px;
+      padding-right:5px;
+    }
+
     .results-local {
       color:@light-grey-type-hover;
       a { color:@light-grey-type-hover; }
     }
 
     .results-local::before {
-      font-family:FontAwesome;
-      font-size:14px;
       content:'\f0b0';
-      padding-right:5px;
     }
 
     .results-all {
       position:absolute;
       right:12px;
       a { color:@ocean; }
+    }
+
+    .results-all::before {
+      color:@ocean;
+      content:'\f03a';
     }
 
   }
