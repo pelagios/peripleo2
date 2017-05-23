@@ -3,7 +3,7 @@ define([
   'ui/controls/results/templates'
 ], function(HasEvents, Templates) {
 
-  var SLIDE_DURATION = 120;
+  var SLIDE_DURATION = 100;
 
   var ResultList = function(parentEl) {
 
@@ -22,7 +22,8 @@ define([
           '</div>').appendTo(parentEl),
 
         headerEl = element.find('.rl-header').hide(),
-        headerResultsLocalEl = headerEl.find('.results-local'),
+        resultsLocalEl = headerEl.find('.results-local'),
+        resultsAllEl = headerEl.find('.results-all'),
 
         bodyEl = element.find('.rl-body'),
         listEl = bodyEl.find('ul'),
@@ -82,11 +83,14 @@ define([
         },
 
         setSearchResponse = function(response) {
+          if (headerEl.is(':visible'))
+            headerEl.velocity('slideUp', { duration: SLIDE_DURATION });
+
           renderResponse(response, false);
         },
 
-        setLocalResponse = function(response, reference) {
-          headerResultsLocalEl.html(
+        setFilteredResponse = function(response, reference) {
+          resultsLocalEl.html(
             response.total + ' results for <a href="#">' + reference.title + '</a>');
           headerEl.velocity('slideDown', { duration: SLIDE_DURATION });
           renderResponse(response, false);
@@ -102,14 +106,20 @@ define([
         appendPage = function(response) {
           renderResponse(response, true);
           waitingForNextPage = false;
+        },
+
+        onExitFilteredSearch = function() {
+          self.fireEvent('exitFilteredSearch');
         };
 
     bodyEl.on('click', 'li', onSelect);
     bodyEl.scroll(onScroll);
 
+    resultsAllEl.click(onExitFilteredSearch);
+
     this.appendPage = appendPage;
     this.setSearchResponse = setSearchResponse;
-    this.setLocalResponse = setLocalResponse;
+    this.setFilteredResponse = setFilteredResponse;
     this.setSelectedItem = setSelectedItem;
 
     HasEvents.apply(this);

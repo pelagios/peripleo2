@@ -208,7 +208,13 @@ require([
         onFilterByReference = function(reference) {
           // TODO support filter by person | period
           state.updateFilters({ places : [ reference.identifiers[0] ] }).done(function(results) {
-            resultList.setLocalResponse(results, reference);
+            resultList.setFilteredResponse(results, reference);
+          });
+        },
+
+        onExitFilteredSearch = function() {
+          state.updateFilters({ places : false }).done(function(results) {
+            resultList.setSearchResponse(results);
           });
         },
 
@@ -235,6 +241,7 @@ require([
 
     resultList.on('select', onSelectItem);
     resultList.on('nextPage', seq(state.loadNextPage, resultList.appendPage));
+    resultList.on('exitFilteredSearch', onExitFilteredSearch);
 
     state.on('stateChange', onStateChange);
     state.init();
