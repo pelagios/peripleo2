@@ -14,6 +14,8 @@ our progress on [Waffle.io](http://waffle.io/pelagios/peripleo2).
 * Clone this repository
 * Create a copy of the file `conf/application.conf.template` and name it `conf/application.conf`.
   Make any environment-specific changes there. (For the most part, the defaults should be fine.)
+* Deploy the time histogram script to ElasticSearch by copying `conf/es-scripts/by_time.groovy`
+  to the `config/scripts` folder on every data node in your ES cluster.
 * Type `activator run` to start the application in development mode.
 * Point your browser to [http://localhost:9000](http://localhost:9000).
 * Peripleo automatically creates a single admin user with username 'admin' and password 'admin'.

@@ -8,6 +8,7 @@ import scala.concurrent.{ Future, ExecutionContext }
 import scala.language.reflectiveCalls
 import services.{ ES, Page }
 import services.item.{ Item, ItemService }
+import org.elasticsearch.script.ScriptService.ScriptType
 import org.elasticsearch.search.aggregations.bucket.histogram.InternalHistogram
 import services.item.search.filters.TermFilter
 import services.notification.NotificationService
@@ -18,16 +19,6 @@ class SearchService @Inject() (
   implicit val notifications: NotificationService,
   implicit val ctx: ExecutionContext
 ) {
-    
-  private def histogramScript(interval: Int) =
-    s"""
-     f = doc['temporal_bounds.from']
-     t = doc['temporal_bounds.to']
-     buckets = []
-     if (!(f.empty || t.empty))
-       for (i=f.date.year; i<t.date.year; i+= $interval) { buckets.add(i) }
-     buckets;
-     """
 
   implicit object ItemHitAs extends HitAs[Item] {
     override def as(hit: RichSearchHit): Item =
@@ -84,8 +75,8 @@ class SearchService @Inject() (
  
   private def buildTimeHistogramQuery(args: SearchArgs, filter: QueryDefinition) =
     itemBaseQuery(args, filter) limit 0 aggregations Seq(
-      aggregation histogram "by_decade" script histogramScript(10) interval 10,
-      aggregation histogram "by_century" script histogramScript(100) interval 100)
+      aggregation histogram "by_decade"  script { script("by_time") params(Map("interval" -> 10))  scriptType ScriptType.FILE } interval 10,
+      aggregation histogram "by_century" script { script("by_time").params(Map("interval" -> 100)) scriptType ScriptType.FILE } interval 100)
 
   def query(args: SearchArgs): Future[RichResultPage] = {
       
