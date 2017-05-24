@@ -65,9 +65,11 @@ define([], function() {
           return url;
         },
 
-        buildFirstPageQuery = function() {
+        buildFirstPageQuery = function(opt_settings) {
           var url = buildBaseQuery(),
-              settings = searchArgs.settings;
+              settings = (opt_settings) ?
+               jQuery.extend({}, searchArgs.settings, opt_settings) :
+               searchArgs.settings;
 
           // First page query includes aggregations
           url = appendIfExists(settings.timeHistogram, 'time_histogram', url);
@@ -85,13 +87,13 @@ define([], function() {
           return buildBaseQuery() + '&offset=' + (currentOffset + PAGE_SIZE);
         },
 
-        makeRequest = function() {
+        makeRequest = function(opt_settings) {
 
           var deferred = jQuery.Deferred(),
 
               handlePending = function() {
                 if (pendingRequest) {
-                  request(pendingRequest);
+                  request(pendingRequest.deferred, pendingRequest.opt_settings);
                   pendingRequest = false;
                 } else {
                   // Throttling: no request pending right now? Wait a bit
@@ -105,17 +107,17 @@ define([], function() {
                 }
               },
 
-              request = function(deferred) {
-                jQuery.getJSON(buildFirstPageQuery(), function(response) {
+              request = function(deferred, opt_settings) {
+                jQuery.getJSON(buildFirstPageQuery(opt_settings), function(response) {
                   deferred.resolve(response);
                 }).always(handlePending);
               };
 
           if (busy) {
-            pendingRequest = deferred;
+            pendingRequest = { deferred: deferred, opt_settings: opt_settings };
           } else {
             busy = true;
-            request(deferred);
+            request(deferred, opt_settings);
           }
 
           return deferred.promise(this);
@@ -158,8 +160,9 @@ define([], function() {
         },
 
         setTimerange = function(range) {
+          // There's no need to re-compute the time histogram in case the time range changes
           searchArgs.timerange = range;
-          return makeRequest();
+          return makeRequest({ timeHistogram: false });
         },
 
         updateSettings = function(diff) {

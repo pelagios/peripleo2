@@ -41,10 +41,13 @@ define([
         },
 
         setResponse = function(response) {
-          footer.update(response);
           if (response.aggregations) {
-            timeHistogram.update(getAggregation(response, 'by_time'));
+            var histogram = getAggregation(response, 'by_time');
+            if (histogram)
+              timeHistogram.update(histogram);
           }
+
+          footer.update(response);
         },
 
         setOpen = function(open) {
