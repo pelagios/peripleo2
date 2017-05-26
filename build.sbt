@@ -13,6 +13,7 @@ libraryDependencies ++= Seq(
   cache,
   filters,
 
+  "com.nrinaudo" %% "kantan.csv" % "0.1.15",
   "com.sksamuel.elastic4s" %% "elastic4s-streams" % "2.4.0",
   "com.vividsolutions" % "jts" % "1.13",
   "jp.t2v" %% "play2-auth" % "0.14.1",

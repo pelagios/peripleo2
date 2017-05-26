@@ -14,6 +14,8 @@ GET     /admin/datasets/annotations                  controllers.admin.datasets.
 POST    /admin/datasets/annotations                  controllers.admin.datasets.AnnotationsAdminController.importVoID
 DELETE  /admin/datasets/annotations/:id              controllers.admin.datasets.AnnotationsAdminController.deleteDataset(id: String)
 GET     /admin/datasets/geodata                      controllers.admin.datasets.GeodataAdminController.index
+GET     /admin/datasets/csv                          controllers.admin.datasets.CSVAdminController.index
+POST    /admin/datasets/csv                          controllers.admin.datasets.CSVAdminController.importCSV
 
 GET     /admin/authorities/gazetteers                controllers.admin.authorities.GazetteerAdminController.index
 POST    /admin/authorities/gazetteers                controllers.admin.authorities.GazetteerAdminController.importGazetteer

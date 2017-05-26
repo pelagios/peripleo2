@@ -30,6 +30,12 @@
                 <span class="label">Geodata</span>
               </a>
             </li>
+
+            <li>
+              <a @if(activeTab == "csv") { class="active" } href="@controllers.admin.datasets.routes.CSVAdminController.index">
+                <span class="label">CSV</span>
+              </a>
+            </li>
           </ul>
         </li>
 
