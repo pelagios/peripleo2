@@ -6,8 +6,26 @@ define([
 
     var el = jQuery(
           '<div class="facet by-type left">' +
-            '<h3>Results by type</h3>' +
-            '<div class="more-buckets">1 more</div>' +
+            '<ul>' +
+              '<li>' +
+                '<div class="count object">' +
+                  '<span class="icon">&#xf219;</span><span class="label">1,201</span>' +
+                '</div>' +
+              '</li>' +
+
+              '<li style="width:65%">' +
+                '<div class="count place">' +
+                  '<span class="icon">&#xf041;</span><span class="label">548</span>' +
+                '</div>' +
+              '</li>' +
+
+              '<li style="width:35%">' +
+                '<div class="count person">' +
+                  '<span class="icon">&#xf007;</span><span class="label">12</span>' +
+                '</div>' +
+              '</li>' +
+            '</ul>' +
+            //'<div class="more-buckets">More...</div>' +
           '</div>').appendTo(parentEl),
 
         update = function(buckets) {

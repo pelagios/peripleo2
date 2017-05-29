@@ -1,6 +1,5 @@
 .termfacet-section {
   padding:0;
-  background-color:@blueish-white;
   border-width:1px 0;
   border-style:solid;
   border-color:@light-grey-border;
@@ -10,17 +9,8 @@
 .facet {
   width:50%;
   height:100px;
-  padding:8px 14px;
   box-sizing:border-box;
   display:inline-block;
-  text-align:center;
-
-  h3 {
-    margin:0;
-    font-size:13px;
-    color:@light-grey-type;
-    font-weight:normal;
-  }
 
   .more-buckets {
     font-size:13px;
@@ -42,7 +32,56 @@
   float:right;
 }
 
+.by-type {
+  padding:14px 14px 14px 20px;
+
+  ul {
+    list-style-type:none;
+    padding:0 0 2px 0;
+    margin:0;
+
+    li {
+      margin:0;
+      padding:0 0 4px 0;
+      position:relative;
+    }
+
+    .count {
+      .rounded-corners(2px);
+      overflow:hidden;
+    }
+
+    .icon {
+      text-align:center;
+      display:inline-block;
+      width:22px;
+      height:21px;
+      line-height:21px;
+      font-size:14px;
+      color:#fff;
+    }
+
+    .label {
+      padding-left:6px;
+    }
+
+    .item (@color) {
+      border-color:@color;
+      background-color:fade(@color, 20%);
+      color:darken(@color, 8%);
+      .icon { background-color:@color; }
+    }
+
+    .OBJECT { .item(@type-object); }
+    .PLACE  { .item(@type-place);  }
+    .PERSON { .item(@type-person); }
+  }
+
+}
+
 .by-source {
+  padding:8px 14px;
+  text-align:center;
   color:@dark-grey-type;
 
   .top-count {
@@ -58,58 +97,3 @@
   }
 
 }
-
-/*
-
-  .facet-container {
-    width:50%;
-    box-sizing:border-box;
-    height:50px;
-    padding:0px 20px 6px 30px;
-    display:inline-block;
-    text-align:center;
-
-    .type-count {
-      position:relative;
-      line-height:100%;
-      display:inline-block;
-      margin:1px;
-      color:#fff;
-      .rounded-corners(2px);
-    }
-
-    .type-count.PLACE   { background-color:@type-place;   }
-    .type-count.OBJECT  { background-color:@type-object;  }
-    .type-count.PERSON  { background-color:@type-person;  }
-    .type-count.DATASET { background-color:@type-dataset; }
-
-    .type-count::before {
-      font-family:FontAwesome;
-      position:absolute;
-      width:100%;
-      text-align:center;
-      top:0;
-      bottom:0;
-      left:3px;
-      font-size:170%;
-      color:rgba(255, 255, 255, 0.4);
-    }
-
-    .type-count.PLACE::before {
-      content:'\f041';
-    }
-
-    .type-count.OBJECT::before {
-      content:'\f219';
-    }
-
-    .type-count.PERSON::before {
-      content:'\f007';
-    }
-
-    .type-count.DATASET::before {
-      content:'\f187';
-    }
-
-  }
-  */

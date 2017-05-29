@@ -18,7 +18,7 @@ define([
               '<div class="facets"></div>' +
               '<div class="hint-more">' +
                 '<span class="icon">&#xf080;</span>' +
-                '<a class="label" href="#">All stats and filters</a>' +
+                '<a class="label" href="#">Advanced stats and filters</a>' +
               '</div>' +
             '</div>' +
           '</div>').appendTo(parentEl),
