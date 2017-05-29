@@ -2,7 +2,8 @@ package harvesting.crosswalks
 
 import java.io.File
 import kantan.csv.ops._
-import org.joda.time.DateTime
+import org.joda.time.{ DateTime, DateTimeZone }
+import org.joda.time.format.DateTimeFormat
 import services.item._
 import services.item.reference._
 import scala.io.Source
@@ -15,6 +16,8 @@ import scala.io.Source
   * libraries that can already handle the streaming (like KantanCSV).
   */
 object CSVCrosswalk {
+  
+  private val formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss").withZone(DateTimeZone.UTC)
   
   private def guessDelimiter(line: String): Char = {
     // This test is pretty trivial but seems to be applied elsewhere (see e.g.
@@ -55,13 +58,13 @@ object CSVCrosswalk {
         None,
         Seq(Category(artist)),
         Seq.empty[Description],
-        Some("http://twitter.com/status/" + tweetId),
+        Some("http://twitter.com/tweet/status/" + tweetId),
         None,
         Seq.empty[Language],
         Seq.empty[Depiction],
         None,
         None,
-        None, // TODO temporal bounds
+        Some(TemporalBounds.fromTimestamp(formatter.parseDateTime(timestamp))),
         Seq.empty[Name],
         Seq.empty[String], Seq.empty[String])
         

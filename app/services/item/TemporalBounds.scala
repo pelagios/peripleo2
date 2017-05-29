@@ -59,5 +59,8 @@ object TemporalBounds {
     val t = new DateTime(DateTimeZone.UTC).withDate(to, 1, 1).withTime(0, 0, 0, 0)
     TemporalBounds(f, t)
   }
+  
+  def fromTimestamp(timestamp: DateTime) =
+    TemporalBounds(timestamp, timestamp)
 
 }
