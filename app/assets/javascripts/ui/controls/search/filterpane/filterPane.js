@@ -1,8 +1,9 @@
 define([
   'ui/common/hasEvents',
-  'ui/controls/search/footer',
-  'ui/controls/search/timeHistogram'
-], function(HasEvents, Footer, TimeHistogram) {
+  'ui/controls/search/filterpane/facets/typeFacet',
+  'ui/controls/search/filterpane/footer',
+  'ui/controls/search/filterpane/timeHistogram'
+], function(HasEvents, TypeFacet, Footer, TimeHistogram) {
 
   var SLIDE_DURATION = 180;
 
@@ -17,8 +18,11 @@ define([
 
         body = element.find('#filterpane-body').hide(),
 
-        timeHistogramSection = jQuery('<div class="section"></div').appendTo(body),
+        timeHistogramSection = jQuery('<div class="section"></div>').appendTo(body),
         timeHistogram = new TimeHistogram(timeHistogramSection, 320, 40),
+
+        facetSection = jQuery('<div class="section"></div>').appendTo(body),
+        typeFacet = new TypeFacet(facetSection),
 
         footer = new Footer(element),
 
@@ -42,9 +46,11 @@ define([
 
         setResponse = function(response) {
           if (response.aggregations) {
-            var histogram = getAggregation(response, 'by_time');
-            if (histogram)
-              timeHistogram.update(histogram);
+            var byTime = getAggregation(response, 'by_time'),
+                byType = getAggregation(response, 'by_type');
+
+            if (byTime) timeHistogram.update(byTime);
+            if (byType) typeFacet.update(byType);
           }
 
           footer.update(response);

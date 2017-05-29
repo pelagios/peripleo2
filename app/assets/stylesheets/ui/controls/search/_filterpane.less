@@ -13,10 +13,63 @@
     padding:6px;
     background-color:@blueish-white;
     border-bottom:1px solid @light-grey-border;
+    position:relative;
   }
 
   .section:last-child {
     border:none;
+  }
+
+  .facet-container {
+    width:50%;
+    box-sizing:border-box;
+    height:50px;
+    padding:0px 20px 6px 30px;
+    display:inline-block;
+    text-align:center;
+
+    .type-count {
+      position:relative;
+      line-height:100%;
+      display:inline-block;
+      margin:1px;
+      color:#fff;
+      .rounded-corners(2px);
+    }
+
+    .type-count.PLACE   { background-color:@type-place;   }
+    .type-count.OBJECT  { background-color:@type-object;  }
+    .type-count.PERSON  { background-color:@type-person;  }
+    .type-count.DATASET { background-color:@type-dataset; }
+
+    .type-count::before {
+      font-family:FontAwesome;
+      position:absolute;
+      width:100%;
+      text-align:center;
+      top:0;
+      bottom:0;
+      left:3px;
+      font-size:170%;
+      color:rgba(255, 255, 255, 0.4);
+    }
+
+    .type-count.PLACE::before {
+      content:'\f041';
+    }
+
+    .type-count.OBJECT::before {
+      content:'\f219';
+    }
+
+    .type-count.PERSON::before {
+      content:'\f007';
+    }
+
+    .type-count.DATASET::before {
+      content:'\f187';
+    }
+
   }
 
 }

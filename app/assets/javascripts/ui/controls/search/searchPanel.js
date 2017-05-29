@@ -1,7 +1,7 @@
 define([
   'ui/common/hasEvents',
-  'ui/controls/search/filterPane',
-  'ui/controls/search/searchBox'
+  'ui/controls/search/filterpane/filterPane',
+  'ui/controls/search/searchbox/searchBox'
 ], function(HasEvents, FilterPane, SearchBox) {
 
   var SearchPanel = function(parentEl) {

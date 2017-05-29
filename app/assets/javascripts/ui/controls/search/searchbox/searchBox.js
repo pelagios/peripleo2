@@ -1,6 +1,6 @@
 define([
   'ui/common/hasEvents',
-  'ui/controls/search/autocomplete'
+  'ui/controls/search/searchbox/autocomplete'
 ], function(HasEvents, Autocomplete) {
 
   var SearchBox = function(parentEl) {

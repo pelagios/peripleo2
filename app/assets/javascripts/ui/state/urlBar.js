@@ -33,7 +33,7 @@ define([], function() {
             },
             settings : {
               timeHistogram    : segments.filters,
-              termAggregations : false,
+              termAggregations : segments.filters,
               topPlaces        : true
             }
           },
