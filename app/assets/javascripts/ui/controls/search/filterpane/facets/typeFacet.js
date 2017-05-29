@@ -5,14 +5,15 @@ define([
   var TypeFacet = function(parentEl) {
 
     var el = jQuery(
-          '<div class="facet-container by-type">' +
+          '<div class="facet by-type left">' +
+            '<h3>Results by type</h3>' +
+            '<div class="more-buckets">1 more</div>' +
           '</div>').appendTo(parentEl),
 
         update = function(buckets) {
+          return;
 
-          console.log(buckets);
-
-          // Buckets are an array of objects, each of the form { ITEM_TYPE : COUNT }
+          /* Buckets are an array of objects, each of the form { ITEM_TYPE : COUNT }
           var total = buckets.reduce(function(acc, bucket) {
                 var count = bucket[Object.keys(bucket)[0]];
                 return acc + count;
@@ -76,7 +77,7 @@ define([
               append(topThree[1], w, bottomHeight, 20, 80, 35, 65, 1.5);
               append(topThree[2], 1 - w, bottomHeight, 20, 80, 35, 65, 1.5);
             }
-          }
+          } */
         };
 
     this.update = update;

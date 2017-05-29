@@ -1,9 +1,10 @@
 define([
   'ui/common/hasEvents',
+  'ui/controls/search/filterpane/facets/sourceFacet',
   'ui/controls/search/filterpane/facets/typeFacet',
   'ui/controls/search/filterpane/footer',
   'ui/controls/search/filterpane/timeHistogram'
-], function(HasEvents, TypeFacet, Footer, TimeHistogram) {
+], function(HasEvents, SourceFacet, TypeFacet, Footer, TimeHistogram) {
 
   var SLIDE_DURATION = 180;
 
@@ -13,16 +14,24 @@ define([
 
         element = jQuery(
           '<div id="filterpane">' +
-            '<div id="filterpane-body"></div>' +
+            '<div id="filterpane-body">' +
+              '<div class="facets"></div>' +
+              '<div class="hint-more">' +
+                '<span class="icon">&#xf080;</span>' +
+                '<a class="label" href="#">All stats and filters</a>' +
+              '</div>' +
+            '</div>' +
           '</div>').appendTo(parentEl),
 
         body = element.find('#filterpane-body').hide(),
+        facetsEl = body.find('.facets'),
 
-        timeHistogramSection = jQuery('<div class="section"></div>').appendTo(body),
+        timeHistogramSection = jQuery('<div class="timehistogram-section"></div>').appendTo(facetsEl),
         timeHistogram = new TimeHistogram(timeHistogramSection, 320, 40),
 
-        facetSection = jQuery('<div class="section"></div>').appendTo(body),
+        facetSection = jQuery('<div class="termfacet-section"></div>').appendTo(facetsEl),
         typeFacet = new TypeFacet(facetSection),
+        sourceFacet = new SourceFacet(facetSection),
 
         footer = new Footer(element),
 
@@ -47,10 +56,12 @@ define([
         setResponse = function(response) {
           if (response.aggregations) {
             var byTime = getAggregation(response, 'by_time'),
-                byType = getAggregation(response, 'by_type');
+                byType = getAggregation(response, 'by_type'),
+                bySource = getAggregation(response, 'by_dataset');
 
             if (byTime) timeHistogram.update(byTime);
             if (byType) typeFacet.update(byType);
+            if (bySource) sourceFacet.update(bySource);
           }
 
           footer.update(response);
