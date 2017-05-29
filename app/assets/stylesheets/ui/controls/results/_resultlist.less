@@ -61,46 +61,35 @@
     min-height:70px;
   }
 
-  .item-icon {
+  .item-color {
     position:absolute;
-    width:32px;
+    width:8px;
     height:100%;
     box-sizing:border-box;
-    color:#fff;
-    padding:5px 0;
-    font-size:22px;
-    text-align:center;
-
-    .icon {
-      display:inline-block;
-      .rounded-corners(100%);
-      padding:5px;
-    }
-
   }
 
-  .item-icon.place {
+  li.place .item-color {
     background-color:@type-place;
     border-bottom:1px solid fade(#000, 7%);
   }
 
-  .item-icon.object {
+  li.object .item-color {
     background-color:@type-object;
     border-bottom:1px solid fade(#000, 5%);
   }
 
-  .item-icon.person {
+  li.person .item-color {
     background-color:@type-person;
     border-bottom:1px solid fade(#000, 6%);
   }
 
-  .item-icon.dataset {
+  li.dataset .item-color {
     background-color:@type-dataset;
     border-bottom:1px solid fade(#000, 9%);
   }
 
   .item-info {
-    margin-left:32px;
+    margin-left:8px;
     min-height:70px;
     padding:8px 12px 9px 12px;
     box-sizing:border-box;

@@ -33,16 +33,16 @@
 }
 
 .by-type {
-  padding:14px 14px 14px 20px;
+  padding:16px 14px 16px 20px;
 
   ul {
     list-style-type:none;
-    padding:0 0 2px 0;
+    padding:0;
     margin:0;
 
     li {
       margin:0;
-      padding:0 0 4px 0;
+      padding:0 0 1px 0;
       position:relative;
     }
 
@@ -62,19 +62,25 @@
     }
 
     .label {
-      padding-left:6px;
+      position:absolute;
+      right:4px;
+      line-height:21px;
     }
 
     .item (@color) {
-      border-color:@color;
-      background-color:fade(@color, 20%);
-      color:darken(@color, 8%);
-      .icon { background-color:@color; }
+      background-color:fade(@color, 80%);
+      color:#fff;
+
+      .icon {
+        background-color:@color;
+        border-right:1px solid rgba(255, 255, 255, 0.5);
+      }
+
     }
 
-    .OBJECT { .item(@type-object); }
-    .PLACE  { .item(@type-place);  }
-    .PERSON { .item(@type-person); }
+    .object { .item(@type-object); }
+    .place  { .item(@type-place);  }
+    .person { .item(@type-person); }
   }
 
 }

@@ -29,9 +29,7 @@ define([
           '</div>').appendTo(parentEl),
 
         update = function(buckets) {
-          return;
-
-          /* Buckets are an array of objects, each of the form { ITEM_TYPE : COUNT }
+          /*
           var total = buckets.reduce(function(acc, bucket) {
                 var count = bucket[Object.keys(bucket)[0]];
                 return acc + count;

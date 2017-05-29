@@ -5,7 +5,7 @@ define([
 
   var BASE_TEMPLATE =
         '<li>' +
-          '<div class="item-icon"></div>' +
+          '<div class="item-color"></div>' +
           '<div class="item-info">' +
             '<h3 class="item-title"></h3>' +
             '<p class="item-description"></p>' +
@@ -13,11 +13,6 @@ define([
             '<p class="item-is-in"></p>' +
           '</div>' +
         '</li>',
-
-      ICON_PLACE = '<span class="icon stroke7">&#xe638;</span>',
-      ICON_OBJECT = '<span class="icon stroke7">&#xe6af;</span>',
-      ICON_PERSON = '<span class="icon tonicons">&#xe863;</span>',
-      ICON_DATASET = '<span class="icon stroke7">&#xe674;</span>',
 
       baseTemplate = function(item) {
         var li = jQuery(BASE_TEMPLATE),
@@ -59,27 +54,21 @@ define([
 
       createPlaceRow = function(item) {
         var li = baseTemplate(item),
-            icon = li.find('.item-icon'),
             identifiersEl = jQuery('<p class="item-identifiers-small"></p>').insertAfter(li.find('.item-title'));
 
-        icon.addClass('place');
-        icon.prop('title', 'Place');
-        icon.html(ICON_PLACE);
+        li.addClass('place');
         appendIdentifiers(identifiersEl, item);
         return li;
       },
 
       createObjectRow = function(item) {
         var li = baseTemplate(item),
-            icon = li.find('.item-icon'),
 
             // We'll assume items to have a single record for now
             inDataset = ItemUtils.getHierarchyPath(item.is_conflation_of[0].is_in_dataset);
 
         // TODO use different icons, depending on item type
-        icon.addClass('object');
-        icon.prop('title', 'Object');
-        icon.html(ICON_OBJECT);
+        li.addClass('object');
 
         // Only display top-level dataset
         li.find('.item-is-in').html(inDataset[0].title);
@@ -88,28 +77,22 @@ define([
 
       createPersonRow = function(item) {
         var li = baseTemplate(item),
-            icon = li.find('.item-icon'),
             identifiersEl = jQuery('<p class="item-identifiers-small"></p>').insertAfter(li.find('.item-title'));
 
-        icon.addClass('person');
-        icon.prop('title', 'Person');
-        icon.html(ICON_PERSON);
+        li.addClass('person');
         appendIdentifiers(identifiersEl, item);
         return li;
       },
 
       createDatasetRow = function(item) {
         var li = baseTemplate(item),
-            icon = li.find('.item-icon'),
 
             // We'll assume datasets to have a single record for now
             record = item.is_conflation_of[0],
 
             isPartOf = (record.is_part_of) ? ItemUtils.getHierarchyPath(record.is_part_of) : false;
 
-        icon.addClass('dataset');
-        icon.prop('title', 'Dataset');
-        icon.html(ICON_DATASET);
+        li.addClass('dataset');
 
         if (isPartOf)
           li.find('.item-is-in').html(isPartOf[0].title);
