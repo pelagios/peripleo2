@@ -42,7 +42,7 @@ require([
           selectionPanel.hide();
              searchPanel.setSearchResponse(response);
               resultList.setSearchResponse(response);
-                     // map.setSearchResponse(response);
+                     map.setSearchResponse(response);
         },
 
         // Happens on 'Back' button, or on page load (when URL params are set)

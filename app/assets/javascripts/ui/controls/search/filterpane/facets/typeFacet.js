@@ -9,7 +9,7 @@ define([
         DATASET : '&#xf187;'
       },
 
-      MIN_PCNT = 27;
+      MIN_PCNT = 29;
 
   var TypeFacet = function(parentEl) {
 
@@ -26,19 +26,20 @@ define([
         list = el.find('ul'),
 
         update = function(arr) {
-          var buckets = arr.map(function(obj) {
-                var key = Object.keys(obj)[0],
-                    val = obj[key];
+          var max = 0,
 
-                return { name: key, count: val };
+              buckets = arr.map(function(obj) {
+                var name = Object.keys(obj)[0],
+                    count = obj[name];
+
+                if (count > max)
+                  max = count;
+
+                return { name: name, count: count };
               }),
 
-              total = buckets.reduce(function(acc, bucket) {
-                return acc + bucket.count;
-              }, 0),
-
               getWidth = function(val) {
-                var pcnt = Math.round(100 * val / total);
+                var pcnt = Math.round(100 * val / max);
                 return Math.max(pcnt, MIN_PCNT) + '%';
               },
 
