@@ -46,12 +46,14 @@
       position:relative;
     }
 
-    .count {
+    .facet-bar {
       .rounded-corners(2px);
+      height:21px;
       overflow:hidden;
     }
 
     .icon {
+      content:'a';
       text-align:center;
       display:inline-block;
       width:22px;
@@ -71,16 +73,17 @@
       background-color:fade(@color, 80%);
       color:#fff;
 
-      .icon {
+      .icon{
         background-color:@color;
         border-right:1px solid rgba(255, 255, 255, 0.5);
       }
 
     }
 
-    .object { .item(@type-object); }
-    .place  { .item(@type-place);  }
-    .person { .item(@type-person); }
+    .OBJECT  .facet-bar { .item(@type-object);  }
+    .PLACE   .facet-bar { .item(@type-place);   }
+    .PERSON  .facet-bar { .item(@type-person);  }
+    .DATASET .facet-bar { .item(@type-dataset); }
   }
 
 }
