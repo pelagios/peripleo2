@@ -60,7 +60,7 @@ define([
           if (args.results > 0)
             referencesEl.append('<a href="#">' + Formatting.formatNumber(args.results) + ' items</a> link here&nbsp;');
           else
-            referencesEl.append('No other items link here');
+            referencesEl.append('No items link here');
 
           if (related.length > 0)
             referencesEl.append(' <span class="icon">&#xf140;</span><a href="#">' + related.length + ' related places</a>');

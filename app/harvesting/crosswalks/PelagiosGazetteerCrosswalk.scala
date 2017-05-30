@@ -43,7 +43,7 @@ object PelagiosGazetteerCrosswalk {
         place.names.map(l => Name(l.chars, l.lang.flatMap(Language.safeParse))),
         place.closeMatches.map(ItemRecord.normalizeURI),
         place.exactMatches.map(ItemRecord.normalizeURI))
-
+    
     // Return crosswalk function
     { stream: InputStream =>
       Scalagios.readPlaces(stream, filename).map(convertPlace).toSeq }

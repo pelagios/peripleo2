@@ -21,11 +21,11 @@ class SearchFilter(args: SearchArgs, placeFilterDefinition: Option[QueryDefiniti
         args.filters.datasetFilter.map(_.filterDefinition("is_conflation_of.is_in_dataset.ids")),
         args.filters.languageFilter.map(_.filterDefinition("is_conflation_of.languages")),
         placeFilterDefinition,
-        { if (args.filters.hasDepiction.getOrElse(false)) Some(nestedQuery("depictions") query { existsQuery("depictions.url") }) else None }
+        { if (args.filters.hasDepiction.getOrElse(false)) Some(existsQuery("is_conflation_of.depictions.url")) else None }
       ).flatten ++ dateRangeClauses.getOrElse(Seq.empty[RangeQueryDefinition])
 
     val notClauses = Seq(
-      { if (!args.filters.hasDepiction.getOrElse(true)) Some(nestedQuery("depictions") query { existsQuery("depictions.url") }) else None },
+      { if (!args.filters.hasDepiction.getOrElse(true)) Some(existsQuery("is_conflation_of.depictions.url")) else None },
       { if (args.filters.rootOnly) Some(existsQuery("is_part_of")) else None  }
     ).flatten 
 
