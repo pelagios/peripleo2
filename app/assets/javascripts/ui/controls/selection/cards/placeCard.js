@@ -54,17 +54,20 @@ define([
             tempBoundsEl.html(Formatting.formatTemporalBounds(place.temporal_bounds));
         },
 
-        renderReferences = function() {
+        renderRelations = function() {
+          var related = args.relatedPlaces;
+
           if (args.results > 0)
-            referencesEl.append('<a href="#">' + Formatting.formatNumber(args.results) + ' items</a> link here');
+            referencesEl.append('<a href="#">' + Formatting.formatNumber(args.results) + ' items</a> link here&nbsp;');
           else
             referencesEl.append('No other items link here');
 
-          // TODO related places
+          if (related.length > 0)
+            referencesEl.append(' <span class="icon">&#xf140;</span><a href="#">' + related.length + ' related places</a>');
         };
 
     renderInfo();
-    renderReferences();
+    renderRelations();
   };
 
   return PlaceCard;
