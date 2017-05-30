@@ -1,10 +1,31 @@
 package services.item.search.filters
 
+import com.sksamuel.elastic4s.ElasticDsl._
 import com.vividsolutions.jts.geom.Coordinate
+import org.elasticsearch.index.query.QueryBuilders
+import org.elasticsearch.common.geo.builders.ShapeBuilder
+import org.elasticsearch.index.query.GeoShapeQueryBuilder
+import com.sksamuel.elastic4s.QueryDefinition
+import org.elasticsearch.common.geo.ShapeRelation
+
+case class GeoShapeDefinition(builder: GeoShapeQueryBuilder) extends QueryDefinition
 
 case class SpatialFilter(bbox: Option[BoundingBox], center: Option[Coordinate], radius: Option[Double]) {
   
   require(bbox.isDefined || center.isDefined)
+  
+  def filterDefinition(field: String) = (bbox, center) match {
+    case (Some(b), _) =>
+      val builder = 
+        QueryBuilders.geoShapeQuery(field, ShapeBuilder.newEnvelope()
+          .topLeft(b.minLon, b.maxLat)
+          .bottomRight(b.maxLon, b.minLat))
+        .relation(ShapeRelation.WITHIN)
+          
+      new GeoShapeDefinition(builder)
+    
+    // TODO circle filter
+  }
   
 }
 

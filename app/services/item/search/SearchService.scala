@@ -71,8 +71,7 @@ class SearchService @Inject() (
     ) // TODO sub-aggregate places vs people vs periods etc. to places only
   
   /** Common query components used to build item result and time histogram **/
-  private def itemBaseQuery(args: SearchArgs, filter: QueryDefinition) = {
-      
+  private def itemBaseQuery(args: SearchArgs, filter: QueryDefinition) = { 
     val itemPart = args.query.map(customPhraseQuery).getOrElse(Seq(queryStringQuery("*")))
     val referencePart = hasChildQuery("reference") query { termQuery("context", args.query.getOrElse("*")) }
       
@@ -102,7 +101,7 @@ class SearchService @Inject() (
       aggregation histogram "by_century" script { script("by_time").params(Map("interval" -> 100)) scriptType ScriptType.FILE } interval 100)
 
   def query(args: SearchArgs): Future[RichResultPage] = {
-      
+
     val startTime = System.currentTimeMillis
     
     // Building filters is an async process as some may require expansion
