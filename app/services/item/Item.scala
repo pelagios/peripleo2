@@ -6,6 +6,7 @@ import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
 import services.{ HasDate, HasGeometry, HasNullableSeq }
+import com.vividsolutions.jts.geom.Envelope
 
 case class Item private[item] (
   docId               : UUID,
@@ -16,8 +17,10 @@ case class Item private[item] (
   temporalBounds      : Option[TemporalBounds],
   isConflationOf      : Seq[ItemRecord]
 ) {
-
+  
   lazy val identifiers = isConflationOf.flatMap(_.identifiers)
+  
+  lazy val bbox = geometry.map(_.getEnvelopeInternal)
 
   private[item] lazy val autocomplete = AutocompleteData(
     isConflationOf.map(_.title) ++ isConflationOf.flatMap(_.names.map(_.name)),
@@ -65,7 +68,13 @@ object Item extends HasGeometry {
       Seq(record))
 
   // Although this means a bit more code, we'll keep a separate Reader and Writer
-  // for the item, so we can keep the autocomplete data out of the case class.
+  // for the item, so we can keep the autocomplete data out of the case class and handle envelopes
+
+  implicit val envelopeWrites = Writes[Envelope] { e =>
+    Json.obj(
+      "type" -> "envelope", // A special geo_shape type supported by ElasticSearch
+      "coordinates" -> Seq(Seq(e.getMinX, e.getMaxY), Seq(e.getMaxX, e.getMinY)))
+  }
 
   implicit val itemReads: Reads[Item] = (
     (JsPath \ "doc_id").read[UUID] and
@@ -81,6 +90,7 @@ object Item extends HasGeometry {
     (JsPath \ "doc_id").write[UUID] and
     (JsPath \ "item_type").write[ItemType] and
     (JsPath \ "title").write[String] and
+    (JsPath \ "bbox").writeNullable[Envelope] and
     (JsPath \ "geometry").writeNullable[Geometry] and
     (JsPath \ "representative_point").writeNullable[Coordinate] and
     (JsPath \ "temporal_bounds").writeNullable[TemporalBounds] and
@@ -90,6 +100,7 @@ object Item extends HasGeometry {
       item.docId,
       item.itemType,
       item.title,
+      item.bbox,
       item.geometry,
       item.representativePoint,
       item.temporalBounds,

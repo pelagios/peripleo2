@@ -10,6 +10,7 @@
            "raw": { "type": "string", "analyzer":"lowercase_keyword" }
         }
       },
+      "bbox": { "type": "geo_shape", "tree": "quadtree", "precision": "100m" },
       "representative_point": { "type": "geo_point" },
       "temporal_bounds": {
         "properties": {

@@ -38,7 +38,7 @@ object PleiadesCrosswalk extends BaseGeoJSONCrosswalk {
       None, // license
       names.flatMap(_.language).distinct,
       Seq.empty[Depiction],
-      pleiades.features.headOption.map(_.geometry), // TODO compute union?
+      pleiades.features.headOption.flatMap(g => Option(g.geometry)), // TODO compute union?
       pleiades.representativePoint,
       computeTemporalBounds(pleiades.names), // TODO temporalBounds
       names,
