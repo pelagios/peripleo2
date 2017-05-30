@@ -87,20 +87,67 @@ require([
             }
         },
 
-        /**
-         * An item was selected, either via:
-         * - the result list
-         * - a map marker
-         * - through autosuggest->identifier->API fetch
-         */
+        /** Common select functionality **/
         onSelectItem = function(item) {
 
-              // Common select functionality
-          var selectItem = function(item) {
+          var uri = ItemUtils.getURIs(item)[0],
 
-                var uri = ItemUtils.getURIs(item)[0],
+              /**
+               * For places, we fetch the total result count at that place (i.e.
+               * the total number of items that link to that place).
+               */
+              selectPlace = function(place) {
 
-                    fetchResultCountForReference = function(uri) {
+                var fetchResultCount = function() {
+                      // Run a search, filtered by the URI of this place
+                      var filter = { places : [ uri ] },
+                          origQuery = state.getQueryPhrase(),
+                          noop = { pushState: false, makeRequest: false};
+
+                      // Transient request with all currently active filters, an additional
+                      // place filter, but no query phrase
+                      state.setQueryPhrase(false, noop);
+
+                      return state.updateFilters(filter, { pushState: false })
+                        .then(function(results) {
+                          // Change back to original filter settings
+                          state.updateFilters({ places: false }, noop);
+                          state.setQueryPhrase(origQuery, noop);
+                          return results;
+                        });
+                    },
+
+                    setSelection = function(results) {
+                      var resultsAt = results.total - 1, // We don't want to count the place itself
+                          related = results.top_places.filter(function(p) {
+                            // Again, count only the other places
+                            return p.doc_id !== place.doc_id;
+                          });
+
+                      // TODO redundancy with selectObject!
+                      state.setSelectedItem(item);
+                      resultList.setSelectedItem(item);
+                      selectionPanel.show(item, { results: resultsAt, relatedPlaces: related });
+
+                      // TODO currentSelection = { item: item, references: references }
+                      currentSelection = item;
+
+
+                      // Note: selection may have happend through the map, so technically no
+                      // need for this - but the map is designed to handle this situation
+                      // map.setSelectedItem(item, references.PLACE);
+                    };
+
+                fetchResultCount().done(setSelection);
+              },
+
+              /**
+               * For objects, we fetch their references (e.g. places they link to), plus
+               * the total number of other results at that reference.
+               */
+              selectObject = function(item) {
+
+                var fetchResultCountForReference = function(uri) {
                       var filter = { places : [ uri ] };
 
                       return state.updateFilters(filter, { pushState: false })
@@ -137,55 +184,42 @@ require([
                       resultCounts = result.resultCounts;
 
                   state.setSelectedItem(item);
-                  selectionPanel.show(item, references, resultCounts);
                   resultList.setSelectedItem(item);
+                  // TODO currentSelection = { item: item, references: references }
+                  currentSelection = item;
+
+                  selectionPanel.show(item, { references: references, resultCounts: resultCounts });
 
                   // Note: selection may have happend through the map, so technically no
                   // need for this - but the map is designed to handle this situation
                   map.setSelectedItem(item, references.PLACE);
-
-                  // TODO currentSelection = { item: item, references: references }
-                  currentSelection = item;
                 });
               },
 
-              // Selecting a place should select the first ITEM at this place, rather then
-              // the place itself. To do this, we need to:
-              // - issue a search request, filtered by the place
-              // - select the first item in the search response
-              // But we DON'T want:
-              // - the request to show up in the history
-              // - the rest of the UI to change
-              // - the place filter to remain active after the request
-              selectPlace = function(place) {
-                var uri = ItemUtils.getURIs(place)[0],
-                    filter = { places : [ uri ] };
+              selectPerson = function(person) {
 
-                return state.updateFilters(filter, { pushState: false })
-                  .then(function(results) {
-                    state.updateFilters({ places: false }, { pushState: false, makeRequest: false });
-                    return results.items[0];
-                  });
               },
 
-              // Apply a filter to show everything in this dataset
               selectDataset = function(dataset) {
+                // Apply a filter to show everything in this dataset
+                /*
                 var uri = dataset.is_conflation_of[0].uri;
                 selectItem(dataset);
                 state.clearSearch(false);
                 state.updateFilters({ 'datasets': uri });
+                */
               };
 
           if (item)
             switch(ItemUtils.getItemType(item)) {
               case 'PLACE':
-                selectPlace(item).then(selectItem);
+                selectPlace(item);
                 break;
               case 'OBJECT':
-                selectItem(item);
+                selectObject(item);
                 break;
               case 'PERSON':
-                selectItem(item);
+                selectPerson(item);
                 break;
               case 'DATASET':
                 selectDataset(item);
@@ -193,6 +227,44 @@ require([
             }
           else
             deselect();
+        },
+
+        onSelectMapMarker = function(place) {
+          var uri = ItemUtils.getURIs(place)[0],
+              filter = { places : [ uri ] };
+
+          return state.updateFilters(filter, { pushState: false })
+            .done(function(results) {
+              state.updateFilters({ places: false }, { pushState: false, makeRequest: false });
+              selectItem(results.items[0]);
+            });
+        },
+
+        /**
+         * An item was selected, either via:
+         * - the result list
+         * - a map marker
+         * - through autosuggest->identifier->API fetch
+         */
+        onSelectItemOld = function(item) {
+
+              // Selecting a place should select the first ITEM at this place, rather then
+              // the PLACE straightaway. (The item CAN be the place itself - but also an
+              // object linked to the place.) To do this, we need to:
+              // - issue a search request, filtered by the place
+              // - select the first item in the search response
+          var selectPlace = function(place) {
+                console.log('selecting first at ', place);
+                var uri = ItemUtils.getURIs(place)[0],
+                    filter = { places : [ uri ] };
+
+                return state.updateFilters(filter, { pushState: false })
+                  .then(function(results) {
+                    console.log(results);
+                    state.updateFilters({ places: false }, { pushState: false, makeRequest: false });
+                    return results.items[0];
+                  });
+              };
         },
 
         /** An identifier was selected (e.g. via suggestions) - fetch item **/
@@ -228,7 +300,7 @@ require([
           state.setFilterPaneOpen(false);
         };
 
-    map.on('selectPlace', onSelectItem);
+    map.on('selectPlace', onSelectMapMarker);
 
     searchPanel.on('open', onOpenFilterPane);
     searchPanel.on('close', onCloseFilterPane);

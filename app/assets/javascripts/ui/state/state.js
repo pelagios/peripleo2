@@ -39,29 +39,32 @@ define([
           }
         },
 
+        // Common functionality for changing properties of the search
+        changeSearch = function(change, options) {
+          var pState = (options) ? options.pushState !== false : true, // default true
+              makeRequest = (options) ? options.makeRequest !== false : true,
+              promise = change(makeRequest);
+
+          if (pState) pushState();
+          return promise;
+        },
+
         clearSearch = function(options) {
-          var pState = (options) ? options.pushState !== false : true, // default true
-              makeRequest = (options) ? options.makeRequest !== false : true,
-              promise = search.clear(makeRequest);
-
-          if (pState) pushState();
-          return promise;
+          return changeSearch(search.clear, options);
         },
 
-        setQueryPhrase = function(query) {
-          var promise = search.setQuery(query);
-          pushState();
-          return promise;
+        setQueryPhrase = function(query, options) {
+          var changeFn = function(makeRequest)  {
+                return search.setQuery(query, makeRequest);
+              };
+          return changeSearch(changeFn, options);
         },
 
-        // TODO remove redundancy with clearSearch
         updateFilters = function(diff, options) {
-          var pState = (options) ? options.pushState !== false : true, // default true
-              makeRequest = (options) ? options.makeRequest !== false : true,
-              promise = search.updateFilters(diff, makeRequest);
-
-          if (pState) pushState();
-          return promise;
+          var changeFn = function(makeRequest) {
+                return search.updateFilters(diff, makeRequest);
+              };
+          return changeSearch(changeFn, options);
         },
 
         setTimerange = function(range) {
@@ -93,6 +96,7 @@ define([
     this.clearSearch = clearSearch;
     this.loadNextPage = search.loadNextPage;
     this.setQueryPhrase = setQueryPhrase;
+    this.getQueryPhrase = search.getQuery;
     this.updateFilters = updateFilters;
     this.setTimerange = setTimerange;
     this.setFilterPaneOpen = setFilterPaneOpen;

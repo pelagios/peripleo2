@@ -24,12 +24,15 @@
     padding:16px 12px;
   }
 
-  .item-references {
-    padding:2px 12px;
+  .references {
     background-color:@blueish-white;
     border-top:1px solid @light-grey-border;
     .rounded-corners-bottom(2px);
     color:@light-grey-type-hover;
+  }
+
+  .item.references {
+    padding:2px 12px;
 
     .ref-place {
 
@@ -56,6 +59,27 @@
       font-family:FontAwesome;
       font-size:14px;
       content:'\f140';
+      padding-right:5px;
+    }
+
+  }
+
+  .place.references {
+    padding:12px 12px;
+
+    a {
+      text-decoration:none;
+      color:@light-grey-type-hover;
+    }
+
+    a:hover {
+      text-decoration:underline;
+    }
+
+    .icon {
+      position:relative;
+      top:1px;
+      font-size:14px;
       padding-right:5px;
     }
 

@@ -2,7 +2,7 @@ define([
   'ui/common/formatting',
   'ui/common/itemUtils'], function(Formatting, ItemUtils) {
 
-  var ObjectCard  = function(parentEl, item, references, resultCounts) {
+  var ObjectCard  = function(parentEl, item, args) {
     var infoEl = jQuery(
           '<div class="item-info">' +
             '<p class="item-is-in"></p>' +
@@ -17,7 +17,7 @@ define([
         tempBoundsEl = infoEl.find('.item-temporal-bounds'),
 
         referencesEl = jQuery(
-          '<div class="item-references"></div>').appendTo(parentEl),
+          '<div class="item references"></div>').appendTo(parentEl),
 
         // TODO we'll assume that objects only have one record for now
         record = item.is_conflation_of[0],
@@ -43,12 +43,12 @@ define([
 
         renderReferences = function() {
 
-          var places = references.PLACE,
+          var places = args.references.PLACE,
               head = (places && places.length > 3) ? places.slice(0, 3) : places;
 
           if (head) {
             head.forEach(function(place) {
-              var counts = jQuery.grep(resultCounts, function(r) {
+              var counts = jQuery.grep(args.resultCounts, function(r) {
                     return place.identifiers.indexOf(r.identifier) > -1;
                   }),
 

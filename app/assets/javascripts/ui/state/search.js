@@ -148,9 +148,14 @@ define([], function() {
             return makeRequest();
         },
 
-        setQuery = function(query) {
+        setQuery = function(query, makeReq) {
           searchArgs.query = query;
-          return makeRequest();
+          if (makeReq)
+            return makeRequest();
+        },
+
+        getQuery = function() {
+          return searchArgs.query;
         },
 
         updateFilters = function(diff, makeReq) {
@@ -183,6 +188,7 @@ define([], function() {
     this.set = set;
     this.setAggregationsEnabled = setAggregationsEnabled;
     this.setQuery = setQuery;
+    this.getQuery = getQuery;
     this.setTimerange = setTimerange;
     this.updateFilters = updateFilters;
     this.updateSettings = updateSettings;

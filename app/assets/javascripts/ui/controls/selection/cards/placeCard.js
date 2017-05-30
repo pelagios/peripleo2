@@ -10,7 +10,7 @@ define([
         }, []);
       };
 
-  var PlaceCard  = function(parentEl, place, references) {
+  var PlaceCard  = function(parentEl, place, args) {
     var infoEl = jQuery(
           '<div class="item-info">' +
             '<h3 class="item-title"></h3>' +
@@ -26,7 +26,11 @@ define([
         descriptionEl = infoEl.find('.item-description'),
         tempBoundsEl  = infoEl.find('.item-temporal-bounds'),
 
-        render = function() {
+        referencesEl = jQuery(
+            '<div class="place references"><span class="icon">&#xf0c1;</span></div>'
+          ).appendTo(parentEl),
+
+        renderInfo = function() {
           var identifiers = ItemUtils.getURIs(place).map(function(uri) { return ItemUtils.parseEntityURI(uri); }),
               descriptions = ItemUtils.getDescriptions(place).map(function(d) { return d.description; }),
               names = distinct(ItemUtils.getNames(place).map(function(n) { return n.name; }));
@@ -48,9 +52,19 @@ define([
 
           if (place.temporal_bounds)
             tempBoundsEl.html(Formatting.formatTemporalBounds(place.temporal_bounds));
+        },
+
+        renderReferences = function() {
+          if (args.results > 0)
+            referencesEl.append('<a href="#">' + Formatting.formatNumber(args.results) + ' items</a> link here');
+          else
+            referencesEl.append('No other items link here');
+
+          // TODO related places
         };
 
-    render();
+    renderInfo();
+    renderReferences();
   };
 
   return PlaceCard;

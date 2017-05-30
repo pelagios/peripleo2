@@ -3,7 +3,7 @@ define([
   'ui/common/itemUtils'
 ], function(Formatting, ItemUtils) {
 
-  var PersonCard  = function(parentEl, person, references) {
+  var PersonCard  = function(parentEl, person, args) {
     var infoEl = jQuery(
           '<div class="item-info">' +
             '<h3 class="item-title"></h3>' +
