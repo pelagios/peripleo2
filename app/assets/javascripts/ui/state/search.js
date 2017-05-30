@@ -18,6 +18,9 @@ define([], function() {
 
           timerange: { from: false, to : false },
 
+          // TODO just a hack for now
+          bbox: false,
+
           settings: {
 
             timeHistogram : false,
@@ -61,6 +64,7 @@ define([], function() {
 
           url = appendIfExists(searchArgs.timerange.from, 'from', url);
           url = appendIfExists(searchArgs.timerange.to, 'to', url);
+          url = appendIfExists(searchArgs.bbox, 'bbox', url);
 
           return url;
         },
@@ -180,6 +184,11 @@ define([], function() {
             timeHistogram    : enabled,
             termAggregations : enabled,
           });
+        },
+
+        setViewport = function(bounds) {
+          // TODO just a hack for now
+          // searchArgs.bbox = bounds;
         };
 
     this.clear = clear;
@@ -192,6 +201,7 @@ define([], function() {
     this.setTimerange = setTimerange;
     this.updateFilters = updateFilters;
     this.updateSettings = updateSettings;
+    this.setViewport = setViewport;
   };
 
   return Search;

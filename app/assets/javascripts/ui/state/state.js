@@ -102,6 +102,7 @@ define([
     this.setFilterPaneOpen = setFilterPaneOpen;
     this.setLayerChanged = setLayerChanged;
     this.setSelectedItem = setSelectedItem;
+    this.setViewport = search.setViewport;
 
     HasEvents.apply(this);
   };

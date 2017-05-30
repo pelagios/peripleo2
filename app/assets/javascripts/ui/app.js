@@ -290,6 +290,8 @@ require([
         };
 
     map.on('selectPlace', onSelectMapMarker);
+    // TODO just a hack for now
+    map.on('move', state.setViewport);
 
     searchPanel.on('open', onOpenFilterPane);
     searchPanel.on('close', onCloseFilterPane);

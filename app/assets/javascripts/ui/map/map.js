@@ -74,6 +74,16 @@ define([
           }
         },
 
+        onMove = function() {
+          var bounds = map.getBounds();
+          self.fireEvent('move', [
+            bounds.getWest(),
+            bounds.getEast(),
+            bounds.getSouth(),
+            bounds.getNorth()
+          ]);
+        },
+
         // Conveniently, this means a click on the base map, not a marker - deselect!
         onClick = function(e) {
           topPlacesLayer.clearSelection();
@@ -109,6 +119,7 @@ define([
     btnZoomIn.click(function() { map.zoomIn(); });
     btnZoomOut.click(function() { map.zoomOut(); });
 
+    map.on('move', onMove);
     map.on('click', onClick);
 
     // Forward selections up the hierarchy chain
