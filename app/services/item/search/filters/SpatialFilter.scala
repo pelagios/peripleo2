@@ -7,6 +7,7 @@ import org.elasticsearch.common.geo.builders.ShapeBuilder
 import org.elasticsearch.index.query.GeoShapeQueryBuilder
 import com.sksamuel.elastic4s.QueryDefinition
 import org.elasticsearch.common.geo.ShapeRelation
+import org.elasticsearch.common.unit.DistanceUnit
 
 case class GeoShapeDefinition(builder: GeoShapeQueryBuilder) extends QueryDefinition
 
@@ -19,12 +20,23 @@ case class SpatialFilter(bbox: Option[BoundingBox], center: Option[Coordinate], 
       val builder = 
         QueryBuilders.geoShapeQuery(field, ShapeBuilder.newEnvelope()
           .topLeft(b.minLon, b.maxLat)
-          .bottomRight(b.maxLon, b.minLat))
-        .relation(ShapeRelation.WITHIN)
+          .bottomRight(b.maxLon, b.minLat)
+        ).relation(ShapeRelation.WITHIN)
           
       new GeoShapeDefinition(builder)
-    
-    // TODO circle filter
+      
+    case (_, Some(c)) =>
+      val builder =
+        QueryBuilders.geoShapeQuery(field, ShapeBuilder.newCircleBuilder()
+          .center(c)
+          .radius(radius.getOrElse(1.0), DistanceUnit.KILOMETERS)
+        ).relation(ShapeRelation.WITHIN)
+          
+      new GeoShapeDefinition(builder)
+       
+    case _ =>
+      // Can never happen due to require(...), but just to avoid compiler warning
+      throw new RuntimeException    
   }
   
 }
