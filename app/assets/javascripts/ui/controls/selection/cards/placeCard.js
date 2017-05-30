@@ -58,15 +58,24 @@ define([
               refEl;
 
           if (args.results > 0) {
-            refEl = jQuery('<span><a class="local-search" href="#">' + Formatting.formatNumber(args.results) + ' items</a> link here&nbsp;</span>');
+            refEl = jQuery(
+              '<span class="inbound-links">' +
+                '<a class="local-search" href="#">' + Formatting.formatNumber(args.results) + ' items</a> link here' +
+              '</span>');
+
             refEl.find('a').data('at', place);
+
             referencesEl.append(refEl);
           } else {
             referencesEl.append('No items link here');
           }
 
           if (related.length > 0)
-            referencesEl.append(' <span class="icon">&#xf140;</span><a href="#">' + related.length + ' related places</a>');
+            referencesEl.append(
+              '·<span class="related-entities">' +
+                  '<span class="icon">&#xf140;</span>' +
+                  '<a href="#">' + related.length + ' related places</a>' +
+                '</span>');
         };
 
     renderInfo();
