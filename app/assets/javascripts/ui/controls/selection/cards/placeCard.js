@@ -55,12 +55,16 @@ define([
         },
 
         renderRelations = function() {
-          var related = args.relatedPlaces;
+          var related = args.relatedPlaces,
+              refEl;
 
-          if (args.results > 0)
-            referencesEl.append('<a href="#">' + Formatting.formatNumber(args.results) + ' items</a> link here&nbsp;');
-          else
+          if (args.results > 0) {
+            refEl = jQuery('<span><a class="local-search" href="#">' + Formatting.formatNumber(args.results) + ' items</a> link here&nbsp;</span>');
+            refEl.find('a').data('at', place);
+            referencesEl.append(refEl);
+          } else {
             referencesEl.append('No items link here');
+          }
 
           if (related.length > 0)
             referencesEl.append(' <span class="icon">&#xf140;</span><a href="#">' + related.length + ' related places</a>');

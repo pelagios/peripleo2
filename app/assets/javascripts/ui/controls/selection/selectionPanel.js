@@ -95,20 +95,31 @@ define([
         onSelectDestination = function(e) {
           var link = jQuery(e.target),
               identifier = link.data('id');
+
           self.fireEvent('select', identifier);
           return false;
         },
 
         /** User clicked a referenced item, in order to trigger a filtered search **/
-        onSelectReference = function(e) {
+        onFilterBy = function(e) {
           var link = jQuery(e.target),
               reference = link.data('reference');
+
           self.fireEvent('filterBy', reference);
+          return false;
+        },
+
+        onLocalSearch = function(e) {
+          var link = jQuery(e.target),
+              place = link.data('at');
+
+          self.fireEvent('localSearch', place);
           return false;
         };
 
     element.on('click', '.destination', onSelectDestination);
-    element.on('click', '.filter', onSelectReference);
+    element.on('click', '.filter', onFilterBy);
+    element.on('click', '.local-search', onLocalSearch);
 
     this.show = show;
     this.hide = hide;

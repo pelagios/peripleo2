@@ -13,11 +13,14 @@ require([
   'ui/api',
 ], function(ItemUtils, ResultList, SearchPanel, SelectionPanel, Map, State, API) {
 
-  /**
-   * A composition helper that puts a function in sequences with a jQuery deferred function.
-   * I.e. function b is called after function a is .done(), with the results of a as input.
-   */
-  var seq = function(a, b) { return function(arg) { a(arg).done(b); }; };
+      /** Shorthand for a 'transient query' state update **/
+  var NOOP = { pushState: false, makeRequest: false},
+
+      /**
+       * A composition helper that puts a function in sequences with a jQuery deferred function.
+       * I.e. function b is called after function a is .done(), with the results of a as input.
+       */
+      seq = function(a, b) { return function(arg) { a(arg).done(b); }; };
 
   jQuery(document).ready(function() {
     var body = jQuery(document.body),
@@ -98,21 +101,17 @@ require([
                */
               selectPlace = function(place) {
 
-                var fetchResultCount = function() {
-                      // Run a search, filtered by the URI of this place
-                      var filter = { places : [ uri ] },
-                          origQuery = state.getQueryPhrase(),
-                          noop = { pushState: false, makeRequest: false};
+                var fetchRelated  = function() {
+                      // Transient search, filtered by URI of the place, but without queryphrase
+                      var filter = { places: [ uri ] },
+                          origQuery = state.getQueryPhrase();
 
-                      // Transient request with all currently active filters, an additional
-                      // place filter, but no query phrase
-                      state.setQueryPhrase(false, noop);
-
+                      state.setQueryPhrase(false, NOOP);
                       return state.updateFilters(filter, { pushState: false })
                         .then(function(results) {
-                          // Change back to original filter settings
-                          state.updateFilters({ places: false }, noop);
-                          state.setQueryPhrase(origQuery, noop);
+                          // Change back to original settings
+                          state.updateFilters({ places: false }, NOOP);
+                          state.setQueryPhrase(origQuery, NOOP);
                           return results;
                         });
                     },
@@ -138,7 +137,7 @@ require([
                       // map.setSelectedItem(item, references.PLACE);
                     };
 
-                fetchResultCount().done(setSelection);
+                fetchRelated().done(setSelection);
               },
 
               /**
@@ -240,33 +239,6 @@ require([
             });
         },
 
-        /**
-         * An item was selected, either via:
-         * - the result list
-         * - a map marker
-         * - through autosuggest->identifier->API fetch
-         */
-        onSelectItemOld = function(item) {
-
-              // Selecting a place should select the first ITEM at this place, rather then
-              // the PLACE straightaway. (The item CAN be the place itself - but also an
-              // object linked to the place.) To do this, we need to:
-              // - issue a search request, filtered by the place
-              // - select the first item in the search response
-          var selectPlace = function(place) {
-                console.log('selecting first at ', place);
-                var uri = ItemUtils.getURIs(place)[0],
-                    filter = { places : [ uri ] };
-
-                return state.updateFilters(filter, { pushState: false })
-                  .then(function(results) {
-                    console.log(results);
-                    state.updateFilters({ places: false }, { pushState: false, makeRequest: false });
-                    return results.items[0];
-                  });
-              };
-        },
-
         /** An identifier was selected (e.g. via suggestions) - fetch item **/
         onSelectIdentifier = function(identifier) {
           API.getItem(identifier)
@@ -281,6 +253,17 @@ require([
           // TODO support filter by person | period
           state.updateFilters({ places : [ reference.identifiers[0] ] }).done(function(results) {
             resultList.setFilteredResponse(results, reference);
+          });
+        },
+
+        /** Local search sets a filter to the place, but removes the query **/
+        onLocalSearch = function(place) {
+          var identifiers = ItemUtils.getURIs(place),
+              filter = { places : [ identifiers[0] ] };
+
+          state.setQueryPhrase(false, NOOP);
+          state.updateFilters(filter).done(function(results) {
+            resultList.setLocalResponse(results, place);
           });
         },
 
@@ -310,6 +293,7 @@ require([
 
     selectionPanel.on('select', onSelectIdentifier);
     selectionPanel.on('filterBy', onFilterByReference);
+    selectionPanel.on('localSearch', onLocalSearch);
 
     resultList.on('select', onSelectItem);
     resultList.on('nextPage', seq(state.loadNextPage, resultList.appendPage));

@@ -1,7 +1,8 @@
 define([
+  'ui/common/formatting',
   'ui/common/hasEvents',
   'ui/controls/results/templates'
-], function(HasEvents, Templates) {
+], function(Formatting, HasEvents, Templates) {
 
   var SLIDE_DURATION = 100;
 
@@ -90,8 +91,17 @@ define([
         },
 
         setFilteredResponse = function(response, reference) {
-          resultsLocalEl.html(
-            response.total + ' results for <a href="#">' + reference.title + '</a>');
+          resultsLocalEl.html(Formatting.formatNumber(response.total) +
+            ' results for <a href="#">' + reference.title + '</a>');
+
+          headerEl.velocity('slideDown', { duration: SLIDE_DURATION });
+          renderResponse(response, false);
+        },
+
+        setLocalResponse = function(response, entity) {
+          resultsLocalEl.html(Formatting.formatNumber(response.total) +
+            ' results for <a href="#">' + entity.title + '</a>');
+
           headerEl.velocity('slideDown', { duration: SLIDE_DURATION });
           renderResponse(response, false);
         },
@@ -120,6 +130,7 @@ define([
     this.appendPage = appendPage;
     this.setSearchResponse = setSearchResponse;
     this.setFilteredResponse = setFilteredResponse;
+    this.setLocalResponse = setLocalResponse;
     this.setSelectedItem = setSelectedItem;
 
     HasEvents.apply(this);
