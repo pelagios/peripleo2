@@ -14,7 +14,7 @@ define([
           '<div id="result-list">' +
             '<div class="rl-header">' +
               '<span class="results-local"></span>' +
-              '<span class="results-all"><a href="#">All results</a></span>' +
+              '<span class="results-all"></span>' +
             '</div>' +
             '<div class="rl-body">' +
               '<ul></ul>' +
@@ -91,16 +91,22 @@ define([
         },
 
         setFilteredResponse = function(response, reference) {
-          resultsLocalEl.html(Formatting.formatNumber(response.total) +
-            ' results for <a href="#">' + reference.title + '</a>');
+          resultsLocalEl.html('<span class="icon">&#xf0b0;</span>' +
+            Formatting.formatNumber(response.total) + ' results for <a href="#">' +
+            reference.title + '</a>');
+
+          resultsAllEl.html('<span class="icon">&#xf03a;</span><a href="#">All results</a>');
 
           headerEl.velocity('slideDown', { duration: SLIDE_DURATION });
           renderResponse(response, false);
         },
 
         setLocalResponse = function(response, entity) {
-          resultsLocalEl.html(Formatting.formatNumber(response.total) +
-            ' results for <a href="#">' + entity.title + '</a>');
+          resultsLocalEl.html('<span class="icon">&#xf0c1;</span>' +
+            Formatting.formatNumber(response.total) + ' results linked to <a href="#">' +
+            entity.title + '</a>');
+
+          resultsAllEl.empty();
 
           headerEl.velocity('slideDown', { duration: SLIDE_DURATION });
           renderResponse(response, false);

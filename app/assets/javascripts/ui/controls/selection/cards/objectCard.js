@@ -55,11 +55,11 @@ define([
                   moreResultsEl = (function() {
                     // Show 'more results' link of there's at least 1 more result
                     if (counts.length > 0 && counts[0].resultCount > 1) {
-                      var moreCount = counts[0].resultCount - 1,
-                          label = (moreCount > 1) ? 'results' : 'result',
+                      var totalCount = counts[0].resultCount,
+                          label = (totalCount > 1) ? ' results total' : ' result total',
                           el = jQuery(
                             '<span class="more"> · ' +
-                              '<a class="filter" href="#">' + moreCount + ' more ' + label + '</a>' +
+                              '<a class="filter" href="#">' + totalCount + label + '</a>' +
                             '<span>');
 
                       el.find('a').data('reference', place);

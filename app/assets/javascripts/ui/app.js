@@ -235,7 +235,7 @@ require([
           return state.updateFilters(filter, { pushState: false })
             .done(function(results) {
               state.updateFilters({ places: false }, { pushState: false, makeRequest: false });
-              selectItem(results.items[0]);
+              onSelectItem(results.items[0]);
             });
         },
 
@@ -281,13 +281,19 @@ require([
           // TODO this will internally fire a new search request (whose response
           // TODO gets ignored) - that's not really needed!
           state.setFilterPaneOpen(false);
+        },
+
+        onQueryPhraseChanged = function(query) {
+          // Remove local search filters first, if any
+          state.updateFilters({ places : false }, NOOP);
+          state.setQueryPhrase(query).done(onSearchResponse);
         };
 
     map.on('selectPlace', onSelectMapMarker);
 
     searchPanel.on('open', onOpenFilterPane);
     searchPanel.on('close', onCloseFilterPane);
-    searchPanel.on('queryChange', seq(state.setQueryPhrase, onSearchResponse));
+    searchPanel.on('queryChange', onQueryPhraseChanged);
     searchPanel.on('timerangeChange', seq(state.setTimerange, onSearchResponse));
     searchPanel.on('selectSuggestOption', onSelectIdentifier);
 

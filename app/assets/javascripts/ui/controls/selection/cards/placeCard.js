@@ -26,9 +26,8 @@ define([
         descriptionEl = infoEl.find('.item-description'),
         tempBoundsEl  = infoEl.find('.item-temporal-bounds'),
 
-        referencesEl = jQuery(
-            '<div class="place references"><span class="icon">&#xf0c1;</span></div>'
-          ).appendTo(parentEl),
+        referencesEl =
+          jQuery('<div class="place references"><span class="icon">&#xf0c1;</span></div>').appendTo(parentEl),
 
         renderInfo = function() {
           var identifiers = ItemUtils.getURIs(place).map(function(uri) { return ItemUtils.parseEntityURI(uri); }),
