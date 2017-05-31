@@ -112,10 +112,6 @@ define([
           renderResponse(response, false);
         },
 
-        deselect = function() {
-
-        },
-
         setSelectedItem = function(item) {
           var select = function() {
                 var setCurrentSelection = function() {
@@ -154,7 +150,8 @@ define([
 
           // The element's scroll position jumps when a selection is made (flexbox...).
           // Therefore we force the scroll position back to what it was before selection
-          bodyEl.scrollTop(lastScrollTop);
+          var scrollTop = lastScrollTop;
+          setTimeout(function() { bodyEl[0].scrollTop = scrollTop; }, 1);
         },
 
         appendPage = function(response) {
