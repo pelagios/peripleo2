@@ -66,6 +66,7 @@ require([
           var deselectItem = function(item) {
                 selectionPanel.hide();
                 currentSelection = false;
+                resultList.setSelectedItem();
               },
 
               deselectPlace = function(item) {
@@ -233,14 +234,18 @@ require([
         },
 
         onSelectMapMarker = function(place) {
-          var uri = ItemUtils.getURIs(place)[0],
-              filter = { places : [ uri ] };
+          if (place) {
+            var uri = ItemUtils.getURIs(place)[0],
+                filter = { places : [ uri ] };
 
-          return state.updateFilters(filter, { pushState: false })
-            .done(function(results) {
-              state.updateFilters({ places: false }, { pushState: false, makeRequest: false });
-              onSelectItem(results.items[0]);
-            });
+            return state.updateFilters(filter, { pushState: false })
+              .done(function(results) {
+                state.updateFilters({ places: false }, { pushState: false, makeRequest: false });
+                onSelectItem(results.items[0]);
+              });
+          } else {
+            deselect();
+          }
         },
 
         /** An identifier was selected (e.g. via suggestions) - fetch item **/

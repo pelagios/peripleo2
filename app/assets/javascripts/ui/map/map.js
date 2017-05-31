@@ -71,8 +71,8 @@ define([
           // TODO get item bounds + compute union
           if (topPlacesBounds.isValid())
             map.fitBounds(topPlacesBounds, {
-              paddingTopLeft: [440, 0],
-              paddingBottomRight: [0, 0],
+              paddingTopLeft: [440, 20],
+              paddingBottomRight: [20, 20],
               animate: true
             });
         },
