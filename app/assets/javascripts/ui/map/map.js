@@ -65,6 +65,18 @@ define([
         btnZoomIn  = controlsEl.find('.zoom-in'),
         btnZoomOut = controlsEl.find('.zoom-out'),
 
+        fitBounds = function() {
+          var topPlacesBounds = topPlacesLayer.getBounds();
+
+          // TODO get item bounds + compute union
+          if (topPlacesBounds.isValid())
+            map.fitBounds(topPlacesBounds, {
+              paddingTopLeft: [440, 0],
+              paddingBottomRight: [0, 0],
+              animate: true
+            });
+        },
+
         onChangeLayer = function(name) {
           var layer = BASE_LAYERS[name];
           if (layer && layer !== currentBaseLayer) {
@@ -125,6 +137,7 @@ define([
     // Forward selections up the hierarchy chain
     topPlacesLayer.on('select', this.forwardEvent('selectPlace'));
 
+    this.fitBounds = fitBounds;
     this.setState = setState;
     this.setSearchResponse = setSearchResponse;
     this.setSelectedItem = setSelectedItem;

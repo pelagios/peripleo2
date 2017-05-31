@@ -130,7 +130,6 @@ require([
                       // TODO currentSelection = { item: item, references: references }
                       currentSelection = place;
 
-
                       // Note: selection may have happend through the map, so technically no
                       // need for this - but the map is designed to handle this situation
                       // map.setSelectedItem(item, references.PLACE);
@@ -291,7 +290,10 @@ require([
         onQueryPhraseChanged = function(query) {
           // Remove local search filters first, if any
           state.updateFilters({ places : false }, NOOP);
-          state.setQueryPhrase(query).done(onSearchResponse);
+          state.setQueryPhrase(query).done(function(results) {
+            onSearchResponse(results);
+            map.fitBounds();
+          });
         };
 
     map.on('selectPlace', onSelectMapMarker);

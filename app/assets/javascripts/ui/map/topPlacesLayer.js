@@ -57,6 +57,10 @@ define([
           });
         },
 
+        getBounds = function() {
+          return markers.getBounds();
+        },
+
         isEqualToCurrentSelection = function(markers) {
           if (markers.length !== currentSelection.length)
             return false;
@@ -122,6 +126,7 @@ define([
         };
 
     this.clearSelection = clearSelection;
+    this.getBounds = getBounds;
     this.update = update;
     this.selectByURIs = selectByURIs;
 
