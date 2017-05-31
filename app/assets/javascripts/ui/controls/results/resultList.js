@@ -112,9 +112,47 @@ define([
           renderResponse(response, false);
         },
 
+        deselect = function() {
+
+        },
+
         setSelectedItem = function(item) {
-          // We currently don't do anything with the selected item. However, unfortunately,
-          // the element's scroll position jumps when a selection is made due (flexbox...).
+          var select = function() {
+                var setCurrentSelection = function() {
+                      // TODO there are various ways to optimize if needed (indexed lookup etc.)
+                      listEl.children('li').each(function(idx, node) {
+                        var el = jQuery(node),
+                            docId = el.data('item').doc_id;
+
+                        if (docId === item.doc_id) {
+                          el.addClass('selected');
+                          currentSelection = el;
+                          return false;
+                        }
+                      });
+                    };
+
+                if (currentSelection) {
+                  if (currentSelection.data('item').doc_id !== item.doc_id) {
+                    currentSelection.removeClass('selected');
+                    setCurrentSelection();
+                  }
+                } else {
+                  setCurrentSelection();
+                }
+              },
+
+              deselect = function() {
+                if (currentSelection)
+                  currentSelection.removeClass('selected');
+              };
+
+          if (item)
+            select();
+          else
+            deselect();
+
+          // The element's scroll position jumps when a selection is made (flexbox...).
           // Therefore we force the scroll position back to what it was before selection
           bodyEl.scrollTop(lastScrollTop);
         },
