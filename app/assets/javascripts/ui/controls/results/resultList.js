@@ -78,6 +78,9 @@ define([
           if (!append) {
             listEl.empty();
             bodyEl.scrollTop(0);
+
+            // If the response replaces the current list, remove selection
+            currentSelection = false;
           }
 
           response.items.forEach(createRow);
@@ -139,8 +142,10 @@ define([
               },
 
               deselect = function() {
-                if (currentSelection)
+                if (currentSelection) {
                   currentSelection.removeClass('selected');
+                  currentSelection = false;
+                }
               };
 
           if (item)
