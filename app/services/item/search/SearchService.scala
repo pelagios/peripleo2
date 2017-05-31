@@ -26,34 +26,34 @@ class SearchService @Inject() (
   }
   
   /** The common phrase query part **/
-  private def customPhraseQuery(q: String) =
-    Seq(
-        // Treat as standard query string query first...
-        queryStringQuery(q).defaultOperator("AND"),
+  private def phraseQuery(query: Option[String]): Seq[QueryDefinition] = {
+    val itemPart = query.map { q =>
+      Seq(
+        // Search inside record titles...
+        matchPhraseQuery("is_conflation_of.title.raw", q).boost(5.0),
+        matchPhraseQuery("is_conflation_of.title", q),
+  
+        // ...names...
+        matchPhraseQuery("is_conflation_of.names.name.raw", q).boost(5.0),
+        matchPhraseQuery("is_conflation_of.names.name", q),
+  
+        // ...and descriptions (with lower boost)
+        matchQuery("is_conflation_of.descriptions.description", q).operator("AND"))
+    }.getOrElse(Seq(matchAllQuery))
+    
+    val referencePart = query.map { q =>
+      Seq(hasChildQuery("reference") query { termQuery("context", q) })
+    }.getOrElse(Seq.empty[QueryDefinition])
+      
+    itemPart ++ referencePart
+  }
 
-        // ...and then look for exact matches in specific fields
-        bool {
-          should (
-            // Search inside record titles...
-            matchPhraseQuery("is_conflation_of.title.raw", q).boost(5.0),
-            matchPhraseQuery("is_conflation_of.title", q),
-
-            // ...names...
-            matchPhraseQuery("is_conflation_of.names.name.raw", q).boost(5.0),
-            matchPhraseQuery("is_conflation_of.names.name", q),
-
-            // ...and descriptions (with lower boost)
-            matchQuery("is_conflation_of.descriptions.description", q).operator("AND")
-          )
-        }
-      )
-
-  private def buildPlaceQuery(args: SearchArgs, filter: QueryDefinition) =
+  private def buildPlaceQuery(args: SearchArgs, filter: QueryDefinition) =    
     search in ES.PERIPLEO / ES.REFERENCE query {
       constantScoreQuery {
         should (
           termQuery("context", args.query.getOrElse("*")),
-          hasParentQuery(ES.ITEM) query { queryStringQuery(args.query.getOrElse("*")) }
+          hasParentQuery(ES.ITEM) query { should ( phraseQuery(args.query) ) }
         ) filter (
           hasParentQuery("item") query filter
         )
@@ -71,16 +71,12 @@ class SearchService @Inject() (
     ) // TODO sub-aggregate places vs people vs periods etc. to places only
   
   /** Common query components used to build item result and time histogram **/
-  private def itemBaseQuery(args: SearchArgs, filter: QueryDefinition) = { 
-    val itemPart = args.query.map(customPhraseQuery).getOrElse(Seq(queryStringQuery("*")))
-    val referencePart = hasChildQuery("reference") query { termQuery("context", args.query.getOrElse("*")) }
-      
+  private def itemBaseQuery(args: SearchArgs, filter: QueryDefinition) =       
     search in ES.PERIPLEO / ES.ITEM query {
       bool {
-        must ( should ( itemPart :+ referencePart ) ) filter(filter)
+        must ( should ( phraseQuery(args.query) ) ) filter(filter)
       } 
     }
-  }
 
   private def buildItemQuery(args: SearchArgs, filter: QueryDefinition) = {
     val aggregations =

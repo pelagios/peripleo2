@@ -124,12 +124,11 @@ require([
                           });
 
                       // TODO redundancy with selectObject!
-                      state.setSelectedItem(item);
-                      resultList.setSelectedItem(item);
-                      selectionPanel.show(item, { results: resultsAt, relatedPlaces: related });
-
+                      state.setSelectedItem(place);
+                      resultList.setSelectedItem(place);
+                      selectionPanel.show(place, { results: resultsAt, relatedPlaces: related });
                       // TODO currentSelection = { item: item, references: references }
-                      currentSelection = item;
+                      currentSelection = place;
 
 
                       // Note: selection may have happend through the map, so technically no
@@ -182,12 +181,13 @@ require([
                   var references = result.references,
                       resultCounts = result.resultCounts;
 
+                  // TODO redundancy with selectPlace!
                   state.setSelectedItem(item);
                   resultList.setSelectedItem(item);
+                  selectionPanel.show(item, { references: references, resultCounts: resultCounts });
                   // TODO currentSelection = { item: item, references: references }
                   currentSelection = item;
 
-                  selectionPanel.show(item, { references: references, resultCounts: resultCounts });
 
                   // Note: selection may have happend through the map, so technically no
                   // need for this - but the map is designed to handle this situation
@@ -200,13 +200,18 @@ require([
               },
 
               selectDataset = function(dataset) {
-                // Apply a filter to show everything in this dataset
-                /*
-                var uri = dataset.is_conflation_of[0].uri;
-                selectItem(dataset);
-                state.clearSearch(false);
-                state.updateFilters({ 'datasets': uri });
-                */
+                // TODO redundancy with selectPlace!
+                state.setSelectedItem(dataset);
+                resultList.setSelectedItem(dataset);
+                selectionPanel.show(dataset);
+                // TODO currentSelection = { item: dataset, references: references }
+                currentSelection = dataset;
+
+                // Clear all search params and then set a filter
+                state.clearSearch(false, NOOP);
+                state.updateFilters({ 'datasets': uri }).done(function(results) {
+                  // TODO show all dots on map?
+                });
               };
 
           if (item)
