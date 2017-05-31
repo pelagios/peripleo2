@@ -22,10 +22,12 @@ define([
 
         element = jQuery(
           '<div id="current-selection">' +
+            '<div class="dogear"></div>' +
             '<div class="depiction"></div>' +
             '<div class="card"></div>' +
           '</div>').hide().appendTo(parentEl),
 
+        dogearEl = element.find('.dogear'),
         depictionEl = element.find('.depiction').hide(),
         cardEl = element.find('.card'),
 
@@ -65,15 +67,19 @@ define([
           // Then defer to the appropriate card implementation
           switch(ItemUtils.getItemType(item)) {
             case 'PLACE':
+              dogearEl.attr('class', 'dogear place');
               new PlaceCard(cardEl, item, args);
               break;
             case 'OBJECT':
+              dogearEl.attr('class', 'dogear object');
               new ObjectCard(cardEl, item, args);
               break;
             case 'PERSON':
+              dogearEl.attr('class', 'dogear person');
               new PersonCard(cardEl, item, args);
               break;
             case 'DATASET':
+              dogearEl.attr('class', 'dogear dataset');
               new DatasetCard(cardEl, item, args);
               break;
             default:

@@ -8,6 +8,52 @@
   .box-shadow(0, 0, 8px, 0, rgba(0,0,0,0.25));
   .rounded-corners(2px);
 
+  .dogear {
+    position:absolute;
+    top:0;
+    right:0;
+    width:0;
+	  height:0;
+	  border-top:52px solid transparent;
+	  border-left:50px solid transparent;
+  }
+
+  .dogear::after {
+    color:#fff;
+    font-family:Tonicons;
+    position:absolute;
+    top:-46px;
+    font-size:23px;
+    right:3px;
+  }
+
+  .dogear.place { border-top-color:@type-place; }
+  .dogear.place::after {
+    content:'\e638';
+    top:-45px;
+    font-size:21px;
+  }
+
+  .dogear.object { border-top-color:@type-object; }
+  .dogear.object::after {
+    content:'\e6af';
+    right:5px;
+  }
+
+  .dogear.person { border-top-color:@type-person; }
+  .dogear.person::after {
+    content:'\e863';
+    font-size:21px;
+    top:-47px;
+  }
+
+  .dogear.dataset { border-top-color:@type-dataset; }
+  .dogear.dataset::after {
+    content:'\e674';
+    font-size:22px;
+    top:-48px;
+  }
+
   .depiction {
     min-height:60px;
     height:25%;
