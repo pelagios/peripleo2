@@ -32,7 +32,7 @@ define([
         cardEl = element.find('.card'),
 
         empty = function() {
-          depictionEl.css('background-image', false);
+          depictionEl.css('background-image', 'none');
           cardEl.empty();
         },
 
@@ -51,6 +51,8 @@ define([
               depictionEl.velocity('slideDown', { duration: SLIDE_DURATION });
           } else if (isPanelVisible) {
             depictionEl.velocity('slideUp', { duration: SLIDE_DURATION });
+          } else {
+            depictionEl.hide();
           }
         },
 
