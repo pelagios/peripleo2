@@ -7,10 +7,11 @@ define(function() {
         { shortcode: 'dare',        initial: 'D', color: '#9e9ac8', url_patterns: [ 'http://dare.ht.lu.se/places/' ] },
         { shortcode: 'vici',        initial: 'V', color: '#d6616b', url_patterns: [ 'http://vici.org/vici/' ] },
         { shortcode: 'geonames',    initial: 'G', color: '#74c476', url_patterns: [ 'http://sws.geonames.org/' ] },
-        { shortcode: 'opencontext', initial: 'O', color: '#8c6d31', url_patterns: [ 'http://opencontext.org/subjects/' ]},
+        { shortcode: 'opencontext', initial: 'O', color: '#8c6d31', url_patterns: [ 'http://opencontext.org/subjects/' ] },
+        { shortcode: 'europeana',   initial: 'e', color: '#1676aa', url_patterns: [ 'http://data.europeana.eu/place/base/' ] },
 
         // People
-        { shortcode: 'europeana',   initial: 'e', color: '#1676aa', url_patterns: ['http://data.europeana.eu/agent/base/'] }
+        { shortcode: 'europeana',   initial: 'e', color: '#1676aa', url_patterns: [ 'http://data.europeana.eu/agent/base/' ] }
       ],
 
       /**
