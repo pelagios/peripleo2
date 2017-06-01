@@ -85,6 +85,16 @@ class GazetteerAdminController @Inject() (
                 GeoNamesCrosswalk.fromJson,
                 importer,
                 loggedIn.username)
+            } else if (formData.filename.toLowerCase.contains("europeana")) {
+              Logger.info("Using Europeana simple places crosswalk")
+              
+              new StreamLoader(taskService, taskType, materializer).importRecords(
+                formData.filename + " (Europeana GeoJSON)",
+                formData.ref.file,
+                formData.filename,
+                EuropeanaPlacesCrosswalk.fromJson,
+                importer,
+                loggedIn.username)
             }
 
           }
