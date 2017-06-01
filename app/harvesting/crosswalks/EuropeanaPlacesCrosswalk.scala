@@ -55,7 +55,7 @@ object EuropeanaPlaceRecord extends HasGeometry {
     (JsPath \ "uri").read[String] and
     (JsPath \ "title").read[String] and
     (JsPath \ "names").read[Seq[Name]] and
-    (JsPath \ "lonloat").readNullable[Coordinate] and
+    (JsPath \ "lonlat").readNullable[Coordinate] and
     (JsPath \ "close_matches").read[Seq[String]]
   )(EuropeanaPlaceRecord.apply _)
 
