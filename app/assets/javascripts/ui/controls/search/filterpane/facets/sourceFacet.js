@@ -20,6 +20,11 @@ define([
         topSource = el.find('.top-source'),
         moreBuckets = el.find('.more-buckets'),
 
+        empty = function() {
+          topSource.empty();
+          moreBuckets.empty();
+        },
+
         // Gets the top bucket, at the lowest leaf-level
         getTopBucket = function(buckets) {
               // Max count
@@ -46,40 +51,38 @@ define([
           });
         },
 
-        // TODO handle zero buckets case
         update = function(buckets) {
+          empty();
+          if (buckets.length > 0) {
+            var asArray = buckets.map(function(obj) {
+                  var key = Object.keys(obj)[0],
+                      val = obj[key];
+                  return { key: key, val: val };
+                }),
 
-          console.log(buckets);
-          
-          var asArray = buckets.map(function(obj) {
-                var key = Object.keys(obj)[0],
-                    val = obj[key];
-                return { key: key, val: val };
-              }),
+                top = getTopBucket(asArray),
 
-              top = getTopBucket(asArray),
+                path = top.key.split(SEPARATOR + SEPARATOR).map(function(segments) {
+                  var t = segments.split(SEPARATOR);
+                  return { id: t[0], label: t[1] };
+                }),
 
-              path = top.key.split(SEPARATOR + SEPARATOR).map(function(segments) {
-                var t = segments.split(SEPARATOR);
-                return { id: t[0], label: t[1] };
-              }),
+                more = removeBranch(asArray, path).length,
 
-              more = removeBranch(asArray, path).length,
+                label =
+                  (more > 0) ?
+                    (more > 1) ?
+                      (more > 10) ? 'and 10+ other sources' : 'and ' + more + ' other sources' :
+                    'and 1 more source' :
+                  '';
 
-              label =
-                (more > 0) ?
-                  (more > 1) ?
-                    (more > 10) ? 'and 10+ other sources' : 'and ' + more + ' other sources' :
-                  'and 1 more source' :
-                '';
+            path.forEach(function(seg) {
+              topSource.append(
+                '<span><a href="#" data-id="' + seg.id + '">' + seg.label + '</a></span>');
+            });
 
-          topSource.empty();
-          path.forEach(function(seg) {
-            topSource.append(
-              '<span><a href="#" data-id="' + seg.id + '">' + seg.label + '</a></span>');
-          });
-
-          moreBuckets.html(label);
+            moreBuckets.html(label);
+          }
         };
 
     this.update = update;

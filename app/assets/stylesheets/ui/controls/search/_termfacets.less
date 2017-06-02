@@ -105,10 +105,11 @@
 }
 
 .by-source {
-  padding:8px 14px;
+  padding:8px;
   text-align:center;
 
   h3 {
+    color:@light-grey-type;
     font-size:13px;
     font-weight:normal;
     padding:0 0 2px 0;
@@ -120,10 +121,8 @@
     font-size:15px;
     line-height:18px;
     padding-bottom:2px;
-
     span { display:block; }
-    a, a:hover { color: @dark-grey-type; }
-
+    a, a:hover, span::after { color: @dark-grey-type; }
   }
 
 }

@@ -29,6 +29,8 @@ class SearchService @Inject() (
   private def phraseQuery(query: Option[String]): Seq[QueryDefinition] = {
     val itemPart = query.map { q =>
       Seq(
+        queryStringQuery(q).defaultOperator("AND"),
+        
         // Search inside record titles...
         matchPhraseQuery("is_conflation_of.title.raw", q).boost(5.0),
         matchPhraseQuery("is_conflation_of.title", q),
