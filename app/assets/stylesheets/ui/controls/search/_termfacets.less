@@ -7,10 +7,12 @@
 }
 
 .facet {
+  position:relative;
   width:50%;
   height:85px;
   box-sizing:border-box;
   display:inline-block;
+  color:@dark-grey-type;
 
   .more-buckets {
     font-size:13px;
@@ -24,12 +26,26 @@
 
 }
 
+.facet-aligner {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  height:100%;
+}
+
 .facet.left {
   border-right:1px solid @light-grey-border;
 }
 
 .facet.right {
   float:right;
+}
+
+.facet.bottom {
+  border-top:1px solid @light-grey-border;
+  padding:14px 0 11px 12px;
+  height:auto;
 }
 
 .by-type {
@@ -91,18 +107,42 @@
 .by-source {
   padding:8px 14px;
   text-align:center;
-  color:@dark-grey-type;
 
-  .top-count {
-    padding:1px 0 2px 0;
-    font-size:21px;
+  h3 {
+    font-size:13px;
+    font-weight:normal;
+    padding:0 0 2px 0;
+    margin:0;
   }
 
   .top-source {
     font-weight:300;
     font-size:15px;
     line-height:18px;
-    padding-bottom:6px;
+    padding-bottom:2px;
+
+    span { display:block; }
+    a, a:hover { color: @dark-grey-type; }
+
   }
 
+}
+
+.people, .periods {
+  color:@light-grey-type;
+
+  .top-related::before {
+    font-face:FontAwesome;
+    font-size:14px;
+    padding-right:6px;
+  }
+
+}
+
+.people .top-related::before {
+  content:'\f007';
+}
+
+.periods .top-related::before {
+  content:'\f017';
 }

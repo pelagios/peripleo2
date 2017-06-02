@@ -1,10 +1,12 @@
 define([
   'ui/common/hasEvents',
+  'ui/controls/search/filterpane/facets/peopleFacet',
+  'ui/controls/search/filterpane/facets/periodFacet',
   'ui/controls/search/filterpane/facets/sourceFacet',
   'ui/controls/search/filterpane/facets/typeFacet',
   'ui/controls/search/filterpane/footer',
   'ui/controls/search/filterpane/timeHistogram'
-], function(HasEvents, SourceFacet, TypeFacet, Footer, TimeHistogram) {
+], function(HasEvents, PeopleFacet, PeriodFacet, SourceFacet, TypeFacet, Footer, TimeHistogram) {
 
   var SLIDE_DURATION = 180;
 
@@ -18,7 +20,7 @@ define([
               '<div class="facets"></div>' +
               '<div class="hint-more">' +
                 '<span class="icon">&#xf080;</span>' +
-                '<a class="label" href="#">Advanced stats and filters</a>' +
+                '<a class="label" href="#">All stats and filters</a>' +
               '</div>' +
             '</div>' +
           '</div>').appendTo(parentEl),
@@ -32,6 +34,8 @@ define([
         facetSection = jQuery('<div class="termfacet-section"></div>').appendTo(facetsEl),
         typeFacet = new TypeFacet(facetSection),
         sourceFacet = new SourceFacet(facetSection),
+        peopleFacet = new PeopleFacet(facetSection),
+        periodFacet = new PeriodFacet(facetSection),
 
         footer = new Footer(element),
 
