@@ -100,9 +100,6 @@ define([
             });
 
             moreBuckets.html(label);
-
-            console.log(buckets);
-            console.log(flattened);
           }
         };
 
