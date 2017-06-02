@@ -15,7 +15,9 @@ define([
 
     var el = jQuery(
           '<div class="facet by-type left">' +
-            '<ul></ul>' +
+            '<div class="facet-aligner">' +
+              '<ul></ul>' +
+            '</div>' +
           '</div>').appendTo(parentEl),
 
         template =
@@ -26,7 +28,6 @@ define([
         list = el.find('ul'),
 
         update = function(arr) {
-          /*
           var max = 0,
 
               buckets = arr.map(function(obj) {
@@ -61,7 +62,6 @@ define([
 
           list.empty();
           buckets.slice(0, 3).forEach(render);
-          */
         };
 
     this.update = update;
