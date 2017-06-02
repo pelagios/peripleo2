@@ -71,9 +71,11 @@ define([
           footer.update(response);
         },
 
-        setOpen = function(open) {
+        setOpen = function(open) {          
           var visible = body.is(':visible'),
               action = (visible) ? 'slideUp' : 'slideDown';
+
+          footer.setOpen(open);
 
           if ((visible && !open) || (!visible && open))
             body.velocity(action, { duration: SLIDE_DURATION });

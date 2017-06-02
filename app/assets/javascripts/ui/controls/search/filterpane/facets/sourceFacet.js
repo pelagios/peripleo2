@@ -91,7 +91,7 @@ define([
                   (more > 0) ?
                     (more > 1) ?
                       (more > 10) ? 'and 10+ other sources' : 'and ' + more + ' other sources' :
-                    'and 1 more source' :
+                    'and 1 other source' :
                   '';
 
             path.forEach(function(seg) {

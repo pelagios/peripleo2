@@ -22,7 +22,7 @@ define([
 
         btnTogglePane = footer.find('.pane-toggle'),
 
-        onTogglePane = function() {
+        onTogglePane = function(cancelEvent) {
           var isOpen = btnTogglePane.hasClass('open');
 
           if (isOpen) {
@@ -33,7 +33,13 @@ define([
             btnTogglePane.velocity({ rotateZ: '-180deg' }, { duration: ROTATE_DURATION });
           }
 
-          self.fireEvent('toggle');
+          if (!cancelEvent)
+            self.fireEvent('toggle');
+        },
+
+        setOpen = function(open) {
+          var isOpen = btnTogglePane.hasClass('open');
+          if (open != isOpen) onTogglePane(true);
         },
 
         update = function(response) {
@@ -43,6 +49,7 @@ define([
     btnTogglePane.click(onTogglePane);
 
     this.update = update;
+    this.setOpen = setOpen;
 
     HasEvents.apply(this);
   };
