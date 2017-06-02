@@ -33,8 +33,7 @@ define([
             btnTogglePane.velocity({ rotateZ: '-180deg' }, { duration: ROTATE_DURATION });
           }
 
-          if (!cancelEvent)
-            self.fireEvent('toggle');
+          if (cancelEvent !== true) self.fireEvent('toggle');
         },
 
         setOpen = function(open) {
