@@ -25,49 +25,64 @@ define([
           moreBuckets.empty();
         },
 
-        // Gets the top bucket, at the lowest leaf-level
-        getTopBucket = function(buckets) {
-              // Max count
-          var topCount = buckets[0].val,
+        /**
+         * 'Flattens' buckets so that redundant parent buckets are removed.
+         *
+         * Example:
+         * If 'Graz>Coin Collection' contains 10 hits, there will
+         * be a redundant parent bucket 'Graz' with 10 hits. This bucket will be removed.
+         */
+        flattenBuckets = function(buckets) {
+          var flattened = [],
 
-              // All buckets where count = maxCount
-              topBuckets = buckets.filter(function(bucket) {
-                return bucket.val === topCount;
-              }),
+              findRedundant = function(b) {
+                var redundant;
 
-              // Sort by longest path, i.e. no. separator chars
-              topLeaf = topBuckets.sort(function(a, b) {
-                return b.key.split(SEPARATOR).length - a.key.split(SEPARATOR).length;
-              })[0];
+                jQuery.each(flattened, function(idx, a) {
+                  // Redundant means same root and same count
+                  if (a.path[0].id === b.path[0].id) {
+                    redundant = a;
+                    return false;
+                  }
+                });
 
-          return topLeaf;
-        },
+                return redundant;
+              };
 
-        /** Removes all buckets in the same branch as the provided path, comparing the root **/
-        removeBranch = function(buckets, path) {
-          var root = path[0];
-          return buckets.filter(function(seg) {
-            return seg.key.indexOf(root.id) < 0;
+          buckets.forEach(function(bucket) {
+            var redundant = findRedundant(bucket);
+            if (redundant) {
+              // Keep the deeper path in the list
+              if (redundant.path.length < bucket.path.length)
+                flattened[flattened.indexOf(redundant)] = bucket;
+            } else {
+              flattened.push(bucket);
+            }
           });
+
+          return flattened;
         },
 
         update = function(buckets) {
           empty();
           if (buckets.length > 0) {
-            var asArray = buckets.map(function(obj) {
+            var parsed = buckets.map(function(obj) {
                   var key = Object.keys(obj)[0],
-                      val = obj[key];
-                  return { key: key, val: val };
+
+                      path = Object.keys(obj)[0].split(SEPARATOR + SEPARATOR).map(function(seg) {
+                        var t = seg.split(SEPARATOR);
+                        return { id: t[0], label: t[1] };
+                      }),
+
+                      count = obj[key];
+
+                  return { path: path, count: count };
                 }),
 
-                top = getTopBucket(asArray),
+                flattened = flattenBuckets(parsed),
 
-                path = top.key.split(SEPARATOR + SEPARATOR).map(function(segments) {
-                  var t = segments.split(SEPARATOR);
-                  return { id: t[0], label: t[1] };
-                }),
-
-                more = removeBranch(asArray, path).length,
+                path = flattened[0].path,
+                more = flattened.length - 1,
 
                 label =
                   (more > 0) ?
