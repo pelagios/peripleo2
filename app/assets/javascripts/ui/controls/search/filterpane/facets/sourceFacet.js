@@ -39,8 +39,11 @@ define([
                 var redundant;
 
                 jQuery.each(flattened, function(idx, a) {
-                  // Redundant means same root and same count
-                  if (a.path[0].id === b.path[0].id) {
+                  // Redundant means a has same root and higher count
+                  var pa = a.path[0],
+                      pb = b.path[0];
+
+                  if (pa.id === pb.id && a.count > b.count) {
                     redundant = a;
                     return false;
                   }
@@ -52,8 +55,8 @@ define([
           buckets.forEach(function(bucket) {
             var redundant = findRedundant(bucket);
             if (redundant) {
-              // Keep the deeper path in the list
-              if (redundant.path.length < bucket.path.length)
+              // Keep the path with a higher count
+              if (redundant.count < bucket.count)
                 flattened[flattened.indexOf(redundant)] = bucket;
             } else {
               flattened.push(bucket);
