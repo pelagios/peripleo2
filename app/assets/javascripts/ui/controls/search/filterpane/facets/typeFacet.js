@@ -1,7 +1,14 @@
 define(['ui/common/formatting'], function(Formatting) {
 
   // Some (sub)facets are irrelevant, e.g. DATASET sub-types (AUTHORITY, AUTHORITY_GAZETTEER, etc.)
-  var RELEVANT_FACETS = [ 'PLACE', 'OBJECT', 'PERSON', 'DATASET' ];
+  var RELEVANT_FACETS = [ 'PLACE', 'OBJECT', 'PERSON', 'DATASET' ],
+
+      LABELS = {
+        PLACE  :  [ 'place', 'places' ],
+        OBJECT :  [ 'object', 'objects' ],
+        PERSON :  [ 'person', 'people' ],
+        DATASET : [ 'dataset', 'datasets' ]
+      };
 
   var TypeFacet = function(graphEl, countsEl) {
     var bar = jQuery(
@@ -26,11 +33,14 @@ define(['ui/common/formatting'], function(Formatting) {
         updateCounts = function(buckets) {
           counts.empty();
           buckets.forEach(function(b) {
-            var t = b.path[0].id;
+            var t = b.path[0].id,
+                c = b.count,
+                label = (c > 1) ? LABELS[t][1] : LABELS[t][0];
+
             counts.append(
               '<li class="col ' + t + '">' +
                 '<span class="value">' +
-                  '<span class="count">' + Formatting.formatNumber(b.count) + '</span> results' + 
+                  '<span class="count">' + Formatting.formatNumber(c) + '</span> ' + label +
                 '</span>' +
               '</li>');
           });

@@ -48,10 +48,10 @@ define([
 
         typeFacet = new TypeFacet(el.find('.type-graph'), el.find('.info-row.types')),
 
-        sourceNum = el.find('.row.sources .count'),
-        topicNum  = el.find('.row.topics .count'),
-        peopleNum = el.find('.row.people .count'),
-        periodNum = el.find('.row.periods .count'),
+        sourceCount = el.find('.col.sources .count'),
+        topicCount  = el.find('.col.topics .count'),
+        peopleCount = el.find('.col.people .count'),
+        periodCount = el.find('.col.periods .count'),
 
         /**
          * 'Flattens' buckets so that redundant parent buckets are removed.
@@ -125,8 +125,8 @@ define([
 
           if (byType) typeFacet.update(byType);
 
-          if (bySource) sourceNum.html(flattenBuckets(bySource).length);
-          else sourceNum.html('0');
+          if (bySource) sourceCount.html(flattenBuckets(bySource).length);
+          else sourceCount.html('0');
         },
 
         toggleSlidePane = function() {
