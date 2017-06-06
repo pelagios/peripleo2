@@ -12,7 +12,7 @@ define([], function() {
 
               '<div class="facet categories">' +
                 '<span class="icon">&#xf02b;</span>' +
-                '<span class="value"><span class="count">7</span> categories</span>' +
+                '<span class="value"><span class="count">7</span> topics</span>' +
               '</div>' +
 
               '<div class="facet people">' +

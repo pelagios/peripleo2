@@ -13,12 +13,15 @@
       .icon {
         font-size:14px;
         padding-right:5px;
+        position:relative;
+        top:-1px;
+        color:lighten(@light-grey-type, 10%);
       }
 
       .count {
         font-size:14px;
         color:@dark-grey-type;
-        font-weight:bold;
+        font-weight:500;
       }
 
     }
@@ -27,8 +30,8 @@
       cursor:pointer;
 
       .value {
-        color:@ocean;
-        .count { color:@ocean; }
+        color:@ocean-dark;
+        .count { color:@ocean-dark; }
       }
 
     }
