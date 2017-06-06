@@ -17,8 +17,8 @@ define([
     var self = this,
 
         container = jQuery(
-          '<div class="time-histogram-container">' +
-            '<div class="time-histogram">' +
+          '<div class="timehistogram-pane">' +
+            '<div class="timehistogram">' +
               '<canvas width="' + width + '" height="' + height + '"></canvas>' +
               '<span class="th-axislabel from"></span>' +
               '<span class="th-axislabel zero">1 AD</span>' +

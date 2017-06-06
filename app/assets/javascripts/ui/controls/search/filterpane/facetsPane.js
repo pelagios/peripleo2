@@ -7,48 +7,51 @@ define([
     var SEPARATOR = '\u0007';
 
     var el = jQuery(
-          '<div class="facets-overview">' +
+          '<div class="facets-pane">' +
             '<div class="type-graph"></div>' +
             '<div class="info-section">' +
-              '<div class="sliding-panel">' +
+              '<div class="sliding-pane">' +
 
                 // Section 1: facet counts
-                '<div class="facets-row">' +
-                  '<div class="facet sources">' +
-                    '<span class="icon">&#xf187;</span>' +
-                    '<span class="value"><span class="count">0</span> sources</span>' +
-                  '</div>' +
+                '<div class="info-row facets">' +
+                  '<ul>' +
+                    '<li class="col sources">' +
+                      '<span class="icon">&#xf187;</span>' +
+                      '<span class="value"><span class="count">0</span> sources</span>' +
+                    '</li>' +
 
-                  '<div class="facet categories">' +
-                    '<span class="icon">&#xf02b;</span>' +
-                    '<span class="value"><span class="count">0</span> topics</span>' +
-                  '</div>' +
+                    '<li class="col topics">' +
+                      '<span class="icon">&#xf02b;</span>' +
+                      '<span class="value"><span class="count">0</span> topics</span>' +
+                    '</li>' +
 
-                  '<div class="facet people">' +
-                    '<span class="icon">&#xf007;</span>' +
-                    '<span class="value"><span class="count">0</span> people</span>' +
-                  '</div>' +
+                    '<li class="col people">' +
+                      '<span class="icon">&#xf007;</span>' +
+                      '<span class="value"><span class="count">0</span> people</span>' +
+                    '</li>' +
 
-                  '<div class="facet periods">' +
-                    '<span class="icon">&#xf017;</span>' +
-                    '<span class="value"><span class="count">0</span> periods</span>' +
-                  '</div>' +
+                    '<li class="col periods">' +
+                      '<span class="icon">&#xf017;</span>' +
+                      '<span class="value"><span class="count">0</span> periods</span>' +
+                    '</li>' +
+                  '</ul>' +
                 '</div>' +
 
                 // Section 2: type counts
-                '<div class="type-counts"></div>' +
-
-              '</div>' +
-            '</div>' +
+                '<div class="info-row types"></div>' +
+              '</div>' + // .sliding-pane
+            '</div>' + // .info-row
           '</div>').appendTo(parentEl),
 
         typeGraph = el.find('.type-graph'),
+        slidingPane = el.find('.sliding-pane'),
 
-        slidingPanel = el.find('.sliding-panel'),
+        typeFacet = new TypeFacet(el.find('.type-graph'), el.find('.info-row.types')),
 
-        typeFacet = new TypeFacet(el.find('.type-graph'), el.find('.type-counts')),
-
-        sourceCount = el.find('.facet.sources .count'),
+        sourceNum = el.find('.row.sources .count'),
+        topicNum  = el.find('.row.topics .count'),
+        peopleNum = el.find('.row.people .count'),
+        periodNum = el.find('.row.periods .count'),
 
         /**
          * 'Flattens' buckets so that redundant parent buckets are removed.
@@ -122,18 +125,18 @@ define([
 
           if (byType) typeFacet.update(byType);
 
-          if (bySource) sourceCount.html(flattenBuckets(bySource).length);
-          else sourceCount.html('0');
+          if (bySource) sourceNum.html(flattenBuckets(bySource).length);
+          else sourceNum.html('0');
         },
 
-        slidePanel = function() {
-          var offset = parseInt(slidingPanel.css('top')),
-              top = (offset === 0) ? -42 : 0;
+        toggleSlidePane = function() {
+          var offset = parseInt(slidingPane.css('top')),
+              top = (offset === 0) ? -40 : 0;
 
-          slidingPanel.velocity({ top: top }, { duration: 200 });
+          slidingPane.velocity({ top: top }, { duration: 200 });
         };
 
-    typeGraph.click(slidePanel);
+    typeGraph.click(toggleSlidePane);
 
     this.update = update;
   };

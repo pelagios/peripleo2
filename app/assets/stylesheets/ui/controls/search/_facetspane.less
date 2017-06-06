@@ -1,0 +1,123 @@
+.facets-pane {
+
+  @clickbuffer:8px;
+
+  text-align:center;
+  margin-bottom:-@clickbuffer;
+
+  .type-graph {
+    cursor:pointer;
+
+    .bar {
+
+      .segment {
+        display:inline-block;
+        height:10px;
+      }
+
+      .segment.place   { background-color:@type-place; }
+      .segment.object  { background-color:@type-object; }
+      .segment.person  { background-color:@type-person; }
+      .segment.dataset { background-color:@type-dataset; }
+    }
+
+    .clickbuffer {
+      z-index:1;
+      height:@clickbuffer;
+      position:relative;
+    }
+
+  }
+
+  .info-section {
+    z-index:0;
+    overflow:hidden;
+    position:relative;
+    top:-@clickbuffer;
+  }
+
+  .sliding-pane {
+    position:relative;
+    height:40px;
+  }
+
+  .info-row {
+    height:40px;
+    white-space:nowrap;
+
+    @icon-color:lighten(@light-grey-type, 10%);
+
+    ul {
+      padding:0;
+      margin:0;
+    }
+
+    .col {
+      display:inline-block;
+      padding:12px 15px 16px 15px;
+      color:@dark-grey-type;
+
+      .icon {
+        font-size:14px;
+        padding-right:5px;
+        position:relative;
+        top:-1px;
+        color:@icon-color;
+      }
+
+      .count {
+        font-size:14px;
+        font-weight:500;
+      }
+
+    }
+
+    .col:first-child {
+      padding-left:3px;
+    }
+
+    .col:last-child {
+      padding-right:3px;
+    }
+
+    .col:hover {
+      cursor:pointer;
+
+      .value {
+        color:@ocean-dark;
+        .count { color:@ocean-dark; }
+      }
+
+    }
+
+  } /** .info-row **/
+
+  .info-row.types {
+
+    .col {
+      padding-top:10px;
+    }
+
+    .col::before {
+      font-family:FontAwesome;
+      font-size:12px;
+      margin-right:5px;
+      position:relative;
+      top:-1px;
+      display:inline-block;
+      width:21px;
+      height:21px;
+      line-height:22px;
+      box-sizing:border-box;
+      color:#fff;
+      .rounded-corners(50%);
+    }
+
+    li.PLACE::before   { background-color: @type-place; content:'\f041'; }
+    li.OBJECT::before  { background-color: @type-object; content:'\f219'; }
+    li.PERSON::before  { background-color: @type-person; content:'\f007'; }
+    li.DATASET::before { background-color: @type-dataset; content:'\f187'; }
+
+  }
+
+}

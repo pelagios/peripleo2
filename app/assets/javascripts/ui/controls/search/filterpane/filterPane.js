@@ -1,9 +1,9 @@
 define([
   'ui/common/hasEvents',
-  'ui/controls/search/filterpane/facetsOverview',
+  'ui/controls/search/filterpane/facetsPane',
   'ui/controls/search/filterpane/footer',
   'ui/controls/search/filterpane/timeHistogram'
-], function(HasEvents, FacetsOverview, Footer, TimeHistogram) {
+], function(HasEvents, FacetsPane, Footer, TimeHistogram) {
 
   var SLIDE_DURATION = 180;
 
@@ -13,21 +13,14 @@ define([
 
         element = jQuery(
           '<div id="filterpane">' +
-            '<div id="filterpane-body">' +
-              '<div class="facets"></div>' +
-              '<!-- div class="hint-more">' +
-                '<span class="icon">&#xf080;</span>' +
-                '<a class="label" href="#">All stats and filters</a>' +
-              '</div -->' +
-            '</div>' +
+            '<div id="filterpane-body"></div>' +
           '</div>').appendTo(parentEl),
 
         body = element.find('#filterpane-body').hide(),
-        facetsEl = body.find('.facets'),
 
-        facetsOverview = new FacetsOverview(facetsEl),
-        timeHistogram = new TimeHistogram(facetsEl, 320, 40),
-        footer = new Footer(element),
+        facetsPane    = new FacetsPane(body),
+        timeHistogram = new TimeHistogram(body, 320, 40),
+        footer        = new Footer(element),
 
         togglePane = function(e) {
           var visible = body.is(':visible'),
@@ -42,11 +35,10 @@ define([
         setResponse = function(response) {
           if (response.aggregations) {
             var byTime = response.aggregations.find(function(agg) {
-                  return agg.name === 'by_time';
-                });
+                  return agg.name === 'by_time'; });
 
             if (byTime) timeHistogram.update(byTime.buckets);
-            facetsOverview.update(response.aggregations);
+            facetsPane.update(response.aggregations);
           }
 
           footer.update(response);
@@ -63,6 +55,7 @@ define([
         };
 
     timeHistogram.on('selectionChange', this.forwardEvent('timerangeChange'));
+    
     footer.on('toggle', togglePane);
 
     this.setOpen = setOpen;

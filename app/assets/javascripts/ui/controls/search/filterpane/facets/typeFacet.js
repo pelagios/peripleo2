@@ -1,15 +1,17 @@
-define([
-  'ui/controls/search/filterpane/facets/typeCounts'
-], function(TypeCounts) {
+define(['ui/common/formatting'], function(Formatting) {
 
   // Some (sub)facets are irrelevant, e.g. DATASET sub-types (AUTHORITY, AUTHORITY_GAZETTEER, etc.)
   var RELEVANT_FACETS = [ 'PLACE', 'OBJECT', 'PERSON', 'DATASET' ];
 
   var TypeFacet = function(graphEl, countsEl) {
-    var bar = jQuery('<div class="bar"></div>').appendTo(graphEl),
-        clickbuffer = jQuery('<div class="clickbuffer"></div>').appendTo(graphEl),
+    var bar = jQuery(
+          '<div class="bar"></div>').appendTo(graphEl),
 
-        typeCounts = new TypeCounts(countsEl),
+        clickbuffer = jQuery(
+          '<div class="clickbuffer"></div>').appendTo(graphEl),
+
+        counts = jQuery(
+          '<ul></ul>').appendTo(countsEl),
 
         getTotalCount = function(buckets) {
           var total = 0;
@@ -21,7 +23,20 @@ define([
           return total;
         },
 
-        update = function(buckets) {
+        updateCounts = function(buckets) {
+          counts.empty();
+          buckets.forEach(function(b) {
+            var t = b.path[0].id;
+            counts.append(
+              '<li class="col ' + t + '">' +
+                '<span class="value">' +
+                  '<span class="count">' + Formatting.formatNumber(b.count) + '</span> results' + 
+                '</span>' +
+              '</li>');
+          });
+        },
+
+        updateBar = function(buckets) {
           var isRelevantBucket = function(b) {
                 var type = b.path[0].id;
                 return RELEVANT_FACETS.indexOf(type) > -1;
@@ -44,9 +59,12 @@ define([
 
           bar.empty();
           relevantBuckets.forEach(addSegment);
-          
-          // TODO only update when visible
-          typeCounts.update(relevantBuckets);
+        },
+
+        update = function(buckets) {
+          updateBar(buckets);
+          // TODO only when visible
+          updateCounts(buckets);
         };
 
     this.update = update;
