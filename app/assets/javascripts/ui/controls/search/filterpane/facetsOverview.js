@@ -1,6 +1,6 @@
 define([
-  'ui/controls/search/filterpane/facets/typeGraph'
-], function(TypeGraph) {
+  'ui/controls/search/filterpane/facets/typeFacet'
+], function(TypeFacet) {
 
   var FacetsOverview = function(parentEl) {
 
@@ -8,31 +8,45 @@ define([
 
     var el = jQuery(
           '<div class="facets-overview">' +
-            '<div class="facets-row">' +
-              '<div class="facet sources">' +
-                '<span class="icon">&#xf187;</span>' +
-                '<span class="value"><span class="count">0</span> sources</span>' +
-              '</div>' +
+            '<div class="type-graph"></div>' +
+            '<div class="info-section">' +
+              '<div class="sliding-panel">' +
 
-              '<div class="facet categories">' +
-                '<span class="icon">&#xf02b;</span>' +
-                '<span class="value"><span class="count">0</span> topics</span>' +
-              '</div>' +
+                // Section 1: facet counts
+                '<div class="facets-row">' +
+                  '<div class="facet sources">' +
+                    '<span class="icon">&#xf187;</span>' +
+                    '<span class="value"><span class="count">0</span> sources</span>' +
+                  '</div>' +
 
-              '<div class="facet people">' +
-                '<span class="icon">&#xf007;</span>' +
-                '<span class="value"><span class="count">0</span> people</span>' +
-              '</div>' +
+                  '<div class="facet categories">' +
+                    '<span class="icon">&#xf02b;</span>' +
+                    '<span class="value"><span class="count">0</span> topics</span>' +
+                  '</div>' +
 
-              '<div class="facet periods">' +
-                '<span class="icon">&#xf017;</span>' +
-                '<span class="value"><span class="count">0</span> periods</span>' +
+                  '<div class="facet people">' +
+                    '<span class="icon">&#xf007;</span>' +
+                    '<span class="value"><span class="count">0</span> people</span>' +
+                  '</div>' +
+
+                  '<div class="facet periods">' +
+                    '<span class="icon">&#xf017;</span>' +
+                    '<span class="value"><span class="count">0</span> periods</span>' +
+                  '</div>' +
+                '</div>' +
+
+                // Section 2: type counts
+                '<div class="type-counts"></div>' +
+
               '</div>' +
             '</div>' +
           '</div>').appendTo(parentEl),
 
-        typeGraph = new TypeGraph(el),
-        typeFacet = el.find('.type-divider'),
+        typeGraph = el.find('.type-graph'),
+
+        slidingPanel = el.find('.sliding-panel'),
+
+        typeFacet = new TypeFacet(el.find('.type-graph'), el.find('.type-counts')),
 
         sourceCount = el.find('.facet.sources .count'),
 
@@ -106,11 +120,20 @@ define([
               topPeople = getAggregation(aggs, 'top_people'),
               topPeriods = getAggregation(aggs, 'top_periods');
 
-          if (byType) typeGraph.update(byType);
+          if (byType) typeFacet.update(byType);
 
           if (bySource) sourceCount.html(flattenBuckets(bySource).length);
           else sourceCount.html('0');
+        },
+
+        slidePanel = function() {
+          var offset = parseInt(slidingPanel.css('top')),
+              top = (offset === 0) ? -42 : 0;
+
+          slidingPanel.velocity({ top: top }, { duration: 200 });
         };
+
+    typeGraph.click(slidePanel);
 
     this.update = update;
   };
