@@ -1,12 +1,9 @@
 define([
   'ui/common/hasEvents',
-  'ui/controls/search/filterpane/facets/peopleFacet',
-  'ui/controls/search/filterpane/facets/periodFacet',
-  'ui/controls/search/filterpane/facets/sourceFacet',
-  'ui/controls/search/filterpane/facets/typeFacet',
+  'ui/controls/search/filterpane/facetsOverview',
   'ui/controls/search/filterpane/footer',
   'ui/controls/search/filterpane/timeHistogram'
-], function(HasEvents, PeopleFacet, PeriodFacet, SourceFacet, TypeFacet, Footer, TimeHistogram) {
+], function(HasEvents, FacetsOverview, Footer, TimeHistogram) {
 
   var SLIDE_DURATION = 180;
 
@@ -18,25 +15,18 @@ define([
           '<div id="filterpane">' +
             '<div id="filterpane-body">' +
               '<div class="facets"></div>' +
-              '<div class="hint-more">' +
+              '<!-- div class="hint-more">' +
                 '<span class="icon">&#xf080;</span>' +
                 '<a class="label" href="#">All stats and filters</a>' +
-              '</div>' +
+              '</div -->' +
             '</div>' +
           '</div>').appendTo(parentEl),
 
         body = element.find('#filterpane-body').hide(),
         facetsEl = body.find('.facets'),
 
-        timeHistogramSection = jQuery('<div class="timehistogram-section"></div>').appendTo(facetsEl),
-        timeHistogram = new TimeHistogram(timeHistogramSection, 320, 40),
-
-        facetSection = jQuery('<div class="termfacet-section"></div>').appendTo(facetsEl),
-        typeFacet = new TypeFacet(facetSection),
-        sourceFacet = new SourceFacet(facetSection),
-        peopleFacet = new PeopleFacet(facetSection),
-        periodFacet = new PeriodFacet(facetSection),
-
+        facetsOverview = new FacetsOverview(facetsEl),
+        timeHistogram = new TimeHistogram(facetsEl, 320, 40),
         footer = new Footer(element),
 
         getAggregation = function(response, name) {
@@ -59,19 +49,16 @@ define([
 
         setResponse = function(response) {
           if (response.aggregations) {
-            var byTime = getAggregation(response, 'by_time'),
-                byType = getAggregation(response, 'by_type'),
-                bySource = getAggregation(response, 'by_dataset');
-
+            var byTime = getAggregation(response, 'by_time');
             if (byTime) timeHistogram.update(byTime);
-            if (byType) typeFacet.update(byType);
-            if (bySource) sourceFacet.update(bySource);
+
+            facetsOverview.update(response);
           }
 
           footer.update(response);
         },
 
-        setOpen = function(open) {          
+        setOpen = function(open) {
           var visible = body.is(':visible'),
               action = (visible) ? 'slideUp' : 'slideDown';
 

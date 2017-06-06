@@ -1,0 +1,52 @@
+.facets-overview {
+  text-align:center;
+
+  .facets-row {
+
+    .facet {
+      display:inline-block;
+      padding:20px 12px 10px 8px;
+      white-space:nowrap;
+      color:@light-grey-type;
+      line-height:10px;
+
+      .icon {
+        font-size:14px;
+        padding-right:5px;
+      }
+
+      .count {
+        font-size:14px;
+        color:@dark-grey-type;
+        font-weight:bold;
+      }
+
+    }
+
+    .facet:hover {
+      cursor:pointer;
+
+      .value {
+        color:@ocean;
+        .count { color:@ocean; }
+      }
+
+    }
+
+  }
+
+  .types-divider {
+    cursor:pointer;
+
+    .clickbuffer {
+      height:6px;
+    }
+
+    .bar {
+      height:8px;
+      background-color:@type-object;
+    }
+
+  }
+
+}
