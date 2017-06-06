@@ -45,7 +45,7 @@ define([
                   return agg.name === 'by_time';
                 });
 
-            if (byTime) timeHistogram.update(byTime);
+            if (byTime) timeHistogram.update(byTime.buckets);
             facetsOverview.update(response.aggregations);
           }
 

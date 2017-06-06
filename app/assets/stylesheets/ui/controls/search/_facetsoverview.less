@@ -1,6 +1,29 @@
 .facets-overview {
   text-align:center;
 
+  .type-graph {
+    cursor:pointer;
+
+    .bar {
+
+      .segment {
+        display:inline-block;
+        height:10px;
+      }
+
+      .segment.place   { background-color:@type-place; }
+      .segment.object  { background-color:@type-object; }
+      .segment.person  { background-color:@type-person; }
+      .segment.dataset { background-color:@type-dataset; }
+
+    }
+
+    .clickbuffer {
+      height:6px;
+    }
+
+  }
+
   .facets-row {
     border-bottom:1px solid @light-grey-border;
 
@@ -41,29 +64,6 @@
         color:@ocean-dark;
         .count { color:@ocean-dark; }
       }
-
-    }
-
-  }
-
-  .types-divider {
-    cursor:pointer;
-
-    .clickbuffer {
-      height:6px;
-    }
-
-    .bar {
-
-      .segment {
-        display:inline-block;
-        height:10px;
-      }
-
-      .segment.place   { background-color:@type-place; }
-      .segment.object  { background-color:@type-object; }
-      .segment.person  { background-color:@type-person; }
-      .segment.dataset { background-color:@type-dataset; }
 
     }
 

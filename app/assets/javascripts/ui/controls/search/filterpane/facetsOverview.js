@@ -1,4 +1,6 @@
-define([], function() {
+define([
+  'ui/controls/search/filterpane/facets/typeGraph'
+], function(TypeGraph) {
 
   var FacetsOverview = function(parentEl) {
 
@@ -6,15 +8,6 @@ define([], function() {
 
     var el = jQuery(
           '<div class="facets-overview">' +
-
-            '<div class="types-divider">' +
-              '<div class="bar">' +
-                '<span class="segment place" style="width:33%"></span>' +
-                '<span class="segment object" style="width:67%"></span>' +
-              '</div>' +
-              '<div class="clickbuffer"></div>' +
-            '</div>' +
-
             '<div class="facets-row">' +
               '<div class="facet sources">' +
                 '<span class="icon">&#xf187;</span>' +
@@ -36,12 +29,10 @@ define([], function() {
                 '<span class="value"><span class="count">0</span> periods</span>' +
               '</div>' +
             '</div>' +
-
-
           '</div>').appendTo(parentEl),
 
-        // TODO refactor - separate classes for each facet type
-        typeDivider = el.find('.type-divider'),
+        typeGraph = new TypeGraph(el),
+        typeFacet = el.find('.type-divider'),
 
         sourceCount = el.find('.facet.sources .count'),
 
@@ -115,11 +106,7 @@ define([], function() {
               topPeople = getAggregation(aggs, 'top_people'),
               topPeriods = getAggregation(aggs, 'top_periods');
 
-          if (byType) {
-            byType.forEach(function(bucket) {
-              console.log(bucket);
-            });
-          }
+          if (byType) typeGraph.update(byType);
 
           if (bySource) sourceCount.html(flattenBuckets(bySource).length);
           else sourceCount.html('0');
