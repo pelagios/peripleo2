@@ -2,12 +2,13 @@
   text-align:center;
 
   .facets-row {
+    border-bottom:1px solid @light-grey-border;
 
     .facet {
       display:inline-block;
-      padding:20px 12px 10px 8px;
+      padding:12px 15px 16px 15px;
       white-space:nowrap;
-      color:@light-grey-type;
+      color:@dark-grey-type;
       line-height:10px;
 
       .icon {
@@ -20,10 +21,17 @@
 
       .count {
         font-size:14px;
-        color:@dark-grey-type;
         font-weight:500;
       }
 
+    }
+
+    .facet:first-child {
+      padding-left:3px;
+    }
+
+    .facet:last-child {
+      padding-right:3px;
     }
 
     .facet:hover {
@@ -46,8 +54,17 @@
     }
 
     .bar {
-      height:8px;
-      background-color:@type-object;
+
+      .segment {
+        display:inline-block;
+        height:10px;
+      }
+
+      .segment.place   { background-color:@type-place; }
+      .segment.object  { background-color:@type-object; }
+      .segment.person  { background-color:@type-person; }
+      .segment.dataset { background-color:@type-dataset; }
+
     }
 
   }

@@ -29,14 +29,6 @@ define([
         timeHistogram = new TimeHistogram(facetsEl, 320, 40),
         footer = new Footer(element),
 
-        getAggregation = function(response, name) {
-          var aggregation = response.aggregations.find(function(agg) {
-            return agg.name === name;
-          });
-
-          if (aggregation) return aggregation.buckets;
-        },
-
         togglePane = function(e) {
           var visible = body.is(':visible'),
               action = (visible) ? 'slideUp' : 'slideDown';
@@ -49,10 +41,12 @@ define([
 
         setResponse = function(response) {
           if (response.aggregations) {
-            var byTime = getAggregation(response, 'by_time');
-            if (byTime) timeHistogram.update(byTime);
+            var byTime = response.aggregations.find(function(agg) {
+                  return agg.name === 'by_time';
+                });
 
-            facetsOverview.update(response);
+            if (byTime) timeHistogram.update(byTime);
+            facetsOverview.update(response.aggregations);
           }
 
           footer.update(response);
