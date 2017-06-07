@@ -31,17 +31,33 @@
   .icon {
     position:absolute;
     top:11px;
-    height:15px;
-    width:15px;
+    right:14px;
+    height:12px;
+    width:12px;
     font-size:15px;
-    left:373px;
     color:lighten(@light-grey-type, 5%);
     z-index:1;
   }
 
-  .icon.clear {
+  .icon.loading {
     top:8px;
-    cursor:pointer;
+    right:8px;
+  	width:17px;
+  	height:17px;
+  	border:2px solid fade(@ocean, 35%);
+  	border-top:2px solid @ocean;
+  	border-radius:50%;
+    -webkit-animation:loadRotation 1s infinite linear;
+            animation:loadRotation 1s infinite linear;
+  }
+
+  @-webkit-keyframes loadRotation {
+  	from { -webkit-transform: rotate(0deg); }
+  	to   { -webkit-transform: rotate(359deg); }
+  }
+  @keyframes loadRotation {
+  	from { transform: rotate(0deg); }
+  	to   { transform: rotate(359deg); }
   }
 
 }

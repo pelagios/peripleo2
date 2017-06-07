@@ -21,6 +21,23 @@ define([
 
          autocomplete = new Autocomplete(searchBoxForm, searchBoxInput),
 
+         onKeyup = function() {
+           // As soon as anything was typed, swap the spyglass icon with the 'X'
+           var chars = searchBoxInput.val().trim();
+           if (chars)
+             searchBoxIcon.html('&#xf1ce;');
+           else
+             searchBoxIcon.html('&#xf002;');
+         },
+
+         onIconClicked = function() {
+           // Different behavior depending on icon state:
+           // - spyglass -> submit
+           // - X        -> clear search
+           // - loading  -> noop
+
+         },
+
          onSubmit = function() {
            var chars = searchBoxInput.val().trim();
 
@@ -46,7 +63,11 @@ define([
            else searchBoxInput.val('');
          };
 
+    searchBoxForm.keyup(onKeyup);
     searchBoxForm.submit(onSubmit);
+
+    searchBoxIcon.click(onIconClicked);
+
     autocomplete.on('selectOption', onSelectOption);
 
     this.setQuery = setQuery;
