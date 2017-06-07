@@ -8,39 +8,40 @@ define([
 
     var el = jQuery(
           '<div class="facets-pane">' +
-            '<div class="type-graph"></div>' +
             '<div class="info-section">' +
-              '<div class="sliding-pane">' +
+              '<div class="info-section-inner">' +
+                '<div class="sliding-pane">' +
+                  // Section 1: facet counts
+                  '<div class="info-row facets">' +
+                    '<ul>' +
+                      '<li class="col sources">' +
+                        '<span class="icon">&#xf187;</span>' +
+                        '<span class="value"><span class="count">0</span> sources</span>' +
+                      '</li>' +
 
-                // Section 1: facet counts
-                '<div class="info-row facets">' +
-                  '<ul>' +
-                    '<li class="col sources">' +
-                      '<span class="icon">&#xf187;</span>' +
-                      '<span class="value"><span class="count">0</span> sources</span>' +
-                    '</li>' +
+                      '<li class="col topics">' +
+                        '<span class="icon">&#xf02b;</span>' +
+                        '<span class="value"><span class="count">0</span> topics</span>' +
+                      '</li>' +
 
-                    '<li class="col topics">' +
-                      '<span class="icon">&#xf02b;</span>' +
-                      '<span class="value"><span class="count">0</span> topics</span>' +
-                    '</li>' +
+                      '<li class="col people">' +
+                        '<span class="icon">&#xf007;</span>' +
+                        '<span class="value"><span class="count">0</span> people</span>' +
+                      '</li>' +
 
-                    '<li class="col people">' +
-                      '<span class="icon">&#xf007;</span>' +
-                      '<span class="value"><span class="count">0</span> people</span>' +
-                    '</li>' +
+                      '<li class="col periods">' +
+                        '<span class="icon">&#xf017;</span>' +
+                        '<span class="value"><span class="count">0</span> periods</span>' +
+                      '</li>' +
+                    '</ul>' +
+                  '</div>' +
+                  // Section 2: type counts
+                  '<div class="info-row types"></div>' +
+                '</div>' + // .sliding-pane
+              '</div>' + //.info-section-inner
+            '</div>' + // .info-section
 
-                    '<li class="col periods">' +
-                      '<span class="icon">&#xf017;</span>' +
-                      '<span class="value"><span class="count">0</span> periods</span>' +
-                    '</li>' +
-                  '</ul>' +
-                '</div>' +
-
-                // Section 2: type counts
-                '<div class="info-row types"></div>' +
-              '</div>' + // .sliding-pane
-            '</div>' + // .info-row
+            '<div class="type-graph"></div>' +
           '</div>').appendTo(parentEl),
 
         typeGraph = el.find('.type-graph'),
@@ -131,7 +132,7 @@ define([
 
         toggleSlidePane = function() {
           var offset = parseInt(slidingPane.css('top')),
-              top = (offset === 0) ? -40 : 0;
+              top = (offset === 0) ? -38 : 0;
 
           slidingPane.velocity({ top: top }, { duration: 200 });
         };

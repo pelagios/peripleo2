@@ -1,18 +1,18 @@
 .facets-pane {
 
-  @clickbuffer:8px;
+  @clickbuffer:6px;
 
   text-align:center;
-  margin-bottom:-@clickbuffer;
 
   .type-graph {
     cursor:pointer;
+    padding-bottom:@clickbuffer;
 
     .bar {
 
       .segment {
         display:inline-block;
-        height:10px;
+        height:8px;
       }
 
       .segment.place   { background-color:@type-place; }
@@ -22,27 +22,31 @@
     }
 
     .clickbuffer {
-      z-index:1;
-      height:@clickbuffer;
       position:relative;
+      z-index:1;
+      padding:1px 0;
+      margin-top:-@clickbuffer;
+      height:@clickbuffer;
     }
 
   }
 
   .info-section {
-    z-index:0;
+    padding-top:4px;
+    height:36px;
+  }
+
+  .info-section-inner {
+    height:38px;
     overflow:hidden;
-    position:relative;
-    top:-@clickbuffer;
   }
 
   .sliding-pane {
     position:relative;
-    height:40px;
   }
 
   .info-row {
-    height:40px;
+    height:38px;
     white-space:nowrap;
 
     @icon-color:lighten(@light-grey-type, 10%);

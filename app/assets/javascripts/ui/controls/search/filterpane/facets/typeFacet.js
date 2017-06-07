@@ -11,11 +11,11 @@ define(['ui/common/formatting'], function(Formatting) {
       };
 
   var TypeFacet = function(graphEl, countsEl) {
-    var bar = jQuery(
-          '<div class="bar"></div>').appendTo(graphEl),
-
-        clickbuffer = jQuery(
+    var clickbuffer = jQuery(
           '<div class="clickbuffer"></div>').appendTo(graphEl),
+
+        bar = jQuery(
+          '<div class="bar"></div>').appendTo(graphEl),
 
         counts = jQuery(
           '<ul></ul>').appendTo(countsEl),
