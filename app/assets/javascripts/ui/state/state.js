@@ -67,15 +67,17 @@ define([
           return changeSearch(changeFn, options);
         },
 
-        setTimerange = function(range) {
-          var promise = search.setTimerange(range);
-          pushState();
-          return promise;
+        setFilterPaneOpen = function(open, options) {
+          var changeFn = function(makeRequest) {
+                return search.setAggregationsEnabled(open, makeRequest);
+              };
+
+          uiState.filterPaneOpen = open;
+          return changeSearch(changeFn, options);
         },
 
-        setFilterPaneOpen = function(open) {
-          uiState.filterPaneOpen = open;
-          var promise = search.setAggregationsEnabled(open);
+        setTimerange = function(range) {
+          var promise = search.setTimerange(range);
           pushState();
           return promise;
         },

@@ -14,7 +14,7 @@ require([
 ], function(ItemUtils, ResultList, SearchPanel, SelectionPanel, Map, State, API) {
 
       /** Shorthand for a 'transient query' state update **/
-  var NOOP = { pushState: false, makeRequest: false},
+  var NOOP = { pushState: false, makeRequest: false },
 
       /**
        * A composition helper that puts a function in sequences with a jQuery deferred function.
@@ -151,7 +151,7 @@ require([
 
                       return state.updateFilters(filter, { pushState: false })
                         .then(function(results) {
-                          state.updateFilters({ places: false }, { pushState: false, makeRequest: false });
+                          state.updateFilters({ places: false }, NOOP);
                           return { 'identifier' : uri, 'resultCount' : results.total };
                         });
                     },
@@ -296,9 +296,7 @@ require([
         },
 
         onCloseFilterPane = function() {
-          // TODO this will internally fire a new search request (whose response
-          // TODO gets ignored) - that's not really needed!
-          state.setFilterPaneOpen(false);
+          state.setFilterPaneOpen(false, { makeRequest: false });
         },
 
         onQueryPhraseChanged = function(query) {

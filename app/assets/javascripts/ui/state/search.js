@@ -174,16 +174,17 @@ define([], function() {
           return makeRequest({ timeHistogram: false });
         },
 
-        updateSettings = function(diff) {
+        updateSettings = function(diff, makeReq) {
           jQuery.extend(searchArgs.settings, diff);
-          return makeRequest();
+          if (makeReq)
+            return makeRequest();
         },
 
-        setAggregationsEnabled = function(enabled) {
+        setAggregationsEnabled = function(enabled, makeReq) {
           return updateSettings({
             timeHistogram    : enabled,
             termAggregations : enabled,
-          });
+          }, makeReq);
         },
 
         setViewport = function(bounds) {
