@@ -21,21 +21,24 @@ define([
 
          autocomplete = new Autocomplete(searchBoxForm, searchBoxInput),
 
-         onKeyup = function() {
-           // As soon as anything was typed, swap the spyglass icon with the 'X'
-           var chars = searchBoxInput.val().trim();
-           if (chars)
-             searchBoxIcon.html('&#xf1ce;');
-           else
-             searchBoxIcon.html('&#xf002;');
-         },
+         currentIconClass = 'icon search',
 
          onIconClicked = function() {
-           // Different behavior depending on icon state:
-           // - spyglass -> submit
-           // - X        -> clear search
-           // - loading  -> noop
+           if (searchBoxIcon.hasClass('search')) {
+             // Click on spyglass triggers search
+             onSubmit();
+           } else if (searchBoxIcon.hasClass('clear')) {
+             // Click on X clears the search
+             setQuery();
 
+             // TODO fire event so app.js gets notified
+           }
+         },
+
+         /** As soon as anything is typed, force spyglass icon **/
+         onKeydown = function() {
+           currentIconClass = 'icon search';
+           searchBoxIcon.attr('class', currentIconClass);
          },
 
          onSubmit = function() {
@@ -61,16 +64,25 @@ define([
          setQuery = function(query) {
            if (query) searchBoxInput.val(query);
            else searchBoxInput.val('');
+         },
+
+         /** En- or disables the loading indicator **/
+         setLoading = function(loading) {
+           if (loading)
+             searchBoxIcon.attr('class', 'icon loading');
+           else
+             searchBoxIcon.attr('class', currentIconClass);
          };
 
-    searchBoxForm.keyup(onKeyup);
     searchBoxForm.submit(onSubmit);
+    searchBoxForm.keydown(onKeydown);
 
     searchBoxIcon.click(onIconClicked);
 
     autocomplete.on('selectOption', onSelectOption);
 
     this.setQuery = setQuery;
+    this.setLoading = setLoading;
 
     HasEvents.apply(this);
   };

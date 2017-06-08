@@ -53,6 +53,7 @@ require([
           var state = e.state, // The state, as manipulated by the user (or set by the URL)
               request = e.request; // Promise of the search request triggered by the state change
 
+          searchPanel.loading();
           searchPanel.setState(state);
                   map.setState(state);
 
@@ -214,6 +215,8 @@ require([
                 });
               };
 
+          searchPanel.loading();
+
           if (item)
             switch(ItemUtils.getItemType(item)) {
               case 'PLACE':
@@ -234,6 +237,7 @@ require([
         },
 
         onSelectMapMarker = function(place) {
+          searchPanel.loading();
           if (place) {
             var uri = ItemUtils.getURIs(place)[0],
                 filter = { places : [ uri ] };
@@ -250,6 +254,7 @@ require([
 
         /** An identifier was selected (e.g. via suggestions) - fetch item **/
         onSelectIdentifier = function(identifier) {
+          searchPanel.loading();
           API.getItem(identifier)
             .done(onSelectItem)
             .fail(function(error) {
@@ -260,6 +265,7 @@ require([
 
         onFilterByReference = function(reference) {
           // TODO support filter by person | period
+          searchPanel.loading();
           state.updateFilters({ places : [ reference.identifiers[0] ] }).done(function(results) {
             resultList.setFilteredResponse(results, reference);
           });
@@ -270,6 +276,7 @@ require([
           var identifiers = ItemUtils.getURIs(place),
               filter = { places : [ identifiers[0] ] };
 
+          searchPanel.loading();
           state.setQueryPhrase(false, NOOP);
           state.updateFilters(filter).done(function(results) {
             resultList.setLocalResponse(results, place);
@@ -277,12 +284,14 @@ require([
         },
 
         onExitFilteredSearch = function() {
+          searchPanel.loading();
           state.updateFilters({ places : false }).done(function(results) {
             resultList.setSearchResponse(results);
           });
         },
 
         onOpenFilterPane = function() {
+          searchPanel.loading();
           state.setFilterPaneOpen(true).done(onSearchResponse);
         },
 
@@ -294,6 +303,7 @@ require([
 
         onQueryPhraseChanged = function(query) {
           // Remove local search filters first, if any
+          searchPanel.loading();
           state.updateFilters({ places : false }, NOOP);
           state.setQueryPhrase(query).done(function(results) {
             onSearchResponse(results);
@@ -308,8 +318,10 @@ require([
     searchPanel.on('open', onOpenFilterPane);
     searchPanel.on('close', onCloseFilterPane);
     searchPanel.on('queryChange', onQueryPhraseChanged);
-    searchPanel.on('timerangeChange', seq(state.setTimerange, onSearchResponse));
     searchPanel.on('selectSuggestOption', onSelectIdentifier);
+
+    // TODO activate load spinner
+    searchPanel.on('timerangeChange', seq(state.setTimerange, onSearchResponse));
 
     selectionPanel.on('select', onSelectIdentifier);
     selectionPanel.on('filterBy', onFilterByReference);

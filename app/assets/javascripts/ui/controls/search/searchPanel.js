@@ -14,7 +14,14 @@ define([
 
         filterPane = new FilterPane(element),
 
+        /** Activates the loading spinner **/
+        loading = function() {
+          searchBox.setLoading(true);
+        },
+
         setSearchResponse = function(searchResponse) {
+          // TODO if the search includes any filter - set X icon
+          searchBox.setLoading(false);
           filterPane.setResponse(searchResponse);
         },
 
@@ -32,6 +39,7 @@ define([
 
     this.setSearchResponse = setSearchResponse;
     this.setState = setState;
+    this.loading = loading;
 
     HasEvents.apply(this);
   };
