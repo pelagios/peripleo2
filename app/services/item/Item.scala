@@ -1,12 +1,11 @@
 package services.item
 
-import com.vividsolutions.jts.geom.{ Coordinate, Geometry }
+import com.vividsolutions.jts.geom.{ Coordinate, Envelope, Geometry, GeometryFactory }
 import java.util.UUID
 import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
 import services.{ HasDate, HasGeometry, HasNullableSeq }
-import com.vividsolutions.jts.geom.Envelope
 
 case class Item private[item] (
   docId               : UUID,
@@ -32,6 +31,8 @@ case class Item private[item] (
 }
 
 object Item extends HasGeometry {
+  
+  private val factory = new GeometryFactory()
 
   /** Per convention, first in list determines docId and top-level properties **/
   def fromRecords(docId: UUID, itemType: ItemType, records: Seq[ItemRecord]) = {
@@ -42,15 +43,27 @@ object Item extends HasGeometry {
     }
 
     // Helper to get the first defined of a list of options
-
     def getFirst[T](seq: Seq[Option[T]]) = seq.flatten.headOption
+    
+    // TODO we should be smarter about determining the 'representative' geometry
+    // TODO cf. Recogito 2: model.place.GazetteerRecord.getPreferredLocation
+    val firstGeometry = getFirst(records.map(_.geometry))
+    val firstPoint = getFirst(records.map(_.representativePoint))
+    
+    // We need to make sure that either both point & geom are set, or none
+    val (geom, point) = (firstGeometry, firstPoint) match {
+      case (Some(g), Some(pt)) => (Some(g), Some(pt))
+      case (Some(g), None)     => (Some(g), Some(g.getCentroid.getCoordinate))
+      case (None, Some(pt))    => (Some(factory.createPoint(pt)), Some(pt))
+      case (None, None)        => (None, None)
+    }
 
     Item(
       docId,
       itemType,
       records.head.title,
-      getFirst(records.map(_.geometry)),
-      getFirst(records.map(_.representativePoint)),
+      geom,
+      point,
       temporalBoundsUnion,
       records
     )

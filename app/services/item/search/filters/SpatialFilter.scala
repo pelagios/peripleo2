@@ -1,44 +1,47 @@
 package services.item.search.filters
 
+import com.sksamuel.elastic4s.QueryDefinition
 import com.sksamuel.elastic4s.ElasticDsl._
 import com.vividsolutions.jts.geom.Coordinate
-import org.elasticsearch.index.query.QueryBuilders
-import org.elasticsearch.common.geo.builders.ShapeBuilder
-import org.elasticsearch.index.query.GeoShapeQueryBuilder
-import com.sksamuel.elastic4s.QueryDefinition
 import org.elasticsearch.common.geo.ShapeRelation
+import org.elasticsearch.common.geo.builders.ShapeBuilder
 import org.elasticsearch.common.unit.DistanceUnit
+import org.elasticsearch.index.query.{ QueryBuilders, GeoShapeQueryBuilder }
+import services.ES
 
-case class GeoShapeDefinition(builder: GeoShapeQueryBuilder) extends QueryDefinition
+case class GeoShapeQueryDefinition(builder: GeoShapeQueryBuilder) extends QueryDefinition
 
 case class SpatialFilter(bbox: Option[BoundingBox], center: Option[Coordinate], radius: Option[Double]) {
   
   require(bbox.isDefined || center.isDefined)
   
-  def filterDefinition(field: String) = (bbox, center) match {
+  private lazy val shape = (bbox, center) match {
     case (Some(b), _) =>
-      val builder = 
-        QueryBuilders.geoShapeQuery(field, ShapeBuilder.newEnvelope()
-          .topLeft(b.minLon, b.maxLat)
-          .bottomRight(b.maxLon, b.minLat)
-        ).relation(ShapeRelation.WITHIN)
-          
-      new GeoShapeDefinition(builder)
+      ShapeBuilder.newEnvelope()
+        .topLeft(b.minLon, b.maxLat)
+        .bottomRight(b.maxLon, b.minLat)
       
     case (_, Some(c)) =>
-      val builder =
-        QueryBuilders.geoShapeQuery(field, ShapeBuilder.newCircleBuilder()
-          .center(c)
-          .radius(radius.getOrElse(1.0), DistanceUnit.KILOMETERS)
-        ).relation(ShapeRelation.WITHIN)
-          
-      new GeoShapeDefinition(builder)
-       
+      ShapeBuilder.newCircleBuilder()
+        .center(c)
+        .radius(radius.getOrElse(1.0), DistanceUnit.KILOMETERS)
+        
     case _ =>
       // Can never happen due to require(...), but just to avoid compiler warning
-      throw new RuntimeException    
+      throw new RuntimeException   
   }
   
+  private def buildQueryDefinition(field: String) =
+    new GeoShapeQueryDefinition(QueryBuilders.geoShapeQuery(field, shape).relation(ShapeRelation.WITHIN))
+  
+  lazy val filterDefinition = 
+    bool { 
+      should (
+        buildQueryDefinition("bbox"),
+        hasChildQuery(ES.REFERENCE) query { buildQueryDefinition("reference_to.bbox") }
+      )
+    }
+
 }
 
 object SpatialFilter {

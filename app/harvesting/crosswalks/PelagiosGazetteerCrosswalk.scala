@@ -22,7 +22,7 @@ object PelagiosGazetteerCrosswalk {
 
     val sourceGazetteer = filename.substring(0, filename.indexOf('.'))
 
-    def convertPlace(place: org.pelagios.api.gazetteer.Place): ItemRecord =
+    def convertPlace(place: org.pelagios.api.gazetteer.Place): ItemRecord =    
       ItemRecord(
         ItemRecord.normalizeURI(place.uri),
         Seq(ItemRecord.normalizeURI(place.uri)),
