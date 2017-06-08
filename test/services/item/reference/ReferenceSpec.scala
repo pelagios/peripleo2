@@ -47,7 +47,7 @@ class ReferenceSpec extends PlaySpec with TestHelpers {
       val source = Reference(
         "http://www.example.com/objects/0001",
         ReferenceType.PLACE,
-        ReferenceTo("http://pleiades.stoa.org/places/118543", UUID.randomUUID),
+        ReferenceTo("http://pleiades.stoa.org/places/118543", UUID.randomUUID, None),
         Some(Relation.ATTESTATION),
         None, // homepage
         None, // context

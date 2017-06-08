@@ -1,9 +1,11 @@
 package services.item.reference
 
+import com.vividsolutions.jts.geom.Envelope
 import java.util.UUID
 import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
+import services.HasGeometry
 
 case class Reference(
   parentUri     : String,
@@ -25,12 +27,12 @@ case class Reference(
     context,
     depiction)
     
-  def rebind(destination: UUID): Reference =
-    this.copy(referenceTo = ReferenceTo(referenceTo.uri, destination))
+  def rebind(destination: UUID, bbox: Option[Envelope]): Reference =
+    this.copy(referenceTo = ReferenceTo(referenceTo.uri, destination, bbox))
 
 }
 
-case class ReferenceTo(uri: String, docId: UUID)
+case class ReferenceTo(uri: String, docId: UUID, bbox: Option[Envelope])
 
 case class ReferenceDepiction(url: String, thumbnail: Option[String])
 
@@ -48,11 +50,12 @@ object Reference {
 
 }
 
-object ReferenceTo {
+object ReferenceTo extends HasGeometry {
 
   implicit val referenceToFormat: Format[ReferenceTo] = (
     (JsPath \ "uri").format[String] and
-    (JsPath \ "doc_id").format[UUID]
+    (JsPath \ "doc_id").format[UUID] and
+    (JsPath \ "bbox").formatNullable[Envelope]
   )(ReferenceTo.apply, unlift(ReferenceTo.unapply))
 
 }

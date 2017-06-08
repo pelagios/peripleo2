@@ -300,9 +300,12 @@ require([
         },
 
         onQueryPhraseChanged = function(query) {
-          // Remove local search filters first, if any
           searchPanel.loading();
+
+          // Remove local search filters and bbox, if any
           state.updateFilters({ places : false }, NOOP);
+          state.setViewport(false, NOOP);
+
           state.setQueryPhrase(query).done(function(results) {
             onSearchResponse(results);
             map.fitBounds();
@@ -310,8 +313,7 @@ require([
         };
 
     map.on('selectPlace', onSelectMapMarker);
-    // TODO just a hack for now
-    map.on('move', state.setViewport);
+    map.on('move', seq(state.setViewport, onSearchResponse));
 
     searchPanel.on('open', onOpenFilterPane);
     searchPanel.on('close', onCloseFilterPane);

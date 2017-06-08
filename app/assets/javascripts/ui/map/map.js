@@ -65,16 +65,22 @@ define([
         btnZoomIn  = controlsEl.find('.zoom-in'),
         btnZoomOut = controlsEl.find('.zoom-out'),
 
+        // Flag so we can tell apart user-initiated zoom/pan from automatic fit movement
+        isAutoFit = false,
+
         fitBounds = function() {
           var topPlacesBounds = topPlacesLayer.getBounds();
 
           // TODO get item bounds + compute union
-          if (topPlacesBounds.isValid())
+          if (topPlacesBounds.isValid()) {
+            isAutoFit = true;
+
             map.fitBounds(topPlacesBounds, {
               paddingTopLeft: [440, 20],
               paddingBottomRight: [20, 20],
               animate: true
             });
+          }
         },
 
         onChangeLayer = function(name) {
@@ -86,14 +92,19 @@ define([
           }
         },
 
-        onMove = function() {
-          var bounds = map.getBounds();
-          self.fireEvent('move', [
-            bounds.getWest(),
-            bounds.getEast(),
-            bounds.getSouth(),
-            bounds.getNorth()
-          ]);
+        onMoved = function(e, f) {
+          if (!isAutoFit) {
+            var bounds = map.getBounds();
+            self.fireEvent('move', [
+              bounds.getWest(),
+              bounds.getEast(),
+              bounds.getSouth(),
+              bounds.getNorth()
+            ]);
+          } else {
+            // Reset autofit flag
+            isAutoFit = false;
+          }
         },
 
         // Conveniently, this means a click on the base map, not a marker - deselect!
@@ -131,7 +142,7 @@ define([
     btnZoomIn.click(function() { map.zoomIn(); });
     btnZoomOut.click(function() { map.zoomOut(); });
 
-    map.on('move', onMove);
+    map.on('moveend', onMoved);
     map.on('click', onClick);
 
     // Forward selections up the hierarchy chain

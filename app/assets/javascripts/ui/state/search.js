@@ -18,7 +18,6 @@ define([], function() {
 
           timerange: { from: false, to : false },
 
-          // TODO just a hack for now
           bbox: false,
 
           settings: {
@@ -148,14 +147,12 @@ define([], function() {
           searchArgs.filters = {};
           searchArgs.timerange = { from: false, to : false };
 
-          if (makeReq)
-            return makeRequest();
+          if (makeReq) return makeRequest();
         },
 
         setQuery = function(query, makeReq) {
           searchArgs.query = query;
-          if (makeReq)
-            return makeRequest();
+          if (makeReq) return makeRequest();
         },
 
         getQuery = function() {
@@ -164,8 +161,7 @@ define([], function() {
 
         updateFilters = function(diff, makeReq) {
           jQuery.extend(searchArgs.filters, diff);
-          if (makeReq)
-            return makeRequest();
+          if (makeReq) return makeRequest();
         },
 
         setTimerange = function(range) {
@@ -176,8 +172,7 @@ define([], function() {
 
         updateSettings = function(diff, makeReq) {
           jQuery.extend(searchArgs.settings, diff);
-          if (makeReq)
-            return makeRequest();
+          if (makeReq) return makeRequest();
         },
 
         setAggregationsEnabled = function(enabled, makeReq) {
@@ -187,9 +182,9 @@ define([], function() {
           }, makeReq);
         },
 
-        setViewport = function(bounds) {
-          // TODO just a hack for now
-          // searchArgs.bbox = bounds;
+        setViewport = function(bounds, makeReq) {
+          searchArgs.bbox = bounds;
+          if (makeReq) return makeRequest();
         };
 
     this.clear = clear;

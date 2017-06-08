@@ -70,12 +70,6 @@ object Item extends HasGeometry {
   // Although this means a bit more code, we'll keep a separate Reader and Writer
   // for the item, so we can keep the autocomplete data out of the case class and handle envelopes
 
-  implicit val envelopeWrites = Writes[Envelope] { e =>
-    Json.obj(
-      "type" -> "envelope", // A special geo_shape type supported by ElasticSearch
-      "coordinates" -> Seq(Seq(e.getMinX, e.getMaxY), Seq(e.getMaxX, e.getMinY)))
-  }
-
   implicit val itemReads: Reads[Item] = (
     (JsPath \ "doc_id").read[UUID] and
     (JsPath \ "item_type").read[ItemType] and

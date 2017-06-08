@@ -67,6 +67,13 @@ define([
           return changeSearch(changeFn, options);
         },
 
+        setViewport = function(bounds, options) {
+          var changeFn = function(makeRequest) {
+                return search.setViewport(bounds, makeRequest);
+              };
+          return changeSearch(changeFn, options);
+        },
+
         setFilterPaneOpen = function(open, options) {
           var changeFn = function(makeRequest) {
                 return search.setAggregationsEnabled(open, makeRequest);
@@ -104,7 +111,7 @@ define([
     this.setFilterPaneOpen = setFilterPaneOpen;
     this.setLayerChanged = setLayerChanged;
     this.setSelectedItem = setSelectedItem;
-    this.setViewport = search.setViewport;
+    this.setViewport = setViewport;
 
     HasEvents.apply(this);
   };
