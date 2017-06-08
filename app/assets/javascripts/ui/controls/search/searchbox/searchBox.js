@@ -11,7 +11,7 @@ define([
            '<div id="searchbox">' +
            '  <form>' +
            '    <input type="text" name="q" autocomplete="off">' +
-           '    <span class="icon">&#xf002;</span>' +
+           '    <span class="icon search"></span>' +
            '  </form>' +
            '</div>').appendTo(parentEl),
 

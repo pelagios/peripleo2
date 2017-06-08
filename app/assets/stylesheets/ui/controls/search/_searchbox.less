@@ -33,10 +33,29 @@
     top:11px;
     right:14px;
     height:12px;
-    width:12px;
+    z-index:1;
+    cursor:pointer;
+  }
+
+  .icon.search::after {
+    content:'\f002';
+    font-family:FontAwesome;
     font-size:15px;
     color:lighten(@light-grey-type, 5%);
-    z-index:1;
+  }
+
+  .icon.clear::after {
+    position:relative;
+    left:12px;
+    content:'\e680';
+    font-family:Stroke7;
+    font-size:36px;
+    line-height:16px;
+    color:@light-grey-type;
+  }
+
+  .icon.clear:hover::after {
+    color:@light-grey-type-hover;
   }
 
   .icon.loading {
