@@ -1,9 +1,8 @@
 define([
   'ui/common/hasEvents',
   'ui/common/itemUtils',
-  'ui/map/animatedMarker',
-  'ui/map/styles'
-], function(HasEvents, ItemUtils, AnimatedMarker, Styles) {
+  'ui/map/selectableMarker'
+], function(HasEvents, ItemUtils, SelectableMarker) {
 
   var MAX_MARKER_SIZE  = 11,
 
@@ -53,9 +52,9 @@ define([
 
         clearSelection = function() {
           currentSelection.forEach(function(marker) {
-            // TODO
-            // marker.deselect();
+            marker.deselect();
           });
+          currentSelection = [];
         },
 
         getBounds = function() {
@@ -71,34 +70,16 @@ define([
           }).length === 0;
         },
 
-        /*
-        onMarkerClicked = function(e) {
-          var marker = e.target,
-              place = marker.place,
-              isSelected = marker.isSelected();
-
-          if (isSelected) {
-            clearSelection();
-            currentSelection = [ marker ];
-            self.fireEvent('select', place);
-          } else {
-            clearSelection();
-            currentSelection = [];
-            self.fireEvent('select');
-          }
-        },
-        */
-
-        // TODO temporary hack!
         onMarkerClicked = function(e) {
           var marker = e.target,
               place = marker.place;
 
-          // TODO check if it's already selected and don't fire event if so
-
-          clearSelection();
-          currentSelection = [ marker ];
-          self.fireEvent('select', place);
+          if (!marker.isSelected()) {
+            clearSelection();
+            marker.select();
+            currentSelection = [ marker ];
+            self.fireEvent('select', place);
+          }
 
           L.DomEvent.stop(e);
         },
@@ -106,13 +87,12 @@ define([
         createMarker = function(place) {
           var pt = (place.representative_point) ? place.representative_point : false,
               uris = ItemUtils.getURIs(place),
-              latlng, size, style, marker;
+              latlng, size, marker;
 
           if (pt) {
             latlng = [ pt[1], pt[0] ];
             size = markerScaleFn(place.result_count);
-            style = jQuery.extend({}, Styles.POINT.RED, { radius: size });
-            marker = L.circleMarker(latlng, style).addTo(markers);
+            marker = new SelectableMarker(latlng, size).addTo(markers);
             marker.on('click', onMarkerClicked);
             marker.place = place;
           }
@@ -138,8 +118,7 @@ define([
             currentSelection = selection;
 
             selection.forEach(function(marker) {
-              // TODO
-              // marker.select();
+              marker.select();
             });
           }
         };
