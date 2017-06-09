@@ -53,7 +53,8 @@ define([
 
         clearSelection = function() {
           currentSelection.forEach(function(marker) {
-            marker.deselect();
+            // TODO
+            // marker.deselect();
           });
         },
 
@@ -70,6 +71,7 @@ define([
           }).length === 0;
         },
 
+        /*
         onMarkerClicked = function(e) {
           var marker = e.target,
               place = marker.place,
@@ -85,16 +87,32 @@ define([
             self.fireEvent('select');
           }
         },
+        */
+
+        // TODO temporary hack!
+        onMarkerClicked = function(e) {
+          var marker = e.target,
+              place = marker.place;
+
+          // TODO check if it's already selected and don't fire event if so
+
+          clearSelection();
+          currentSelection = [ marker ];
+          self.fireEvent('select', place);
+
+          L.DomEvent.stop(e);
+        },
 
         createMarker = function(place) {
           var pt = (place.representative_point) ? place.representative_point : false,
               uris = ItemUtils.getURIs(place),
-              latlng, size, marker;
+              latlng, size, style, marker;
 
           if (pt) {
             latlng = [ pt[1], pt[0] ];
             size = markerScaleFn(place.result_count);
-            marker = new AnimatedMarker(latlng, size).addTo(markers);
+            style = jQuery.extend({}, Styles.POINT.RED, { radius: size });
+            marker = L.circleMarker(latlng, style).addTo(markers);
             marker.on('click', onMarkerClicked);
             marker.place = place;
           }
@@ -120,7 +138,8 @@ define([
             currentSelection = selection;
 
             selection.forEach(function(marker) {
-              marker.select();
+              // TODO
+              // marker.select();
             });
           }
         };

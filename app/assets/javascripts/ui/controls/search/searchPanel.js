@@ -15,8 +15,8 @@ define([
         filterPane = new FilterPane(element),
 
         /** Activates the loading spinner **/
-        loading = function() {
-          searchBox.setLoading(true);
+        setLoading = function(loading) {
+          searchBox.setLoading(loading);
         },
 
         setSearchResponse = function(searchResponse) {
@@ -39,7 +39,7 @@ define([
 
     this.setSearchResponse = setSearchResponse;
     this.setState = setState;
-    this.loading = loading;
+    this.setLoading = setLoading;
 
     HasEvents.apply(this);
   };

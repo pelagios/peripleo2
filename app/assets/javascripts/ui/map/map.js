@@ -109,7 +109,7 @@ define([
           }
         },
 
-        // Conveniently, this means a click on the base map, not a marker - deselect!
+        // We're stopping event propagation on markers, so this click is on the basemap - deselect!
         onClick = function(e) {
           topPlacesLayer.clearSelection();
           self.fireEvent('selectPlace');

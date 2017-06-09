@@ -53,7 +53,7 @@ require([
           var state = e.state, // The state, as manipulated by the user (or set by the URL)
               request = e.request; // Promise of the search request triggered by the state change
 
-          searchPanel.loading();
+          searchPanel.setLoading(true);
           searchPanel.setState(state);
                   map.setState(state);
 
@@ -186,6 +186,8 @@ require([
                   state.setSelectedItem(item);
                   resultList.setSelectedItem(item);
                   selectionPanel.show(item, { references: references, resultCounts: resultCounts });
+                  searchPanel.setLoading(false);
+
                   // TODO currentSelection = { item: item, references: references }
                   currentSelection = item;
 
@@ -215,7 +217,7 @@ require([
                 });
               };
 
-          searchPanel.loading();
+          searchPanel.setLoading(true);
 
           if (item)
             switch(ItemUtils.getItemType(item)) {
@@ -237,8 +239,8 @@ require([
         },
 
         onSelectMapMarker = function(place) {
-          searchPanel.loading();
           if (place) {
+            searchPanel.setLoading(true);
             var uri = ItemUtils.getURIs(place)[0],
                 filter = { places : [ uri ] };
 
@@ -254,7 +256,7 @@ require([
 
         /** An identifier was selected (e.g. via suggestions) - fetch item **/
         onSelectIdentifier = function(identifier) {
-          searchPanel.loading();
+          searchPanel.setLoading(true);
           API.getItem(identifier)
             .done(onSelectItem)
             .fail(function(error) {
@@ -265,7 +267,7 @@ require([
 
         onFilterByReference = function(reference) {
           // TODO support filter by person | period
-          searchPanel.loading();
+          searchPanel.setLoading(true);
           state.updateFilters({ places : [ reference.identifiers[0] ] }).done(function(results) {
             resultList.setFilteredResponse(results, reference);
           });
@@ -276,7 +278,7 @@ require([
           var identifiers = ItemUtils.getURIs(place),
               filter = { places : [ identifiers[0] ] };
 
-          searchPanel.loading();
+          searchPanel.setLoading(true);
           state.setQueryPhrase(false, NOOP);
           state.updateFilters(filter).done(function(results) {
             resultList.setLocalResponse(results, place);
@@ -284,14 +286,14 @@ require([
         },
 
         onExitFilteredSearch = function() {
-          searchPanel.loading();
+          searchPanel.setLoading(true);
           state.updateFilters({ places : false }).done(function(results) {
             resultList.setSearchResponse(results);
           });
         },
 
         onOpenFilterPane = function() {
-          searchPanel.loading();
+          searchPanel.setLoading(true);
           state.setFilterPaneOpen(true).done(onSearchResponse);
         },
 
@@ -300,7 +302,7 @@ require([
         },
 
         onQueryPhraseChanged = function(query) {
-          searchPanel.loading();
+          searchPanel.setLoading(true);
 
           // Remove local search filters and bbox, if any
           state.updateFilters({ places : false }, NOOP);
