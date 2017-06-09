@@ -42,7 +42,6 @@ require([
         currentSelection = false,
 
         onSearchResponse = function(response) {
-          selectionPanel.hide();
              searchPanel.setSearchResponse(response);
               resultList.setSearchResponse(response);
                      map.setSearchResponse(response);
@@ -303,6 +302,7 @@ require([
 
         onQueryPhraseChanged = function(query) {
           searchPanel.setLoading(true);
+          selectionPanel.hide();
 
           // Remove local search filters and bbox, if any
           state.updateFilters({ places : false }, NOOP);
