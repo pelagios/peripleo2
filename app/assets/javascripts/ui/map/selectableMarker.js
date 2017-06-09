@@ -1,12 +1,5 @@
 define(['ui/map/styles'], function(Styles) {
 
-  var SELECTION_STYLE = {
-        stroke      : false,
-        fillOpacity : 0.4,
-        fillColor   : '#e75444',
-        radius      : 25
-      };
-
   var SelectableMarker = function(latlng, size) {
 
     var self = this,
@@ -16,12 +9,24 @@ define(['ui/map/styles'], function(Styles) {
         selection = false,
 
         select = function() {
-          selection = L.circleMarker(latlng, SELECTION_STYLE).addTo(self._map).bringToBack();
+          var icon = L.divIcon({
+                iconSize  : [ 50, 50 ],
+                iconAnchor: [ 25, 25 ],
+                className : 'marker-selected',
+                html      : '<div class="inner"></div>'
+              });
+
+          selection = L.marker(latlng, { icon: icon }).addTo(self._map);
+          setTimeout(function() { jQuery(selection._icon).css('padding', 0); }, 1);
         },
 
         deselect = function() {
-          if (selection) selection.remove();
-          selection = false;
+          if (selection) {
+            var marker = selection;
+            selection = false;
+            jQuery(marker._icon).css('padding', '25px');
+            setTimeout(function() { marker.remove(); }, 150);
+          }
         };
 
     this.isSelected = function() { return selection !== false; };
