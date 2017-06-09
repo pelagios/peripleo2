@@ -16,8 +16,11 @@ define(['ui/map/styles'], function(Styles) {
                 html      : '<div class="inner"></div>'
               });
 
-          selection = L.marker(latlng, { icon: icon }).addTo(self._map);
-          setTimeout(function() { jQuery(selection._icon).css('padding', 0); }, 1);
+          selection = L.marker(latlng, { icon: icon });
+          selection.on('add', function() {
+            setTimeout(function() { jQuery(selection._icon).css('padding', 0); }, 10);
+          });
+          selection.addTo(self._map);
         },
 
         deselect = function() {
