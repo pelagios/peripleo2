@@ -48,6 +48,7 @@ define([
 
         controlsEl = jQuery(
           '<div id="map-controls">' +
+            '<div class="control filter-by-viewport"><span class="icon">&#xf0b0;</span></div>' +
             '<div class="control layers icon" title="Change base layer">&#xf0c9;</div>' +
             '<div class="zoom">' +
               '<div class="control zoom-in" title="Zoom in">+</div>' +
@@ -61,9 +62,10 @@ define([
 
         layerSwitcher = new LayerSwitcher(),
 
-        btnLayers  = controlsEl.find('.layers'),
-        btnZoomIn  = controlsEl.find('.zoom-in'),
-        btnZoomOut = controlsEl.find('.zoom-out'),
+        btnFilterByView = controlsEl.find('.filter-by-viewport'),
+        btnLayers       = controlsEl.find('.layers'),
+        btnZoomIn       = controlsEl.find('.zoom-in'),
+        btnZoomOut      = controlsEl.find('.zoom-out'),
 
         // Flag so we can tell apart user-initiated zoom/pan from automatic fit movement
         isAutoFit = false,

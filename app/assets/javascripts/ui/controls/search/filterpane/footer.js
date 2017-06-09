@@ -11,7 +11,7 @@ define([
 
         footer = jQuery(
           '<div id="filterpane-footer">' +
-            '<span class="footer-text">' +
+            '<span class="total-result-count">' +
               '<span class="icon">&#xf03a;</span>' +
               '<span class="label"></span>' +
             '</span>' +

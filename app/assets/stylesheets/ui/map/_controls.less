@@ -1,0 +1,77 @@
+#map-controls {
+  position:absolute;
+  top:15px;
+  right:20px;
+
+  .control {
+    margin-bottom:6px;
+    text-align:center;
+    background-color:#fff;
+    width:36px;
+    height:36px;
+    line-height:37px;
+    font-size:14px;
+    color:@light-grey-type;
+    cursor:pointer;
+    .rounded-corners(2px);
+  }
+
+
+  .filter-by-viewport {
+    box-sizing:border-box;
+    padding:7px 0;
+    .box-shadow(0, 0, 8px, 0, rgba(0,0,0,0.25));
+
+    .icon {
+      display:inline-block;
+      font-size:14px;
+      line-height:18px;
+      color:@light-grey-type;
+      border:2px dotted lighten(@light-grey-type, 10%);
+      width:22px;
+    }
+
+  }
+
+  .filter-by-viewport.enabled,
+  .filter-by-viewport.enabled:hover {
+    background-color:@ocean;
+
+    .icon {
+      border-color:#fff;
+      color:#fff;
+    }
+
+  }
+
+  .layers {
+    .box-shadow(0, 0, 8px, 0, rgba(0,0,0,0.25));
+  }
+
+  .zoom {
+    .no-select();
+    .box-shadow(0, 0, 8px, 0, rgba(0,0,0,0.25));
+
+    .control {
+      font-size:23px;
+      font-family:Roboto;
+      line-height:39px;
+    }
+
+    .control:first-child {
+      margin-bottom:0;
+      border-bottom:1px solid @light-grey-border;
+      .rounded-corners-bottom(0);
+    }
+
+    .control:last-child {
+      .rounded-corners-top(0);
+    }
+
+  }
+
+  .control:hover {
+    background-color:lighten(@light-grey-border, 7%);
+  }
+
+}
