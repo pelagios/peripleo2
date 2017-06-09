@@ -136,10 +136,21 @@ define([
           // TODO - the item may have geometry itself
 
           topPlacesLayer.selectByURIs(placeURIs);
+        },
+
+        onToggleFilterByView = function() {
+          var isEnabled = btnFilterByView.hasClass('enabled');
+          if (isEnabled)
+            btnFilterByView.removeClass('enabled');
+          else
+            btnFilterByView.addClass('enabled');
+
+          self.fireEvent('filterByViewport', !isEnabled);
         };
 
     layerSwitcher.on('changeLayer', onChangeLayer);
 
+    btnFilterByView.click(onToggleFilterByView);
     btnLayers.click(function() { layerSwitcher.open(); });
     btnZoomIn.click(function() { map.zoomIn(); });
     btnZoomOut.click(function() { map.zoomOut(); });

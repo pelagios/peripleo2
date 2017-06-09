@@ -310,10 +310,23 @@ require([
             onSearchResponse(results);
             map.fitBounds();
           });
+        },
+
+        onFilterByViewport = function(filter) {
+          state.setFilterByViewport(filter).done(onSearchResponse);
+        },
+
+        onMapMove = function(bounds) {
+          // This may return a new search request, depending on
+          // whether the user has enabled filtering by viewport!
+          var promise = state.setViewport(bounds);
+          if (promise)
+            promise.done(onSearchResponse);
         };
 
+    map.on('filterByViewport', onFilterByViewport);
     map.on('selectPlace', onSelectMapMarker);
-    map.on('move', seq(state.setViewport, onSearchResponse));
+    map.on('move', onMapMove);
 
     searchPanel.on('open', onOpenFilterPane);
     searchPanel.on('close', onCloseFilterPane);

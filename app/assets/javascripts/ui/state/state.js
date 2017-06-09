@@ -16,7 +16,14 @@ define([
         currentSelection = false,
 
         uiState = {
-          filterPaneOpen: false
+          // The current map viewport
+          viewportBounds   : false,
+
+          // Open/closed state of the filter panel
+          filterPaneOpen   : false,
+
+          // State of the 'filter by viewport' button
+          filterByViewport : false
         },
 
         init = function() {
@@ -67,13 +74,6 @@ define([
           return changeSearch(changeFn, options);
         },
 
-        setViewport = function(bounds, options) {
-          var changeFn = function(makeRequest) {
-                return search.setViewport(bounds, makeRequest);
-              };
-          return changeSearch(changeFn, options);
-        },
-
         setFilterPaneOpen = function(open, options) {
           var changeFn = function(makeRequest) {
                 return search.setAggregationsEnabled(open, makeRequest);
@@ -85,6 +85,32 @@ define([
 
         setTimerange = function(range) {
           var promise = search.setTimerange(range);
+          pushState();
+          return promise;
+        },
+
+        setViewport = function(bounds, options) {
+          // Update UI state
+          uiState.viewportBounds = bounds;
+
+          // If we are currently filtering by viewport, we need to trigger a search, too
+          if (uiState.filterByViewport) {
+            var changeFn = function(makeRequest) {
+                  return search.setViewport(bounds, makeRequest);
+                };
+            return changeSearch(changeFn, options);
+          }
+        },
+
+        setFilterByViewport = function(filter) {
+          uiState.filterByViewport = filter;
+
+          var promise = (filter) ?
+                // If filter == true, we set the bounds in the search state...
+                search.setViewport(uiState.viewportBounds, true) :
+                // ...otherwise we remove them
+                search.setViewport(false, true);
+
           pushState();
           return promise;
         },
@@ -109,6 +135,7 @@ define([
     this.updateFilters = updateFilters;
     this.setTimerange = setTimerange;
     this.setFilterPaneOpen = setFilterPaneOpen;
+    this.setFilterByViewport = setFilterByViewport;
     this.setLayerChanged = setLayerChanged;
     this.setSelectedItem = setSelectedItem;
     this.setViewport = setViewport;
