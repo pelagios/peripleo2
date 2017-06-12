@@ -1,7 +1,8 @@
 define([
   'ui/common/formatting',
-  'ui/common/itemUtils'
-], function(Formatting, ItemUtils) {
+  'ui/common/itemUtils',
+  'ui/api'
+], function(Formatting, ItemUtils, API) {
 
   var DatasetCard  = function(parentEl, dataset, args) {
     var infoEl = jQuery(
@@ -18,6 +19,15 @@ define([
         homepageEl    = infoEl.find('.item-homepage'),
         descriptionEl = infoEl.find('.item-description'),
         tempBoundsEl  = infoEl.find('.item-temporal-bounds'),
+
+        subsetsEl = jQuery(
+          '<div class="dataset subsets">' +
+            '<h4></h4>' +
+            '<ul></ul>' +
+          '</div>').appendTo(parentEl).hide(),
+
+        subsetsLabelEl = subsetsEl.find('h4'),
+        subsetsListEl = subsetsEl.find('ul'),
 
         statsEl = jQuery(
           '<div class="item references"></div>').appendTo(parentEl),
@@ -64,6 +74,14 @@ define([
           tempBoundsEl.html(Formatting.formatTemporalBounds(getTemporalBounds(timeHistogram)));
         },
 
+        renderSubsets = function(subsets) {
+          subsetsLabelEl.html(subsets.length + ' subsets');
+          subsets.forEach(function(subset) {
+            subsetsListEl.append(subset.title);
+          });
+          // subsetsEl.show();
+        },
+
         renderStats = function() {
           var totalItems = args.total,
               topPlaces = args.top_places,
@@ -87,6 +105,10 @@ define([
 
     renderInfo();
     renderStats();
+
+    API.getParts(record.identifiers[0]).done(function(parts) {
+      if (parts.length > 0) renderSubsets(parts);
+    });
   };
 
   return DatasetCard;

@@ -10,6 +10,10 @@ define([], function() {
       return jsRoutes.controllers.api.ItemAPIController.getReferences(identifier).ajax();
     },
 
+    getParts : function(identifier) {
+      return jsRoutes.controllers.api.ItemAPIController.getParts(identifier).ajax();
+    },
+
     suggest : function(query) {
       return jsRoutes.controllers.api.SearchAPIController.suggest(query).ajax();
     },
