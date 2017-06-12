@@ -19,6 +19,10 @@ define([
           searchBox.setLoading(loading);
         },
 
+        setFilterByViewport = function(filter) {
+          filterPane.setFilterByViewport(filter);
+        },
+
         setSearchResponse = function(searchResponse) {
           // TODO if the search includes any filter - set X icon
           searchBox.setLoading(false);
@@ -40,6 +44,7 @@ define([
     this.setSearchResponse = setSearchResponse;
     this.setState = setState;
     this.setLoading = setLoading;
+    this.setFilterByViewport = setFilterByViewport;
 
     HasEvents.apply(this);
   };

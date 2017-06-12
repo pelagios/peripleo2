@@ -190,7 +190,6 @@ require([
                   // TODO currentSelection = { item: item, references: references }
                   currentSelection = item;
 
-
                   // Note: selection may have happend through the map, so technically no
                   // need for this - but the map is designed to handle this situation
                   map.setSelectedItem(item, references.PLACE);
@@ -321,6 +320,7 @@ require([
         },
 
         onFilterByViewport = function(filter) {
+          searchPanel.setFilterByViewport(filter);
           state.setFilterByViewport(filter).done(onSearchResponse);
         },
 

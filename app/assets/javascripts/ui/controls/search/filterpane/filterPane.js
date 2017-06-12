@@ -55,11 +55,12 @@ define([
         };
 
     timeHistogram.on('selectionChange', this.forwardEvent('timerangeChange'));
-    
+
     footer.on('toggle', togglePane);
 
     this.setOpen = setOpen;
     this.setResponse = setResponse;
+    this.setFilterByViewport = footer.setFilterByViewport;
 
     HasEvents.apply(this);
   };

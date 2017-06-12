@@ -12,11 +12,13 @@ define([
         footer = jQuery(
           '<div id="filterpane-footer">' +
             '<span class="total-result-count">' +
-              '<span class="icon">&#xf03a;</span>' +
+              '<span class="icon"></span>' +
               '<span class="label"></span>' +
             '</span>' +
             '<span class="pane-toggle"></span>' +
           '</div>').appendTo(parentEl),
+
+        icon = footer.find('.icon'),
 
         label = footer.find('.label'),
 
@@ -36,6 +38,11 @@ define([
           if (cancelEvent !== true) self.fireEvent('toggle');
         },
 
+        setFilterByViewport = function(filter) {
+          if (filter) icon.addClass('by-viewport');
+          else icon.removeClass('by-viewport');
+        },
+
         setOpen = function(open) {
           var isOpen = btnTogglePane.hasClass('open');
           if (open != isOpen) onTogglePane(true);
@@ -49,6 +56,7 @@ define([
 
     this.update = update;
     this.setOpen = setOpen;
+    this.setFilterByViewport = setFilterByViewport;
 
     HasEvents.apply(this);
   };

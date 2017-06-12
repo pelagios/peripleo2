@@ -4,14 +4,20 @@
   position:relative;
 
   .total-result-count {
-    cursor:pointer;
 
-    .icon {
-      position:relative;
+    .icon::after {
+      content:'\f03a';
       font-size:14px;
-      top:1px;
-      margin-right:4px;
+      margin-right:3px;
       color:@ocean;
+    }
+
+    .icon.by-viewport::after {
+      content:'';
+      border:2px dotted @ocean;
+      display:inline-block;
+      width:10px;
+      height:6px;
     }
 
     .label {
