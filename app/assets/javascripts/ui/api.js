@@ -24,7 +24,7 @@ define([], function() {
      * - datasets = identifier
      */
     getDatasetInfo : function(identifier) {
-      var url = '/api/search?limit=0&top_places=true&time_histogram=true&datasets=' + identifier;
+      var url = '/api/search?limit=20&top_places=true&time_histogram=true&datasets=' + identifier;
       return jQuery.getJSON(url);
     }
 

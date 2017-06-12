@@ -201,20 +201,22 @@ require([
               },
 
               selectDataset = function(dataset) {
-                // TODO don't make this a transitional query, but set a new state:
-                // TODO - remove all filters
-                // TODO - set dataset filter
-                // TODO - go
-                // TODO how do we indicate there's currently a dataset filter? Result list?
+                // TODO indicate that there is 'source' filter via searchbox footer
+                // TODO (same way as if filter were set via facets panel)
+                state.clearSearch(NOOP);
+                state.updateFilters({ 'datasets' : [ uri ] }, NOOP);
+
+                // Handle this as a transitional request, so we can force a time histgraom
                 API.getDatasetInfo(uri).done(function(response) {
-                  // TODO redundancy with selectPlace!
                   state.setSelectedItem(dataset);
-                  resultList.setSelectedItem(dataset);
                   selectionPanel.show(dataset, response);
-                  // TODO currentSelection = { item: dataset, references: references }
                   currentSelection = dataset;
 
+                  searchPanel.setSearchResponse(response);
+                  resultList.setSearchResponse(response);
                   map.setSearchResponse(response);
+                  map.fitBounds();
+
                   searchPanel.setLoading(false);
                 });
               };
@@ -313,9 +315,11 @@ require([
           searchPanel.setLoading(true);
           selectionPanel.hide();
 
-          // Remove local search filters and bbox, if any
-          state.updateFilters({ places : false }, NOOP);
-          state.setViewport(false, NOOP);
+          // Remove local search and dataset filters
+          state.updateFilters({
+            places   : false,
+            datasets : false
+          }, NOOP);
 
           state.setQueryPhrase(query).done(function(results) {
             onSearchResponse(results);

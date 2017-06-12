@@ -46,6 +46,10 @@ define([
           }
         },
 
+        getUIState = function() {
+          return uiState;
+        },
+
         // Common functionality for changing properties of the search
         changeSearch = function(change, options) {
           var pState = (options) ? options.pushState !== false : true, // default true
@@ -132,6 +136,7 @@ define([
     this.loadNextPage = search.loadNextPage;
     this.setQueryPhrase = setQueryPhrase;
     this.getQueryPhrase = search.getQuery;
+    this.getUIState = getUIState;
     this.updateFilters = updateFilters;
     this.setTimerange = setTimerange;
     this.setFilterPaneOpen = setFilterPaneOpen;

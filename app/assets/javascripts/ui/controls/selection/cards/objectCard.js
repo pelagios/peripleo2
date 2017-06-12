@@ -59,7 +59,8 @@ define([
                           label = (totalCount > 1) ? ' results total' : ' result total',
                           el = jQuery(
                             '<span class="more"> · ' +
-                              '<a class="filter" href="#">' + totalCount + label + '</a>' +
+                              '<a class="filter" href="#">' + Formatting.formatNumber(totalCount) +
+                                label + '</a>' +
                             '<span>');
 
                       el.find('a').data('reference', place);
