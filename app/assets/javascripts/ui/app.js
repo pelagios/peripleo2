@@ -201,6 +201,11 @@ require([
               },
 
               selectDataset = function(dataset) {
+                // TODO don't make this a transitional query, but set a new state:
+                // TODO - remove all filters
+                // TODO - set dataset filter
+                // TODO - go
+                // TODO how do we indicate there's currently a dataset filter? Result list?
                 API.getDatasetInfo(uri).done(function(response) {
                   // TODO redundancy with selectPlace!
                   state.setSelectedItem(dataset);
