@@ -1,24 +1,45 @@
 define([
+  'ui/common/formatting',
   'ui/common/itemUtils'
-], function(ItemUtils) {
+], function(Formatting, ItemUtils) {
 
   var DatasetCard  = function(parentEl, dataset, args) {
     var infoEl = jQuery(
           '<div class="item-info">' +
             '<p class="item-is-in"></p>' +
             '<h3 class="item-title"></h3>' +
+            '<p class="item-homepage"></h3>' +
             '<p class="item-description"></p>' +
+            '<p class="item-temporal-bounds"></p>' +
           '</div>').appendTo(parentEl),
 
         partOfEl      = infoEl.find('.item-is-in'),
         titleEl       = infoEl.find('.item-title'),
+        homepageEl    = infoEl.find('.item-homepage'),
         descriptionEl = infoEl.find('.item-description'),
+        tempBoundsEl  = infoEl.find('.item-temporal-bounds'),
 
-        // TODO safe to assume that datasets only have one record
+        statsEl = jQuery(
+          '<div class="item references"></div>').appendTo(parentEl),
+
+        // Safe to assume that datasets only have one record
         record = dataset.is_conflation_of[0],
 
-        render = function() {
-          var descriptions = ItemUtils.getDescriptions(dataset);
+        getTemporalBounds = function(histogram) {
+          var first = histogram[0],
+              last = histogram[ histogram.length - 1 ],
+              getYear = function(obj) {
+                return parseInt(Object.keys(obj)[0]);
+              };
+
+          return { from: getYear(first), to: getYear(last) };
+        },
+
+        renderInfo = function() {
+          var descriptions = ItemUtils.getDescriptions(dataset),
+              timeHistogram = args.aggregations.filter(function(agg) {
+                return agg.name === 'by_time';
+              })[0].buckets;
 
           if (record.is_part_of)
             ItemUtils.getHierarchyPath(record.is_part_of).forEach(function(segment) {
@@ -27,12 +48,45 @@ define([
                 '</a></span>');
             });
 
-          titleEl.html(dataset.title);
+          if (record.homepage) {
+            titleEl.html(
+              '<a href="' + record.homepage + '" target="_blank">' + dataset.title + '</a>');
+            homepageEl.html(
+              '<a href="' + record.homepage + '" target="_blank">' + record.homepage + '</a>');
+          } else {
+            titleEl.html(dataset.title);
+          }
+
           if (descriptions.length > 0)
             descriptionEl.html(descriptions[0].description);
+
+          // TODO what if there are no dates?
+          tempBoundsEl.html(Formatting.formatTemporalBounds(getTemporalBounds(timeHistogram)));
+        },
+
+        renderStats = function() {
+          var totalItems = args.total,
+              topPlaces = args.top_places,
+              topPlacesCount = (topPlaces.length < 500) ? topPlaces.length: '500+';
+
+          statsEl.append(
+            '<span class="stats-items">' +
+              '<span class="icon">&#xf219</span>' +
+              '<span class="count">' +
+                Formatting.formatNumber(totalItems) +
+              '</span> items' +
+            '</span><span class="sep"></span>' +
+
+            '<span class="stats-links">' +
+              '<span class="icon">&#xf0c1;</span> linked to ' +
+              '<span class="count">' +
+                topPlacesCount +
+              '</span> places' +
+            '</span>');
         };
 
-    render();
+    renderInfo();
+    renderStats();
   };
 
   return DatasetCard;

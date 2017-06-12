@@ -1,4 +1,5 @@
 @import "../_iteminfo.less";
+@import "types/_dataset.less";
 
 #current-selection {
   margin-top:4px;
@@ -27,28 +28,28 @@
     right:3px;
   }
 
-  .dogear.place { border-top-color:@type-place; }
-  .dogear.place::after {
+  .dogear.PLACE { border-top-color:@type-place; }
+  .dogear.PLACE::after {
     content:'\e638';
     top:-45px;
     font-size:21px;
   }
 
-  .dogear.object { border-top-color:@type-object; }
-  .dogear.object::after {
+  .dogear.OBJECT { border-top-color:@type-object; }
+  .dogear.OBJECT::after {
     content:'\e6af';
     right:5px;
   }
 
-  .dogear.person { border-top-color:@type-person; }
-  .dogear.person::after {
+  .dogear.PERSON { border-top-color:@type-person; }
+  .dogear.PERSON::after {
     content:'\e863';
     font-size:21px;
     top:-47px;
   }
 
-  .dogear.dataset { border-top-color:@type-dataset; }
-  .dogear.dataset::after {
+  .dogear.DATASET { border-top-color:@type-dataset; }
+  .dogear.DATASET::after {
     content:'\e674';
     font-size:22px;
     top:-48px;
@@ -67,7 +68,7 @@
   }
 
   .item-info {
-    padding:16px 12px;
+    padding:16px 22px 16px 12px;
   }
 
   .references {
@@ -111,7 +112,6 @@
   }
 
   .place.references {
-    padding:12px 12px;
     overflow:hidden;
     white-space:nowrap;
     text-overflow:ellipsis;

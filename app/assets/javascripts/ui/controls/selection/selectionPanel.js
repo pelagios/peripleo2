@@ -60,28 +60,29 @@ define([
           var visible = element.is(':visible'),
 
               slideAction = (visible && !item) ? 'slideUp' : // Open + deselect
-                (!visible && item) ? 'slideDown' : false; // Closed + select
+                (!visible && item) ? 'slideDown' : false, // Closed + select
 
-          // Clear & set depicition in any case
+              itemType = ItemUtils.getItemType(item);
+
+          dogearEl.attr('class', 'dogear ' + itemType);
+          cardEl.attr('class', 'card ' + itemType);
+
+          // Clear & set depiction in any case
           empty();
           setDepiction(item);
 
           // Then defer to the appropriate card implementation
-          switch(ItemUtils.getItemType(item)) {
+          switch(itemType) {
             case 'PLACE':
-              dogearEl.attr('class', 'dogear place');
               new PlaceCard(cardEl, item, args);
               break;
             case 'OBJECT':
-              dogearEl.attr('class', 'dogear object');
               new ObjectCard(cardEl, item, args);
               break;
             case 'PERSON':
-              dogearEl.attr('class', 'dogear person');
               new PersonCard(cardEl, item, args);
               break;
             case 'DATASET':
-              dogearEl.attr('class', 'dogear dataset');
               new DatasetCard(cardEl, item, args);
               break;
             default:

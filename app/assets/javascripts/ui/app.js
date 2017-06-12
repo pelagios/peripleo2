@@ -86,7 +86,7 @@ require([
                 deselectItem(currentSelection);
                 break;
               case 'DATASET':
-                selectDataset(currentSelection);
+                deselectItem(currentSelection);
                 break;
             }
         },
@@ -201,17 +201,16 @@ require([
               },
 
               selectDataset = function(dataset) {
-                // TODO redundancy with selectPlace!
-                state.setSelectedItem(dataset);
-                resultList.setSelectedItem(dataset);
-                selectionPanel.show(dataset);
-                // TODO currentSelection = { item: dataset, references: references }
-                currentSelection = dataset;
+                API.getDatasetInfo(uri).done(function(response) {
+                  // TODO redundancy with selectPlace!
+                  state.setSelectedItem(dataset);
+                  resultList.setSelectedItem(dataset);
+                  selectionPanel.show(dataset, response);
+                  // TODO currentSelection = { item: dataset, references: references }
+                  currentSelection = dataset;
 
-                // Clear all search params and then set a filter
-                state.clearSearch(false, NOOP);
-                state.updateFilters({ 'datasets': uri }).done(function(results) {
-                  // TODO show all dots on map?
+                  map.setSearchResponse(response);
+                  searchPanel.setLoading(false);
                 });
               };
 
