@@ -280,6 +280,12 @@ require([
           searchPanel.setLoading(true);
           state.setQueryPhrase(false, NOOP);
           state.updateFilters(filter).done(function(results) {
+            // Exclude the place itself from the results
+            results.total = results.total - 1;
+            results.items = results.items.filter(function(r) {
+              return r.doc_id !== place.doc_id;
+            });
+
             resultList.setLocalResponse(results, place);
           });
         },

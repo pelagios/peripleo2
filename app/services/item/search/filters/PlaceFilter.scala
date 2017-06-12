@@ -20,7 +20,7 @@ case class PlaceFilter(uris: Seq[String], setting: TermFilter.Setting) {
       }
     } map { _.as[Item].map(_.docId).toSeq }
     
-    def filter(docId: UUID) =
+    def filter(docId: UUID) = 
       hasChildQuery(ES.REFERENCE) query { termQuery("reference_to.doc_id", docId.toString) }
    
     if (uris.size == 1)
