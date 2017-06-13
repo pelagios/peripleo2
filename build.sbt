@@ -8,6 +8,11 @@ scalaVersion := "2.11.8"
 
 scalacOptions ++= Seq("-feature")
 
+resolvers ++= Seq(
+  "Open Source Geospatial Foundation Repository" at "http://download.osgeo.org/webdav/geotools/",
+  "http://maven.geotoolkit.org/" at "http://maven.geotoolkit.org/"
+)
+
 libraryDependencies ++= Seq(
   ws,
   cache,
