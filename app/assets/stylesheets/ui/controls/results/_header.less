@@ -24,11 +24,54 @@
   .rl-h-filters {
     flex:1;
     background-color:#fff;
+    list-style-type:none;
+    padding:0;
+    margin:0;
 
-    @blur:10px; @col:rgba(0,0,0,0.08);
-    -webkit-box-shadow: inset 0 -@blur @blur -@blur @col, inset @blur @blur @blur -@blur @col, inset -@blur 0 @blur -@blur @col;
-       -moz-box-shadow: inset 0 -@blur @blur -@blur @col, inset @blur @blur @blur -@blur @col, inset -@blur 0 @blur -@blur @col;
-            box-shadow: inset 0 -@blur @blur -@blur @col, inset @blur @blur @blur -@blur @col, inset -@blur 0 @blur -@blur @col;
+    @blur:10px; @col:rgba(0,0,0,0.18);
+    -webkit-box-shadow: inset 0 -@blur @blur -@blur @col, inset @blur 0 @blur -@blur @col, inset -@blur 0 @blur -@blur @col;
+       -moz-box-shadow: inset 0 -@blur @blur -@blur @col, inset @blur 0 @blur -@blur @col, inset -@blur 0 @blur -@blur @col;
+            box-shadow: inset 0 -@blur @blur -@blur @col, inset @blur 0 @blur -@blur @col, inset -@blur 0 @blur -@blur @col;
+
+    li {
+      display:inline-block;
+      margin:4px 0 4px 3px;
+      .box-shadow(0, 0, 5px, 0, rgba(0,0,0,0.3));
+      cursor:pointer;
+      overflow:hidden;
+
+      * {
+        display:inline-block;
+        height:30px;
+        line-height:30px;
+        vertical-align:middle;
+        color:#fff;
+      }
+
+      .icon {
+        text-align:center;
+        width:30px;
+        font-size:14px;
+        background-color:@ocean;
+        border-right:1px solid rgba(255, 255, 255, 0.5);
+        .rounded-corners-left(2px);
+      }
+
+      .label {
+        padding:0 12px 0 7px;
+        background-color:fade(@ocean, 80%);
+        text-decoration:none;
+        .rounded-corners-right(2px);
+      }
+
+      .label:hover { text-decoration:underline; }
+
+    }
+
+    li.collapsed .icon {
+      .rounded-corners-right(2px);
+    }
+
   }
 
   .rl-h-clear {
