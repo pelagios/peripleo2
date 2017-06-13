@@ -1,0 +1,57 @@
+.rl-header {
+  position:relative;
+  border-bottom:1px solid @light-grey-border;
+  flex-shrink:0;
+  color:@dark-grey-type;
+
+  .rl-h-container {
+    display:flex;
+  }
+
+  .rl-h-container > div {
+    display:inline-block;
+  }
+
+  .rl-h-label {
+    flex-shrink:0;
+    background-color:#fff;
+    padding:12px;
+    color:@ocean;
+    font-size:14px;
+    border-right:1px solid @light-grey-border;
+  }
+
+  .rl-h-filters {
+    flex:1;
+    background-color:#fff;
+
+    @blur:10px; @col:rgba(0,0,0,0.08);
+    -webkit-box-shadow: inset 0 -@blur @blur -@blur @col, inset @blur @blur @blur -@blur @col, inset -@blur 0 @blur -@blur @col;
+       -moz-box-shadow: inset 0 -@blur @blur -@blur @col, inset @blur @blur @blur -@blur @col, inset -@blur 0 @blur -@blur @col;
+            box-shadow: inset 0 -@blur @blur -@blur @col, inset @blur @blur @blur -@blur @col, inset -@blur 0 @blur -@blur @col;
+  }
+
+  .rl-h-clear {
+    flex-shrink:0;
+    background-color:#fff;
+    cursor:pointer;
+    width:34px;
+    border-left:1px solid @light-grey-border;
+
+    .icon {
+      position:absolute;
+      top:13px;
+      right:19px;
+      font-size:32px;
+      color:@light-grey-type;
+      line-height:14px;
+      width:14px;
+    }
+
+  }
+
+  .rl-h-clear:hover .icon {
+    color:@light-grey-type-hover;
+  }
+
+}

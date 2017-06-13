@@ -1,3 +1,5 @@
+@import "_header.less";
+
 #result-list {
   margin:6px 0 40px 0;
   .box-shadow(0, 0, 8px, 0, rgba(0,0,0,0.25));
@@ -6,40 +8,6 @@
   display:flex;
   flex-direction:column;
   overflow:hidden;
-
-  .rl-header {
-    background-color:#fff;
-    padding: 14px 12px 11px 12px;
-    border-bottom:1px solid @light-grey-border;
-    flex-shrink:0;
-
-    a { text-decoration:none; }
-    a:hover { text-decoration:underline; }
-
-    span::before {
-      font-family:FontAwesome;
-      font-size:14px;
-      padding-right:5px;
-    }
-
-    .icon {
-      font-size:14px;
-      padding-right:5px;
-    }
-
-    .results-local {
-      color:@light-grey-type-hover;
-      a { color:@light-grey-type-hover; }
-    }
-
-    .results-all {
-      position:absolute;
-      right:12px;
-      color:@ocean;
-      a { color:@ocean; }
-    }
-
-  }
 
   .rl-body {
     flex-shrink:1;

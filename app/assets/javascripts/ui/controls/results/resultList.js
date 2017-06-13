@@ -1,8 +1,9 @@
 define([
   'ui/common/formatting',
   'ui/common/hasEvents',
+  'ui/controls/results/header',
   'ui/controls/results/templates'
-], function(Formatting, HasEvents, Templates) {
+], function(Formatting, HasEvents, Header, Templates) {
 
   var SLIDE_DURATION = 100;
 
@@ -12,19 +13,20 @@ define([
 
         element = jQuery(
           '<div id="result-list">' +
-            '<div class="rl-header">' +
-              '<span class="results-local"></span>' +
-              '<span class="results-all"></span>' +
-            '</div>' +
+            '<div class="rl-header"></div>' +
+//               '<span class="results-local"></span>' +
+//              '<span class="results-all"></span>' +
+//            '</div>' +
             '<div class="rl-body">' +
               '<ul></ul>' +
               '<div class="rl-wait"><img src="/assets/images/wait-circle.gif"/></div>' +
             '</div>' +
           '</div>').appendTo(parentEl),
 
-        headerEl = element.find('.rl-header').hide(),
-        resultsLocalEl = headerEl.find('.results-local'),
-        resultsAllEl = headerEl.find('.results-all'),
+        header = new Header(element.find('.rl-header').hide()),
+
+        // resultsLocalEl = headerEl.find('.results-local'),
+        // resultsAllEl = headerEl.find('.results-all'),
 
         bodyEl = element.find('.rl-body'),
         listEl = bodyEl.find('ul'),
@@ -87,8 +89,8 @@ define([
         },
 
         setSearchResponse = function(response) {
-          if (headerEl.is(':visible'))
-            headerEl.velocity('slideUp', { duration: SLIDE_DURATION });
+//         if (headerEl.is(':visible'))
+//           headerEl.velocity('slideUp', { duration: SLIDE_DURATION });
 
           renderResponse(response, false);
         },
@@ -171,7 +173,7 @@ define([
     bodyEl.on('click', 'li', onSelect);
     bodyEl.scroll(onScroll);
 
-    resultsAllEl.click(onExitFilteredSearch);
+    // resultsAllEl.click(onExitFilteredSearch);
 
     this.appendPage = appendPage;
     this.setSearchResponse = setSearchResponse;
