@@ -1,8 +1,9 @@
 define([
+  'ui/common/aggregationUtils',
   'ui/common/formatting',
   'ui/common/itemUtils',
   'ui/api'
-], function(Formatting, ItemUtils, API) {
+], function(AggregationUtils, Formatting, ItemUtils, API) {
 
   var DatasetCard  = function(parentEl, dataset, args) {
     var infoEl = jQuery(
@@ -21,12 +22,8 @@ define([
         tempBoundsEl  = infoEl.find('.item-temporal-bounds'),
 
         subsetsEl = jQuery(
-          '<div class="dataset subsets">' +
-            '<h4></h4>' +
-            '<ul></ul>' +
-          '</div>').appendTo(parentEl).hide(),
+          '<div class="dataset subsets"><ul></ul></div>').appendTo(parentEl).hide(),
 
-        subsetsLabelEl = subsetsEl.find('h4'),
         subsetsListEl = subsetsEl.find('ul'),
 
         statsEl = jQuery(
@@ -75,11 +72,25 @@ define([
         },
 
         renderSubsets = function(subsets) {
-          subsetsLabelEl.html(subsets.length + ' subsets');
-          subsets.forEach(function(subset) {
-            subsetsListEl.append(subset.title);
+          var counts = AggregationUtils.getAggregation(args.aggregations, 'by_dataset');
+
+          subsets.items.slice(0, 5).forEach(function(subset) {
+            var id = subset.is_conflation_of[0].identifiers[0];
+            subsetsListEl.append(
+              '<li>' +
+                '<a class="destination" data-id="' + id + '" href="#">' + subset.title + '</a>' +
+                '<span class="count">(' +
+                  Formatting.formatNumber(AggregationUtils.getCountForId(counts, id)) +
+                ' items)<span>' +
+              '</li>');
           });
-          // subsetsEl.show();
+
+          // TODO make this link do something
+          if (subsets.items.length > 5)
+            subsetsEl.append(
+              '<span class="more-subsets">+ <a href="#">' + (subsets.items.length - 5) + ' more</a></span>');
+
+          subsetsEl.show();
         },
 
         renderStats = function() {
@@ -107,7 +118,7 @@ define([
     renderStats();
 
     API.getParts(record.identifiers[0]).done(function(parts) {
-      if (parts.length > 0) renderSubsets(parts);
+      if (parts.total > 0) renderSubsets(parts);
     });
   };
 
