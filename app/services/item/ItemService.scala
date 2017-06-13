@@ -9,7 +9,7 @@ import org.joda.time.DateTime
 import play.api.Logger
 import play.api.libs.json.{ Json, JsSuccess, JsError }
 import scala.concurrent.{ ExecutionContext, Future }
-import services.ES
+import services.{ ES, Page }
 import services.item.reference.{ Reference, ReferenceService, UnboundReference }
 import services.task.TaskType
 
@@ -67,15 +67,16 @@ class ItemService @Inject() (
       }
     } map { _.as[(Item, Long)].headOption.map(_._1) }
     
-  def findPartsOf(identifier: String) =
+  def findPartsOf(identifier: String, offset: Int = 0, limit: Int = 20) =
     es.client execute {
       search in ES.PERIPLEO / ES.ITEM query {
         constantScoreQuery {
           filter ( termQuery("is_conflation_of.is_part_of.ids" -> identifier) )
         }
-      }
-    // TODO return results as page?
-    } map { _.as[(Item, Long)].map(_._1) }
+      } start offset limit limit
+    } map { response =>
+      Page(response.tookInMillis, response.totalHits, offset, limit, response.as[(Item, Long)].map(_._1))
+    }
 
   /** Retrieves connected items.
     *

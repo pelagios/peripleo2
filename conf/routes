@@ -47,8 +47,8 @@ GET     /api/datasets                                controllers.api.DatasetAPIC
 GET     /api/gazetteers                              controllers.api.GazetteerAPIController.list
 GET     /api/search                                  controllers.api.SearchAPIController.search
 GET     /api/suggest                                 controllers.api.SearchAPIController.suggest(q: String)
+GET     /api/items/:id/parts                         controllers.api.ItemAPIController.getParts(id: String, offset: Int ?= 0, limit: Int ?= 20)
 GET     /api/items/:id/references                    controllers.api.ItemAPIController.getReferences(id: String)
-GET     /api/items/:id/parts                         controllers.api.ItemAPIController.getParts(id: String)
 GET     /api/items/:id                               controllers.api.ItemAPIController.getItem(id: String)
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
