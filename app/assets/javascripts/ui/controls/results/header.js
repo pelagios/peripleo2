@@ -16,13 +16,19 @@ define([], function() {
             parentEl.velocity('slideUp', { duration: SLIDE_DURATION });
         };
 
-    /* Dummy - just to test the design
+    // Dummy - just to test the design
+    filterList.append(
+      '<li class="collapsed">' +
+        '<span class="icon">&#xf041;</span>' +
+      '</li>');
+
     filterList.append(
       '<li>' +
         '<span class="icon">&#xf187;</span>' +
         '<a class="label destination" href="#">University of Graz</a>' +
       '</li>');
 
+    /*
     filterList.append(
       '<li>' +
         '<span class="icon">&#xf041;</span>' +
