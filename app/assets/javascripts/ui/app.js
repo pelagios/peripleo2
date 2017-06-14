@@ -197,7 +197,8 @@ require([
               },
 
               selectPerson = function(person) {
-
+                // TODO 
+                selectObject(person);
               },
 
               selectDataset = function(dataset) {
