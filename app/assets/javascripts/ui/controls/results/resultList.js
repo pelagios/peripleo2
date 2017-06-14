@@ -23,7 +23,7 @@ define([
             '</div>' +
           '</div>').appendTo(parentEl),
 
-        header = new Header(element.find('.rl-header')),
+        header = new Header(element.find('.rl-header').hide()),
 
         // resultsLocalEl = headerEl.find('.results-local'),
         // resultsAllEl = headerEl.find('.results-all'),

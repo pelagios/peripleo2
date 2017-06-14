@@ -1,69 +1,54 @@
 .rl-header {
   position:relative;
-  border-bottom:1px solid @light-grey-border;
   flex-shrink:0;
   color:@dark-grey-type;
 
-  .rl-h-container {
-    display:flex;
-  }
-
-  .rl-h-container > div {
-    display:inline-block;
-  }
-
-  /*
-  .rl-h-label {
-    flex-shrink:0;
-    background-color:#fff;
-    padding:12px;
-    color:@ocean;
-    font-size:14px;
-    border-right:1px solid @light-grey-border;
-  }
-  */
-
   .rl-h-filters {
-    flex:1;
-    background-color:#fff;
+    background-color:@blueish-white;
     list-style-type:none;
-    padding:0;
+    padding:0 2px;
     margin:0;
 
-    @blur:10px; @col:rgba(0,0,0,0.18);
-    -webkit-box-shadow: inset 0 -@blur @blur -@blur @col, inset @blur 0 @blur -@blur @col, inset -@blur 0 @blur -@blur @col;
-       -moz-box-shadow: inset 0 -@blur @blur -@blur @col, inset @blur 0 @blur -@blur @col, inset -@blur 0 @blur -@blur @col;
-            box-shadow: inset 0 -@blur @blur -@blur @col, inset @blur 0 @blur -@blur @col, inset -@blur 0 @blur -@blur @col;
+    @blur:10px; @col:rgba(0,0,0,0.25);
+    -webkit-box-shadow: inset 0 -@blur @blur -@blur @col;
+       -moz-box-shadow: inset 0 -@blur @blur -@blur @col;
+            box-shadow: inset 0 -@blur @blur -@blur @col;
 
     li {
       display:inline-block;
-      margin:3px 0 3px 3px;
-      .box-shadow(0, 0, 5px, 0, rgba(0,0,0,0.3));
+      margin:3px 0 3px 1px;
+      .box-shadow(0, 0, 4px, 0, rgba(0,0,0,0.1));
       cursor:pointer;
       overflow:hidden;
+      .rounded-corners(2px);
 
       * {
         display:inline-block;
-        height:32px;
-        line-height:32px;
+        height:26px;
+        line-height:26px;
         vertical-align:middle;
-        color:#fff;
+        border-color:@light-grey-border-darker;
+        border-style:solid;
+        border-width:0;
+        background-color:#fff;
       }
 
       .icon {
         text-align:center;
-        width:32px;
+        width:26px;
         font-size:14px;
-        background-color:@ocean;
-        border-right:1px solid rgba(255, 255, 255, 0.5);
+        color:@light-grey-type;
+        border-width:1px;
+        border-right-color:@light-grey-border;
         .rounded-corners-left(2px);
       }
 
       .label {
         padding:0 12px 0 7px;
-        background-color:fade(@ocean, 80%);
+        color:@light-grey-type-hover;
         text-decoration:none;
         .rounded-corners-right(2px);
+        border-width:1px 1px 1px 0;
       }
 
       .label:hover { text-decoration:underline; }
@@ -72,6 +57,7 @@
 
     li.collapsed .icon {
       .rounded-corners-right(2px);
+      border-right-color:@light-grey-border-darker;
     }
 
   }
