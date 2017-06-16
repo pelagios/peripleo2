@@ -84,6 +84,10 @@ define([
           renderResponse(response, false);
         },
 
+        updateFilterCrumbs = function(diff) {
+          filterCrumbs.update(diff);
+        },
+
         setFilteredResponse = function(response, reference) {
           filterCrumbs.setPlaceFilter(reference.identifiers[0], reference.title);
           renderResponse(response, false);
@@ -159,6 +163,7 @@ define([
     this.setFilteredResponse = setFilteredResponse;
     this.setLocalResponse = setLocalResponse;
     this.setSelectedItem = setSelectedItem;
+    this.updateFilterCrumbs = updateFilterCrumbs;
 
     HasEvents.apply(this);
   };

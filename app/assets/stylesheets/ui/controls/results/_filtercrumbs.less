@@ -61,13 +61,18 @@
         .rounded-corners-right(2px);
       }
 
-      .label:hover { text-decoration:underline; }
+      a.label:hover { text-decoration:underline; }
 
     }
 
     li.collapsed .icon {
       .rounded-corners-right(2px);;
     }
+
+    li.item-type.PLACE   .icon { background-color: @type-place }
+    li.item-type.OBJECT  .icon { background-color: @type-object }
+    li.item-type.PERSON  .icon { background-color: @type-person }
+    li.item-type.DATASET .icon { background-color: @type-dataset }
 
   }
 

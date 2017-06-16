@@ -332,6 +332,7 @@ require([
         },
 
         onSetFilter = function(filter) {
+          resultList.updateFilterCrumbs(filter);
           state.updateFilters(filter).done(onSearchResponse);
         },
 

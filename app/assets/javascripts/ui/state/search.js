@@ -68,11 +68,8 @@ define([], function() {
           return url;
         },
 
-        buildFirstPageQuery = function(opt_settings) {
-          var url = buildBaseQuery(),
-              settings = (opt_settings) ?
-                jQuery.extend({}, searchArgs.settings, opt_settings) :
-                searchArgs.settings,
+        buildFirstPageQuery = function(settings) {
+          var url = buildBaseQuery();
 
               // In terms of UI navigation, there's a dependency between 'top_places' and
               // the 'places' filter. If a 'places' filter is set 'top_places' will be
@@ -118,7 +115,17 @@ define([], function() {
               },
 
               request = function(deferred, opt_settings) {
-                jQuery.getJSON(buildFirstPageQuery(opt_settings), function(response) {
+                var settings = (opt_settings) ?
+                      jQuery.extend({}, searchArgs.settings, opt_settings) :
+                      searchArgs.settings,
+
+                    requestArgs = jQuery.extend({}, searchArgs);
+
+                // Clone request args at time of request, so we can add them to the response
+                requestArgs.settings = jQuery.extend(requestArgs.settings, settings);
+
+                jQuery.getJSON(buildFirstPageQuery(settings), function(response) {
+                  response.request_args = requestArgs;
                   deferred.resolve(response);
                 }).always(handlePending);
               };
