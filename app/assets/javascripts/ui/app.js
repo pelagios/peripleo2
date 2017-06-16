@@ -118,16 +118,17 @@ require([
                     },
 
                     setSelection = function(results) {
-                      var resultsAt = results.total - 1, // We don't want to count the place itself
-                          related = results.top_places.filter(function(p) {
+                      var resultsAt = results.total - 1; // We don't want to count the place itself
+
+                          // related = results.top_places.filter(function(p) {
                             // Again, count only the other places
-                            return p.doc_id !== place.doc_id;
-                          });
+                            // return p.doc_id !== place.doc_id;
+                          // });
 
                       // TODO redundancy with selectObject!
                       state.setSelectedItem(place);
                       resultList.setSelectedItem(place);
-                      selectionPanel.show(place, { results: resultsAt, relatedPlaces: related });
+                      selectionPanel.show(place, { results: resultsAt, relatedPlaces: [] });
                       // TODO currentSelection = { item: item, references: references }
                       currentSelection = place;
 
@@ -274,7 +275,7 @@ require([
           // TODO support filter by person | period
           searchPanel.setLoading(true);
           state.updateFilters({ places : [ reference.identifiers[0] ] }).done(function(response) {
-            // searchPanel.setSearchResponse(response);
+            searchPanel.setSearchResponse(response);
             resultList.setFilteredResponse(response, reference);
           });
         },
@@ -293,7 +294,7 @@ require([
               return r.doc_id !== place.doc_id;
             });
 
-            // searchPanel.setSearchResponse(response);
+            searchPanel.setSearchResponse(response);
             resultList.setLocalResponse(response, place);
           });
         },
@@ -330,6 +331,10 @@ require([
           });
         },
 
+        onSetFilter = function(filter) {
+          state.updateFilters(filter).done(onSearchResponse);
+        },
+
         onFilterByViewport = function(filter) {
           searchPanel.setFilterByViewport(filter);
           state.setFilterByViewport(filter).done(onSearchResponse);
@@ -351,6 +356,7 @@ require([
     searchPanel.on('close', onCloseFilterPane);
     searchPanel.on('queryChange', onQueryPhraseChanged);
     searchPanel.on('selectSuggestOption', onSelectIdentifier);
+    searchPanel.on('setFilter', onSetFilter);
 
     // TODO activate load spinner
     searchPanel.on('timerangeChange', seq(state.setTimerange, onSearchResponse));

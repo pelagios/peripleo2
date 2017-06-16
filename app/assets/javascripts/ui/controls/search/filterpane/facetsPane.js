@@ -1,7 +1,8 @@
 define([
   'ui/common/aggregationUtils',
+  'ui/common/hasEvents',
   'ui/controls/search/filterpane/facets/typeFacet'
-], function(AggregationUtils, TypeFacet) {
+], function(AggregationUtils, HasEvents, TypeFacet) {
 
   var FacetsOverview = function(parentEl) {
 
@@ -74,9 +75,13 @@ define([
         };
 
     typeGraph.click(toggleSlidePane);
+    typeFacet.on('setFilter', this.forwardEvent('setFilter'));
 
     this.update = update;
+
+    HasEvents.apply(this);
   };
+  FacetsOverview.prototype = Object.create(HasEvents.prototype);
 
   return FacetsOverview;
 

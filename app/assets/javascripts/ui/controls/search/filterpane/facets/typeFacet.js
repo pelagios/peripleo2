@@ -1,4 +1,7 @@
-define(['ui/common/formatting'], function(Formatting) {
+define([
+  'ui/common/formatting',
+  'ui/common/hasEvents'
+], function(Formatting, HasEvents) {
 
   // Some (sub)facets are irrelevant, e.g. DATASET sub-types (AUTHORITY, AUTHORITY_GAZETTEER, etc.)
   var RELEVANT_FACETS = [ 'PLACE', 'OBJECT', 'PERSON', 'DATASET' ],
@@ -11,7 +14,10 @@ define(['ui/common/formatting'], function(Formatting) {
       };
 
   var TypeFacet = function(graphEl, countsEl) {
-    var clickbuffer = jQuery(
+
+    var self = this,
+
+        clickbuffer = jQuery(
           '<div class="clickbuffer"></div>').appendTo(graphEl),
 
         bar = jQuery(
@@ -38,7 +44,7 @@ define(['ui/common/formatting'], function(Formatting) {
                 label = (c > 1) ? LABELS[t][1] : LABELS[t][0];
 
             counts.append(
-              '<li class="col ' + t + '">' +
+              '<li class="col" data-type="' + t + '">' +
                 '<span class="value">' +
                   '<span class="count">' + Formatting.formatNumber(c) + '</span> ' + label +
                 '</span>' +
@@ -75,11 +81,22 @@ define(['ui/common/formatting'], function(Formatting) {
           updateBar(buckets);
           // TODO only when visible
           updateCounts(buckets);
+        },
+
+        onSelectType = function(e) {
+          var li = jQuery(e.target).closest('li');
+              type = li.data('type');
+
+          self.fireEvent('setFilter', { types: [ type] });
         };
+
+    counts.on('click', 'li', onSelectType);
 
     this.update = update;
 
+    HasEvents.apply(this);
   };
+  TypeFacet.prototype = Object.create(HasEvents.prototype);
 
   return TypeFacet;
 

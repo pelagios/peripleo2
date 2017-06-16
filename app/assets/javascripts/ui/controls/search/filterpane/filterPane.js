@@ -54,8 +54,8 @@ define([
             body.velocity(action, { duration: SLIDE_DURATION });
         };
 
+    facetsPane.on('setFilter', this.forwardEvent('setFilter'));
     timeHistogram.on('selectionChange', this.forwardEvent('timerangeChange'));
-
     footer.on('toggle', togglePane);
 
     this.setOpen = setOpen;

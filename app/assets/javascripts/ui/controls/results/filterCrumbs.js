@@ -1,4 +1,4 @@
-define([], function() {
+define(['ui/common/hasEvents'], function(HasEvents) {
 
   var SLIDE_DURATION = 100;
 
@@ -6,19 +6,19 @@ define([], function() {
     'PLACE' : '&#xf041;'
   };
 
-  var Header = function(parentEl) {
+  var FilterCrumbs = function(parentEl) {
 
-    var el = jQuery(
+    var self = this,
+
+        el = jQuery(
           '<div class="rl-h-container">' +
+            '<div class="rl-h-label icon">&#xf0b0;</div>' +
             '<ul class="rl-h-filters"></ul>' +
             '<div class="rl-h-clear icon stroke7">&#xe680;</div>' +
           '</div>').appendTo(parentEl),
 
         filterList = el.find('.rl-h-filters'),
-
-        isVisible = function() {
-          return parentEl.is(':visible');
-        },
+        btnClear   = el.find('.rl-h-clear'),
 
         show = function() {
           if (!parentEl.is(':visible'))
@@ -26,33 +26,68 @@ define([], function() {
         },
 
         hide = function() {
-          if (parentEl.is(':visible'))
-            parentEl.velocity('slideUp', { duration: SLIDE_DURATION });
+
         },
 
-        addFilter = function(type, label, identifier) {
+        addFilter = function(type, identifier, label) {
           filterList.append(
             '<li>' +
               '<span class="icon">' + ICONS[type] + '</span>' +
               '<a class="label destination" href="#">' + label + '</a>' +
             '</li>');
+
+          show();
         },
 
-        pushPlace = function(reference) {
-          addFilter('PLACE', reference.title, reference.identifiers[0]);
+        setCategoryFilter = function(category, opt_identifier) {
+
+        },
+
+        setDatasetFilter = function(identifier, title) {
+
+        },
+
+        setPeriodFilter = function(identifier, title) {
+
+        },
+
+        setPersonFilter = function(identifier, name) {
+
+        },
+
+        setPlaceFilter = function(identifier, title) {
+          addFilter('PLACE', identifier, title);
+        },
+
+        setTypeFilter = function(type) {
+
         },
 
         clear = function() {
-          filterList.empty();
+          if (parentEl.is(':visible')) {
+            parentEl.velocity('slideUp', {
+              duration: SLIDE_DURATION,
+              complete: function() { filterList.empty(); }
+            });
+
+            self.fireEvent('removeAll');
+          }
         };
 
-    this.isVisible = isVisible;
-    this.show = show;
-    this.hide = hide;
-    this.clear = clear;
-    this.pushPlace = pushPlace;
-  };
+    btnClear.click(clear);
 
-  return Header;
+    this.setCategoryFilter = setCategoryFilter;
+    this.setDatasetFilter = setDatasetFilter;
+    this.setPeriodFilter = setPeriodFilter;
+    this.setPersonFilter = setPersonFilter;
+    this.setPlaceFilter = setPlaceFilter;
+    this.setTypeFilter = setTypeFilter;
+    this.clear = clear;
+
+    HasEvents.apply(this);
+  };
+  FilterCrumbs.prototype = Object.create(HasEvents.prototype);
+
+  return FilterCrumbs;
 
 });

@@ -18,7 +18,7 @@ define([
             '</div>' +
           '</div>').appendTo(parentEl),
 
-        filterCrumbs = new FilterCrumbs(element.find('.rl-header')),
+        filterCrumbs = new FilterCrumbs(element.find('.rl-header').hide()),
 
         bodyEl = element.find('.rl-body'),
         listEl = bodyEl.find('ul'),
@@ -81,33 +81,18 @@ define([
         },
 
         setSearchResponse = function(response) {
-          if (filterCrumbs.isVisible())
-            filterCrumbs.hide();
-
           renderResponse(response, false);
         },
 
         setFilteredResponse = function(response, reference) {
-          filterCrumbs.clear();
-          filterCrumbs.pushPlace(reference);
-          filterCrumbs.show();
+          filterCrumbs.setPlaceFilter(reference.identifiers[0], reference.title);
           renderResponse(response, false);
         },
 
         setLocalResponse = function(response, entity) {
-          /*
-          resultsLocalEl.html('<span class="icon">&#xf0c1;</span>' +
-            Formatting.formatNumber(response.total) + ' results linked to <a href="#">' +
-            entity.title + '</a>');
-
-          resultsAllEl.empty();
-
-          headerEl.velocity('slideDown', { duration: SLIDE_DURATION });
-          */
-
-          // TODO update filterCrumbs
-          filterCrumbs.show();
-
+          var identifier = entity.is_conflation_of[0].identifiers[0],
+              title = entity.title;
+          filterCrumbs.setPlaceFilter(identifier, title);
           renderResponse(response, false);
         },
 
@@ -167,8 +152,8 @@ define([
     bodyEl.on('click', 'li', onSelect);
     bodyEl.scroll(onScroll);
 
-    element.on('click', '.rl-h-clear', onExitFilteredSearch);
-    
+    filterCrumbs.on('removeAll', onExitFilteredSearch);
+
     this.appendPage = appendPage;
     this.setSearchResponse = setSearchResponse;
     this.setFilteredResponse = setFilteredResponse;

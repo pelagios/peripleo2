@@ -117,10 +117,10 @@
       .rounded-corners(50%);
     }
 
-    li.PLACE::before   { background-color: @type-place; content:'\f041'; }
-    li.OBJECT::before  { background-color: @type-object; content:'\f219'; }
-    li.PERSON::before  { background-color: @type-person; content:'\f007'; }
-    li.DATASET::before { background-color: @type-dataset; content:'\f187'; }
+    [data-type='PLACE']::before   { background-color: @type-place; content:'\f041'; }
+    [data-type='OBJECT']::before  { background-color: @type-object; content:'\f219'; }
+    [data-type='PERSON']::before  { background-color: @type-person; content:'\f007'; }
+    [data-type='DATASET']::before { background-color: @type-dataset; content:'\f187'; }
 
   }
 

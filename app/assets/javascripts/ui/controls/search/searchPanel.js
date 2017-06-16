@@ -39,6 +39,7 @@ define([
 
     filterPane.on('open', this.forwardEvent('open'));
     filterPane.on('close', this.forwardEvent('close'));
+    filterPane.on('setFilter', this.forwardEvent('setFilter'));
     filterPane.on('timerangeChange', this.forwardEvent('timerangeChange'));
 
     this.setSearchResponse = setSearchResponse;
