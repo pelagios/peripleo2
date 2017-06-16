@@ -299,11 +299,9 @@ require([
           });
         },
 
-        onExitFilteredSearch = function() {
+        onRemoveAllFilters = function() {
           searchPanel.setLoading(true);
-          state.updateFilters({ places : false }).done(function(response) {
-            resultList.setSearchResponse(response);
-          });
+          state.clearFilters().done(onSearchResponse);
         },
 
         onOpenFilterPane = function() {
@@ -368,7 +366,7 @@ require([
 
     resultList.on('select', onSelectItem);
     resultList.on('nextPage', seq(state.loadNextPage, resultList.appendPage));
-    resultList.on('exitFilteredSearch', onExitFilteredSearch);
+    resultList.on('removeAllFilters', onRemoveAllFilters);
 
     state.on('stateChange', onStateChange);
     state.init();

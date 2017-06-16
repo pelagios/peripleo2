@@ -64,6 +64,10 @@ define([
           return changeSearch(search.clear, options);
         },
 
+        clearFilters = function(options) {
+          return changeSearch(search.clearFilters, options);
+        },
+
         setQueryPhrase = function(query, options) {
           var changeFn = function(makeRequest)  {
                 return search.setQuery(query, makeRequest);
@@ -133,6 +137,7 @@ define([
 
     this.init = init;
     this.clearSearch = clearSearch;
+    this.clearFilters = clearFilters;
     this.loadNextPage = search.loadNextPage;
     this.setQueryPhrase = setQueryPhrase;
     this.getQueryPhrase = search.getQuery;

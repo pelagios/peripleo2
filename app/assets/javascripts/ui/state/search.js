@@ -164,6 +164,11 @@ define([], function() {
           if (makeReq) return makeRequest();
         },
 
+        clearFilters = function(makeReq) {
+          searchArgs.filters = {};
+          if (makeReq) return makeRequest();
+        },
+
         setQuery = function(query, makeReq) {
           searchArgs.query = query;
           if (makeReq) return makeRequest();
@@ -202,6 +207,7 @@ define([], function() {
         };
 
     this.clear = clear;
+    this.clearFilters = clearFilters;
     this.getCurrentArgs = getCurrentArgs;
     this.loadNextPage = loadNextPage;
     this.set = set;

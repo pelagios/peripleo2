@@ -147,16 +147,12 @@ define([
         appendPage = function(response) {
           renderResponse(response, true);
           waitingForNextPage = false;
-        },
-
-        onExitFilteredSearch = function() {
-          self.fireEvent('exitFilteredSearch');
         };
 
     bodyEl.on('click', 'li', onSelect);
     bodyEl.scroll(onScroll);
 
-    filterCrumbs.on('removeAll', onExitFilteredSearch);
+    filterCrumbs.on('removeAll', this.forwardEvent('removeAllFilters'));
 
     this.appendPage = appendPage;
     this.setSearchResponse = setSearchResponse;
