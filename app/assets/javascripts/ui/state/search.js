@@ -122,7 +122,7 @@ define([], function() {
                     requestArgs = jQuery.extend({}, searchArgs);
 
                 // Clone request args at time of request, so we can add them to the response
-                requestArgs.settings = jQuery.extend(requestArgs.settings, settings);
+                requestArgs.settings = jQuery.extend({}, requestArgs.settings, settings);
 
                 jQuery.getJSON(buildFirstPageQuery(settings), function(response) {
                   response.request_args = requestArgs;
