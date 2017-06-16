@@ -71,13 +71,20 @@ define([], function() {
         buildFirstPageQuery = function(opt_settings) {
           var url = buildBaseQuery(),
               settings = (opt_settings) ?
-               jQuery.extend({}, searchArgs.settings, opt_settings) :
-               searchArgs.settings;
+                jQuery.extend({}, searchArgs.settings, opt_settings) :
+                searchArgs.settings,
+
+              // In terms of UI navigation, there's a dependency between 'top_places' and
+              // the 'places' filter. If a 'places' filter is set 'top_places' will be
+              // useless for mapping (it will only include the filter place itself, plus
+              // related places). In this case, we simply omit top_places altogether.
+              includeTopPlaces = settings.topPlaces && !searchArgs.filters.places;
 
           // First page query includes aggregations
           url = appendIfExists(settings.timeHistogram, 'time_histogram', url);
           url = appendIfExists(settings.termAggregations, 'facets', url);
-          url = appendIfExists(settings.topPlaces, 'top_places', url);
+
+          if (includeTopPlaces) url += '&top_places=true';
 
           // Reset offset for subsequent next page queries
           currentOffset = 0;

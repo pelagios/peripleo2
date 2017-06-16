@@ -1,11 +1,9 @@
 define([
   'ui/common/formatting',
   'ui/common/hasEvents',
-  'ui/controls/results/header',
+  'ui/controls/results/filterCrumbs',
   'ui/controls/results/templates'
-], function(Formatting, HasEvents, Header, Templates) {
-
-  var SLIDE_DURATION = 100;
+], function(Formatting, HasEvents, FilterCrumbs, Templates) {
 
   var ResultList = function(parentEl) {
 
@@ -14,19 +12,13 @@ define([
         element = jQuery(
           '<div id="result-list">' +
             '<div class="rl-header"></div>' +
-//               '<span class="results-local"></span>' +
-//              '<span class="results-all"></span>' +
-//            '</div>' +
             '<div class="rl-body">' +
               '<ul></ul>' +
               '<div class="rl-wait"><img src="/assets/images/wait-circle.gif"/></div>' +
             '</div>' +
           '</div>').appendTo(parentEl),
 
-        header = new Header(element.find('.rl-header')),
-
-        // resultsLocalEl = headerEl.find('.results-local'),
-        // resultsAllEl = headerEl.find('.results-all'),
+        filterCrumbs = new FilterCrumbs(element.find('.rl-header')),
 
         bodyEl = element.find('.rl-body'),
         listEl = bodyEl.find('ul'),
@@ -89,24 +81,21 @@ define([
         },
 
         setSearchResponse = function(response) {
-//         if (headerEl.is(':visible'))
-//           headerEl.velocity('slideUp', { duration: SLIDE_DURATION });
+          if (filterCrumbs.isVisible())
+            filterCrumbs.hide();
 
           renderResponse(response, false);
         },
 
         setFilteredResponse = function(response, reference) {
-          resultsLocalEl.html('<span class="icon">&#xf0b0;</span>' +
-            Formatting.formatNumber(response.total) + ' results for <a href="#">' +
-            reference.title + '</a>');
-
-          resultsAllEl.html('<span class="icon">&#xf03a;</span><a href="#">All results</a>');
-
-          headerEl.velocity('slideDown', { duration: SLIDE_DURATION });
+          filterCrumbs.clear();
+          filterCrumbs.pushPlace(reference);
+          filterCrumbs.show();
           renderResponse(response, false);
         },
 
         setLocalResponse = function(response, entity) {
+          /*
           resultsLocalEl.html('<span class="icon">&#xf0c1;</span>' +
             Formatting.formatNumber(response.total) + ' results linked to <a href="#">' +
             entity.title + '</a>');
@@ -114,6 +103,11 @@ define([
           resultsAllEl.empty();
 
           headerEl.velocity('slideDown', { duration: SLIDE_DURATION });
+          */
+
+          // TODO update filterCrumbs
+          filterCrumbs.show();
+
           renderResponse(response, false);
         },
 
@@ -173,8 +167,8 @@ define([
     bodyEl.on('click', 'li', onSelect);
     bodyEl.scroll(onScroll);
 
-    // resultsAllEl.click(onExitFilteredSearch);
-
+    element.on('click', '.rl-h-clear', onExitFilteredSearch);
+    
     this.appendPage = appendPage;
     this.setSearchResponse = setSearchResponse;
     this.setFilteredResponse = setFilteredResponse;

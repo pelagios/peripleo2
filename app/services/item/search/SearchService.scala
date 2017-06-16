@@ -137,7 +137,7 @@ class SearchService @Inject() (
             val byDecade = Aggregation.parseHistogram(response.aggregations.get("by_decade"), "by_time")
             if (byCentury.buckets.size >= 40) Some(byCentury) else Some(byDecade)
           }
-        else
+       else
           Future.successful(None)
       
       if (args.settings.topPlaces) {
@@ -158,8 +158,17 @@ class SearchService @Inject() (
           RichResultPage(System.currentTimeMillis - startTime, totalHits, args.offset, args.limit, items, aggs, Some(topPlaces))
         }
       } else {
-        fItemQuery.map { case (totalHits, items, aggregations) =>
-          RichResultPage(System.currentTimeMillis - startTime, totalHits, args.offset, args.limit, items, aggregations, None)
+        val fResults = for {
+          (totalHits, items, aggregations) <- fItemQuery
+          histogram <- fHistogramQuery
+        } yield (totalHits, items, aggregations, histogram)
+        
+        fResults.map { case (totalHits, items, aggregations, histogram) =>
+          val aggs = histogram match {
+            case Some(h) => aggregations :+ h
+            case None => aggregations
+          }
+          RichResultPage(System.currentTimeMillis - startTime, totalHits, args.offset, args.limit, items, aggs, None)
         }
       }
       

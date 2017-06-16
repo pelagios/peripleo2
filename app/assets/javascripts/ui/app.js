@@ -197,7 +197,7 @@ require([
               },
 
               selectPerson = function(person) {
-                // TODO 
+                // TODO
                 selectObject(person);
               },
 
@@ -273,8 +273,9 @@ require([
         onFilterByReference = function(reference) {
           // TODO support filter by person | period
           searchPanel.setLoading(true);
-          state.updateFilters({ places : [ reference.identifiers[0] ] }).done(function(results) {
-            resultList.setFilteredResponse(results, reference);
+          state.updateFilters({ places : [ reference.identifiers[0] ] }).done(function(response) {
+            // searchPanel.setSearchResponse(response);
+            resultList.setFilteredResponse(response, reference);
           });
         },
 
@@ -285,21 +286,22 @@ require([
 
           searchPanel.setLoading(true);
           state.setQueryPhrase(false, NOOP);
-          state.updateFilters(filter).done(function(results) {
-            // Exclude the place itself from the results
-            results.total = results.total - 1;
-            results.items = results.items.filter(function(r) {
+          state.updateFilters(filter).done(function(response) {
+            // Exclude the place itself from the response
+            response.total = response.total - 1;
+            response.items = response.items.filter(function(r) {
               return r.doc_id !== place.doc_id;
             });
 
-            resultList.setLocalResponse(results, place);
+            // searchPanel.setSearchResponse(response);
+            resultList.setLocalResponse(response, place);
           });
         },
 
         onExitFilteredSearch = function() {
           searchPanel.setLoading(true);
-          state.updateFilters({ places : false }).done(function(results) {
-            resultList.setSearchResponse(results);
+          state.updateFilters({ places : false }).done(function(response) {
+            resultList.setSearchResponse(response);
           });
         },
 
