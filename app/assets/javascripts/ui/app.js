@@ -354,6 +354,7 @@ require([
     searchPanel.on('queryChange', onQueryPhraseChanged);
     searchPanel.on('selectSuggestOption', onSelectIdentifier);
     searchPanel.on('setFilter', onSetFilter);
+    searchPanel.on('removeAllFilters', onRemoveAllFilters);
 
     // TODO activate load spinner
     searchPanel.on('timerangeChange', seq(state.setTimerange, onSearchResponse));
@@ -364,7 +365,6 @@ require([
 
     resultList.on('select', onSelectItem);
     resultList.on('nextPage', seq(state.loadNextPage, resultList.appendPage));
-    resultList.on('removeAllFilters', onRemoveAllFilters);
 
     state.on('stateChange', onStateChange);
     state.init();
