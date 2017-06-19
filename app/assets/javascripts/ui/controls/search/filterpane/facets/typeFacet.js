@@ -11,6 +11,10 @@ define([
         OBJECT :  [ 'object', 'objects' ],
         PERSON :  [ 'person', 'people' ],
         DATASET : [ 'dataset', 'datasets' ]
+      },
+
+      capitalize = function(str) {
+        return str.charAt(0).toUpperCase() + str.substr(1);
       };
 
   var TypeFacet = function(graphEl, countsEl) {
@@ -87,7 +91,13 @@ define([
           var li = jQuery(e.target).closest('li');
               type = li.data('type');
 
-          self.fireEvent('setFilter', { types: [ type] });
+          self.fireEvent('setFilter', {
+            filter: 'types',
+            values: [{
+              identifier: type,
+              label: capitalize(LABELS[type][1])
+            }]
+          });
         };
 
     counts.on('click', 'li', onSelectType);

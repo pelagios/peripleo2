@@ -271,39 +271,6 @@ require([
             });
         },
 
-        onFilterByReference = function(reference) {
-          // TODO support filter by person | period
-          searchPanel.setLoading(true);
-          state.updateFilters({ places : [ reference.identifiers[0] ] }).done(function(response) {
-            searchPanel.setSearchResponse(response);
-            resultList.setFilteredResponse(response, reference);
-          });
-        },
-
-        /** Local search sets a filter to the place, but removes the query **/
-        onLocalSearch = function(place) {
-          var identifiers = ItemUtils.getURIs(place),
-              filter = { places : [ identifiers[0] ] };
-
-          searchPanel.setLoading(true);
-          state.setQueryPhrase(false, NOOP);
-          state.updateFilters(filter).done(function(response) {
-            // Exclude the place itself from the response
-            response.total = response.total - 1;
-            response.items = response.items.filter(function(r) {
-              return r.doc_id !== place.doc_id;
-            });
-
-            searchPanel.setSearchResponse(response);
-            resultList.setLocalResponse(response, place);
-          });
-        },
-
-        onRemoveAllFilters = function() {
-          searchPanel.setLoading(true);
-          state.clearFilters().done(onSearchResponse);
-        },
-
         onOpenFilterPane = function() {
           searchPanel.setLoading(true);
           state.setFilterPaneOpen(true).done(onSearchResponse);
@@ -329,9 +296,40 @@ require([
           });
         },
 
-        onSetFilter = function(filter) {
-          resultList.updateFilterCrumbs(filter);
-          state.updateFilters(filter).done(onSearchResponse);
+        /** TODO consolidate with onSetFilter **/
+        onLocalSearch = function(place) {
+          /*
+          var identifiers = ItemUtils.getURIs(place),
+              filter = { places : [ identifiers[0] ] };
+
+          searchPanel.setLoading(true);
+          state.setQueryPhrase(false, NOOP);
+          state.updateFilters(filter).done(function(response) {
+            // Exclude the place itself from the response
+            response.total = response.total - 1;
+            response.items = response.items.filter(function(r) {
+              return r.doc_id !== place.doc_id;
+            });
+
+            searchPanel.setSearchResponse(response);
+            resultList.setLocalResponse(response, place);
+          });
+          */
+        },
+
+        onSetFilter = function(f) {
+          // Convert to key/value format required by state
+          var asFilterSetting = {};
+          asFilterSetting[f.filter] = f.values.map(function(v) { return v.identifier; });
+
+          searchPanel.setLoading(true);
+          searchPanel.updateFilterCrumbs(f);
+          state.updateFilters(asFilterSetting).done(onSearchResponse);
+        },
+
+        onRemoveAllFilters = function() {
+          searchPanel.setLoading(true);
+          state.clearFilters().done(onSearchResponse);
         },
 
         onFilterByViewport = function(filter) {
@@ -361,7 +359,7 @@ require([
     searchPanel.on('timerangeChange', seq(state.setTimerange, onSearchResponse));
 
     selectionPanel.on('select', onSelectIdentifier);
-    selectionPanel.on('filterBy', onFilterByReference);
+    selectionPanel.on('setFilter', onSetFilter);
     selectionPanel.on('localSearch', onLocalSearch);
 
     resultList.on('select', onSelectItem);

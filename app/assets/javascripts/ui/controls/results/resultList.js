@@ -1,9 +1,8 @@
 define([
   'ui/common/formatting',
   'ui/common/hasEvents',
-  'ui/controls/results/filterCrumbs',
   'ui/controls/results/templates'
-], function(Formatting, HasEvents, FilterCrumbs, Templates) {
+], function(Formatting, HasEvents, Templates) {
 
   var ResultList = function(parentEl) {
 
@@ -11,14 +10,11 @@ define([
 
         element = jQuery(
           '<div id="result-list">' +
-            '<div class="rl-header"></div>' +
             '<div class="rl-body">' +
               '<ul></ul>' +
               '<div class="rl-wait"><img src="/assets/images/wait-circle.gif"/></div>' +
             '</div>' +
           '</div>').appendTo(parentEl),
-
-        filterCrumbs = new FilterCrumbs(element.find('.rl-header').hide()),
 
         bodyEl = element.find('.rl-body'),
         listEl = bodyEl.find('ul'),
@@ -84,19 +80,15 @@ define([
           renderResponse(response, false);
         },
 
-        updateFilterCrumbs = function(diff) {
-          filterCrumbs.update(diff);
-        },
-
         setFilteredResponse = function(response, reference) {
-          filterCrumbs.setPlaceFilter(reference.identifiers[0], reference.title);
+          // filterCrumbs.setPlaceFilter(reference.identifiers[0], reference.title);
           renderResponse(response, false);
         },
 
         setLocalResponse = function(response, entity) {
           var identifier = entity.is_conflation_of[0].identifiers[0],
               title = entity.title;
-          filterCrumbs.setPlaceFilter(identifier, title);
+          // filterCrumbs.setPlaceFilter(identifier, title);
           renderResponse(response, false);
         },
 
@@ -152,14 +144,11 @@ define([
     bodyEl.on('click', 'li', onSelect);
     bodyEl.scroll(onScroll);
 
-    filterCrumbs.on('removeAll', this.forwardEvent('removeAllFilters'));
-
     this.appendPage = appendPage;
     this.setSearchResponse = setSearchResponse;
     this.setFilteredResponse = setFilteredResponse;
     this.setLocalResponse = setLocalResponse;
     this.setSelectedItem = setSelectedItem;
-    this.updateFilterCrumbs = updateFilterCrumbs;
 
     HasEvents.apply(this);
   };

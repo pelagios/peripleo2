@@ -1,8 +1,9 @@
 define([
   'ui/common/hasEvents',
   'ui/controls/search/filterpane/filterPane',
-  'ui/controls/search/searchbox/searchBox'
-], function(HasEvents, FilterPane, SearchBox) {
+  'ui/controls/search/searchbox/searchBox',
+  'ui/controls/search/filterCrumbs'
+], function(HasEvents, FilterPane, SearchBox, FilterCrumbs) {
 
   var SearchPanel = function(parentEl) {
 
@@ -11,6 +12,8 @@ define([
         element = jQuery('<div id="searchpanel"></div>').appendTo(parentEl),
 
         searchBox = new SearchBox(element),
+
+        filterCrumbs = new FilterCrumbs(element),
 
         filterPane = new FilterPane(element),
 
@@ -32,10 +35,16 @@ define([
         setState = function(state) {
           searchBox.setQuery(state.search.query);
           filterPane.setOpen(state.ui.filterPaneOpen);
+        },
+
+        updateFilterCrumbs = function(diff) {
+          filterCrumbs.update(diff);
         };
 
     searchBox.on('change', this.forwardEvent('queryChange'));
     searchBox.on('selectSuggestOption', this.forwardEvent('selectSuggestOption'));
+
+    filterCrumbs.on('removeAll', this.forwardEvent('removeAllFilters'));
 
     filterPane.on('open', this.forwardEvent('open'));
     filterPane.on('close', this.forwardEvent('close'));
@@ -46,6 +55,7 @@ define([
     this.setState = setState;
     this.setLoading = setLoading;
     this.setFilterByViewport = setFilterByViewport;
+    this.updateFilterCrumbs = updateFilterCrumbs;
 
     HasEvents.apply(this);
   };

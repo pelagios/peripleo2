@@ -112,9 +112,16 @@ define([
         /** User clicked a referenced item, in order to trigger a filtered search **/
         onFilterBy = function(e) {
           var link = jQuery(e.target),
-              reference = link.data('reference');
+              reference = link.data('reference'),
+              filter = {
+                filter : 'places',
+                values : [{
+                  identifier: reference.identifiers[0],
+                  label: reference.title
+                }]
+              };
 
-          self.fireEvent('filterBy', reference);
+          self.fireEvent('setFilter', filter);
           return false;
         },
 
