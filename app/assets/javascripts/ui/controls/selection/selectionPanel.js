@@ -109,10 +109,10 @@ define([
           return false;
         },
 
-        /** User clicked a referenced item, in order to trigger a filtered search **/
-        onFilterBy = function(e) {
+        onSetFilter = function(e) {
           var link = jQuery(e.target),
               reference = link.data('reference'),
+
               filter = {
                 filter : 'places',
                 values : [{
@@ -125,6 +125,10 @@ define([
           return false;
         },
 
+        /**
+         * 'Local search' means we'll show ALL items at this place, not just those
+         * matching the query phrase.
+         */
         onLocalSearch = function(e) {
           var link = jQuery(e.target),
               place = link.data('at');
@@ -134,8 +138,8 @@ define([
         };
 
     element.on('click', '.destination', onSelectDestination);
-    element.on('click', '.filter', onFilterBy);
     element.on('click', '.local-search', onLocalSearch);
+    element.on('click', '.filter', onSetFilter);
 
     this.show = show;
     this.hide = hide;

@@ -39,7 +39,11 @@ require([
 
         state = new State(),
 
+        // Keeps track of current selection, so we can deselect
         currentSelection = false,
+
+        // Keeps track of search query when moving to local search
+        previousGlobalSearch = false,
 
         onSearchResponse = function(response) {
              searchPanel.setSearchResponse(response);
@@ -284,11 +288,13 @@ require([
           searchPanel.setLoading(true);
           selectionPanel.hide();
 
-          // Remove local search and dataset filters
+          // Remove local search/places and dataset filters
           state.updateFilters({
             places   : false,
             datasets : false
           }, NOOP);
+
+          previousGlobalSearch = false;
 
           state.setQueryPhrase(query).done(function(results) {
             onSearchResponse(results);
@@ -296,9 +302,8 @@ require([
           });
         },
 
-        /** TODO consolidate with onSetFilter **/
-        onLocalSearch = function(place) {
-          /*
+        /*
+        onLocalSearch = function(f) {
           var identifiers = ItemUtils.getURIs(place),
               filter = { places : [ identifiers[0] ] };
 
@@ -314,7 +319,42 @@ require([
             searchPanel.setSearchResponse(response);
             resultList.setLocalResponse(response, place);
           });
-          */
+        },
+        */
+
+        /**
+         * 'Local search' means we'll show ALL items at this place, not just those
+         * matching the query phrase. I.e. in addition to setting the filter we also
+         * want to clear the phrase from the state.
+         *
+         * In addition, they payload of the links is different: in onSetFilter, we're
+         * dealing with a reference object, whereas in onLocalSearch, we're dealing
+         * with the entity object.
+         */
+        onLocalSearch = function(place) {
+          // Convert to key/value format required by state
+          var identifier = place.is_conflation_of[0].identifiers[0],
+              asFilterSetting = { 'places': [ identifier ]};
+
+          searchPanel.setLoading(true);
+          searchPanel.updateFilterCrumbs({ filter: 'places', values: [{
+            identifier: identifier,
+            label: place.title
+          }]});
+
+          // Clear the query phrase - but remember for later
+          previousGlobalSearch = state.getQueryPhrase();
+          state.setQueryPhrase(false, NOOP);
+          state.updateFilters(asFilterSetting).done(function(response) {
+            // Exclude the place itself from the response
+            response.total = response.total - 1;
+            response.items = response.items.filter(function(r) {
+              return r.doc_id !== place.doc_id;
+            });
+
+            searchPanel.setSearchResponse(response);
+            resultList.setSearchResponse(response);
+          });
         },
 
         onSetFilter = function(f) {
@@ -329,6 +369,13 @@ require([
 
         onRemoveAllFilters = function() {
           searchPanel.setLoading(true);
+
+          // TODO leaving local search? restore query phrase
+          if (previousGlobalSearch) {
+            state.setQueryPhrase(previousGlobalSearch, NOOP);
+            previousGlobalSearch = false;
+          }
+
           state.clearFilters().done(onSearchResponse);
         },
 

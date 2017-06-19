@@ -80,18 +80,6 @@ define([
           renderResponse(response, false);
         },
 
-        setFilteredResponse = function(response, reference) {
-          // filterCrumbs.setPlaceFilter(reference.identifiers[0], reference.title);
-          renderResponse(response, false);
-        },
-
-        setLocalResponse = function(response, entity) {
-          var identifier = entity.is_conflation_of[0].identifiers[0],
-              title = entity.title;
-          // filterCrumbs.setPlaceFilter(identifier, title);
-          renderResponse(response, false);
-        },
-
         setSelectedItem = function(item) {
           var select = function() {
                 var setCurrentSelection = function() {
@@ -146,8 +134,6 @@ define([
 
     this.appendPage = appendPage;
     this.setSearchResponse = setSearchResponse;
-    this.setFilteredResponse = setFilteredResponse;
-    this.setLocalResponse = setLocalResponse;
     this.setSelectedItem = setSelectedItem;
 
     HasEvents.apply(this);
