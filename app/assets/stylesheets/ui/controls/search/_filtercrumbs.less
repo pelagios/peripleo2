@@ -10,7 +10,7 @@
 
   .fc-label {
     position:absolute;
-    top:11px;
+    top:13px;
     left:10px;
     font-size:14px;
     color:@ocean;
@@ -23,37 +23,34 @@
 
     li {
       display:inline-block;
-      margin:3px 0 2px 1px;
-      .box-shadow(0, 0, 4px, 0, rgba(0,0,0,0.1));
+      margin:6px 1px 5px 1px;
       cursor:pointer;
       overflow:hidden;
       .rounded-corners(2px);
-      border:1px solid @light-grey-border;
 
       * {
         display:inline-block;
-        height:26px;
-        line-height:26px;
+        height:24px;
+        line-height:24px;
         vertical-align:middle;
-        border-style:solid;
-        border-width:0;
       }
 
       .icon {
         text-align:center;
-        width:26px;
+        width:24px;
         font-size:14px;
         color:#fff;
         .rounded-corners-left(2px);
-        background-color:@light-grey-type;
+        background-color:@ocean;
       }
 
       .label {
-        background-color:#fff;
-        padding:0 12px 0 7px;
-        color:@dark-grey-type;
+        padding:0 10px 0 5px;
+        color:#fff;
         text-decoration:none;
         .rounded-corners-right(2px);
+        border-left:1px solid rgba(255, 255, 255, 0.45);
+        background-color:#6e9fd1;
       }
 
       a.label:hover { text-decoration:underline; }
@@ -64,16 +61,21 @@
       .rounded-corners-right(2px);;
     }
 
-    li.item-type.PLACE   .icon { background-color: @type-place }
-    li.item-type.OBJECT  .icon { background-color: @type-object }
-    li.item-type.PERSON  .icon { background-color: @type-person }
-    li.item-type.DATASET .icon { background-color: @type-dataset }
+    .type-crumb(@col) {
+      .label { background-color:fade(@col, 80%); }
+      .icon  { background-color:@col; }
+    }
+
+    li.types.places   { .type-crumb(@type-place); }
+    li.types.objects  { .type-crumb(@type-object); }
+    li.types.people   { .type-crumb(@type-person); }
+    li.types.datasets { .type-crumb(@type-dataset); }
 
   }
 
   .fc-clear {
     position:absolute;
-    top:3px;
+    top:5px;
     right:19px;
     font-size:32px;
     color:@light-grey-type;

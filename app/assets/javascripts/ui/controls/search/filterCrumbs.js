@@ -40,10 +40,13 @@ define(['ui/common/hasEvents'], function(HasEvents) {
         },
 
         update = function(f) {
+          var cssClass = (f.filter === 'types') ?
+                'types ' + f.values[0].label.toLowerCase() : f.filter;
+
           // TODO handle existing filters?
           f.values.forEach(function(v) {
             filterListEl.append(
-              '<li>' +
+              '<li class="' + cssClass + '">' +
                 '<span class="icon">' + ICONS[f.filter] + '</span>' +
                 '<spann class="label">' + v.label + '</span>' +
               '</li>');
