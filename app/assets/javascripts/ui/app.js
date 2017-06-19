@@ -302,26 +302,6 @@ require([
           });
         },
 
-        /*
-        onLocalSearch = function(f) {
-          var identifiers = ItemUtils.getURIs(place),
-              filter = { places : [ identifiers[0] ] };
-
-          searchPanel.setLoading(true);
-          state.setQueryPhrase(false, NOOP);
-          state.updateFilters(filter).done(function(response) {
-            // Exclude the place itself from the response
-            response.total = response.total - 1;
-            response.items = response.items.filter(function(r) {
-              return r.doc_id !== place.doc_id;
-            });
-
-            searchPanel.setSearchResponse(response);
-            resultList.setLocalResponse(response, place);
-          });
-        },
-        */
-
         /**
          * 'Local search' means we'll show ALL items at this place, not just those
          * matching the query phrase. I.e. in addition to setting the filter we also
