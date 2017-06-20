@@ -43,7 +43,7 @@ require([
         currentSelection = false,
 
         // Keeps track of search query when moving to local search
-        previousGlobalSearch = false,
+        stashedQuery = false,
 
         onSearchResponse = function(response) {
              searchPanel.setSearchResponse(response);
@@ -76,6 +76,15 @@ require([
               deselectPlace = function(item) {
                 state.updateFilters({ places : false });
                 deselectItem(item);
+              },
+
+              deselectDataset = function(dataset) {
+                deselectItem(dataset);
+                if (stashedQuery) {
+                  state.setQueryPhrase(stashedQuery, NOOP);
+                  stashedQuery = false;
+                  state.updateFilters({ datasets: false }).done(onSearchResponse);
+                }
               };
 
           if (currentSelection)
@@ -90,7 +99,7 @@ require([
                 deselectItem(currentSelection);
                 break;
               case 'DATASET':
-                deselectItem(currentSelection);
+                deselectDataset(currentSelection);
                 break;
             }
         },
@@ -207,8 +216,15 @@ require([
               },
 
               selectDataset = function(dataset) {
-                // TODO indicate that there is 'source' filter via searchbox footer
-                // TODO (same way as if filter were set via facets panel)
+                // Stash the query so we can return
+                stashedQuery = state.getQueryPhrase();
+
+                // Update filter crumbs
+                searchPanel.updateFilterCrumbs({ filter: 'datasets', values: [{
+                  identifier: uri,
+                  label: dataset.title
+                }]});
+
                 state.clearSearch(NOOP);
                 state.updateFilters({ 'datasets' : [ uri ] }, NOOP);
 
@@ -294,7 +310,7 @@ require([
             datasets : false
           }, NOOP);
 
-          previousGlobalSearch = false;
+          stashedQuery = false;
 
           state.setQueryPhrase(query).done(function(results) {
             onSearchResponse(results);
@@ -324,7 +340,7 @@ require([
           selectionPanel.hide();
 
           // Clear the query phrase - but remember for later
-          previousGlobalSearch = state.getQueryPhrase();
+          stashedQuery = state.getQueryPhrase();
           state.setQueryPhrase(false, NOOP);
           state.updateFilters(asFilterSetting).done(function(response) {
             // Exclude the place itself from the response
@@ -352,10 +368,9 @@ require([
         onRemoveAllFilters = function() {
           searchPanel.setLoading(true);
 
-          // TODO leaving local search? restore query phrase
-          if (previousGlobalSearch) {
-            state.setQueryPhrase(previousGlobalSearch, NOOP);
-            previousGlobalSearch = false;
+          if (stashedQuery) {
+            state.setQueryPhrase(stashedQuery, NOOP);
+            stashedQuery = false;
           }
 
           state.clearFilters().done(onSearchResponse);

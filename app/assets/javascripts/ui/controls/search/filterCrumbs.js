@@ -4,7 +4,8 @@ define(['ui/common/hasEvents'], function(HasEvents) {
 
       ICONS = {
         'types'   : '&#xf03a;',
-        'places'  : '&#xf041;'
+        'places'  : '&#xf041;',
+        'datasets': '&#xf187;'
       };
   var FilterCrumbs = function(parentEl) {
 
