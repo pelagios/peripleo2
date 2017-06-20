@@ -304,12 +304,7 @@ require([
           searchPanel.setLoading(true);
           selectionPanel.hide();
 
-          // Remove local search/places and dataset filters
-          state.updateFilters({
-            places   : false,
-            datasets : false
-          }, NOOP);
-
+          // If there's a stashed query, it's no longer relevant
           stashedQuery = false;
 
           state.setQueryPhrase(query).done(function(results) {
