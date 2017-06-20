@@ -18,7 +18,7 @@ class PeriodODefinitionSpec extends PlaySpec {
       
       play.api.Logger.info("Got " + definitions.size + " definitions")
       
-      definitions.size mustBe 4634
+      definitions.size mustBe 4630
     }
     
   }

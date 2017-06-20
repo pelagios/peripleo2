@@ -22,6 +22,7 @@ POST    /admin/authorities/gazetteers                controllers.admin.authoriti
 GET     /admin/authorities/people                    controllers.admin.authorities.PeopleAdminController.index
 POST    /admin/authorities/people                    controllers.admin.authorities.PeopleAdminController.importAuthorityFile
 GET     /admin/authorities/periods                   controllers.admin.authorities.PeriodAdminController.index
+POST    /admin/authorities/periods                   controllers.admin.authorities.PeriodAdminController.importAuthorityFile
 
 GET     /admin/analytics                             controllers.admin.analytics.AnalyticsAdminController.index
 
