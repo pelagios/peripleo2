@@ -1,14 +1,11 @@
-package services
+package helpers
 
-import com.sksamuel.elastic4s.{ ElasticClient, ElasticsearchClientUri }
 import com.vividsolutions.jts.geom.{ Coordinate, GeometryFactory }
 import java.io.File
-import org.elasticsearch.common.settings.Settings
-import org.joda.time.{ DateTime, DateTimeZone } 
+import org.joda.time.{ DateTime, DateTimeZone }
 import org.joda.time.format.DateTimeFormat
 import play.api.libs.json.{ Json, Reads }
 import scala.io.Source
-import java.util.UUID
 
 trait TestHelpers {
   

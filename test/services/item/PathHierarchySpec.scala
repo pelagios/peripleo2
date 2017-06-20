@@ -12,6 +12,7 @@ class PathHierarchySpec extends PlaySpec {
     ("id02" -> "Middle"),
     ("id03" -> "Leaf")
   ))
+  
   private val HIERARCHY_JSON =
     Json.parse("{" +
                   "\"paths\": [ \"id01\\u0007Root\", " + 

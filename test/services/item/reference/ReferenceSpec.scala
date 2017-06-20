@@ -1,11 +1,11 @@
 package services.item.reference
 
+import helpers.TestHelpers
 import java.util.UUID
 import org.scalatestplus.play._
 import play.api.libs.json.Json
 import play.api.test._
 import play.api.test.Helpers._
-import services.TestHelpers
 
 class ReferenceSpec extends PlaySpec with TestHelpers {
   

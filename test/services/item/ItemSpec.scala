@@ -1,13 +1,13 @@
 package services.item
 
 import com.vividsolutions.jts.geom.Coordinate
+import helpers.TestHelpers
 import java.util.UUID
 import org.joda.time.DateTimeField
 import org.scalatestplus.play._
 import play.api.libs.json.Json
 import play.api.test._
 import play.api.test.Helpers._
-import services.TestHelpers
 
 class ItemSpec extends PlaySpec with TestHelpers {
 
