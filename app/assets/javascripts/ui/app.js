@@ -321,6 +321,7 @@ require([
             identifier: identifier,
             label: place.title
           }]});
+          selectionPanel.hide();
 
           // Clear the query phrase - but remember for later
           previousGlobalSearch = state.getQueryPhrase();
@@ -344,6 +345,7 @@ require([
 
           searchPanel.setLoading(true);
           searchPanel.updateFilterCrumbs(f);
+          selectionPanel.hide();
           state.updateFilters(asFilterSetting).done(onSearchResponse);
         },
 
