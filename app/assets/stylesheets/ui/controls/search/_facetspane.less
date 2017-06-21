@@ -15,9 +15,10 @@
         height:8px;
       }
 
-      .segment.place   { background-color:@type-place; }
       .segment.object  { background-color:@type-object; }
+      .segment.place   { background-color:@type-place; }
       .segment.person  { background-color:@type-person; }
+      .segment.period  { background-color:@type-period; }
       .segment.dataset { background-color:@type-dataset; }
     }
 
@@ -117,9 +118,10 @@
       .rounded-corners(50%);
     }
 
-    [data-type='PLACE']::before   { background-color: @type-place; content:'\f041'; }
     [data-type='OBJECT']::before  { background-color: @type-object; content:'\f219'; }
+    [data-type='PLACE']::before   { background-color: @type-place; content:'\f041'; }
     [data-type='PERSON']::before  { background-color: @type-person; content:'\f007'; }
+    [data-type='PERIOD']::before  { background-color: @type-period; content:'\f017'; }
     [data-type='DATASET']::before { background-color: @type-dataset; content:'\f187'; }
 
   }

@@ -11,6 +11,7 @@ define([
       };
 
   var PlaceCard  = function(parentEl, place, args) {
+    
     var infoEl = jQuery(
           '<div class="item-info">' +
             '<h3 class="item-title"></h3>' +

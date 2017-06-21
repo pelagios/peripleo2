@@ -28,6 +28,12 @@
     right:3px;
   }
 
+  .dogear.OBJECT { border-top-color:@type-object; }
+  .dogear.OBJECT::after {
+    content:'\e6af';
+    right:5px;
+  }
+
   .dogear.PLACE { border-top-color:@type-place; }
   .dogear.PLACE::after {
     content:'\e638';
@@ -35,17 +41,18 @@
     font-size:21px;
   }
 
-  .dogear.OBJECT { border-top-color:@type-object; }
-  .dogear.OBJECT::after {
-    content:'\e6af';
-    right:5px;
-  }
-
   .dogear.PERSON { border-top-color:@type-person; }
   .dogear.PERSON::after {
     content:'\e863';
     font-size:21px;
     top:-47px;
+  }
+
+  .dogear.PERIOD { border-top-color:@type-period; }
+  .dogear.PERIOD::after {
+    content:'\e66b';
+    font-size:24px;
+    top:-49px;
   }
 
   .dogear.DATASET { border-top-color:@type-dataset; }

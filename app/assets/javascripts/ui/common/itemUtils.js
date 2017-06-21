@@ -78,12 +78,14 @@ define(function() {
     getItemType : function(item) {
       var t = item.item_type;
 
-      if (t.indexOf('PLACE') > -1) {
-        return 'PLACE';
-      } else if (t.indexOf('OBJECT') > -1) {
+      if (t.indexOf('OBJECT') > -1) {
         return 'OBJECT';
+      } else if (t.indexOf('PLACE') > -1) {
+        return 'PLACE';
       } else if (t.indexOf('PERSON') > -1) {
         return 'PERSON';
+      } else if (t.indexOf('PERIOD') > -1) {
+        return 'PERIOD';
       } else if (t.indexOf('DATASET') > -1) {
         return 'DATASET';
       }

@@ -4,12 +4,13 @@ define([
 ], function(Formatting, HasEvents) {
 
   // Some (sub)facets are irrelevant, e.g. DATASET sub-types (AUTHORITY, AUTHORITY_GAZETTEER, etc.)
-  var RELEVANT_FACETS = [ 'PLACE', 'OBJECT', 'PERSON', 'DATASET' ],
+  var RELEVANT_FACETS = [ 'OBJECT', 'PLACE', 'PERSON', 'PERIOD', 'DATASET' ],
 
       LABELS = {
-        PLACE  :  [ 'place', 'places' ],
-        OBJECT :  [ 'object', 'objects' ],
-        PERSON :  [ 'person', 'people' ],
+        OBJECT  : [ 'object',  'objects'  ],
+        PLACE   : [ 'place',   'places'   ],
+        PERSON  : [ 'person',  'people'   ],
+        PERIOD  : [ 'period',  'periods'  ],
         DATASET : [ 'dataset', 'datasets' ]
       },
 

@@ -52,15 +52,6 @@ define([
         }
       },
 
-      createPlaceRow = function(item) {
-        var li = baseTemplate(item),
-            identifiersEl = jQuery('<p class="item-identifiers-small"></p>').insertAfter(li.find('.item-title'));
-
-        li.addClass('place');
-        appendIdentifiers(identifiersEl, item);
-        return li;
-      },
-
       createObjectRow = function(item) {
         var li = baseTemplate(item),
 
@@ -75,12 +66,27 @@ define([
         return li;
       },
 
+      createPlaceRow = function(item) {
+        var li = baseTemplate(item),
+            identifiersEl = jQuery('<p class="item-identifiers-small"></p>').insertAfter(li.find('.item-title'));
+
+        li.addClass('place');
+        appendIdentifiers(identifiersEl, item);
+        return li;
+      },
+
       createPersonRow = function(item) {
         var li = baseTemplate(item),
             identifiersEl = jQuery('<p class="item-identifiers-small"></p>').insertAfter(li.find('.item-title'));
 
         li.addClass('person');
         appendIdentifiers(identifiersEl, item);
+        return li;
+      },
+
+      createPeriodRow = function(item) {
+        var li = baseTemplate(item);
+        li.addClass('period');
         return li;
       },
 
@@ -104,12 +110,14 @@ define([
 
     createRow : function(item) {
       switch(ItemUtils.getItemType(item)) {
-        case 'PLACE':
-          return createPlaceRow(item);
         case 'OBJECT':
           return createObjectRow(item);
+        case 'PLACE':
+          return createPlaceRow(item);
         case 'PERSON':
           return createPersonRow(item);
+        case 'PERIOD':
+          return createPeriodRow(item);
         case 'DATASET':
           return createDatasetRow(item);
       }

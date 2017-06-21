@@ -3,6 +3,7 @@ define([
   'ui/common/itemUtils'], function(Formatting, ItemUtils) {
 
   var ObjectCard  = function(parentEl, item, args) {
+    
     var infoEl = jQuery(
           '<div class="item-info">' +
             '<p class="item-is-in"></p>' +

@@ -6,6 +6,7 @@ define([
 ], function(AggregationUtils, Formatting, ItemUtils, API) {
 
   var DatasetCard  = function(parentEl, dataset, args) {
+    
     var infoEl = jQuery(
           '<div class="item-info">' +
             '<p class="item-is-in"></p>' +

@@ -110,50 +110,6 @@ require([
           var uri = ItemUtils.getURIs(item)[0],
 
               /**
-               * For places, we fetch the total result count at that place (i.e.
-               * the total number of items that link to that place).
-               */
-              selectPlace = function(place) {
-
-                var fetchRelated  = function() {
-                      // Transient search, filtered by URI of the place, but without queryphrase
-                      var filter = { places: [ uri ] },
-                          origQuery = state.getQueryPhrase();
-
-                      state.setQueryPhrase(false, NOOP);
-                      return state.updateFilters(filter, { pushState: false })
-                        .then(function(results) {
-                          // Change back to original settings
-                          state.updateFilters({ places: false }, NOOP);
-                          state.setQueryPhrase(origQuery, NOOP);
-                          return results;
-                        });
-                    },
-
-                    setSelection = function(results) {
-                      var resultsAt = results.total - 1; // We don't want to count the place itself
-
-                          // related = results.top_places.filter(function(p) {
-                            // Again, count only the other places
-                            // return p.doc_id !== place.doc_id;
-                          // });
-
-                      // TODO redundancy with selectObject!
-                      state.setSelectedItem(place);
-                      resultList.setSelectedItem(place);
-                      selectionPanel.show(place, { results: resultsAt, relatedPlaces: [] });
-                      // TODO currentSelection = { item: item, references: references }
-                      currentSelection = place;
-
-                      // Note: selection may have happend through the map, so technically no
-                      // need for this - but the map is designed to handle this situation
-                      // map.setSelectedItem(item, references.PLACE);
-                    };
-
-                fetchRelated().done(setSelection);
-              },
-
-              /**
                * For objects, we fetch their references (e.g. places they link to), plus
                * the total number of other results at that reference.
                */
@@ -210,9 +166,62 @@ require([
                 });
               },
 
+              /**
+               * For places, we fetch the total result count at that place (i.e.
+               * the total number of items that link to that place).
+               */
+              selectPlace = function(place) {
+
+                var fetchRelated  = function() {
+                      // Transient search, filtered by URI of the place, but without queryphrase
+                      var filter = { places: [ uri ] },
+                          origQuery = state.getQueryPhrase();
+
+                      state.setQueryPhrase(false, NOOP);
+                      return state.updateFilters(filter, { pushState: false })
+                        .then(function(results) {
+                          // Change back to original settings
+                          state.updateFilters({ places: false }, NOOP);
+                          state.setQueryPhrase(origQuery, NOOP);
+                          return results;
+                        });
+                    },
+
+                    setSelection = function(results) {
+                      var resultsAt = results.total - 1; // We don't want to count the place itself
+
+                          // related = results.top_places.filter(function(p) {
+                            // Again, count only the other places
+                            // return p.doc_id !== place.doc_id;
+                          // });
+
+                      // TODO redundancy with selectObject!
+                      state.setSelectedItem(place);
+                      resultList.setSelectedItem(place);
+                      selectionPanel.show(place, { results: resultsAt, relatedPlaces: [] });
+                      // TODO currentSelection = { item: item, references: references }
+                      currentSelection = place;
+
+                      // Note: selection may have happend through the map, so technically no
+                      // need for this - but the map is designed to handle this situation
+                      // map.setSelectedItem(item, references.PLACE);
+                    };
+
+                fetchRelated().done(setSelection);
+              },
+
               selectPerson = function(person) {
-                // TODO
+                // TODO should look like selectPeriod instead?
                 selectObject(person);
+              },
+
+              selectPeriod = function(period) {
+                // TODO redundancy with selectObject!
+                state.setSelectedItem(period);
+                resultList.setSelectedItem(period);
+                selectionPanel.show(period);
+                // TODO currentSelection = { item: item, references: references }
+                currentSelection = period;
               },
 
               selectDataset = function(dataset) {
@@ -247,14 +256,17 @@ require([
 
           if (item)
             switch(ItemUtils.getItemType(item)) {
-              case 'PLACE':
-                selectPlace(item);
-                break;
               case 'OBJECT':
                 selectObject(item);
                 break;
+              case 'PLACE':
+                selectPlace(item);
+                break;
               case 'PERSON':
                 selectPerson(item);
+                break;
+              case 'PERIOD':
+                selectPeriod(item);
                 break;
               case 'DATASET':
                 selectDataset(item);

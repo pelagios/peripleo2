@@ -3,6 +3,7 @@ define([
   'ui/common/itemUtils',
   'ui/controls/selection/cards/datasetCard',
   'ui/controls/selection/cards/objectCard',
+  'ui/controls/selection/cards/periodCard',
   'ui/controls/selection/cards/personCard',
   'ui/controls/selection/cards/placeCard'
 ], function(
@@ -10,6 +11,7 @@ define([
   ItemUtils,
   DatasetCard,
   ObjectCard,
+  PeriodCard,
   PersonCard,
   PlaceCard
 ) {
@@ -73,14 +75,17 @@ define([
 
           // Then defer to the appropriate card implementation
           switch(itemType) {
-            case 'PLACE':
-              new PlaceCard(cardEl, item, args);
-              break;
             case 'OBJECT':
               new ObjectCard(cardEl, item, args);
               break;
+            case 'PLACE':
+              new PlaceCard(cardEl, item, args);
+              break;
             case 'PERSON':
               new PersonCard(cardEl, item, args);
+              break;
+            case 'PERIOD':
+              new PeriodCard(cardEl, item, args);
               break;
             case 'DATASET':
               new DatasetCard(cardEl, item, args);
