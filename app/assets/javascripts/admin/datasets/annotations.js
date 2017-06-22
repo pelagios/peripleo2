@@ -11,7 +11,7 @@ require(['admin/hasUploads'], function(Uploads) {
         registerVoID = function() {
           var url = prompt('Enter VoID URL');
           if (url) {
-            jsRoutes.controllers.admin.datasets.AnnotationsAdminController.importVoID()
+            jsRoutes.controllers.admin.datasets.AnnotationsAdminController.importData()
               .ajax({ data: { 'url': url }});
           }
           return false;

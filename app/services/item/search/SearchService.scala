@@ -27,7 +27,7 @@ class SearchService @Inject() (
   
   /** The common phrase query part **/
   private def phraseQuery(query: Option[String]): Seq[QueryDefinition] = {
-    val itemPart = query.map { q =>
+    query.map { q =>
       Seq(
         queryStringQuery(q).field("is_conflation_of.title").field("is_conflation_of.descriptions.description").defaultOperator("AND"),
         
@@ -42,23 +42,21 @@ class SearchService @Inject() (
         // ...and descriptions (with lower boost)
         matchQuery("is_conflation_of.descriptions.description", q).operator("AND"))
     }.getOrElse(Seq(matchAllQuery))
-    
-    val referencePart = query.map { q =>
-      Seq(hasChildQuery("reference") query { termQuery("context", q) })
-    }.getOrElse(Seq.empty[QueryDefinition])
-      
-    itemPart ++ referencePart
   }
 
   private def buildPlaceQuery(args: SearchArgs, filter: QueryDefinition) =    
     search in ES.PERIPLEO / ES.REFERENCE query {
       constantScoreQuery {
-        should (
-          termQuery("context", args.query.getOrElse("*")),
-          hasParentQuery(ES.ITEM) query { should ( phraseQuery(args.query) ) }
-        ) filter (
-          hasParentQuery("item") query filter
-        )
+        bool {
+          must (
+            should (
+              termQuery("context", args.query.getOrElse("*")) +:
+              phraseQuery(args.query).map { q => hasParentQuery(ES.ITEM) query { q } }
+            )
+          ) filter (
+            hasParentQuery("item") query filter
+          )
+        }
       }
     } start 0 limit 0 aggregations (
       aggregation
@@ -76,7 +74,16 @@ class SearchService @Inject() (
   private def itemBaseQuery(args: SearchArgs, filter: QueryDefinition) =       
     search in ES.PERIPLEO / ES.ITEM query {
       bool {
-        must ( should ( phraseQuery(args.query) ) ) filter(filter)
+        must (
+          should ( 
+            phraseQuery(args.query) ++
+            
+            // If there is a query, search reference contexts
+            args.query
+              .map { q => Seq(hasChildQuery(ES.REFERENCE) query { termQuery("context", q) }) }
+              .getOrElse(Seq.empty[QueryDefinition])
+          ) 
+        ) filter (filter)
       } 
     }
 

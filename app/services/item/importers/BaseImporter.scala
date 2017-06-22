@@ -15,7 +15,7 @@ abstract class BaseImporter(itemService: ItemService) {
 
   /** The ItemType this importer should set for new items **/
   protected val ITEM_TYPE: ItemType
-  
+
   /**
    *  If true, the importer will reject items that have 0 resolvable references.
    *  This is normally desired behavior. (E.g. we don't want place references
@@ -39,7 +39,7 @@ abstract class BaseImporter(itemService: ItemService) {
     *
     */
   private def insertOrUpdateItem(i: ItemWithUnboundReferences): Future[Boolean] = {
-    
+
     // References that resolve to objects already in the index
     val fFilterResolvable = itemService.resolveReferences(i.references)
 
@@ -48,7 +48,7 @@ abstract class BaseImporter(itemService: ItemService) {
       val identifiers = i.item.identifiers.toSet
       identifiers.contains(ref.uri)
     }.map(_.toReference(i.item.docId, i.item.bbox))
-    
+
     // Filter references, keeping only those that are not already indexed
     def indexableReferences(selfReferences: Seq[Reference], resolvableReferences: Seq[Reference]) = {
 
@@ -59,16 +59,16 @@ abstract class BaseImporter(itemService: ItemService) {
       val rebound = resolvableReferences.map { reference =>
         if (reference.parentUri == reference.referenceTo.uri)
           reference.rebind(i.item.docId, i.item.bbox)
-        else 
+        else
           reference
       }
-      
+
       // All refs, minus those indexed already - that's what we need to index
       val all = (selfReferences ++ rebound).distinct
       all diff dontIndex
     }
-    
-    def fUpsert(item: Item, maybeVersion: Option[Long], refs: Seq[Reference]) =   
+
+    def fUpsert(item: Item, maybeVersion: Option[Long], refs: Seq[Reference]) =
       if (REJECT_IF_NO_INDEXABLE_REFERENCES && refs.size == 0) {
         Logger.warn("Skipping item with 0 resolvable references")
         i.references.foreach(ref => Logger.warn(ref.toString))
@@ -78,12 +78,10 @@ abstract class BaseImporter(itemService: ItemService) {
           case Some(version) => update id item.docId.toString in ES.PERIPLEO / ES.ITEM source item version version
           case None => index into ES.PERIPLEO / ES.ITEM id item.docId.toString source item
         }
-              
-        if (refs.size > 10) {
+
+        if (refs.size > 10)
           Logger.warn("Inserting " + refs.size + " references to index")
-          Logger.warn(refs.map(_.referenceTo.docId).mkString(", "))
-        }
-              
+
         es.client execute {
           // Failures will occasionally happen here due version conflicts (ES optimistic locking!).
           // Note that in this case, the bulk insert will produce orphaned References! We could
@@ -93,12 +91,12 @@ abstract class BaseImporter(itemService: ItemService) {
           // in the Reference-rewrite stage (cf. ReferenceService).
           bulk ( upsertItem +: refs.map(ref => index into ES.PERIPLEO / ES.REFERENCE source ref parent item.docId.toString) )
         } map { result =>
-          // Note: it seems we cannot reliably roll back Reference inserts following a version conflict. Immediately 
+          // Note: it seems we cannot reliably roll back Reference inserts following a version conflict. Immediately
           // after insert, they are not necessarily indexed, so a delete request will just fail.
           if (result.hasFailures) {
             result.failures.foreach(result => Logger.error(result.failureMessage))
             Logger.error("Error indexing item: " + i.item.docId)
-          }       
+          }
           !result.hasFailures
         }
       }
@@ -107,7 +105,7 @@ abstract class BaseImporter(itemService: ItemService) {
       resolvedReferences <- fFilterResolvable
       success <- fUpsert(i.item, i.maybeVersion, indexableReferences(selfReferences, resolvedReferences))
     } yield success
-    
+
     f.recover { case t: Throwable =>
       Logger.error("Error indexing item " + i.item.docId + ": " + t.getMessage)
       t.printStackTrace
@@ -174,10 +172,10 @@ abstract class BaseImporter(itemService: ItemService) {
 
     // Fetches affected items from the index and computes the new conflation
     def reconflateItems(normalizedRecord: ItemRecord, references: Seq[UnboundReference]): Future[(Seq[ItemWithReferences], Seq[ItemWithUnboundReferences])] = {
-      
+
       // val startTime = System.currentTimeMillis
       getAffectedItems(normalizedRecord).map(i => {
-        
+
         // Sorted affected items by no. of records
         val affectedItems = i.sortBy(- _.item.isConflationOf.size)
 
@@ -194,7 +192,7 @@ abstract class BaseImporter(itemService: ItemService) {
         }
 
         val conflatedItems: Seq[(Item, Option[Long])] = {
-          
+
           val itemsAfterConflation = conflate(records)
 
           if (affectedItems.size > 0 && affectedItems.size != itemsAfterConflation.size)
@@ -212,7 +210,7 @@ abstract class BaseImporter(itemService: ItemService) {
         }
 
         val conflatedReferences = affectedItems.flatMap(_.references).map(_.unbind) ++ references
-        
+
         // Pass back places before and after conflation
         (affectedItems, groupReferences(conflatedItems, conflatedReferences))
       })

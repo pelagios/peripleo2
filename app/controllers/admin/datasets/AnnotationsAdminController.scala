@@ -1,18 +1,23 @@
 package controllers.admin.datasets
 
 import akka.actor.ActorSystem
-import controllers.{ BaseAuthController, WebJarAssets }
+import controllers.WebJarAssets
+import controllers.admin.authorities.BaseAuthorityAdminController
 import harvesting.VoIDHarvester
 import harvesting.loaders.DumpLoader
 import harvesting.crosswalks._
 import javax.inject.{ Inject, Singleton }
-import jp.t2v.lab.play2.auth.AuthElement
 import play.api.{ Configuration, Logger }
-import play.api.mvc.Action
+import play.api.mvc.MultipartFormData
+import play.api.libs.Files
 import scala.concurrent.ExecutionContext
-import services.task.TaskService
+import services.item.{ ItemType, PathHierarchy } 
+import services.item.importers.DatasetImporter
+import services.task.{ TaskService, TaskType }
 import services.user.{ Role, UserService }
 import services.item.ItemService
+import services.item.importers.ItemImporter
+import harvesting.crosswalks.tei.TeiCrosswalk
 
 @Singleton
 class AnnotationsAdminController @Inject() (
@@ -24,31 +29,62 @@ class AnnotationsAdminController @Inject() (
   implicit val ctx: ExecutionContext,
   implicit val system: ActorSystem,
   implicit val webjars: WebJarAssets
-) extends BaseAuthController with AuthElement {
-
+) extends BaseAuthorityAdminController(new DatasetImporter(itemService, ItemType.DATASET.ANNOTATIONS)) {
+  
   def index = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>
     Ok(views.html.admin.datasets.annotations())
   }
   
-  def importVoID = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>
-    request.body.asFormUrlEncoded match {
-      case Some(form) => form.get("url").flatMap(_.headOption) match {
-        case Some(url) =>
-          voidHarvester.harvest(url, loggedIn.username).map { success =>
-            if (success) Logger.info(s"Import complete from $url")
-            else Logger.error(s"Import failed from $url")
-          } recover { case t: Throwable =>
-            t.printStackTrace
-            Logger.info("Error harvesting VoID: " + t.getMessage)
-          }
+  def importData = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>
+    
+    val voidReq = request.body.asFormUrlEncoded
+    val fileReq = request.body.asMultipartFormData
+    
+    def harvestVoID(form: Map[String, Seq[String]]) = form.get("url").flatMap(_.headOption) match {
+      case Some(url) =>
+        voidHarvester.harvest(url, loggedIn.username).map { success =>
+          if (success) Logger.info(s"Import complete from $url")
+          else Logger.error(s"Import failed from $url")
+        } recover { case t: Throwable =>
+          t.printStackTrace
+          Logger.info("Error harvesting VoID: " + t.getMessage)
+        }
+        Ok // Return immediately
           
-          Ok // Return immediately
+      case _ => BadRequest
+    }
+    
+    def importFile(form: MultipartFormData[Files.TemporaryFile]) = form.file("file") match {
+      case Some(filepart) =>
+        if (filepart.filename.contains(".tei.xml")) {
+          Logger.info("Importing TEI")
           
-        case None => BadRequest
-      }
+          // TODO just a hack for now!!
+          upsertDatasetRecord("TEI", "TEI").map { success => if (success) {
+            val importer = new ItemImporter(itemService, ItemType.OBJECT)
+            new DumpLoader(taskService, TaskType("TEI_IMPORT")).importDump(
+              filepart.filename,
+              filepart.ref.file,
+              filepart.filename,
+              TeiCrosswalk.fromSingleFile(filepart.filename, PathHierarchy("TEI", "TEI")),
+              importer,
+              loggedIn.username)
+          }}
+          // TODO just a hack for now!!
+          
+        }
+        
+        Redirect(routes.AnnotationsAdminController.index)
         
       case None => BadRequest
     }
+    
+    (voidReq, fileReq) match {
+      case (Some(form), _) => harvestVoID(form)
+      case (_, Some(form)) => importFile(form)
+      case _ => BadRequest
+    }
+    
   }
   
   def deleteDataset(id: String) = AsyncStack(AuthorityKey -> Role.ADMIN) { implicit request =>
@@ -56,37 +92,5 @@ class AnnotationsAdminController @Inject() (
       Ok
     }
   }
-  
-  // def importVoID = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>
-  //    
-  //   request.body.asMultipartFormData.flatMap(_.file("file")) match {
-  //     case Some(formData) =>
-  //       if (formData.filename.contains(".rdf")) {
-  //         Logger.info("Importing Pelagios VoID")
-  //         val importer = new DumpImporter(taskService)
-  //         importer.importDump(formData.ref.file, formData.filename, PelagiosVoIDCrosswalk.fromRDF(formData.filename), itemService, loggedIn.username)
-  //       }
-  //      
-  //       Redirect(routes.AnnotationsAdminController.index)
-  //     
-  //     case None => BadRequest
-  //   }
-  // }
-
-  // def importAnnotations = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>
-  //   request.body.asMultipartFormData.flatMap(_.file("file")) match {
-  //     case Some(formData) =>
-  // 
-  //       if (formData.filename.contains(".rdf")) {
-  //         Logger.info("Importing Pelagios RDF/XML dump")
-  //         val importer = new DumpImporter(taskService)
-  //         importer.importDump(formData.ref.file, formData.filename, PelagiosAnnotationCrosswalk.fromRDF(formData.filename), itemService, loggedIn.username)
-  //       }
-  // 
-  //       Redirect(routes.AnnotationsAdminController.index)
-  // 
-  //     case None => BadRequest
-  //   }
-  // }
 
 }

@@ -10,7 +10,7 @@ object TeiCrosswalk {
   
   private def parseHeader(identifier: String, dataset:PathHierarchy, xml: Elem): ItemRecord = {     
     val title = (xml \\ "teiHeader" \\ "title").text
-    val homepage = (xml \\ "teiHeader" \\ "sourceDesc" \\ "link").head.attribute("target").map(_.text)
+    val homepage = (xml \\ "teiHeader" \\ "sourceDesc" \\ "link").headOption.flatMap(_.attribute("target").map(_.text))
     
     ItemRecord(
       identifier,
