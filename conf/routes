@@ -52,6 +52,9 @@ GET     /api/items/:id/parts                         controllers.api.ItemAPICont
 GET     /api/items/:id/references                    controllers.api.ItemAPIController.getReferences(id: String)
 GET     /api/items/:id                               controllers.api.ItemAPIController.getItem(id: String)
 
+## HACK
+GET     /api/items/:id/snippets                      controllers.api.ItemAPIController.getSnippets(id: String, ref: String, q: String)
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Restricted JSON API
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

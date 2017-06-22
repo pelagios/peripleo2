@@ -50,7 +50,7 @@ class SearchService @Inject() (
         bool {
           must (
             should (
-              termQuery("context", args.query.getOrElse("*")) +:
+              queryStringQuery(args.query.getOrElse("*")).field("context") +:
               phraseQuery(args.query).map { q => hasParentQuery(ES.ITEM) query { q } }
             )
           ) filter (
@@ -80,7 +80,7 @@ class SearchService @Inject() (
             
             // If there is a query, search reference contexts
             args.query
-              .map { q => Seq(hasChildQuery(ES.REFERENCE) query { termQuery("context", q) }) }
+              .map { q => Seq(hasChildQuery(ES.REFERENCE) query { queryStringQuery(q).field("context") }) }
               .getOrElse(Seq.empty[QueryDefinition])
           ) 
         ) filter (filter)

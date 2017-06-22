@@ -128,15 +128,18 @@ require([
                     fetchReferences = API.getReferences(uri).then(function(references) {
                       // Run filtered searches for the first two references of each type,
                       // so we can display info in the UI
-                      var places = (references.PLACE) ? references.PLACE.slice(0, 3) : false,
+                      var places = (references.PLACE) ? references.PLACE.slice(0, 1) : false,
 
-                          fPlaceCounts; // TODO support persona and period references
+                          fPlaceCounts; // TODO support person and period references
+
+                      console.log(references);
 
                       if (places) {
                         fPlaceCounts = places.map(function(place) {
                           return fetchResultCountForReference(place.identifiers[0]);
                         });
 
+                        // TODO this doesn't seem to work as expected!
                         return jQuery.when.apply(jQuery, fPlaceCounts).then(function() {
                           return { references: references, resultCounts: arguments };
                         });
@@ -284,7 +287,7 @@ require([
 
             return state.updateFilters(filter, { pushState: false })
               .done(function(results) {
-                state.updateFilters({ places: false }, { pushState: false, makeRequest: false });
+                state.updateFilters({ places: false }, NOOP);
                 onSelectItem(results.items[0]);
               });
           } else {

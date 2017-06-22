@@ -25,6 +25,13 @@ class ItemAPIController @Inject() (
       jsonOk(Json.toJson(stats))
     }
   }
+  
+  // TODO hack
+  def getSnippets(parentUri: String, destinationUri: String, query: String) = Action.async { implicit request =>
+    itemService.findReference(parentUri, destinationUri, query).map { refs =>
+      jsonOk(Json.toJson(refs))
+    }
+  }
 
   def getParts(identifier: String, offset: Int, limit: Int) = Action.async { implicit request =>
     // The first .findByIdentifier isn't strictly needed (and introduces an ES roundtrip), but

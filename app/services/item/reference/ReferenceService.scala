@@ -9,12 +9,18 @@ import play.api.Logger
 import play.api.libs.json.Json
 import scala.concurrent.Future
 import scala.util.Try
-import services.ES
+import services.{ ES, Page }
 import services.item.{ Item, ItemService }
 
 trait ReferenceService { self: ItemService =>
+  
+  private implicit object RefHitAs extends HitAs[Reference] {
+    override def as(hit: RichSearchHit): Reference = {
+      Json.fromJson[Reference](Json.parse(hit.sourceAsString)).get
+    }
+  }
 
-  private implicit object ReferenceHitAs extends HitAs[(Reference, String, String)] {
+  private implicit object RefAndIdsHitAs extends HitAs[(Reference, String, String)] {
     override def as(hit: RichSearchHit): (Reference, String, String) = {
       val id = hit.id
       val parent = hit.field("_parent").value[String]
@@ -127,7 +133,24 @@ trait ReferenceService { self: ItemService =>
       Future.successful(true)
     }
   }
+  
+  /** Retrieves references by parent URI, destination URI, and context query **/ 
+  def findReference(parentUri: String, destinationUri: String, query: String, offset: Int = 0, limit: Int = 20) =
+    es.client execute {
+      search in ES.PERIPLEO / ES.REFERENCE query {
+        bool {
+          must (
+            termQuery("parent_uri" -> parentUri),
+            termQuery("reference_to.uri" -> destinationUri),
+            queryStringQuery(query).field("context")
+          )
+        }
+      }
+    } map { response =>
+      Page(response.tookInMillis, response.totalHits, offset, limit, response.as[Reference])
+    }
 
+  // TODO rename - there's currently some ambiguity (also in the API) between *references* and *stats about references*
   def getReferenceStats(identifier: String): Future[ReferenceStats] = {
 
     val fStats =
