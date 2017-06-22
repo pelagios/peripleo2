@@ -23,7 +23,7 @@ case class PathHierarchy(path: Seq[(String, String)]) {
         .map(t => t._1 + PathHierarchy.INNER_SEPARATOR + t._2)
         .mkString(PathHierarchy.OUTER_SEPARATOR) }
   
-  private lazy val ids: Seq[String] = path.map(_._1)
+  lazy val ids: Seq[String] = path.map(_._1)
   
 }
 

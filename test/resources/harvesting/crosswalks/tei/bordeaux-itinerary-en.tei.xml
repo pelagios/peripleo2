@@ -1,0 +1,751 @@
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+        <teiHeader>
+          <fileDesc>
+            <titleStmt><title>Anonymous: Bordeaux Itinerary</title></titleStmt>
+            <publicationStmt>
+              <p>333 CE</p>
+            </publicationStmt>
+            <sourceDesc>
+              <p><link target="http://www.christusrex.org/www1/ofm/pilgr/bord/10Bord01Lat.html"/></p>
+            </sourceDesc>
+          </fileDesc>
+        </teiHeader>
+        <text>
+          <body><div><p>[549] ITINERARIVM A <placeName ref="http://pleiades.stoa.org/places/138248">BVRDIGALA</placeName> <placeName ref="http://pleiades.stoa.org/places/687928">HIERVSALEM</placeName> VSQVE ET AB <placeName ref="http://pleiades.stoa.org/places/511357">HERACLEA</placeName> PER <placeName ref="http://pleiades.stoa.org/places/481750">AVLONAM</placeName> ET PER VRBEM <placeName ref="http://pleiades.stoa.org/places/423025">ROMAM</placeName> <placeName ref="http://pleiades.stoa.org/places/383706">MEDIOLANVM</placeName> VSQVE SIC:
+ciuitas <placeName ref="http://pleiades.stoa.org/places/138248">burdigala</placeName>, ubi est fluuius <placeName ref="http://pleiades.stoa.org/places/138369">garonna</placeName>, per quem facit mare oceanum accessa et recessa per leugas plus minus centum.
+
+[550] Mutatio <placeName ref="http://pleiades.stoa.org/places/138599">stomatas</placeName> leugae vii
+mutatio <placeName ref="http://pleiades.stoa.org/places/138593">sirione</placeName> leugae viiii
+ciuitas <placeName ref="http://pleiades.stoa.org/places/138313">vasatas</placeName> leugae viiii
+mutatio <placeName ref="http://pleiades.stoa.org/places/138626">tres arbores</placeName> leugae v
+mutatio <placeName ref="http://pleiades.stoa.org/places/138504">oscineio</placeName> leugae viii
+mutatio <placeName ref="http://pleiades.stoa.org/places/246662">scittio</placeName> leugae viii
+ciuitates <placeName ref="http://pleiades.stoa.org/places/246380">elusa</placeName> leugae viii
+mutatio <placeName ref="http://pleiades.stoa.org/places/246727">vanesia</placeName> leugae xii
+ciuitas <placeName ref="http://pleiades.stoa.org/places/246379">auscius</placeName> leugae viii
+mutatio a<placeName ref="http://pleiades.stoa.org/places/246141">d sextum</placeName> leugae vi
+mutatio <placeName ref="http://pleiades.stoa.org/places/246420">hungunuerro</placeName> leugae vii
+mutatio <placeName ref="http://pleiades.stoa.org/places/246260">bucconis</placeName> leugae vii
+[551] mutatio <placeName ref="http://pleiades.stoa.org/places/246136">ad iouem</placeName> leugae vii
+ciuitas <placeName ref="http://pleiades.stoa.org/places/246694">tholosa</placeName> leugae vii
+mutatio <placeName ref="http://pleiades.stoa.org/places/246137">ad nonum</placeName> milia viiii
+mutatio <placeName ref="http://pleiades.stoa.org/places/246143">ad vicesimum</placeName> milia xi
+mansio <placeName ref="http://pleiades.stoa.org/places/246381">elusione</placeName> milia viiii
+mutatio <placeName ref="http://pleiades.stoa.org/places/246660">sostomago</placeName> milia viiii
+uicus <placeName ref="http://pleiades.stoa.org/places/246413">hebromago</placeName> milia x
+mutatio <placeName ref="http://pleiades.stoa.org/places/246320">cedros</placeName> milia vi
+castellum <placeName ref="http://pleiades.stoa.org/places/246294">carcassone</placeName> milia viii
+mutatio <placeName ref="http://pleiades.stoa.org/places/246706">tricensimum</placeName> milia viii
+[552] mutatio <placeName ref="http://pleiades.stoa.org/places/246720">hosuerbas</placeName> milia xv
+ciuitas <placeName ref="http://pleiades.stoa.org/places/246347">narbone</placeName> milia xv
+ciuitas <placeName ref="http://pleiades.stoa.org/places/148056">beterris</placeName> milia xvi
+mansio <placeName ref="http://pleiades.stoa.org/places/147997">cessarone</placeName> milia xii
+mutatio f<placeName ref="http://pleiades.stoa.org/places/148081">oro domiti</placeName> milia xviii
+mutatio <placeName ref="http://pleiades.stoa.org/places/148202">sostantione</placeName> milia xv
+mutatio <placeName ref="http://pleiades.stoa.org/places/147990">ambrosi</placeName> milia xv
+ciuitas <placeName ref="http://pleiades.stoa.org/places/148142">nemauso</placeName> milia xv
+mutatio <placeName ref="http://pleiades.stoa.org/places/148160">ponte aerarium</placeName> milia xii
+ciuitas <placeName ref="http://pleiades.stoa.org/places/148217">arelate</placeName> milia viii.
+
+[553] Fit a <placeName ref="http://pleiades.stoa.org/places/138248">burdigala</placeName> <placeName ref="http://pleiades.stoa.org/places/148217">arelate</placeName> usque milia ccclxxii, mutationes xxx, mansiones xi.
+Mutatio <placeName ref="http://pleiades.stoa.org/places/148074">arnagine</placeName> milia viii
+mutatio <placeName ref="http://pleiades.stoa.org/places/148019">bellinto</placeName> milia x
+ciuitas <placeName ref="http://pleiades.stoa.org/places/148004">auenione</placeName> milia v
+mutatio <placeName ref="http://pleiades.stoa.org/places/148065">cypresseta</placeName> milia v
+ciuitas <placeName ref="http://pleiades.stoa.org/places/148054">arausione</placeName> milia xv
+mutatio <placeName ref="http://pleiades.stoa.org/places/167616">ad letoce</placeName> milia xiii
+mutatio <placeName ref="http://pleiades.stoa.org/places/167856">nouem</placeName> craris milia x
+mansio <placeName ref="http://pleiades.stoa.org/places/167627">acuno</placeName> milia x
+[554] mutatio <placeName ref="http://pleiades.stoa.org/places/167668">bantianis</placeName> milia xii
+mutatio <placeName ref="http://pleiades.stoa.org/places/167947">vmbenno</placeName> milia xii
+ciuitas <placeName ref="http://pleiades.stoa.org/places/167718">valentia</placeName> milia viiii
+mutatio <placeName ref="http://pleiades.stoa.org/places/167705">cerebelliaca</placeName> milia xii
+mansio <placeName ref="http://pleiades.stoa.org/places/167658">augusta</placeName> milia x
+mutatio <placeName ref="http://pleiades.stoa.org/places/167737">darentiaca</placeName> milia xii
+ciuitas <placeName ref="http://pleiades.stoa.org/places/167716">dea vocontiorum</placeName> milia xvi
+mansio <placeName ref="http://pleiades.stoa.org/places/167815">luco</placeName> milia xii
+mutatio <placeName ref="http://pleiades.stoa.org/places/167978">vologatis</placeName> milia viiii.
+
+[555] Inde ascenditur <placeName ref="http://pleiades.stoa.org/places/167780">gaura</placeName> mons.
+Mutatio <placeName ref="http://pleiades.stoa.org/places/167697">cambono</placeName> milia viii
+mansio <placeName ref="http://pleiades.stoa.org/places/167836">monte seleuci</placeName> milia viii
+mutatio <placeName ref="http://pleiades.stoa.org/places/167738">dauiano</placeName> milia viii
+mutatio <placeName ref="http://pleiades.stoa.org/places/167615">ad finem</placeName> milia xii
+mansio <placeName ref="http://pleiades.stoa.org/places/167954">vappinco</placeName> milia xi
+mansio <placeName ref="http://pleiades.stoa.org/places/167701">catorigas</placeName> milia xii
+mansio <placeName ref="http://pleiades.stoa.org/places/167750">ebreduno</placeName> milia xvi.
+
+Inde incipiunt <placeName ref="http://pleiades.stoa.org/places/167743">alpes</placeName> cottiae.
+
+Mutatio <placeName ref="http://pleiades.stoa.org/places/167881">ramae</placeName> milia xvii
+mansio <placeName ref="http://pleiades.stoa.org/places/167691">byrigante</placeName> milia xvii.
+
+[556] Inde ascendis <placeName ref="http://pleiades.stoa.org/places/167826">matronam</placeName>.
+Mutatio <placeName ref="http://pleiades.stoa.org/places/167778">gesdaone</placeName> milia x
+mansio <placeName ref="http://pleiades.stoa.org/places/167617">ad marte</placeName> milia viiii
+ciuitas <placeName ref="http://pleiades.stoa.org/places/167919">segussione</placeName> milia xvi.
+
+Inde incipit <placeName ref="http://pleiades.stoa.org/places/1052">italia</placeName>.
+
+Mutatio ad <placeName ref="http://pleiades.stoa.org/places/167623">duodecimum</placeName> milia xii
+mansio <placeName ref="http://pleiades.stoa.org/places/383545">ad fines</placeName> milia xii
+mutatio <placeName ref="http://pleiades.stoa.org/places/383557">ad octauum</placeName> milia viii
+ciuitas <placeName ref="http://pleiades.stoa.org/places/383580">taurinis</placeName> milia viii
+mutatio <placeName ref="http://pleiades.stoa.org/places/383558">ad decimum</placeName> milia x
+[557] mansio <placeName ref="http://pleiades.stoa.org/places/383753">quadratis</placeName> milia xii
+mutatio <placeName ref="http://pleiades.stoa.org/places/383616">ceste</placeName> milia xi
+mansio <placeName ref="http://pleiades.stoa.org/places/383759">rigomago</placeName> milia viii
+mutatio <placeName ref="http://pleiades.stoa.org/places/383610">ad medias</placeName> milia x
+mutatio <placeName ref="http://pleiades.stoa.org/places/383630">ad cottias</placeName> milia xiii
+mansio <placeName ref="http://pleiades.stoa.org/places/383690">laumello</placeName> milia xii
+mutatio <placeName ref="http://pleiades.stoa.org/places/383637">duriis</placeName> milia viii
+ciuitas <placeName ref="http://pleiades.stoa.org/places/383798">ticino</placeName> milia xii
+mutatio <placeName ref="http://pleiades.stoa.org/places/383559">ad decimum</placeName> milia x
+ciuitas <placeName ref="http://pleiades.stoa.org/places/383706">mediolanum</placeName> milia x
+[mansio <placeName>fluuio frigido</placeName> milia xii].
+
+[558] Fit ab <placeName ref="http://pleiades.stoa.org/places/148217">arelate</placeName> <placeName ref="http://pleiades.stoa.org/places/383706">mediolanum</placeName> usque milia cccclxxv, mutationes lxiii, mansiones xxii.</p></div><div><p>
+ciuitas mediolanum milia x
+[mansio <placeName>fluuio frigido</placeName> milia xii].
+
+[558] Fit ab arelate mediolanum usque milia cccclxxv, mutationes lxiii, mansiones xxii.
+Mutatio <placeName ref="http://pleiades.stoa.org/places/383575">argentea</placeName> milia x
+mutatio <placeName ref="http://pleiades.stoa.org/places/383747">ponte aureoli</placeName> milia x
+ciuitas <placeName ref="http://pleiades.stoa.org/places/383589">bergamo</placeName> milia xiii
+mutatio <placeName ref="http://pleiades.stoa.org/places/383796">tellegate</placeName> milia xii
+mutatio <placeName ref="http://pleiades.stoa.org/places/383797">tetellus</placeName> milia x
+ciuitas <placeName ref="http://pleiades.stoa.org/places/383603">brixa</placeName> milia x
+mansio <placeName ref="http://pleiades.stoa.org/places/383546">ad flexum</placeName> milia xi
+mutatio <placeName ref="http://pleiades.stoa.org/places/383588">beneuentum</placeName> milia x
+ciuitas <placeName ref="http://pleiades.stoa.org/places/383816">verona</placeName> milia x
+mutatio <placeName ref="http://pleiades.stoa.org/places/393396">cadiano</placeName> milia x
+mutatio <placeName ref="http://pleiades.stoa.org/places/393387">aureos</placeName> milia x
+[559] ciuitas <placeName ref="http://pleiades.stoa.org/places/393513">vincentia</placeName> milia xi
+mutatio <placeName ref="http://pleiades.stoa.org/places/393361">ad finem</placeName> milia xi
+ciuitas <placeName ref="http://pleiades.stoa.org/places/393473">pataui</placeName> milia x
+mutatio <placeName ref="http://pleiades.stoa.org/places/393359">ad duodecimum</placeName> milia xii
+mutatio <placeName ref="http://pleiades.stoa.org/places/393358">ad nonum</placeName> milia xi
+ciuitas <placeName ref="http://pleiades.stoa.org/places/393374">altino</placeName> milia viiii
+mutatio <placeName ref="http://pleiades.stoa.org/places/393369">sanos</placeName> milia x
+ciuitas <placeName ref="http://pleiades.stoa.org/places/393441">concordia</placeName> milia viiii
+mutatio <placeName ref="http://pleiades.stoa.org/places/187287">apicilia</placeName> milia viiii
+mutatio <placeName ref="http://pleiades.stoa.org/places/187260">ad vndecimum</placeName> milia xi
+ciuitas <placeName ref="http://pleiades.stoa.org/places/187290">aquileia</placeName> milia xi.
+
+Fit a mediolano <placeName ref="http://pleiades.stoa.org/places/187290">aquileia</placeName> usque milia ccli, mutationes xxiiii, mansiones viiii.
+Mutatio <placeName ref="http://pleiades.stoa.org/places/187261">ad vndecimum</placeName> milia xi
+[560] mutatio <placeName ref="http://pleiades.stoa.org/places/197063">ad fornolus</placeName> milia xii
+mutatio <placeName ref="http://pleiades.stoa.org/places/197276">castra</placeName> milia xii.
+
+Inde surgunt <placeName ref="http://pleiades.stoa.org/places/197317">alpes iuliae</placeName>.
+
+<placeName ref="http://pleiades.stoa.org/places/197317">Ad pirum</placeName> summas alpes milia viiii
+mansio <placeName ref="http://pleiades.stoa.org/places/197357">longatico</placeName> milia x
+mutatio <placeName ref="http://pleiades.stoa.org/places/197076">ad nonum</placeName> milia viiii
+ciuitas <placeName ref="http://pleiades.stoa.org/places/197258">emona</placeName> milia xiiii
+mutatio <placeName ref="http://pleiades.stoa.org/places/197082">ad quartodecimo</placeName> milia x
+mansio <placeName ref="http://pleiades.stoa.org/places/197147">hadrante</placeName> milia xiii.
+
+Fines <placeName ref="http://pleiades.stoa.org/places/1052">italiae</placeName> et norci.
+
+Mutatio <placeName ref="http://pleiades.stoa.org/places/197072">ad medias</placeName> milia xiii
+ciuitas <placeName ref="http://pleiades.stoa.org/places/197206">celeia</placeName> milia xiii
+[561] mutatio <placeName ref="http://pleiades.stoa.org/places/197069">lotodos</placeName> milia xii
+mansio <placeName ref="http://pleiades.stoa.org/places/197467">ragindone</placeName> milia xii
+mutatio <placeName ref="http://pleiades.stoa.org/places/197460">pultouia</placeName> milia xii
+ciuitas <placeName ref="http://pleiades.stoa.org/places/197446">poetouione</placeName> milia xii.
+
+Transis pontem, intras <placeName ref="http://pleiades.stoa.org/places/981540">pannoniam inferiorem</placeName>.
+
+Mutatio <placeName ref="http://pleiades.stoa.org/places/197468">ramista</placeName> milia viiii
+mansio <placeName ref="http://pleiades.stoa.org/places/197129">aqua viua</placeName> milia viiii
+mutatio <placeName ref="http://pleiades.stoa.org/places/197454">populis</placeName> milia x
+ciuitas <placeName ref="http://pleiades.stoa.org/places/197326">iouia</placeName> milia viiii
+mutatio <placeName ref="http://pleiades.stoa.org/places/197522">sunista</placeName> milia viiii
+[562] mutatio <placeName ref="http://pleiades.stoa.org/places/197440">peritur</placeName> milia xii
+mansio <placeName ref="http://pleiades.stoa.org/places/197348">lentolis</placeName> milia xii
+mutatio <placeName ref="http://pleiades.stoa.org/places/197191">cardono</placeName> milia x
+mutatio <placeName ref="http://pleiades.stoa.org/places/197215">cocconis</placeName> milia xii
+mansio <placeName ref="http://pleiades.stoa.org/places/197508">serota</placeName> milia x
+mutatio <placeName ref="http://pleiades.stoa.org/places/203108">bolentia</placeName> milia x
+mansio <placeName ref="http://pleiades.stoa.org/places/197370">maurianis</placeName> milia viiii.
+
+Intras <placeName ref="http://pleiades.stoa.org/places/981541">pannoniam</placeName> superiorem.
+Mutatio <placeName ref="http://pleiades.stoa.org/places/197507">serena</placeName> milia viii
+mansio <placeName ref="http://pleiades.stoa.org/places/197576">vereis</placeName> milia x
+mansio <placeName ref="http://pleiades.stoa.org/places/197576">vereis</placeName> milia x
+mutatio <placeName ref="http://pleiades.stoa.org/places/197325">ioualia</placeName> milia viii
+mutatio <placeName ref="http://pleiades.stoa.org/places/197391">mersella</placeName> milia viii
+ciuitas <placeName ref="http://pleiades.stoa.org/places/197389">mursa</placeName> milia x
+[563] mutatio <placeName ref="http://pleiades.stoa.org/places/197065">leutuoano</placeName> milia xii
+ciuitas <placeName ref="http://pleiades.stoa.org/places/197207">cibalis</placeName> milia xii
+mutatio <placeName ref="http://pleiades.stoa.org/places/197204">caelena</placeName> milia xi
+mansio <placeName ref="http://pleiades.stoa.org/places/207525">vlmo</placeName> milia xi
+mutatio <placeName ref="http://pleiades.stoa.org/places/207460">spaneta</placeName> milia x
+mutatio <placeName ref="http://pleiades.stoa.org/places/206995">vedulia</placeName> milia viii
+ciuitas <placeName ref="http://pleiades.stoa.org/places/207447">sirmium</placeName> milia viii.
+
+Fit ab <placeName ref="http://pleiades.stoa.org/places/187290">aquileia</placeName>, <placeName ref="http://pleiades.stoa.org/places/207447">sirmium</placeName> usque milia ccccxii, mansiones xvii, mutationes xxxviii.</p></div><div><p>
+
+ciuitas <placeName ref="http://pleiades.stoa.org/places/207447">sirmium</placeName> milia viii.
+
+Fit ab <placeName ref="http://pleiades.stoa.org/places/187290">aquileia</placeName>, <placeName ref="http://pleiades.stoa.org/places/207447">sirmium</placeName> usque milia ccccxii, mansiones xvii, mutationes xxxviii.
+
+Mutatio <placeName ref="http://pleiades.stoa.org/places/207120">fossis</placeName> milia viiii
+ciuitas <placeName ref="http://pleiades.stoa.org/places/206960">bassianis</placeName> milia x
+mutatio <placeName ref="http://pleiades.stoa.org/places/207313">nouiciani</placeName> milia xii
+mutatio <placeName ref="http://pleiades.stoa.org/places/206913">altina</placeName> milia xi
+ciuitas <placeName ref="http://pleiades.stoa.org/places/207443">singiduno</placeName> milia viii.
+
+[564] Fines <placeName ref="http://pleiades.stoa.org/places/197425">pannoniae</placeName> et misiae.
+Mutatio <placeName>ad sextum</placeName> milia vi
+mutatio <placeName ref="http://pleiades.stoa.org/places/207515">tricornia</placeName> castra milia vi
+mutatio <placeName ref="http://pleiades.stoa.org/places/206893">ad sextum</placeName> miliarem milia vii
+ciuitas <placeName ref="http://pleiades.stoa.org/places/206938">aureo monte</placeName> milia vi
+mutatio <placeName ref="http://pleiades.stoa.org/places/207550">vingeio</placeName> milia vi
+ciuitas <placeName ref="http://pleiades.stoa.org/places/207267">margo</placeName> milia viiii
+ciuitas <placeName ref="http://pleiades.stoa.org/places/207549">viminacio</placeName> milia x.
+
+Ubi diocletianus occidit carinum.
+
+Mutatio <placeName ref="http://pleiades.stoa.org/places/206887">ad nonum</placeName> milia viiii
+[565] mansio <placeName ref="http://pleiades.stoa.org/places/207296">munecipio</placeName> milia viiii
+mutatio <placeName ref="http://pleiades.stoa.org/places/207189">iouis pago</placeName> milia x
+mutatio <placeName ref="http://pleiades.stoa.org/places/206958">bao</placeName> milia vii
+mansio <placeName ref="http://pleiades.stoa.org/places/207183">idomo</placeName> milia viiii
+mutatio <placeName ref="http://pleiades.stoa.org/places/206889">ad octauum</placeName> milia viiii
+mansio <placeName ref="http://pleiades.stoa.org/places/207173">oromago</placeName> milia viii.
+
+Finis <placeName ref="http://pleiades.stoa.org/places/992077">myssiae</placeName> et <placeName>asiae</placeName>.
+
+Mutatio <placeName ref="http://pleiades.stoa.org/places/207424">sarmatorum</placeName> milia xii
+mutatio <placeName ref="http://pleiades.stoa.org/places/207006">caminitas</placeName> milia xi
+[566] mansio <placeName ref="http://pleiades.stoa.org/places/207363">ipompeis</placeName> milia viiii
+mutatio <placeName ref="http://pleiades.stoa.org/places/207156">rampiana</placeName> milia xii
+ciuitas <placeName ref="http://pleiades.stoa.org/places/207303">naisso</placeName> milia xii
+mutatio <placeName ref="http://pleiades.stoa.org/places/207373">redicibus</placeName> milia xii
+mutatio <placeName ref="http://pleiades.stoa.org/places/207526">vlmo</placeName> milia vii
+mansio <placeName ref="http://pleiades.stoa.org/places/207382">romansiana</placeName> milia viiii
+mutatio <placeName ref="http://pleiades.stoa.org/places/207235">latina</placeName> milia viiii
+mansio <placeName ref="http://pleiades.stoa.org/places/207521">turribus</placeName> milia viiii
+mutatio <placeName ref="http://pleiades.stoa.org/places/207509">translitis</placeName> milia xii
+mutatio <placeName ref="http://pleiades.stoa.org/places/206955">ballanstra</placeName> milia x
+mansio <placeName ref="http://pleiades.stoa.org/places/207275">meldia</placeName> milia viiii
+mutatio <placeName ref="http://pleiades.stoa.org/places/207435">scretisca</placeName> milia xii
+[567] ciuitas <placeName ref="http://pleiades.stoa.org/places/207439">serdica</placeName> milia xi.
+
+Fit a <placeName ref="http://pleiades.stoa.org/places/207447">sirmium</placeName> <placeName ref="http://pleiades.stoa.org/places/207439">serdica</placeName> usque milia cccxiiii, mutationes xxiiii, mansiones xiii.
+Mutatio <placeName ref="http://pleiades.stoa.org/places/481835">extuomne</placeName> milia viii
+mansio <placeName ref="http://pleiades.stoa.org/places/481775">buragara</placeName> milia viiii
+mutatio <placeName ref="http://pleiades.stoa.org/places/481998">sparata</placeName> milia viii
+mansio <placeName ref="http://pleiades.stoa.org/places/481860">hilica</placeName> milia x
+mutatio <placeName ref="http://pleiades.stoa.org/places/481996">soneio</placeName> milia viiii.
+
+Fines <placeName ref="http://pleiades.stoa.org/places/207065">daciae</placeName> et <placeName ref="http://pleiades.stoa.org/places/981552">traciae</placeName>.
+
+Mutatio <placeName ref="http://pleiades.stoa.org/places/222149">ponte vcasi</placeName> milia vi
+mansio <placeName>bona mansio</placeName> milia vi
+[568] mutatio <placeName>alusore</placeName> milia viiii
+mansio <placeName ref="http://pleiades.stoa.org/places/216732">basapare</placeName> milia xii
+mutatio <placeName>tugugero</placeName> milia viiii
+ciuitas <placeName ref="http://pleiades.stoa.org/places/216927">filopopuli</placeName> milia xii
+mutatio <placeName ref="http://pleiades.stoa.org/places/216980">sernota</placeName> milia x
+mutatio <placeName ref="http://pleiades.stoa.org/places/216920">paramuole</placeName> milia viii
+mansio <placeName ref="http://pleiades.stoa.org/places/216767">cillio</placeName> milia xii
+mutatio <placeName ref="http://pleiades.stoa.org/places/216750">carassura</placeName> milia viiii
+mansio <placeName ref="http://pleiades.stoa.org/places/216714">arzo</placeName> milia xi
+mutatio <placeName ref="http://pleiades.stoa.org/places/501384">palae</placeName> milia vii
+mansio <placeName ref="http://pleiades.stoa.org/places/222167">castozobra</placeName> milia xi
+mutatio <placeName ref="http://pleiades.stoa.org/places/501381">rhamis</placeName> milia vii
+[569] mansio <placeName ref="http://pleiades.stoa.org/places/501526">burdista</placeName> milia xi
+mutatio <placeName ref="http://pleiades.stoa.org/places/511428">daphabae</placeName> milia xi
+mansio <placeName ref="http://pleiades.stoa.org/places/511458">nicae</placeName> milia viiii
+mutatio <placeName ref="http://pleiades.stoa.org/places/511185">tarpodizo</placeName> milia x
+mutatio <placeName ref="http://pleiades.stoa.org/places/511331">vrisio</placeName> milia vii
+mansio <placeName ref="http://pleiades.stoa.org/places/511241">virgoles</placeName> milia vii
+mutatio <placeName ref="http://pleiades.stoa.org/places/511448">narco</placeName> milia viii
+mansio <placeName ref="http://pleiades.stoa.org/places/511456">drizupara</placeName> milia viiii
+mutatio <placeName ref="http://pleiades.stoa.org/places/511456">tipso</placeName> milia viii
+mansio <placeName ref="http://pleiades.stoa.org/places/511184">tunorullo</placeName> milia viii
+[570] mutatio <placeName ref="http://pleiades.stoa.org/places/511357">beodizo</placeName> milia viii
+ciuitas <placeName ref="http://pleiades.stoa.org/places/511227">heraclea</placeName> milia viiii
+mutatio <placeName ref="http://pleiades.stoa.org/places/511414">baunne</placeName> milia xii
+mansio <placeName ref="http://pleiades.stoa.org/places/511201">salambria</placeName> milia x
+mutatio <placeName ref="http://pleiades.stoa.org/places/511172">callum</placeName> milia x
+mansio <placeName ref="http://pleiades.stoa.org/places/511397">atyra</placeName> milia x
+mansio <placeName ref="http://pleiades.stoa.org/places/520998">regio</placeName> milia xii.
+
+Ciuitas <placeName ref="http://pleiades.stoa.org/places/207439">constantinopoli</placeName> milia xii.
+
+[571] Fit a <placeName ref="http://pleiades.stoa.org/places/520998">serdica</placeName> <placeName ref="http://pleiades.stoa.org/places/138248">constantinopoli</placeName> milia ccccxiii, mutationes xii, mansiones xx.
+Fit omnis summa a <placeName ref="http://pleiades.stoa.org/places/520998">burdigala</placeName> <placeName ref="http://pleiades.stoa.org/places/648789">constantinopolim</placeName> uicies bis centena uiginti unum milia, mutationes ccxxx, mansiones cxii.</p></div><div><p>
+Item ambulauimus dalmatico et zenophilo cons- iii kal- iun- a <placeName ref="http://pleiades.stoa.org/places/520988">calcedonia</placeName> et reuersi sumus <placeName ref="http://pleiades.stoa.org/places/520998">constantinopolim</placeName> vii kal- ian- cons- suprascripto.
+
+A <placeName ref="http://pleiades.stoa.org/places/520998">constantinopoli</placeName> transis <placeName ref="http://pleiades.stoa.org/places/520977">pontum</placeName>, uenis <placeName ref="http://pleiades.stoa.org/places/520988">calcedoniam</placeName>, ambulas prouinciam <placeName ref="http://pleiades.stoa.org/places/511189">bithyniam</placeName>.
+
+Mutatio <placeName ref="http://pleiades.stoa.org/places/521092">nassete</placeName> milia vii s&amp;lt;emis&amp;gt;
+[572] mansio <placeName ref="http://pleiades.stoa.org/places/521106">pandicia</placeName> milia vii s&amp;lt;emis&amp;gt;.
+
+Mutatio <placeName ref="http://pleiades.stoa.org/places/511371">pontamus</placeName> milia xiii
+mansio <placeName ref="http://pleiades.stoa.org/places/511305">libissa</placeName> milia viiii.
+
+Ibi positus est rex annibalianus, qui fuit afrorum.
+
+Mutatio <placeName ref="http://pleiades.stoa.org/places/511193">brunga</placeName> milia xii
+ciuitas <placeName ref="http://pleiades.stoa.org/places/511337">nicomedia</placeName> milia viiii.
+
+Fit a <placeName ref="http://pleiades.stoa.org/places/520998">constantinopoli</placeName> <placeName ref="http://pleiades.stoa.org/places/511337">nicomedia</placeName> usque mil- lviii, mutationes vii, mansiones iii.
+
+[573] Mutatio <placeName ref="http://pleiades.stoa.org/places/511253">hyribolum</placeName> milia x
+mansio <placeName ref="http://pleiades.stoa.org/places/511304">libum</placeName> milia xi
+mutatio <placeName ref="http://pleiades.stoa.org/places/511302">liada</placeName> milia xii
+ciuitas <placeName ref="http://pleiades.stoa.org/places/511268">nicia</placeName> milia viiii
+mutatio <placeName ref="http://pleiades.stoa.org/places/511412">schinae</placeName> milia viii
+mansio <placeName ref="http://pleiades.stoa.org/places/511326">mido</placeName> milia vii
+mutatio <placeName ref="http://pleiades.stoa.org/places/511210">chogeae</placeName> milia vi
+mutatio <placeName ref="http://pleiades.stoa.org/places/511437">thateso</placeName> milia x
+mansio <placeName>tutaio</placeName> milia viiii
+mutatio <placeName ref="http://pleiades.stoa.org/places/511431">protunica</placeName> milia xi
+mutatio <placeName ref="http://pleiades.stoa.org/places/511383">artemis</placeName> milia xii
+[574] mansio <placeName ref="http://pleiades.stoa.org/places/844900">dablae</placeName> milia vi
+mansio <placeName ref="http://pleiades.stoa.org/places/844892">ceratae</placeName> milia vi.
+Fines <placeName ref="http://pleiades.stoa.org/places/511189">bithiniae</placeName> et <placeName ref="http://pleiades.stoa.org/places/619161">galatiae</placeName>.
+
+Mutatio fines milia x
+mansio <placeName ref="http://pleiades.stoa.org/places/844901">dadastano</placeName> milia vi
+mutatio <placeName ref="http://pleiades.stoa.org/places/845086">trans monte</placeName> milia vi
+mutatio <placeName ref="http://pleiades.stoa.org/places/845019">milia</placeName> milia xi
+ciuitas <placeName ref="http://pleiades.stoa.org/places/844935">iuliopolis</placeName> milia viii
+mutatio <placeName ref="http://pleiades.stoa.org/places/844946">hicronpotamum</placeName> milia xiii
+mansio <placeName ref="http://pleiades.stoa.org/places/609447">agannia</placeName> milia xi
+mutatio <placeName ref="http://pleiades.stoa.org/places/845038">petrobrogen</placeName> milia vi
+[575] mansio <placeName ref="http://pleiades.stoa.org/places/845020">mnizos</placeName> milia x
+mutatio <placeName ref="http://pleiades.stoa.org/places/845047">prasmon</placeName> milia xii
+mansio <placeName ref="http://pleiades.stoa.org/places/845011">malogordis</placeName> milia viiii
+mutatio <placeName ref="http://pleiades.stoa.org/places/619136">cenaxem palidem</placeName> milia xiii
+ciuitas <placeName ref="http://pleiades.stoa.org/places/619103">anchira galatia</placeName> milia xiii.
+
+Fit a <placeName ref="http://pleiades.stoa.org/places/511337">nicomedia</placeName> <placeName ref="http://pleiades.stoa.org/places/619103">anchira galatia</placeName> usque milia cclviii, mutationes xxvi, mansiones xii.
+Mutatio <placeName ref="http://pleiades.stoa.org/places/619161">delemna</placeName> <placeName ref="http://pleiades.stoa.org/places/619150">milia</placeName> x
+mansio <placeName ref="http://pleiades.stoa.org/places/619167">curueunta</placeName> milia xi
+mutatio <placeName ref="http://pleiades.stoa.org/places/619228">rosolodiaco</placeName> milia xii
+mutatio <placeName ref="http://pleiades.stoa.org/places/619102">aliassum</placeName> milia xiii
+ciuitas <placeName ref="http://pleiades.stoa.org/places/619118">aspona</placeName> milia xviii
+[576] mutatio <placeName ref="http://pleiades.stoa.org/places/619162">galea</placeName> milia xiii
+mutatio andrapa milia viiii.
+
+Fines <placeName ref="http://pleiades.stoa.org/places/991393">galatiae</placeName> et <placeName ref="http://pleiades.stoa.org/places/981523">cappadociae</placeName>.
+
+Mansio <placeName ref="http://pleiades.stoa.org/places/619235">parnasso</placeName> milia xiii
+mansio <placeName ref="http://pleiades.stoa.org/places/619232">iogola</placeName> milia xvi
+mansio <placeName ref="http://pleiades.stoa.org/places/619220">nitalis</placeName> milia xviii
+mutatio <placeName ref="http://pleiades.stoa.org/places/619115">argustana</placeName> milia xiii
+ciuitas <placeName ref="http://pleiades.stoa.org/places/619164">colonia</placeName> milia xv
+[577] mutatio <placeName ref="http://pleiades.stoa.org/places/619212">momoasson</placeName> milia xii
+mansio <placeName ref="http://pleiades.stoa.org/places/619218">anathiango</placeName> milia xiii
+mutatio <placeName ref="http://pleiades.stoa.org/places/619139">chusa</placeName> milia xii
+mansio <placeName ref="http://pleiades.stoa.org/places/619256">sasima</placeName> milia xii
+mansio <placeName ref="http://pleiades.stoa.org/places/619104">andauilis</placeName> milia xvi.
+
+Ibi est uilla pammati, unde ueniunt equi curules.
+
+Ciuitas <placeName ref="http://pleiades.stoa.org/places/648801">thyana</placeName> milia xviii.
+
+[578] Inde fuit apollonius magus.
+Ciuitas <placeName ref="http://pleiades.stoa.org/places/648608">faustinopoli</placeName> milia xii
+mutatio <placeName ref="http://pleiades.stoa.org/places/648592">caena</placeName> milia xiii
+mansio <placeName ref="http://pleiades.stoa.org/places/648742">opodando</placeName> milia xii
+mutatio <placeName ref="http://pleiades.stoa.org/places/648670">pilas</placeName> milia xiiii.
+
+[579] Fines <placeName ref="http://pleiades.stoa.org/places/628949">cappadociae</placeName> et <placeName ref="http://pleiades.stoa.org/places/981514">ciliciae</placeName>.
+
+Mansio <placeName ref="http://pleiades.stoa.org/places/648704">mansucrinae</placeName> milia xii
+ciuitas <placeName ref="http://pleiades.stoa.org/places/648789">tarso</placeName> milia xii.
+
+Inde fuit apostolus paulus.
+
+Fit ad <placeName ref="http://pleiades.stoa.org/places/619161">anchira galatia</placeName> <placeName ref="http://pleiades.stoa.org/places/648789">tarso</placeName> usque milia cccxliii, [580] mutationes xxv, mansiones xviii.</p></div><div><p>
+ciuitas <placeName ref="http://pleiades.stoa.org/places/648789">tarso</placeName> milia xii.
+
+Inde fuit apostolus paulus.
+
+Fit ad <placeName ref="http://pleiades.stoa.org/places/619103">anchira</placeName> <placeName ref="http://pleiades.stoa.org/places/619161">galatia</placeName> <placeName ref="http://pleiades.stoa.org/places/648789">tarso</placeName> usque milia cccxliii, [580] mutationes xxv, mansiones xviii.
+
+Mutatio <placeName ref="http://pleiades.stoa.org/places/648733">pargais</placeName> milia xiii
+ciuitas <placeName ref="http://pleiades.stoa.org/places/648548">adana</placeName> milia xiiii
+ciuitas <placeName ref="http://pleiades.stoa.org/places/658538">mansista</placeName> milia xviii
+mutatio <placeName ref="http://pleiades.stoa.org/places/658610">tardequeia</placeName> milia xv
+mansio <placeName ref="http://pleiades.stoa.org/places/658506">catauolo</placeName> milia xvi
+mansio <placeName ref="http://pleiades.stoa.org/places/658394">baiae</placeName> milia xvii
+mansio <placeName ref="http://pleiades.stoa.org/places/658371">alexandria scabiosa</placeName> milia xvi
+[581] mutatio <placeName ref="http://pleiades.stoa.org/places/658573">pictanus</placeName> milia viiii.
+
+Fines <placeName ref="http://pleiades.stoa.org/places/981514">cilciae</placeName> et <placeName ref="http://pleiades.stoa.org/places/981550">syriae</placeName>.
+
+Mansio <placeName ref="http://pleiades.stoa.org/places/658564">pagrios</placeName> milia viii
+ciuitas <placeName ref="http://pleiades.stoa.org/places/658381">antiochia</placeName> milia xvi.
+
+Fit a <placeName ref="http://pleiades.stoa.org/places/648789">tarso</placeName> <placeName ref="http://pleiades.stoa.org/places/981514">ciliciae</placeName> <placeName ref="http://pleiades.stoa.org/places/658381">antiochia</placeName> usque milia cxli, mutationes x, mansiones vii.
+
+Ad <placeName ref="http://pleiades.stoa.org/places/658450">palatium dafne</placeName> milia v
+[582] mutatio <placeName ref="http://pleiades.stoa.org/places/658483">hysdata</placeName> milia xi
+mansio <placeName>platanus</placeName> milia viii
+mutatio <placeName>baccaias</placeName> milia viii
+mansio <placeName>catelas</placeName> milia xvi
+ciuitas <placeName ref="http://pleiades.stoa.org/places/668290">ladica</placeName> milia xvi
+ciuitas <placeName ref="http://pleiades.stoa.org/places/668250">gabala</placeName> milia xiiii
+ciuitas <placeName ref="http://pleiades.stoa.org/places/668206">balaneas</placeName> milia xiii
+Fines <placeName ref="http://pleiades.stoa.org/places/981550">syriae coelis</placeName> et <placeName ref="http://pleiades.stoa.org/places/678334">foenicis</placeName>.
+
+Mutatio <placeName ref="http://pleiades.stoa.org/places/668305">maraccas</placeName> milia x
+mansio <placeName ref="http://pleiades.stoa.org/places/668190">antaradus</placeName> milia xvi.
+
+Est ciuitas in mare a ripa milia ii.
+
+Mutatio <placeName>spiclin</placeName> milia xii
+[583] mutatio <placeName>basiliscum</placeName> milia xii
+mansio <placeName ref="http://pleiades.stoa.org/places/668198">arcas</placeName> milia viii
+mutatio <placeName ref="http://pleiades.stoa.org/places/668215">bruttus</placeName> milia iiii
+ciuitas tripoli milia xii
+mutatio <placeName ref="http://pleiades.stoa.org/places/668392">triclis</placeName> milia xii
+mutatio <placeName ref="http://pleiades.stoa.org/places/668214">bruttos</placeName> alia milia xii
+mutatio <placeName ref="http://pleiades.stoa.org/places/668216">alcobile</placeName> milia xii
+mutatio <placeName ref="http://pleiades.stoa.org/places/678177">heldua</placeName> milia xii
+ciuitas <placeName ref="http://pleiades.stoa.org/places/678060">birito</placeName> milia xii
+mutatio <placeName ref="http://pleiades.stoa.org/places/678338">parphirion</placeName> milia viii
+ciuitas <placeName ref="http://pleiades.stoa.org/places/678393">sidona</placeName> milia viii
+inde <placeName ref="http://pleiades.stoa.org/places/678374">sarepta</placeName> milia viiii.
+
+Ibi helias ad uiduam ascendit et petiit sibi cibum.
+
+Mutatio <placeName ref="http://pleiades.stoa.org/places/679506">ad nonum</placeName> milia iiii
+[584] ciuitas <placeName ref="http://pleiades.stoa.org/places/678437">tyro</placeName> milia xii.
+
+Fit ab <placeName ref="http://pleiades.stoa.org/places/658381">antiochia</placeName> <placeName ref="http://pleiades.stoa.org/places/678437">tyro</placeName> usque milia clxxiiii, mutationes xx, mansiones xi.
+
+Mutatio <placeName ref="http://pleiades.stoa.org/places/678013">alexandroschene</placeName> milia xii
+mutatio <placeName ref="http://pleiades.stoa.org/places/678128">ecdeppa</placeName> milia xii
+ciuitas <placeName ref="http://pleiades.stoa.org/places/678010">ptolomaida</placeName> milia viii
+mutatio <placeName>calamon</placeName> milia xii
+mansio <placeName ref="http://pleiades.stoa.org/places/678404">sicaminos</placeName> milia iii.
+
+[585] Ibi est <placeName ref="http://pleiades.stoa.org/places/678084">mons carmelus</placeName>, ibi helias sacrificium faciebat.
+Mutatio certha milia viii.
+
+Fines <placeName ref="http://pleiades.stoa.org/places/981550">syriae</placeName> <placeName ref="http://pleiades.stoa.org/places/991410">finices</placeName> et <placeName ref="http://pleiades.stoa.org/places/687995">palestinae</placeName>.
+
+Ciuitas <placeName ref="http://pleiades.stoa.org/places/678401">caesarea</placeName> palestina id est <placeName ref="http://pleiades.stoa.org/places/687934">iudaea</placeName> milia viii.
+
+Fit a <placeName ref="http://pleiades.stoa.org/places/678437">tyro</placeName> <placeName ref="http://pleiades.stoa.org/places/678401">caesarea</placeName> palestina milia lxxiii, mutationes ii, mansiones iii.</p></div><div><p>Ciuitas <placeName ref="http://pleiades.stoa.org/places/678401">caesarea palestina</placeName> id est <placeName ref="http://pleiades.stoa.org/places/678401">iudaea</placeName> milia viii.
+
+Fit a <placeName ref="http://pleiades.stoa.org/places/678437">tyro</placeName> <placeName ref="http://pleiades.stoa.org/places/678401">caesarea palestina</placeName> milia lxxiii, mutationes ii, mansiones iii.
+
+Ibi est balneus cornelii centurionis, qui multas elymosynas faciebat.
+
+Inde est tertio miliario [586] mons <placeName ref="http://pleiades.stoa.org/places/678405">syna</placeName>, ubi fons est, in quem mulier est lauerit, grauida fit.
+
+Ciuitas <placeName ref="http://pleiades.stoa.org/places/678266">maximianopoli</placeName> milia xviii
+ciuitas <placeName ref="http://pleiades.stoa.org/places/678197">isdradela</placeName> milia x.
+
+Ibi sedit achab rex et helias prophetauit; ibi est campus, ubi dauid goliat occidit.
+
+Ciuitas <placeName ref="http://pleiades.stoa.org/places/678378">scithopoli</placeName> milia xii
+[587] <placeName ref="http://pleiades.stoa.org/places/678034">aser</placeName>, ubi fuit uilla iob milia xvi
+civitas <placeName ref="http://pleiades.stoa.org/places/678301">Neapoli</placeName> milia xv.
+
+Ibi est <placeName ref="http://pleiades.stoa.org/places/678147">mons agazaren</placeName>: ibi dicunt samaritani abraham sacrificium obtulisse, et ascenduntur usque ad summum montem gradi numero mccc.
+
+Inde ad pedem montis ipsius locus est, cui nomen est <placeName ref="http://pleiades.stoa.org/places/678403">sechim</placeName>.
+
+Ibi est monumentum, ubi positus est [588] ioseph in uilla, quam dedit ei iacob pater eius.
+Inde rapta est et dina filia iacob a filiis amorreorum.
+
+Inde passus mille locus est cui nomen <placeName ref="http://pleiades.stoa.org/places/678403">sechar</placeName>, unde descendit mulier <placeName ref="http://pleiades.stoa.org/places/678370">samaritana</placeName> ad eundem locum, ubi iacob puteum fodit, ut de eo aquam impleret, et dominus noster iesus christus cum ea locutus est; ubi sunt et arbores platani, quas plantauit iacob, et balneus, qui de eo puteo lauatur.
+
+Inde milia xxviii euntibus <placeName ref="http://pleiades.stoa.org/places/687928">hierusalem</placeName> in parte sinistra est uilla, quae dicitur <placeName ref="http://pleiades.stoa.org/places/687851">bethar</placeName>.
+
+Inde passus mille est locus, ubi iacob, cum iret in <placeName ref="http://pleiades.stoa.org/places/874602">mesopotamiam</placeName>, addormiuit, et ibi est arbor amigdala, et uidit uisum et angelus cum eo luctatus est.
+
+Ibi fuit rex hieroboam, ad quem missus propheta, ut conuerteretur ad deum [589] excelsum; et iussum fuerat prophetae, ne cum pseudoprophetam, quem se cum rex habebat, manducaret, et quia seductus est a pseudopropheta et cum eo manducauit rediens, occurrit prophetae leo in uia et occidit eum.
+
+Inde <placeName ref="http://pleiades.stoa.org/places/687928">hierusalem</placeName> milia xii.
+
+Fit a <placeName ref="http://pleiades.stoa.org/places/678401">caesarea palestina</placeName> <placeName ref="http://pleiades.stoa.org/places/687928">hierusalem</placeName> usque milia cxvi, mansiones iiii, mutationes iiii.</p></div><div><p>Inde <placeName ref="http://pleiades.stoa.org/places/687928">hierusalem</placeName> milia xii.
+
+Fit a <placeName ref="http://pleiades.stoa.org/places/678401">caesarea palestina</placeName> <placeName ref="http://pleiades.stoa.org/places/687928">hierusalem</placeName> usque milia cxvi, mansiones iiii, mutationes iiii.
+Sunt in <placeName ref="http://pleiades.stoa.org/places/687928">hierusalem</placeName> piscinae magnae duae ad latus templi, id est una ad dexteram, alia ad sinistram, quas salomon fecit, interius uero ciuitati sunt piscinae gemellares quinque porticus habentes, quae appellantur behtsaida.
+
+Ibi aegri multorum annorum sanabantur.
+
+Aquam autem habent hae piscinae in modum coccini turbatam.
+
+Est ibi et cripta, ubi salomon daemones torquebat.
+
+Ibi est anglus [590] turris excelsissimae, ubi dominus ascendit et dixit ei is, qui temptabat eum, et ait ei dominus: non temptabis dominum deum tuum, sed illi soli seruies.
+
+Ibi est et lapis angularis mangus, de quo dictum est: lapidem, quem reprobauerunt aedificantes, hic factus est ad caput anguli.
+
+Et sub pinna turris ipsius sunt cubicula plurima, ubi salomon palatium habebat.
+
+Ibi etiam constat cubiculus, in quo sedit et sapientiam descripsit; ipse uero cubiculus uno lapide est tectus.
+
+Sunt ibi et excepturia magna aquae subterraneae et piscinae magno opere aedificatae.
+
+Et [591] in aede ipsa, ubi templum fuit, quem salomon aedificauit, in marmore ante aram sanguinem zachariae ibi dicas hodie fusum; etiam parent uestigia clauorum militum, qui eum occiderunt, per totam aream, ut putes in cera fixum esse.
+Sunt ibi et statuae duae hadriani; est et non longe de statuas lapis pertusus, ad quem ueniunt iudaei singulis annis et unguent eum et lamentant se cum gemitu et uestimenta sua scindunt et sic recedunt.
+
+Est ibi et domus ezechiae regis iudae.</p></div><div><p>Item exeuntibus <placeName ref="http://pleiades.stoa.org/places/687928">hierusalem</placeName>, ut ascendas <placeName>sion</placeName>, in parte sinistra [592] et deorsum in ualle iuxta murum est piscina, quae dicitur siloa; habet quadriporticum; et alia piscina grandis foras.
+
+Haec fons sex diebus atque noctibus currit, septima uero die est sabbatum: in totum nec nocte nec die currit.
+
+In eadem ascenditur <placeName>sion</placeName> et paret ubi fuit domus caifae sacerdotis, et columna adhuc ibi est, in qua christum flagellis ceciderunt.
+
+Intus autem intra murum <placeName>sion</placeName> paret locus, ubi palatium habuit dauid.
+
+Et septem synagogae, quae illic fuerunt, una tantum remansit, reliquae autem arantur et seminantur, sicut isaias propheta [593] dixit.
+
+Inde ut eas foris murum de <placeName>sion</placeName>, euntibus ad portam neapolitanam ad partem dextram deorsum in ualle sunt parietes, ubi domus fuit siue praetorium pontii pilati; ibi dominus auditus est, antequam pateretur.
+
+A sinistra autem parte est monticulus golgotha, ubi dominus crucifixus est.
+
+[594] Inde quasi ad lapidem missum est cripta, ubi corpus eius positum fuit et tertia die resurrexit; ibidem modo iussu constantini imperatoris basilica facta est, id est dominicum, mirae pulchritudinis habens ad latus excepturia, unde aqua leuatur, et balneum a tergo, ubi infantes lauantur.
+
+Item ad hierusalem euntibus ad portam, quae est contra orientem, ut ascendatur in monte oliueti, uallis, quae dicitur iosafath, ad partem sinistram, ubi sunt uineae, est et petra ubi iudas scarioth christum tradidit: a parte uero [595] dextra est arbor palmae, de qua infantes ramos tulerunt et ueniente christo substrauerunt.
+
+Inde non longe quasi ad lapidis missum sunt monumenta duo monubiles mirae pulchritudinis facta: in unum positus est isaias propheta, qui est uere monolitus, et in alio ezechias rex iudaeorum.
+Inde ascendis in montem oliueti, ubi dominus ante passionem apostolos docuit: ibi facta est basilica iussu constantini.
+
+Inde non longe est monticulus, ubi dominus ascendit orare et apparuit illic moyses et helias, quando petrum [596] et iohannem se cum duxit.</p></div><div><p>
+Inde ad orientem passus mille quingentos est uilla, quae appellatur bethania; est ibi cripta, ubi lazarus positus fuit, quem dominus suscitauit.
+
+Item ad hierusalem in hiericho milia xviii.
+
+Descendentibus montem in parte dextra retro monumentum est arbor sicomori, in qua zachaeus ascendit, ut christum uideret.
+
+A ciuitate, passus mille quingentos est ibi fons helisei prophetae.
+
+Antea si qua mulier ex ipsa aqua bibebat, non faciebat natos.
+
+Adlatum est uas fictile heliseo, misit in eo sales et uenit et stetit super fontem et dixit: haec dicit dominus: sanauit aquas has.
+
+Ex eo si qua mulier inde biberit, filios faciet.
+
+Supra eundem uero fontem [597] est domus rachab fornicariae, ad quam exploratores introierunt et occultauit eos, quando hiericho euersa est, et sola euasit.
+
+Ibi fuit ciuitas hiericho, cuius muros gyrauerunt cum arca testamenti filii israel et ceciderunt muri.
+Ex eo non paret nisi locus, ubi fuit arca testamenti et lapides xii, quos filii israel de iordane leuauerunt.
+
+Ibidem iesus filius naue circumcidit filios israel.
+
+Et circumcisiones eorum sepeliuit.
+
+Item ad hiericho ad mare mortuum milia nouem.
+
+Est aqua ipsius ualde amarissima, ubi in totum nullius generis piscis est nec aliqua nauis, et si qui hominum miserit se, ut natet, ipsa aqua eum uersat.
+
+[598] Inde ad iordane, ubi dominus a iohanne baptizatus est, milia quinque.
+
+Ibi est locus super flumen, monticulus in illa ripa, ubi raptus est helias in caelum.</p></div><div><p>
+
+Item ab hierusalem euntibus behtleem milia quattuor super strata in parte dextra est monumentum, ubi rachel posita est, uxor iacob.
+
+Inde milia duo a parte sinistra est bethleem, ubi natus est dominus iesus christus; ibi basilica facta est iussu constantini.
+
+Inde non longe est monumentum ezechiel.
+
+Asaph, iob et iesse, dauid, salomon, et habet in ipsa cripta ad latus deorsum descendentibus hebraeis litteris scriptum nomina supra scripta.
+
+[599] Inde bethasora milia xiiii, ubi est fons, in quo philippus eunuchum baptizauit.
+
+Inde terebinto milia viiii, ubi abraham habitauit et puteum fodit sub arbore terebintho et cum angelis locutus est et cibum sumpsit; ibi basilica facta est iussu constantini mirae pulchritudinis.
+
+Inde terebinto cebron milia ii, ubi est memoria per quadrum ex lapidibus mirae pulchritudinis, in qua positi sunt abraham, isaac, iacob, sarra, rebecca et lia.
+
+[600] Item ab hierusolyma, sic:
+ciuitas nicopoli milia xxii
+ciuitas lidda milia x
+mutatio antipatrida milia x
+mutatio betthar milia x
+ciuitas caesarea milia xvi.
+
+[601] Fit omnis summa a constantinopoli usque hierusalem milia undecies centena lxiiii milia mutationes lxviiii, mansiones lviii.
+
+Item per nicopoli caesarea milia lxxiii s&amp;lt;emis&amp;gt; mutationes v, mansiones iii.</p></div><div><p>Item ab heraclea per machedonio:
+
+Mutatio aerea milia xvi
+mansio registo milia xii
+mutatio bedizo milia xii
+ciuitas apris milia xii
+[602] mutatio zesutera milia xii.
+
+Finis europae et rhodopeae.
+
+Mansio sirogellis milia x
+mutatio drippa milia xiiii
+mansio gipsila milia xii
+mutatio demas milia xii
+ciuitas traianopoli milia xiii
+mutatio ad vnimpara milia viii
+mutatio salei milia vii s&amp;lt;emis&amp;gt;
+mutatio melalico milia viii
+mansio berozicha milia xv
+[603] mutatio breierophara milia x
+ciuitas maximianopoli milia x
+mutatio ad stabulodio milia xii
+mutatio rumbodona milia x
+ciuitas epyrum milia x
+mutatio purdis milia viii.
+
+Fine rhodopeae et macedoniae.
+
+Mansio hercontroma milia viiii
+mutatio neapolim milia viiii
+ciuitas philippis milia x, [604] ubi paulus et sileas in carcere fuerunt.
+Mutatio ad duodecimum milia xii
+mutatio domeros milia vii
+ciuitas amphipholim milia xiii
+mutatio pennana milia x
+mutatio peripidis milia x.
+
+Ibi positus est euripidis poeta.
+
+[605] Mansio appollonia milia xi
+mutatio heracleustibus milia xi
+mutatio duo dea milia xiiii
+ciuitas thessalonica milia xiii
+mutatio ad decimum milia x
+mutatio gephira milia x
+[606] ciuitas polli, unde fuit alexander, magnus macedo milia x.
+
+Mutatio scurio milia xv
+ciuitas edissa milia xv
+mutatio ad duodecimum milia xii
+mansio cellis milia xvi
+mutatio grande milia xiiii
+mutatio melitonus milia xiiii
+ciuitas heraclea milia xiii
+[607] mutatio parambole milia xii
+mutatio brucida milia xviiii.
+
+Finis macedoniae et ephyri.
+
+Ciuitas cledo milia xiii
+mutatio patras milia xii
+mansio claudanon milia iiii
+mutatio in tabernas milia viiii
+mansio grandauia milia viiii
+[608] mutatio treiecto milia viiii
+mansio hiscampis milia viiii
+mutatio ad quintum - milia vi
+mansio coladiana milia xv
+mansio marusio milia xiii
+mansio absos milia xiiii
+mutatio stefanaphana milia xii
+ciuitas appollonia milia xviii
+mutatio stefana milia xii
+mansio aulona treiectum milia xii.</p></div><div><p>[609] Fit omnis summa ab heraclea per machedoniam aulona usque milia dclxxxviii, mutationes lviii, mansiones, xxv.
+Trans mare stadia mille, quod facit milia centum, et uenis odronto mansio mille passus:
+
+Mutatio ad duodecimum milia xiii
+mansio clipeas milia xii
+mutatio valentia milia xiii
+ciuitas brindisi milia xi
+mansio spilenaees milia xiiii
+mutatio ad decimum milia xi
+ciuitas leonatiae milia x
+mutatio turres aurilianas milia xv
+mutatio turres iuliana milia viiii
+ciuitas beroes milia xi
+mutatio butontones milia xi
+[610] ciuitas rubos milia xi
+mutatio ad quintumdecimum milia xv
+ciuitas canusio milia xv
+mutatio vndecimum milia xi
+ciuitas serdonis milia xv
+ciuitas aecas milia xviii
+mutatio aquilonis milia x.
+
+Finis apuliae et campaniae.
+
+Mansio ad equum magnum milia viii
+mutatio uicus forno nouo milia xii
+ciuitas beneuento milia x
+ciuitas et mansio claudiis milia xii
+mutatio nouas milia viiii
+ciuitas capua milia xii.
+
+[611] Fit summa ab aulona usque capua milia cclxxxviiii, mutationes xxv, mansiones xiii.
+Mutatio ad octauum milia viii
+mutatio ponte campano milia viiii
+ciuitas sonuessa milia viiii
+ciuitas menturnas milia viiii
+ciuitas formis milia viiii
+ciuitas fundis milia xii
+ciuitas tarracina milia xiii
+mutatio ad medias milia x
+mutatio appi foro milia viiii
+[612] mutatio sponsas milia vii
+ciuitas aricia et albona milia xiiii
+mutatio ad nono milia vii
+in urbe roma milia viiii.
+
+Fit a capua usque ad urbem romam milia cxxxvi, mutationes xiiii, mansiones viiii.
+
+Fit ab heraclea per aulona in urbe roma usque milia undecies centena xiii, mutationes cxvii, mansiones xlvi.</p></div><div><p>Ab urbe mediolanium:
+
+Mutatio rubras milia viiii
+[613] mutatio ad vicensimum milia xi
+mutatio aqua viua milia xii
+ciuitas vcriculo milia xii
+ciuitas narniae milia xii
+ciuitas interamna milia viiii
+mutatio tribus tabernis milia iii
+mutatio fani fugitiui milia x
+ciuitas spolitio milia vii
+mutatio sacraria milia viii
+ciuitas treuis milia iiii
+ciuitas fulginis milia v
+[614] ciuitas foro flamini milia iii
+ciuitas noceria milia xii
+ciuitas ptanias milia viii
+mansio herbelloni milia vii
+mutatio ad hesis milia x
+mutatio ad cale milia xiiii
+mutatio intercisa milia viiii
+[615] ciuitas foro semproni milia viiii
+mutatio ad octauo milia viiii
+ciuitas fano furtunae milia viii
+ciuitas pisauro &amp;lt;milia viii
+ciuitas ariminum&amp;gt; milia xxiiii.
+
+&amp;lt;Fit a roma&amp;gt; usque ariminum &amp;lt;milia ccxxiiii, mutationes xxiiii, mansiones xiiii&amp;gt;.
+Mutatio conpetu milia xii
+ciuitas cesena milia vi
+[616] ciuitas foro populi milia vi
+ciuitas foro liui milia vi
+ciuitas fauentia milia v
+ciuitas foro corneli milia x
+ciuitas claterno milia xiii
+ciuitas bononia milia x
+mutatio ad medias milia xv
+mutatio victoriolas milia x
+ciuitas mutena milia iii
+mutatio ponte secies milia v
+ciuitas regio milia viii
+mutatio canneto milia x
+ciuitas parme milia viii
+mutatio ad tarum milia vii
+mansio fidentiae milia viii
+mutatio ad fonteclos milia viii
+ciuitas placentia milia xiii
+[617] mutatio ad rota milia xi
+mutatio tribus tabernis milia v
+ciuitas laude milia viii
+mutatio ad nonum milia vii
+ciuitas mediolanum milia vii.
+
+Fit omnis summa ab urbe roma mediolanum usque milia ccccxvi, mutationes xliiii, mansiones xxiiii.
+
+Explicit itinerarium.</p></div></body>
+        </text>
+      </TEI>
