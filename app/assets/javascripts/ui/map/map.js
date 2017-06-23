@@ -135,7 +135,7 @@ define([
           // TODO - what if the places are not in the topPlaceLayer yet (happens for autosuggest selections!)
           // TODO - the item may have geometry itself
 
-          topPlacesLayer.selectByURIs(placeURIs);
+          // topPlacesLayer.selectByURIs(placeURIs);
         },
 
         onToggleFilterByView = function() {

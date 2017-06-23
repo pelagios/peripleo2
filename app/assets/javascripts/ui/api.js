@@ -30,6 +30,13 @@ define([], function() {
     getDatasetInfo : function(identifier) {
       var url = '/api/search?limit=20&facets=true&top_places=true&time_histogram=true&datasets=' + identifier;
       return jQuery.getJSON(url);
+    },
+
+    /**
+     * Yet another hack, to be made clean and official later.
+     */
+    getSnippets : function(itemId, refId, query) {
+      return jsRoutes.controllers.api.ItemAPIController.getSnippets(itemId, refId, query).ajax();
     }
 
   };

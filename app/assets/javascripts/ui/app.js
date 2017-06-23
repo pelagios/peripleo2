@@ -105,7 +105,7 @@ require([
         },
 
         /** Common select functionality **/
-        onSelectItem = function(item) {
+        onSelectItem = function(item, opt_via_ref) {
 
           var uri = ItemUtils.getURIs(item)[0],
 
@@ -132,8 +132,6 @@ require([
 
                           fPlaceCounts; // TODO support person and period references
 
-                      console.log(references);
-
                       if (places) {
                         fPlaceCounts = places.map(function(place) {
                           return fetchResultCountForReference(place.identifiers[0]);
@@ -154,10 +152,16 @@ require([
                   var references = result.references,
                       resultCounts = result.resultCounts;
 
-                  // TODO redundancy with selectPlace!
                   state.setSelectedItem(item);
                   resultList.setSelectedItem(item);
-                  selectionPanel.show(item, { references: references, resultCounts: resultCounts });
+
+                  selectionPanel.show(item, {
+                    query_phrase : state.getQueryPhrase(),
+                    selected_via : opt_via_ref,
+                    references   : references,
+                    resultCounts : resultCounts
+                  });
+                  
                   searchPanel.setLoading(false);
 
                   // TODO currentSelection = { item: item, references: references }
@@ -288,7 +292,7 @@ require([
             return state.updateFilters(filter, { pushState: false })
               .done(function(results) {
                 state.updateFilters({ places: false }, NOOP);
-                onSelectItem(results.items[0]);
+                onSelectItem(results.items[0], place);
               });
           } else {
             deselect();

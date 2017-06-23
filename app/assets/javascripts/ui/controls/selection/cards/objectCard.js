@@ -1,9 +1,10 @@
 define([
   'ui/common/formatting',
-  'ui/common/itemUtils'], function(Formatting, ItemUtils) {
+  'ui/common/itemUtils',
+  'ui/api'], function(Formatting, ItemUtils, API) {
 
   var ObjectCard  = function(parentEl, item, args) {
-    
+
     var infoEl = jQuery(
           '<div class="item-info">' +
             '<p class="item-is-in"></p>' +
@@ -16,6 +17,9 @@ define([
         titleEl      = infoEl.find('.item-title'),
         homepageEl   = infoEl.find('.item-homepage'),
         tempBoundsEl = infoEl.find('.item-temporal-bounds'),
+
+        snippetsEl = jQuery(
+          '<div class="item snippets"></div>').hide().appendTo(parentEl),
 
         referencesEl = jQuery(
           '<div class="item references"></div>').appendTo(parentEl),
@@ -42,12 +46,44 @@ define([
             tempBoundsEl.html(Formatting.formatTemporalBounds(item.temporal_bounds));
         },
 
-        renderReferences = function() {
+        renderSnippets = function() {
+          var itemId = item.is_conflation_of[0].identifiers[0],
+              refId = (args.selected_via) ?
+                args.selected_via.is_conflation_of[0].identifiers[0] : false,
 
+              renderSnippet = function(context) {
+                var terms = args.query_phrase.split(' ');
+                    snippet = context.trim();
+
+                terms.forEach(function(term) {
+                  snippet = snippet.replace(term, '<em>' + term + '</em>');
+                });
+
+                snippetsEl.append('<div class="snippet">...' + snippet + '...</div>');
+              };
+
+          if (refId)
+            API.getSnippets(itemId, refId, args.query_phrase).done(function(result) {
+              // TODO animate
+              snippetsEl.show();
+              if (result.total > 0)
+                result.items.forEach(function(ref) {
+                  renderSnippet(ref.context);
+                });
+            });
+        },
+
+        renderReferences = function() {
           var places = args.references.PLACE,
               head = (places && places.length > 3) ? places.slice(0, 3) : places;
 
-          if (head) {
+          if (args.selected_via) {
+            // TODO quick hack
+            referencesEl.append(
+              '<p class="ref-place">' +
+                '<span class="title"><a href="#">' + args.selected_via.title + '</a></span>' +
+              '</p>');
+          } else if (head) {
             head.forEach(function(place) {
               var counts = jQuery.grep(args.resultCounts, function(r) {
                     return place.identifiers.indexOf(r.identifier) > -1;
@@ -86,6 +122,7 @@ define([
         };
 
     renderInfo();
+    renderSnippets();
     renderReferences();
   };
 

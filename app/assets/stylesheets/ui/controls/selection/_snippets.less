@@ -1,0 +1,27 @@
+.item.snippets {
+  background-color:#fff;
+  font-family:'Times New Roman', Times, serif;
+  font-size:15px;
+  font-style:italic;
+  line-height:140%;
+  padding:0 8px 8px 8px;
+  color:@dark-grey-type;
+
+  .snippet {
+    background-color:@blueish-white;
+    padding:5px 10px;
+    .rounded-corners(4px);
+    margin-bottom:8px;
+    border:1px solid @light-grey-border;
+
+    em {
+      text-decoration:underline;
+    }
+
+  }
+
+  .snippet:last-child {
+    margin-bottom:4px;
+  }
+
+}
