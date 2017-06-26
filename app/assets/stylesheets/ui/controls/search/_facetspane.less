@@ -128,46 +128,48 @@
 
   .chart-section {
     border-bottom:1px solid @light-grey-border;
-    padding:5px 34px 10px 22px;
+    padding:2px 0 4px 0;
     position:relative;
-    text-align:left;
+    text-align:center;
 
     ul {
-      margin:0;
+      margin:0 auto;
       padding:0;
       list-style-type:none;
+      display:inline-block;
+      text-align:left;
     }
 
     li.meter {
       margin:0;
-      padding:0 0 1px 0;
-
-      .bar {
-        display:inline-block;
-        background-color:fade(@ocean, 75%);
-        .rounded-corners(2px);
-        height:19px;
-      }
+      color:@dark-grey-type;
+      cursor:pointer;
+      padding-bottom:7px;
 
       .count {
-        display:inline-block;
-        width:32px;
-        background-color:@ocean;
-        color:#fff;
+        position:relative;
+        top:1px;
+        width:45px;
         padding:0 4px;
-        text-align:center;
-        .rounded-corners-left(2px);
-        height:19px;
-        line-height:19px;
-        border-right:1px solid fade(@blueish-white, 75%);
+        text-align:right;
+        font-size:14px;
+        font-weight:500;
+        display:inline-block;
       }
 
       .label {
-        line-height:19px;
-        color:@dark-grey-type;
-        padding:2px 5px;
+        line-height:18px;
+        display:inline-block;
+        overflow:visible;
+        white-space:nowrap;
+        border-bottom:1px solid darken(@light-grey-type, 15%);
       }
 
+    }
+
+    li.meter:hover .label {
+      color:@ocean-dark;
+      border-bottom-color:@ocean;
     }
 
   }
