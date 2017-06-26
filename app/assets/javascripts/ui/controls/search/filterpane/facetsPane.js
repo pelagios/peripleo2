@@ -1,18 +1,19 @@
 define([
   'ui/common/aggregationUtils',
   'ui/common/hasEvents',
+  'ui/controls/search/filterpane/facets/facetChart',
   'ui/controls/search/filterpane/facets/typeFacet'
-], function(AggregationUtils, HasEvents, TypeFacet) {
+], function(AggregationUtils, HasEvents, FacetChart, TypeFacet) {
 
   var FacetsOverview = function(parentEl) {
 
     var el = jQuery(
           '<div class="facets-pane">' +
-            '<div class="info-section">' +
-              '<div class="info-section-inner">' +
+            '<div class="summary-section">' +
+              '<div class="summary-section-inner">' +
                 '<div class="sliding-pane">' +
                   // Section 1: facet counts
-                  '<div class="info-row facets">' +
+                  '<div class="summary-row facets">' +
                     '<ul>' +
                       '<li class="col sources">' +
                         '<span class="icon">&#xf187;</span>' +
@@ -36,23 +37,26 @@ define([
                     '</ul>' +
                   '</div>' +
                   // Section 2: type counts
-                  '<div class="info-row types"></div>' +
+                  '<div class="summary-row types"></div>' +
                 '</div>' + // .sliding-pane
-              '</div>' + //.info-section-inner
-            '</div>' + // .info-section
-
-            '<div class="type-graph"></div>' +
+              '</div>' + //.summary-section-inner
+            '</div>' + // .summary-section
+            '<div class="type-bar"></div>' + // Multicolor item type 'piechart' bar
+            '<div class="chart-section"></div>' + // Collapsible section for detail facet charts
           '</div>').appendTo(parentEl),
 
-        typeGraph = el.find('.type-graph'),
+        typeGraph = el.find('.type-bar'),
         slidingPane = el.find('.sliding-pane'),
 
-        typeFacet = new TypeFacet(el.find('.type-graph'), el.find('.info-row.types')),
+        typeFacet = new TypeFacet(el.find('.type-bar'), el.find('.summary-row.types')),
 
         sourceCount = el.find('.col.sources .count'),
         topicCount  = el.find('.col.topics .count'),
         peopleCount = el.find('.col.people .count'),
         periodCount = el.find('.col.periods .count'),
+
+        // TODO dummy only
+        facetChart = new FacetChart(el.find('.chart-section')),
 
         update = function(aggs) {
           var byType = AggregationUtils.getAggregation(aggs, 'by_type'),

@@ -4,7 +4,7 @@
 
   text-align:center;
 
-  .type-graph {
+  .type-bar {
     cursor:pointer;
     padding-bottom:@clickbuffer;
 
@@ -32,12 +32,12 @@
 
   }
 
-  .info-section {
+  .summary-section {
     padding-top:4px;
     height:36px;
   }
 
-  .info-section-inner {
+  .summary-section-inner {
     height:38px;
     overflow:hidden;
   }
@@ -46,7 +46,7 @@
     position:relative;
   }
 
-  .info-row {
+  .summary-row {
     height:38px;
     white-space:nowrap;
 
@@ -97,7 +97,7 @@
 
   } /** .info-row **/
 
-  .info-row.types {
+  .summary-row.types {
 
     .col {
       padding-top:10px;
@@ -123,6 +123,52 @@
     [data-type='PERSON']::before  { background-color: @type-person; content:'\f007'; }
     [data-type='PERIOD']::before  { background-color: @type-period; content:'\f017'; }
     [data-type='DATASET']::before { background-color: @type-dataset; content:'\f187'; }
+
+  }
+
+  .chart-section {
+    border-bottom:1px solid @light-grey-border;
+    padding:5px 34px 10px 22px;
+    position:relative;
+    text-align:left;
+
+    ul {
+      margin:0;
+      padding:0;
+      list-style-type:none;
+    }
+
+    li.meter {
+      margin:0;
+      padding:0 0 1px 0;
+
+      .bar {
+        display:inline-block;
+        background-color:fade(@ocean, 75%);
+        .rounded-corners(2px);
+        height:19px;
+      }
+
+      .count {
+        display:inline-block;
+        width:32px;
+        background-color:@ocean;
+        color:#fff;
+        padding:0 4px;
+        text-align:center;
+        .rounded-corners-left(2px);
+        height:19px;
+        line-height:19px;
+        border-right:1px solid fade(@blueish-white, 75%);
+      }
+
+      .label {
+        line-height:19px;
+        color:@dark-grey-type;
+        padding:2px 5px;
+      }
+
+    }
 
   }
 
