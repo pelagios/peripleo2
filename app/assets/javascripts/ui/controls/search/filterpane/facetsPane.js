@@ -15,22 +15,22 @@ define([
                   // Section 1: facet counts
                   '<div class="summary-row facets">' +
                     '<ul>' +
-                      '<li class="col sources">' +
+                      '<li class="col sources" data-facet="sources">' +
                         '<span class="icon">&#xf187;</span>' +
                         '<span class="value"><span class="count">0</span> sources</span>' +
                       '</li>' +
 
-                      '<li class="col topics">' +
+                      '<li class="col topics" data-facet="topics">' +
                         '<span class="icon">&#xf02b;</span>' +
                         '<span class="value"><span class="count">0</span> topics</span>' +
                       '</li>' +
 
-                      '<li class="col people">' +
+                      '<li class="col people" data-facet="people">' +
                         '<span class="icon">&#xf007;</span>' +
                         '<span class="value"><span class="count">0</span> people</span>' +
                       '</li>' +
 
-                      '<li class="col periods">' +
+                      '<li class="col periods" data-facet="periods">' +
                         '<span class="icon">&#xf017;</span>' +
                         '<span class="value"><span class="count">0</span> periods</span>' +
                       '</li>' +
@@ -56,7 +56,7 @@ define([
         periodCount = el.find('.col.periods .count'),
 
         // TODO dummy only
-        facetChart = new FacetChart(el.find('.chart-section')),
+        facetChart = new FacetChart(el.find('.chart-section').hide()),
 
         update = function(aggs) {
           var byType = AggregationUtils.getAggregation(aggs, 'by_type'),
@@ -67,8 +67,13 @@ define([
 
           if (byType) typeFacet.update(byType);
 
-          if (bySource) sourceCount.html(AggregationUtils.flattenBuckets(bySource).length);
-          else sourceCount.html('0');
+          if (bySource) {
+            // TODO dummy only - for testing
+            sourceCount.html(AggregationUtils.flattenBuckets(bySource).length);
+            facetChart.update(AggregationUtils.flattenBuckets(bySource));
+          } else {
+            sourceCount.html('0');
+          }
         },
 
         toggleSlidePane = function() {
@@ -76,10 +81,22 @@ define([
               top = (offset === 0) ? -38 : 0;
 
           slidingPane.velocity({ top: top }, { duration: 200 });
+        },
+
+        onShowDetails = function(e) {
+          var col = jQuery(e.target).closest('.col'),
+              facet = col.data('facet');
+
+          // TODO dummy
+          facetChart.toggle();
         };
 
     typeGraph.click(toggleSlidePane);
+
     typeFacet.on('setFilter', this.forwardEvent('setFilter'));
+    facetChart.on('setFilter', this.forwardEvent('setFilter'));
+
+    el.on('click', '.col', onShowDetails);
 
     this.update = update;
 

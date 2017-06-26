@@ -372,6 +372,9 @@ require([
         },
 
         onSetFilter = function(f) {
+
+          console.log(f);
+          
           // Convert to key/value format required by state
           var asFilterSetting = {};
           asFilterSetting[f.filter] = f.values.map(function(v) { return v.identifier; });
