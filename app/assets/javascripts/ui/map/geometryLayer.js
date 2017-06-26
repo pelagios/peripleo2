@@ -8,7 +8,7 @@ define([
 
       MIN_MARKER_SIZE = 4;
 
-  var TopPlacesLayer = function(map) {
+  var GeometryLayer = function(map) {
 
     var self = this,
 
@@ -102,10 +102,43 @@ define([
           });
         },
 
-        update = function(topPlaces) {
-          computeMarkerScaleFn(topPlaces);
+        /**
+         * Merges the geometries of the search results and top_places
+         *
+         * TODO properly support non-place items with geometry
+         */
+        mergeGeometries = function(results) {
+          var itemsWithGeometry = results.items.filter(function(item) {
+                // Skips all items without geometries
+                return item.representative_point;
+              }),
+
+              // Shorthand so we can quickly test which places exist in top_places
+              topPlaceIds = results.top_places.map(function(p) { return p.doc_id; }),
+
+              // Clone top_places
+              merged = results.top_places.map(function(p) {
+                return jQuery.extend(true, {}, p);
+              });
+
+          itemsWithGeometry.forEach(function(item) {
+            var existsIdx = topPlaceIds.indexOf(item.doc_id);
+            if (existsIdx < 0)
+              // Item is not already in top_places - add to end of array
+              merged.push(jQuery.extend(true, {},  item, { result_count: 0 }));
+            else
+              // Item is in top_places already - increment result_count
+              merged[existsIdx].result_count += 1;
+          });
+
+          return merged;
+        },
+
+        update = function(results) {
+          var placeCounts = mergeGeometries(results);
+          computeMarkerScaleFn(placeCounts);
           clearLayer();
-          topPlaces.forEach(createMarker);
+          placeCounts.forEach(createMarker);
         },
 
         selectByURIs = function(uris) {
@@ -130,8 +163,8 @@ define([
 
     HasEvents.apply(this);
   };
-  TopPlacesLayer.prototype = Object.create(HasEvents.prototype);
+  GeometryLayer.prototype = Object.create(HasEvents.prototype);
 
-  return TopPlacesLayer;
+  return GeometryLayer;
 
 });

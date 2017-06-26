@@ -1,12 +1,12 @@
 define([
   'ui/common/hasEvents',
   'ui/common/itemUtils',
-  'ui/map/itemLayer',
-  'ui/map/layerSwitcher',
-  'ui/map/topPlacesLayer'
-], function(HasEvents, ItemUtils, ItemLayer, LayerSwitcher, TopPlacesLayer) {
+  'ui/map/baselayerSwitcher',
+  'ui/map/geometryLayer'
+], function(HasEvents, ItemUtils, BaseLayerSwitcher, GeometryLayer) {
 
   // TODO can we make these configurable? Cf. E-ARK demo (where we used a JSON file)
+  // TODO move these into BaseLayerSwitcher?
   var BASE_LAYERS = {
 
         DARE   : L.tileLayer('http://pelagios.org/tilesets/imperium/{z}/{x}/{y}.png', {
@@ -56,11 +56,9 @@ define([
             '</div>' +
           '</div>').appendTo(document.body),
 
-        itemLayer = new ItemLayer(map),
+        geometryLayer = new GeometryLayer(map),
 
-        topPlacesLayer = new TopPlacesLayer(map),
-
-        layerSwitcher = new LayerSwitcher(),
+        baseLayerSwitcher = new BaseLayerSwitcher(),
 
         btnFilterByView = controlsEl.find('.filter-by-viewport'),
         btnLayers       = controlsEl.find('.layers'),
@@ -71,7 +69,7 @@ define([
         isAutoFit = false,
 
         fitBounds = function() {
-          var topPlacesBounds = topPlacesLayer.getBounds();
+          var topPlacesBounds = geometryLayer.getBounds();
 
           // TODO get item bounds + compute union
           if (topPlacesBounds.isValid()) {
@@ -111,14 +109,8 @@ define([
 
         // We're stopping event propagation on markers, so this click is on the basemap - deselect!
         onClick = function(e) {
-          topPlacesLayer.clearSelection();
+          geometryLayer.clearSelection();
           self.fireEvent('selectPlace');
-        },
-
-        setSearchResponse = function(searchResponse) {
-          itemLayer.update(searchResponse.items);
-          if (searchResponse.top_places)
-            topPlacesLayer.update(searchResponse.top_places);
         },
 
         setState = function(state) {
@@ -135,7 +127,7 @@ define([
           // TODO - what if the places are not in the topPlaceLayer yet (happens for autosuggest selections!)
           // TODO - the item may have geometry itself
 
-          // topPlacesLayer.selectByURIs(placeURIs);
+          // geometryLayer.selectByURIs(placeURIs);
         },
 
         onToggleFilterByView = function() {
@@ -148,10 +140,10 @@ define([
           self.fireEvent('filterByViewport', !isEnabled);
         };
 
-    layerSwitcher.on('changeLayer', onChangeLayer);
+    baseLayerSwitcher.on('changeLayer', onChangeLayer);
 
     btnFilterByView.click(onToggleFilterByView);
-    btnLayers.click(function() { layerSwitcher.open(); });
+    btnLayers.click(function() { baseLayerSwitcher.open(); });
     btnZoomIn.click(function() { map.zoomIn(); });
     btnZoomOut.click(function() { map.zoomOut(); });
 
@@ -159,11 +151,11 @@ define([
     map.on('click', onClick);
 
     // Forward selections up the hierarchy chain
-    topPlacesLayer.on('select', this.forwardEvent('selectPlace'));
+    geometryLayer.on('select', this.forwardEvent('selectPlace'));
 
     this.fitBounds = fitBounds;
     this.setState = setState;
-    this.setSearchResponse = setSearchResponse;
+    this.setSearchResponse = geometryLayer.update;
     this.setSelectedItem = setSelectedItem;
 
     HasEvents.apply(this);

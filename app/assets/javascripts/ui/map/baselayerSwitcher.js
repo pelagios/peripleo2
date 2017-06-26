@@ -1,6 +1,6 @@
 define(['ui/common/hasEvents'], function(HasEvents) {
 
-  var LayerSwitcher = function() {
+  var BaseLayerSwitcher = function() {
 
     var self = this,
 
@@ -81,8 +81,8 @@ define(['ui/common/hasEvents'], function(HasEvents) {
 
     HasEvents.apply(this);
   };
-  LayerSwitcher.prototype = Object.create(HasEvents.prototype);
+  BaseLayerSwitcher.prototype = Object.create(HasEvents.prototype);
 
-  return LayerSwitcher;
+  return BaseLayerSwitcher;
 
 });

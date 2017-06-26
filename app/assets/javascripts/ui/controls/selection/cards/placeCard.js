@@ -11,7 +11,7 @@ define([
       };
 
   var PlaceCard  = function(parentEl, place, args) {
-    
+
     var infoEl = jQuery(
           '<div class="item-info">' +
             '<h3 class="item-title"></h3>' +
@@ -71,12 +71,14 @@ define([
             referencesEl.append('No items link here');
           }
 
+          /*
           if (related.length > 0)
             referencesEl.append(
               '·<span class="related-entities">' +
                   '<span class="icon">&#xf140;</span>' +
                   '<a href="#">' + related.length + ' related places</a>' +
                 '</span>');
+         */
         };
 
     renderInfo();

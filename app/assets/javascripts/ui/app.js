@@ -161,7 +161,7 @@ require([
                     references   : references,
                     resultCounts : resultCounts
                   });
-                  
+
                   searchPanel.setLoading(false);
 
                   // TODO currentSelection = { item: item, references: references }
@@ -195,17 +195,10 @@ require([
                     },
 
                     setSelection = function(results) {
-                      var resultsAt = results.total - 1; // We don't want to count the place itself
-
-                          // related = results.top_places.filter(function(p) {
-                            // Again, count only the other places
-                            // return p.doc_id !== place.doc_id;
-                          // });
-
                       // TODO redundancy with selectObject!
                       state.setSelectedItem(place);
                       resultList.setSelectedItem(place);
-                      selectionPanel.show(place, { results: resultsAt, relatedPlaces: [] });
+                      selectionPanel.show(place, { results: results.total, relatedPlaces: results.top_places });
                       // TODO currentSelection = { item: item, references: references }
                       currentSelection = place;
 
@@ -284,19 +277,29 @@ require([
         },
 
         onSelectMapMarker = function(place) {
-          if (place) {
-            searchPanel.setLoading(true);
-            var uri = ItemUtils.getURIs(place)[0],
-                filter = { places : [ uri ] };
+          var selectPlace = function() {
+                onSelectItem(place);
+              },
 
-            return state.updateFilters(filter, { pushState: false })
-              .done(function(results) {
-                state.updateFilters({ places: false }, NOOP);
-                onSelectItem(results.items[0], place);
-              });
-          } else {
+              selectFirstResultAt = function() {
+                searchPanel.setLoading(true);
+                var uri = ItemUtils.getURIs(place)[0],
+                    filter = { places : [ uri ] };
+
+                return state.updateFilters(filter, { pushState: false })
+                  .done(function(results) {
+                    state.updateFilters({ places: false }, NOOP);
+                    onSelectItem(results.items[0], place);
+                  });
+              };
+
+          if (place)
+            if (place.result_count === 0)
+              selectPlace();
+            else
+              selectFirstResultAt();
+          else
             deselect();
-          }
         },
 
         /** An identifier was selected (e.g. via suggestions) - fetch item **/

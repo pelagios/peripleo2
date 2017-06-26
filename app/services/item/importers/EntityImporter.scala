@@ -25,14 +25,7 @@ class EntityImporter(itemService: ItemService, itemType: ItemType) extends BaseI
       throw new Exception("Not a valid entity item type: " + itemType)
   }
   
-  override protected def importRecord(record: ItemRecord) = {
-    // Due to the way indexing works, entities contain a single reference to themselves
-    val ref = UnboundReference(
-      record.uri,
-      REFERENCE_TYPE,
-      record.uri, None, None, None, None)
-      
-    super.importRecord((record, Seq(ref)))
-  }
+  override protected def importRecord(record: ItemRecord) =
+    super.importRecord((record, Seq.empty[UnboundReference]))
   
 }
