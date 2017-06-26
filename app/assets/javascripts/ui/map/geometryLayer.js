@@ -114,12 +114,12 @@ define([
               }),
 
               // Shorthand so we can quickly test which places exist in top_places
-              topPlaceIds = results.top_places.map(function(p) { return p.doc_id; }),
+              topPlaceIds = (results.top_places) ?
+                results.top_places.map(function(p) { return p.doc_id; }) : [],
 
               // Clone top_places
-              merged = results.top_places.map(function(p) {
-                return jQuery.extend(true, {}, p);
-              });
+              merged = (results.top_places) ?
+                results.top_places.map(function(p) { return jQuery.extend(true, {}, p); }) : [];
 
           itemsWithGeometry.forEach(function(item) {
             var existsIdx = topPlaceIds.indexOf(item.doc_id);
@@ -135,10 +135,15 @@ define([
         },
 
         update = function(results) {
-          var placeCounts = mergeGeometries(results);
-          computeMarkerScaleFn(placeCounts);
-          clearLayer();
-          placeCounts.forEach(createMarker);
+          var hasPlaceFilter = results.request_args.filters.places;
+
+          // Don't update the map if there's a place filter
+          if (!hasPlaceFilter) {
+            var placeCounts = mergeGeometries(results);
+            computeMarkerScaleFn(placeCounts);
+            clearLayer();
+            placeCounts.forEach(createMarker);
+          }
         },
 
         selectByURIs = function(uris) {
