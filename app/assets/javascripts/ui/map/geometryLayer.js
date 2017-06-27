@@ -135,7 +135,8 @@ define([
         },
 
         update = function(results) {
-          var hasPlaceFilter = results.request_args.filters.places;
+          var hasPlaceFilter = (results.request_args.filters) ?
+                results.request_args.filters.places : false;
 
           // Don't update the map if there's a place filter
           if (!hasPlaceFilter) {

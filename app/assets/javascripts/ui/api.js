@@ -28,8 +28,21 @@ define([], function() {
      * - datasets = identifier
      */
     getDatasetInfo : function(identifier) {
-      var url = '/api/search?limit=20&facets=true&top_places=true&time_histogram=true&datasets=' + identifier;
-      return jQuery.getJSON(url);
+      var url = '/api/search?limit=20&facets=true&top_places=true&time_histogram=true&datasets=' + identifier,
+          requestArgs = {
+            filters:   { datasets: [ identifier ] },
+            timerange: { from: false, to : false },
+            settings:  {
+              timeHistogram   : true,
+              termAggregations: true,
+              topPlaces       : true
+            }
+          };
+
+      return jQuery.getJSON(url).then(function(response) {
+        response.request_args = requestArgs;
+        return response;
+      });
     },
 
     /**
