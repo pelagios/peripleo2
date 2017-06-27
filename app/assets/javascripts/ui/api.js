@@ -29,6 +29,9 @@ define([], function() {
      */
     getDatasetInfo : function(identifier) {
       var url = '/api/search?limit=20&facets=true&top_places=true&time_histogram=true&datasets=' + identifier,
+
+          // 'Fake' request args, so that this requests behaves just like a standard search
+          // request made through application state
           requestArgs = {
             filters:   { datasets: [ identifier ] },
             timerange: { from: false, to : false },

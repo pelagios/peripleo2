@@ -1,5 +1,6 @@
 .facets-pane {
 
+  @icon-color:lighten(@light-grey-type, 10%);
   @clickbuffer:6px;
 
   text-align:center;
@@ -49,8 +50,6 @@
   .summary-row {
     height:38px;
     white-space:nowrap;
-
-    @icon-color:lighten(@light-grey-type, 10%);
 
     ul {
       padding:0;
@@ -128,50 +127,55 @@
 
   .chart-section {
     border-bottom:1px solid @light-grey-border;
-    padding:2px 0 4px 0;
+    padding-left:80px;
     position:relative;
-    text-align:center;
+    height:64px;
 
-    ul {
-      margin:0 auto;
-      padding:0;
-      list-style-type:none;
-      display:inline-block;
-      text-align:left;
-      min-width:50%;
-    }
+    .donut {
+      position:absolute;
+      top:0;
+      left:10px;
+      width:50px;
+      height:50px;
 
-    li.meter {
-      margin:0;
-      color:@dark-grey-type;
-      cursor:pointer;
-      padding-bottom:7px;
-
-      .count {
-        position:relative;
-        top:1px;
-        width:45px;
-        padding:0 4px;
-        text-align:right;
+      .icon {
+        position:absolute;
         font-size:14px;
-        font-weight:500;
-        display:inline-block;
-      }
-
-      .label {
-        line-height:18px;
-        min-width:5px;
-        display:inline-block;
-        overflow:visible;
-        white-space:nowrap;
-        border-bottom:1px solid darken(@light-grey-type, 15%);
+        color:@icon-color;
+        top:19px;
+        left:28px;
       }
 
     }
 
-    li.meter:hover .label {
+    table {
+      margin:6px 0;
+      text-align:left;
+      border-collapse:collapse;
+    }
+
+    tr {
+      cursor:pointer;
+      vertical-align:bottom;
+    }
+
+    td {
+      color:@dark-grey-type;
+      font-size:13px;
+    }
+
+    td.count {
+      font-size:14px;
+      font-weight:500;
+      text-align:right;
+    }
+
+    td.label {
+      padding-left:5px;
+    }
+
+    tr:hover td.label {
       color:@ocean-dark;
-      border-bottom-color:@ocean;
     }
 
   }
