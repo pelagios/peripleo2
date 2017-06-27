@@ -37,9 +37,15 @@ object PelagiosAnnotationCrosswalk {
 
         val references = thing.annotations.flatMap { _.places.headOption.map { placeUri =>
           val uri = ItemRecord.normalizeURI(placeUri)
+          
+          // TODO temporary hack for Europeana data
+          val refType =
+            if (uri.contains("data.europeana.eu/agent")) ReferenceType.PERSON
+            else ReferenceType.PLACE
+          
           UnboundReference(
             thing.uri,
-            ReferenceType.PLACE,
+            refType,
             uri,
             None, // relation
             None, // homepage
