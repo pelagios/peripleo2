@@ -77,17 +77,13 @@ define([
           var places =
                 (args.selected_via) ?
                   [{ title: args.selected_via.title, identifiers: args.selected_via.is_conflation_of[0].identifiers }] :
-                  args.references.PLACE;
+                  args.references.PLACE,
 
-              head = (places && places.length > 3) ? places.slice(0, 3) : places;
+              head = (places && places.length > 3) ? places.slice(0, 3) : places,
 
-          /* if (args.selected_via) {
-            // TODO quick hack
-            referencesEl.append(
-              '<p class="ref-place">' +
-                '<span class="title"><a href="#">' + args.selected_via.title + '</a></span>' +
-              '</p>');
-          } else*/ if (head) {
+              people = args.references.PERSON;
+
+          if (head) {
             head.forEach(function(place) {
               var counts = jQuery.grep(args.resultCounts, function(r) {
                     return place.identifiers.indexOf(r.identifier) > -1;
@@ -113,7 +109,7 @@ define([
                   })(),
 
                   refEl = jQuery(
-                    '<p class="ref-place">' +
+                    '<p class="ref place">' +
                       '<span class="title"><a href="#">' + place.title + '</a></span>' +
                     '</p>');
 
@@ -121,6 +117,14 @@ define([
                 refEl.append(moreResultsEl);
 
               referencesEl.append(refEl);
+            });
+          } else if (people) {
+            // TODO hack!
+            people.forEach(function(p) {
+              referencesEl.append(
+                '<p class="ref person">' +
+                  '<span class="title"><a href="#" class="destination" data-id="' + p.identifiers[0] + '">' + p.title + '</a></span>' +
+                '</p>');
             });
           }
         };

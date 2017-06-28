@@ -4,7 +4,7 @@ define([
 ], function(Formatting, ItemUtils) {
 
   var PersonCard  = function(parentEl, person, args) {
-    
+
     var infoEl = jQuery(
           '<div class="item-info">' +
             '<h3 class="item-title"></h3>' +
@@ -19,6 +19,9 @@ define([
         namesEl       = infoEl.find('.item-names'),
         tempBoundsEl = infoEl.find('.item-temporal-bounds'),
         descriptionEl = infoEl.find('.item-description'),
+
+        referencesEl =
+          jQuery('<div class="person references"><span class="icon">&#xf0c1;</span></div>').appendTo(parentEl),
 
         render = function() {
           var identifiers = ItemUtils.getURIs(person).map(function(uri) { return ItemUtils.parseEntityURI(uri); }),
@@ -45,9 +48,25 @@ define([
 
           if (descriptions.length > 0)
             descriptionEl.html(descriptions[0]);
+        },
+
+        renderRelations = function() {
+          if (args.results > 0) {
+            refEl = jQuery(
+              '<span class="inbound-links">' +
+                '<a class="local-search" href="#">' + Formatting.formatNumber(args.results) + ' items</a> link to this person' +
+              '</span>');
+
+            refEl.find('a').data('at', person);
+
+            referencesEl.append(refEl);
+          } else {
+            referencesEl.append('No items link here');
+          }
         };
 
     render();
+    renderRelations();
   };
 
   return PersonCard;

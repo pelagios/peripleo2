@@ -211,8 +211,39 @@ require([
               },
 
               selectPerson = function(person) {
-                // TODO should look like selectPeriod instead?
-                selectObject(person);
+                // selectObject(person);
+
+                // TODO total redundancy with selectPlace - clean up
+                var fetchRelated  = function() {
+                      // Transient search, filtered by URI of the place, but without queryphrase
+                      var filter = { places: [ uri ] },
+                          origQuery = state.getQueryPhrase();
+
+                      state.setQueryPhrase(false, NOOP);
+                      return state.updateFilters(filter, { pushState: false })
+                        .then(function(results) {
+                          // Change back to original settings
+                          state.updateFilters({ places: false }, NOOP);
+                          state.setQueryPhrase(origQuery, NOOP);
+                          return results;
+                        });
+                    },
+
+                    setSelection = function(results) {
+                      // TODO redundancy with selectObject!
+                      state.setSelectedItem(person);
+                      resultList.setSelectedItem(person);
+                      selectionPanel.show(person, { results: results.total });
+                      // TODO currentSelection = { item: item, references: references }
+                      currentSelection = person;
+
+                      // Note: selection may have happend through the map, so technically no
+                      // need for this - but the map is designed to handle this situation
+                      // map.setSelectedItem(item, references.PLACE);
+                    };
+
+                fetchRelated().done(setSelection);
+
               },
 
               selectPeriod = function(period) {
@@ -374,7 +405,7 @@ require([
         onSetFilter = function(f) {
 
           console.log(f);
-          
+
           // Convert to key/value format required by state
           var asFilterSetting = {};
           asFilterSetting[f.filter] = f.values.map(function(v) { return v.identifier; });

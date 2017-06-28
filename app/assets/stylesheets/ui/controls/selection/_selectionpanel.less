@@ -89,7 +89,7 @@
 
   .item.references {
 
-    .ref-place {
+    .ref {
 
       a {
         text-decoration:none;
@@ -110,20 +110,22 @@
 
     }
 
-    .ref-place {
+    .ref {
       margin:0;
     }
 
-    .ref-place::before {
+    .ref::before {
       font-family:FontAwesome;
       font-size:14px;
-      content:'\f140';
       padding-right:5px;
     }
 
+    .ref.place::before { content:'\f140'; }
+    .ref.person::before { content:'\f007'; }
+
   }
 
-  .place.references {
+  .references {
     overflow:hidden;
     white-space:nowrap;
     text-overflow:ellipsis;
