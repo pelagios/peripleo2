@@ -118,7 +118,9 @@ define([
 
               referencesEl.append(refEl);
             });
-          } else if (people) {
+          }
+
+          if (people) {
             // TODO hack!
             people.forEach(function(p) {
               referencesEl.append(
