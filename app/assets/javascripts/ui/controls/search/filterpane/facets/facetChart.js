@@ -3,9 +3,11 @@ define([
   'ui/common/formatting'
 ], function(HasEvents, Formatting) {
 
-  var SLIDE_DURATION = 240;
+  var SLIDE_DURATION = 240,
 
-  var TEMPLATE = '<tr><td class="count"></td><td class="label"></td></tr>';
+      SEGMENT_COLORS = [ '#70a8dc', '#9cc1d7', '#377bbc' ],
+
+      ROW_TEMPLATE = '<tr><td class="count"></td><td class="label"></td></tr>';
 
   var FacetChart = function(parentEl) {
 
@@ -17,10 +19,6 @@ define([
               '<svg width="100%" height="100%" viewBox="0 0 42 42" class="donut">' +
                 '<circle class="donut-hole" cx="21" cy="21" r="15.91549430918954" fill="#f5f7f7"></circle>' +
                 '<circle class="donut-ring" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#d8d9db" stroke-width="5"></circle>' +
-
-                '<circle class="donut-segment" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#70a8dc" stroke-width="5" stroke-dasharray="40 60" stroke-dashoffset="25"></circle>' +
-                '<circle class="donut-segment" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#9cc1d7" stroke-width="5" stroke-dasharray="20 80" stroke-dashoffset="85"></circle>' +
-                '<circle class="donut-segment" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#377bbc" stroke-width="5" stroke-dasharray="30 70" stroke-dashoffset="65"></circle>' +
               '</svg>' +
               '<div class="icon">&#xf187;</div>' +
             '</div>' +
@@ -29,14 +27,46 @@ define([
 
         tableEl = el.find('table'),
 
+        /**
+         * Approach taken from
+         * https://medium.com/@heyoka/scratch-made-svg-donut-pie-charts-in-html5-2c587e935d72
+         */
+        renderSegments = function(percentages) {
+          var svg = el.find('svg')[0];
+
+          el.find('.donut-segment').remove();
+          percentages.reduce(function(offset, pcnt, idx) {
+            var color = SEGMENT_COLORS[idx];
+
+                // SVG is namespaced, so we can't just use jQuery
+                circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+
+            circle.setAttribute('class', 'donut-segment');
+            circle.setAttribute('cx', 21);
+            circle.setAttribute('cy', 21);
+            circle.setAttribute('r', 15.91549430918954);
+            circle.setAttribute('fill', 'transparent');
+            circle.setAttribute('stroke', color);
+            circle.setAttribute('stroke-width', 5);
+            circle.setAttribute('stroke-dasharray', pcnt + ' ' + (100 - pcnt));
+            circle.setAttribute('stroke-dashoffset', offset);
+
+            svg.appendChild(circle);
+
+            offset -= pcnt;
+            if (offset < 0) offset += 100;
+            return offset;
+          }, 25); // Initial offset 25% counter-clockwise = 12 o'clock position
+        },
+
         getLabel = function(path) {
           return path.map(function(segment) {
             return segment.label;
           }).join(' > ');
         },
 
-        createBar = function(bucket, percent) {
-          var el = jQuery(TEMPLATE),
+        createBar = function(bucket) {
+          var el = jQuery(ROW_TEMPLATE),
               countEl = el.find('.count'),
               labelEl = el.find('.label');
 
@@ -55,13 +85,21 @@ define([
         },
 
         update = function(buckets) {
-          var maxCount = (buckets.length > 0) ? buckets[0].count : 0;
+          var totalCount = buckets.reduce(function(total, bucket) {
+                return total + bucket.count;
+              }, 0),
+
+              percentages = buckets.slice(0, 3).map(function(bucket) {
+                return Math.round(100 * bucket.count / totalCount);
+              });
 
           tableEl.empty();
-          buckets.slice(0, 3).forEach(function(bucket) {
-            var pcnt = 100 * bucket.count / maxCount;
-            tableEl.append(createBar(bucket, pcnt));
+          buckets/*.slice(0, 3)*/.forEach(function(bucket) {
+            // var pcnt = 100 * bucket.count / maxCount;
+            tableEl.append(createBar(bucket));
           });
+
+          renderSegments(percentages);
         },
 
         onSetFilter = function(e) {
