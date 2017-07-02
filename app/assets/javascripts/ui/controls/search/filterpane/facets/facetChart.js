@@ -7,14 +7,21 @@ define([
 
       SEGMENT_COLORS = [ '#70a8dc', '#9cc1d7', '#377bbc' ],
 
-      ROW_TEMPLATE = '<tr><td class="count"></td><td class="label"></td></tr>';
+      ROW_TEMPLATE = '<tr><td class="count"></td><td class="label"></td></tr>',
+
+      /** Shorthand to fetch labels from a path **/
+      toLabel = function(path) {
+        return path.map(function(segment) {
+          return '<span class="seg">' + segment.label + '</span>';
+        }).join(' ');
+      };
 
   var FacetChart = function(parentEl) {
 
     var self = this,
 
         el = jQuery(
-          '<div>' +
+          '<div class="chart-container">' +
             '<div class="donut">' +
               '<svg width="100%" height="100%" viewBox="0 0 42 42" class="donut">' +
                 '<circle class="donut-hole" cx="21" cy="21" r="15.91549430918954" fill="#f5f7f7"></circle>' +
@@ -31,7 +38,7 @@ define([
          * Approach taken from
          * https://medium.com/@heyoka/scratch-made-svg-donut-pie-charts-in-html5-2c587e935d72
          */
-        renderSegments = function(percentages) {
+        renderDonut = function(percentages) {
           var svg = el.find('svg')[0];
 
           el.find('.donut-segment').remove();
@@ -59,28 +66,32 @@ define([
           }, 25); // Initial offset 25% counter-clockwise = 12 o'clock position
         },
 
-        getLabel = function(path) {
-          return path.map(function(segment) {
-            return segment.label;
-          }).join(' > ');
-        },
+        renderTable = function(buckets) {
+          var renderRow = function(bucket) {
+                var el = jQuery(ROW_TEMPLATE);
 
-        createBar = function(bucket) {
-          var el = jQuery(ROW_TEMPLATE),
-              countEl = el.find('.count'),
-              labelEl = el.find('.label');
+                el.data('path', bucket.path);
+                el.find('.count').html(Formatting.formatNumber(bucket.count));
+                el.find('.label').html(toLabel(bucket.path));
 
-          el.data('path', bucket.path);
-          countEl.html(Formatting.formatNumber(bucket.count));
-          labelEl.html(getLabel(bucket.path));
-          return el;
-        },
+                return el;
+              };
 
-        toggle = function() {
-          if (parentEl.is(':visible'))
-            parentEl.velocity('slideUp', { duration: SLIDE_DURATION });
-          else
-            parentEl.velocity('slideDown', { duration: SLIDE_DURATION });
+          tableEl.empty();
+
+          // Only show top three buckets
+          buckets.slice(0, 3).forEach(function(bucket) {
+            tableEl.append(renderRow(bucket));
+          });
+
+          if (buckets.length > 3)
+            tableEl.append(
+              '<tr>' +
+                '<td></td>' +
+                '<td><span class="more">+ ' +
+                  (buckets.length - 3) + ' more' +
+                '</span></td>' +
+              '</tr>');
         },
 
         update = function(buckets) {
@@ -90,28 +101,17 @@ define([
 
               percentages = buckets.slice(0, 3).map(function(bucket) {
                 return Math.round(100 * bucket.count / totalCount);
-              }),
+              });
 
-              renderTable = function() {
-                tableEl.empty();
+          renderTable(buckets);
+          renderDonut(percentages);
+        },
 
-                // Only show top three buckets
-                buckets.slice(0, 3).forEach(function(bucket) {
-                  tableEl.append(createBar(bucket));
-                });
-
-                if (buckets.length > 3)
-                  tableEl.append(
-                    '<tr>' +
-                      '<td></td>' +
-                      '<td><span class="more">+ ' +
-                        (buckets.length - 3) + ' more' +
-                      '</span></td>' +
-                    '</tr>');
-              };
-
-          renderTable();
-          renderSegments(percentages);
+        toggle = function() {
+          if (parentEl.is(':visible'))
+            parentEl.velocity('slideUp', { duration: SLIDE_DURATION });
+          else
+            parentEl.velocity('slideDown', { duration: SLIDE_DURATION });
         },
 
         onSetFilter = function(e) {
@@ -122,7 +122,7 @@ define([
             filter: 'datasets', // TODO just a quick hack
             values: [{
               identifier: path[path.length - 1].id,
-              label: getLabel(path)
+              label: toLabel(path)
             }]
           });
         };
