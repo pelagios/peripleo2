@@ -73,7 +73,6 @@ define([
           el.data('path', bucket.path);
           countEl.html(Formatting.formatNumber(bucket.count));
           labelEl.html(getLabel(bucket.path));
-          // labelEl.css('width', 0.6 * percent + '%');
           return el;
         },
 
@@ -91,19 +90,32 @@ define([
 
               percentages = buckets.slice(0, 3).map(function(bucket) {
                 return Math.round(100 * bucket.count / totalCount);
-              });
+              }),
 
-          tableEl.empty();
-          buckets/*.slice(0, 3)*/.forEach(function(bucket) {
-            // var pcnt = 100 * bucket.count / maxCount;
-            tableEl.append(createBar(bucket));
-          });
+              renderTable = function() {
+                tableEl.empty();
 
+                // Only show top three buckets
+                buckets.slice(0, 3).forEach(function(bucket) {
+                  tableEl.append(createBar(bucket));
+                });
+
+                if (buckets.length > 3)
+                  tableEl.append(
+                    '<tr>' +
+                      '<td></td>' +
+                      '<td><span class="more">+ ' +
+                        (buckets.length - 3) + ' more' +
+                      '</span></td>' +
+                    '</tr>');
+              };
+
+          renderTable();
           renderSegments(percentages);
         },
 
         onSetFilter = function(e) {
-          var li = jQuery(e.target).closest('li'),
+          var li = jQuery(e.target).closest('tr'),
               path = li.data('path');
 
           self.fireEvent('setFilter', {
@@ -115,7 +127,7 @@ define([
           });
         };
 
-    parentEl.on('click', 'ul', onSetFilter);
+    parentEl.on('click', 'tr', onSetFilter);
 
     this.toggle = toggle;
     this.update = update;
