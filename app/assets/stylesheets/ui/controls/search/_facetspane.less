@@ -127,55 +127,69 @@
 
   .chart-section {
     border-bottom:1px solid @light-grey-border;
-    padding-left:80px;
     position:relative;
     height:64px;
+    text-align:center;
 
-    .donut {
-      position:absolute;
-      top:0;
-      left:10px;
-      width:50px;
-      height:50px;
+    .chart-container {
 
-      .icon {
-        position:absolute;
-        font-size:14px;
-        color:@icon-color;
-        top:19px;
-        left:28px;
+      .donut {
+        display:inline-block;
+        width:50px;
+        height:50px;
+        position:relative;
+
+        .icon {
+          position:absolute;
+          font-size:14px;
+          color:@icon-color;
+          top:18px;
+          left:18px;
+        }
+
       }
 
-    }
+      table {
+        display:inline-block;
+      }
 
-    table {
-      margin:6px 0;
-      text-align:left;
-      border-collapse:collapse;
-    }
+      tr {
+        cursor:pointer;
+        vertical-align:bottom;
+      }
 
-    tr {
-      cursor:pointer;
-      vertical-align:bottom;
-    }
+      td {
+        color:@dark-grey-type;
+        font-size:13px;
+      }
 
-    td {
-      color:@dark-grey-type;
-      font-size:13px;
-    }
+      td.count {
+        font-size:14px;
+        font-weight:500;
+        text-align:right;
+      }
 
-    td.count {
-      font-size:14px;
-      font-weight:500;
-      text-align:right;
-    }
+      td.label {
+        padding-left:5px;
 
-    td.label {
-      padding-left:5px;
-    }
+        .seg::after {
+          font-family:FontAwesome;
+          font-size:14px;
+          content:'\f105';
+          padding:0 3px 0 4px;
+        }
 
-    tr:hover td.label {
-      color:@ocean-dark;
+        .seg:last-child:after {
+          display:none;
+          content:''
+        }
+
+      }
+
+      tr:hover td.label {
+        color:@ocean-dark;
+      }
+
     }
 
   }
