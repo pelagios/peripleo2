@@ -128,15 +128,21 @@
   .chart-section {
     border-bottom:1px solid @light-grey-border;
     position:relative;
-    height:64px;
-    text-align:center;
+    padding-bottom:5px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
 
     .chart-container {
+      display:flex;
+      justify-content:center;
+      align-items:center;
 
       .donut {
         display:inline-block;
         width:50px;
         height:50px;
+        padding-right:5px;
         position:relative;
 
         .icon {
@@ -188,6 +194,14 @@
 
       tr:hover td.label {
         color:@ocean-dark;
+      }
+
+      td.more {
+        color:@ocean-dark;
+      }
+
+      tr:hover td.more .label {
+        text-decoration:underline;
       }
 
     }

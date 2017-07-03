@@ -88,9 +88,9 @@ define([
             tableEl.append(
               '<tr>' +
                 '<td></td>' +
-                '<td><span class="more">+ ' +
-                  (buckets.length - 3) + ' more' +
-                '</span></td>' +
+                '<td class="more">+ ' +
+                  '<span class="label">' + (buckets.length - 3) + ' more</span>' +
+                '</td>' +
               '</tr>');
         },
 
