@@ -145,7 +145,9 @@ trait ReferenceService { self: ItemService =>
             queryStringQuery(query).field("context")
           )
         }
-      }
+      } highlighting (
+        highlight field "context" fragmentSize 200
+      )
     } map { response =>
       Page(response.tookInMillis, response.totalHits, offset, limit, response.as[Reference])
     }
