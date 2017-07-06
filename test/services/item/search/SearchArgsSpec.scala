@@ -27,6 +27,7 @@ class SearchArgsSpec extends PlaySpec {
          "time_histogram" -> Seq("false"))
        
        val parsed = SearchArgs.fromQueryString(validParams)
+              
        parsed.query mustBe Some("athens")
        parsed.offset mustBe 10
        parsed.limit mustBe 200
@@ -37,7 +38,7 @@ class SearchArgsSpec extends PlaySpec {
          DateRangeFilter.INTERSECT
        ))
        
-       parsed.filters.placeFilter mustBe Some(TermFilter(Seq("http://pleiades.stoa.org/places/579885"), TermFilter.ONLY))       
+       parsed.filters.placeFilter mustBe Some(PlaceFilter(Seq("http://pleiades.stoa.org/places/579885"), TermFilter.ONLY))
        parsed.filters.languageFilter mustBe Some(TermFilter(Seq("la", "de"), TermFilter.ONLY))
        parsed.filters.categoryFilter mustBe Some(TermFilter(Seq("archaeology"), TermFilter.EXCLUDE))
        parsed.settings.topRelated mustBe true

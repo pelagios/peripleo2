@@ -29,17 +29,6 @@ class ReferenceSpec extends PlaySpec with TestHelpers {
     
   }
   
-  "Sample place Reference" should {
-    
-    "be properly created from JSON" in {
-       val placeReferences = loadJSON[Seq[Reference]]("services/item/place/place_references.json")
-       placeReferences.size mustBe 1
-       placeReferences.head.referenceType mustBe ReferenceType.PLACE
-       placeReferences.head.relation mustBe None
-    }
-    
-  }
-  
   "JSON serialization/parsing roundtrip" should {
     
     "yield an equal reference" in {

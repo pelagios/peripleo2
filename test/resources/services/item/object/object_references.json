@@ -1,4 +1,5 @@
 [{
+  "parent_uri": "http://numismatics.org/collection/1991.60.36",
   "reference_type": "PLACE",
   "reference_to": {
     "uri": "http://pleiades.stoa.org/places/589872",
@@ -6,6 +7,7 @@
   },
   "relation": "FINDSPOT"
 },{
+  "parent_uri": "http://numismatics.org/collection/1991.60.36",
   "reference_type": "PERSON",
   "reference_to": {
     "uri": "http://collection.britishmuseum.org/resource?uri=http://collection.britishmuseum.org/id/person-institution/56988",
