@@ -67,10 +67,7 @@ define([
         },
 
         renderRelated = function() {
-          var places =
-                (args.selected_via) ?
-                  [{ title: args.selected_via.title, identifiers: args.selected_via.is_conflation_of[0].identifiers }] :
-                  args.related.PLACE,
+          var places = (args.selected_via) ? [ args.selected_via ] : args.related.PLACE,
 
               head = (places && places.length > 3) ? places.slice(0, 3) : places,
 

@@ -306,6 +306,7 @@ require([
         },
 
         onSelectMapMarker = function(place) {
+
           var selectPlace = function() {
                 onSelectItem(place);
               },
