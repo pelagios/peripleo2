@@ -57,7 +57,7 @@ GET     /api/items/:id                               controllers.api.ItemAPICont
 # Restricted JSON API
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-GET     /api/admin/tasks                             controllers.api.admin.TaskAPIController.list
+GET     /api/admin/tasks                             controllers.api.admin.TaskAPIController.list(type: Option[String], offset: Int ?= 0, limit: Int ?= 20)
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Application root

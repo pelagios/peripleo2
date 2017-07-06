@@ -18,15 +18,8 @@ class TaskAPIController @Inject() (
   val taskService: TaskService,
   implicit val ctx: ExecutionContext
 ) extends BaseAuthController with AuthElement with HasPrettyPrintJSON {
-  
-  private def getArg(key: String)(implicit request: Request[AnyContent]): Option[String] =
-    request.queryString.get(key).flatMap(_.headOption)
-  
-  def list() = AsyncStack(AuthorityKey -> Role.ADMIN) { implicit request =>
-    val offset = getArg("offset").map(_.toInt).getOrElse(0)
-    val limit = getArg("limit").map(_.toInt).getOrElse(20)
-    val typeFilter = getArg("type")
-    
+
+  def list(typeFilter: Option[String], offset: Int, limit: Int) = AsyncStack(AuthorityKey -> Role.ADMIN) { implicit request =>
     val f = typeFilter match {
       case Some(taskType) =>
         taskService.findByType(TaskType(taskType), offset, limit)

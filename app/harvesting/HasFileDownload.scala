@@ -21,9 +21,9 @@ trait HasFileDownload { self: { val ws: WSClient } =>
   
   private val EXTENSION_BY_CONTENT_TYPE = Seq(
     "application/rdf+xml" -> "rdf",
-    "text/xml" -> "rdf",
-    "text/turtle" -> "ttl",
-    "text/n3" -> "n3",
+    "text/xml"         -> "rdf",
+    "text/turtle"      -> "ttl",
+    "text/n3"          -> "n3",
     "application/json" -> "json")
   
   // TODO if we want to compute file hashes (to check for changes) - this is probably the place to put the code
