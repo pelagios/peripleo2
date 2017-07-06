@@ -20,7 +20,7 @@ case class RichResultPage(
   
   aggregations: Seq[Aggregation],
   
-  topPlaces: Option[ResolvedTopRelated]
+  topRelated: Option[ResolvedTopRelated]
   
 )
 

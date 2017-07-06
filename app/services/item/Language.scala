@@ -31,7 +31,9 @@ object Language {
   /** Alternative builder that returns Option instead of failing on invalid input **/
   def safeParse(str: String): Option[Language] =
     Try(Language(str)) match {
-      case Success(language) => Some(language)
+      case Success(language) =>
+        Some(language)
+        
       case Failure(t) =>
         Logger.warn("Error parsing language code: " + str)
         None
