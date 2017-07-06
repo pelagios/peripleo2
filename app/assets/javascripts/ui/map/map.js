@@ -117,10 +117,10 @@ define([
 
         },
 
-        setSelectedItem = function(item, placeReferences) {
+        setSelectedItem = function(item, relatedPlaces) {
           // The item won't necessarily have place references
-          var placeURIs = (placeReferences) ?
-                placeReferences.map(function(ref) { return ref.identifiers[0]; }) :
+          var placeURIs = (relatedPlaces) ?
+                relatedPlaces.map(function(p) { return p.is_conflation_of[0].identifiers[0]; }) :
                 [];
 
           // TODO rethink all possible situtations

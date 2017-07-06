@@ -62,7 +62,7 @@ class SearchService @Inject() (
     } start 0 limit 0 aggregations (
       // Aggregate by reference type (PLACE | PERSON | PERIOD)
       aggregation terms "by_related" field "reference_type" size 10 aggregations (
-        // Sub-aggregate by root URI
+        // Sub-aggregate by docId
         aggregation terms "by_doc_id" field "reference_to.doc_id" size ES.MAX_SIZE
       ),
       

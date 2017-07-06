@@ -24,7 +24,7 @@ define([
         referencesEl = jQuery(
           '<div class="item references"></div>').appendTo(parentEl),
 
-        // TODO we'll assume that objects only have one record for now
+        // We're assuming that, for now, objects only have one record
         record = item.is_conflation_of[0],
 
         renderInfo = function() {
@@ -70,16 +70,18 @@ define([
           var places =
                 (args.selected_via) ?
                   [{ title: args.selected_via.title, identifiers: args.selected_via.is_conflation_of[0].identifiers }] :
-                  args.references.PLACE,
+                  args.related.PLACE,
 
               head = (places && places.length > 3) ? places.slice(0, 3) : places,
 
-              people = args.references.PERSON;
+              people = args.related.PERSON;
 
           if (head) {
             head.forEach(function(place) {
-              var counts = jQuery.grep(args.resultCounts, function(r) {
-                    return place.identifiers.indexOf(r.identifier) > -1;
+              var identifiers = ItemUtils.getURIs(place),
+
+                  counts = jQuery.grep(args.relatedCounts, function(r) {
+                    return identifiers.indexOf(r.identifier) > -1;
                   }),
 
                   moreResultsEl = (function() {

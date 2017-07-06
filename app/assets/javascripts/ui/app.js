@@ -125,42 +125,40 @@ require([
                         });
                     },
 
-                    fetchReferences = API.getRelated(uri).then(function(references) {
-                      // Run filtered searches for the first two references of each type,
+                    fetchRelated = API.getRelated(uri).then(function(related) {
+                      // Run filtered searches for the first two related items of each type,
                       // so we can display info in the UI
-                      var places = (references.PLACE) ? references.PLACE.slice(0, 1) : false,
+                      var places  = (related.PLACE)  ? related.PLACE.slice(0, 1)  : false,
+                          people  = (related.PERSON) ? related.PERSON.slice(0, 1) : false,
+                          periods = (related.PERIOD) ? related.PERIOD.slice(0, 1) : false,
 
-                          fPlaceCounts; // TODO support person and period references
+                          fRelatedCounts; // TODO support person and period references
 
                       if (places) {
-                        fPlaceCounts = places.map(function(place) {
-                          return fetchResultCountForReference(place.identifiers[0]);
+                        fRelatedCounts = places.map(function(item) {
+                          var identifiers = ItemUtils.getURIs(item);
+                          return fetchResultCountForReference(identifiers[0]);
                         });
 
                         // TODO this doesn't seem to work as expected!
-                        return jQuery.when.apply(jQuery, fPlaceCounts).then(function() {
-                          return { references: references, resultCounts: arguments };
+                        return jQuery.when.apply(jQuery, fRelatedCounts).then(function() {
+                          return { related: related, relatedCounts: arguments };
                         });
                       } else {
                         return jQuery.Deferred().resolve(this).then(function() {
-                          return { references: references, resultCounts: [] };
+                          return { related: related, relatedCounts: [] };
                         });
                       }
                     });
 
-                fetchReferences.done(function(result) {
-                  var references = result.references,
-                      resultCounts = result.resultCounts;
-
+                fetchRelated.done(function(response) {
                   state.setSelectedItem(item);
                   resultList.setSelectedItem(item);
 
-                  selectionPanel.show(item, {
+                  selectionPanel.show(item, jQuery.extend({}, response, {
                     query_phrase : state.getQueryPhrase(),
-                    selected_via : opt_via_ref,
-                    references   : references,
-                    resultCounts : resultCounts
-                  });
+                    selected_via : opt_via_ref
+                  }));
 
                   searchPanel.setLoading(false);
 
@@ -169,7 +167,7 @@ require([
 
                   // Note: selection may have happend through the map, so technically no
                   // need for this - but the map is designed to handle this situation
-                  map.setSelectedItem(item, references.PLACE);
+                  map.setSelectedItem(item, response.related.PLACE);
                 });
               },
 

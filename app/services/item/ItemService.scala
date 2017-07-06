@@ -11,6 +11,7 @@ import play.api.libs.json.{ Json, JsSuccess, JsError }
 import scala.concurrent.{ ExecutionContext, Future }
 import services.{ ES, Page }
 import services.item.reference.{ Reference, ReferenceService, UnboundReference }
+import services.notification.NotificationService
 import services.task.TaskType
 
 object ItemService {
@@ -51,6 +52,7 @@ object ItemService {
 
 @Singleton
 class ItemService @Inject() (
+  val notifications: NotificationService,
   val es: ES,
   implicit val ctx: ExecutionContext
 ) extends ReferenceService {

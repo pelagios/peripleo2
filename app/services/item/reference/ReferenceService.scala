@@ -11,6 +11,7 @@ import scala.concurrent.Future
 import scala.util.Try
 import services.{ ES, Page }
 import services.item.{ Item, ItemService }
+import services.item.search.{ TopRelated, ResolvedTopRelated }
 
 trait ReferenceService { self: ItemService =>
   
@@ -145,16 +146,17 @@ trait ReferenceService { self: ItemService =>
     }
   }
 
-  def getRelated(identifier: String): Future[ReferenceStats] = {
-
-    val fStats =
+  def getRelated(identifier: String): Future[ResolvedTopRelated] = {
+    val fRelatedQuery =
       es.client execute {
         search in ES.PERIPLEO / ES.REFERENCE query {
-          hasParentQuery(ES.ITEM) query(termQuery("is_conflation_of.identifiers", identifier))
+          constantScoreQuery {
+            filter ( hasParentQuery(ES.ITEM) query(termQuery("is_conflation_of.identifiers", identifier)) )
+          }
         } start 0 limit 0 aggregations (
           // Aggregate by reference type (PLACE | PERSON | PERIOD)
-          aggregation terms "by_type" field "reference_type" aggregations (
-            // Sub-aggregate by root URI
+          aggregation terms "by_related" field "reference_type" aggregations (
+            // Sub-aggregate by docId
             aggregation terms "by_doc_id" field "reference_to.doc_id" size ES.MAX_SIZE aggregations (
               // Sub-sub-aggregate by relation
               aggregation terms "by_relation" field "relation" size 10
@@ -162,28 +164,13 @@ trait ReferenceService { self: ItemService =>
           )
         )
       } map { response =>
-
-        import scala.collection.JavaConverters._
-
-        val byType = response.aggregations.get("by_type").asInstanceOf[Terms]
-        byType.getBuckets.asScala.map { bucket =>
-          val byDocId = bucket.getAggregations.get("by_doc_id").asInstanceOf[Terms]
-          val byDocIdAsMap = byDocId.getBuckets.asScala.map { subBucket =>
-            (subBucket.getKeyAsString, subBucket.getDocCount) // URI -> count
-          }.toMap
-
-          val referenceType = ReferenceType.withName(bucket.getKeyAsString)
-          (referenceType, (bucket.getDocCount, byDocIdAsMap))
-          
-          // TODO parse by-relation info from response
-        }.toMap
+        TopRelated.parseAggregation(response.aggregations) 
       }
 
     for {
-      stats <- fStats
-      // TODO horrible intermediate hack! Flattens place URIs from stats
-      places <- ItemService.resolveItems(stats.flatMap(_._2._2.map(_._1)).toSeq.map(id => UUID.fromString(id)))(self.es, self.ctx)
-    } yield(ReferenceStats.build(stats, places.toSet))
+      unresolvedRelated <- fRelatedQuery
+      related <- unresolvedRelated.resolve()(self.es, self.ctx, self.notifications)
+    } yield(related)
   }
 
   /** Retrieves references by parent URI, destination URI, and context query ** **/
