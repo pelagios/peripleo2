@@ -335,8 +335,12 @@ require([
         onSelectIdentifier = function(identifier) {
           searchPanel.setLoading(true);
           API.getItem(identifier)
-            .done(onSelectItem)
-            .fail(function(error) {
+            .done(function(response) {
+              // The shorter alternative would be .done(onSelectItem).
+              // But then the AJAX API response would adds a second call arg ("success")
+              // which onSelectItem would mis-interpret as 'via' argument
+              onSelectItem(response);
+            }).fail(function(error) {
               // TODO shouldn't happen unless connection or backend is down
               // TODO show error popup
             });
@@ -401,9 +405,6 @@ require([
         },
 
         onSetFilter = function(f) {
-
-          console.log(f);
-
           // Convert to key/value format required by state
           var asFilterSetting = {};
           asFilterSetting[f.filter] = f.values.map(function(v) { return v.identifier; });

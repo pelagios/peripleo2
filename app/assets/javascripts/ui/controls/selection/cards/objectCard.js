@@ -96,7 +96,7 @@ define([
                                 moreLabel + '</a>' +
                             '<span>');
 
-                      el.find('a').data('reference', place);
+                      el.find('a').data('related', place);
                       return el;
                     } else {
                       return false;

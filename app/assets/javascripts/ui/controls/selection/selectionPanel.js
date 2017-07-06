@@ -116,13 +116,13 @@ define([
 
         onSetFilter = function(e) {
           var link = jQuery(e.target),
-              reference = link.data('reference'),
+              related = link.data('related'),
 
               filter = {
                 filter : 'places',
                 values : [{
-                  identifier: reference.identifiers[0],
-                  label: reference.title
+                  identifier: related.is_conflation_of[0].identifiers[0],
+                  label: related.title
                 }]
               };
 
