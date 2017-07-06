@@ -15,7 +15,10 @@
       "last_synced_at": "2016-04-03T11:23:00Z",
       "last_changed_at": "2016-04-03T11:23:00Z",
       "title": "Ad Mauros",
-      "is_in_dataset": [ "http://pleiades.stoa.org\u0007Pleiades" ],
+      "is_in_dataset": {
+        "paths": [ "http://pleiades.stoa.org\u0007Pleiades" ],
+        "ids": [ "http://pleiades.stoa.org" ]
+      },
       "categories": [
         { "label": "fort" },
         { "label": "tower"}
@@ -34,7 +37,10 @@
       "last_synced_at": "2016-04-03T11:23:00Z",
       "last_changed_at": "2016-04-03T11:23:00Z",
       "title": "Ad Mauros/Marinianio, Eferding",
-      "is_in_dataset": [ "http://dare.ht.lu.se\u0007DARE" ],
+      "is_in_dataset": {
+        "paths": [ "http://dare.ht.lu.se\u0007DARE" ],
+        "ids": [ "http://dare.ht.lu.se" ]
+      },
       "categories": [{ "label": "fort" }],
       "geometry": {
          "type": "Point",
@@ -54,7 +60,10 @@
       "identifiers": [ "http://www.trismegistos.org/place/35191" ],
       "last_synced_at": "2016-04-03T11:23:00Z",
       "title": "Ad Mauros",
-      "is_in_dataset": [ "http://www.trismegistos.org\u0007Trismegistos" ],
+      "is_in_dataset": {
+        "paths": [ "http://www.trismegistos.org\u0007Trismegistos" ],
+        "ids": [ "http://www.trismegistos.org" ]
+      },
       "languages": [ "LA" ],
       "names": [
         { "name": "Ad Mauros" },

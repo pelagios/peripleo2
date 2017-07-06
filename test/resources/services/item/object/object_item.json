@@ -17,10 +17,16 @@
     "last_synced_at": "2017-02-03T11:18:21Z",
     "last_changed_at": "2016-10-01T12:00:00Z",
     "title": "Silver 4 drachm (tetradrachm), Cnossus, 200 BC - 67 BC. 1991.60.36",
-    "is_in_dataset": [
-      "ecbd9773-b60f-4dc1-bd86-f2cceb6548a1\u0007ANS Coins",
-      "ecbd9773-b60f-4dc1-bd86-f2cceb6548a1\u0007ANS Coins\u0007\u0007d6fdd35c-08b6-495b-ad4e-3f9256d30665\u0007Greek Collection"
-    ],
+    "is_in_dataset": {
+      "paths": [
+        "ecbd9773-b60f-4dc1-bd86-f2cceb6548a1\u0007ANS Coins",
+        "ecbd9773-b60f-4dc1-bd86-f2cceb6548a1\u0007ANS Coins\u0007\u0007d6fdd35c-08b6-495b-ad4e-3f9256d30665\u0007Greek Collection"
+      ],
+      "ids": [
+        "ecbd9773-b60f-4dc1-bd86-f2cceb6548a1",
+        "d6fdd35c-08b6-495b-ad4e-3f9256d30665"
+      ]
+    },
     "categories": [{
       "label": "Archaeology",
       "uri": "http://vocab.getty.edu/aat/300054328"

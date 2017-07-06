@@ -8,9 +8,10 @@
     "identifiers": [ "http://n2t.net/ark:/99152/p0z5nvh24r6" ],
     "last_synced_at": "2017-02-14T07:49:00Z",
     "title": "Aegean Bronze Age",
-    "is_in_dataset": [
-      "http://perio.do/\u0007PeriodO"
-    ],
+    "is_in_dataset": {
+      "paths": [ "http://perio.do/\u0007PeriodO" ],
+      "ids": [ "http://perio.do/" ]
+    },
     "descriptions": [{
       "description": "In collection: Stokstad, Marilyn, 1929-. Art history. 2005."
     }],

@@ -127,9 +127,10 @@
     "last_synced_at": "2017-02-03T11:18:21Z",
     "last_changed_at": "2014-05-19T12:00:00Z",
     "title": "Missouri Site Files",
-    "is_part_of": [
-      "http://opencontext.org/projects/\u0007Open Context"
-    ],
+    "is_part_of": {
+      "paths": [ "http://opencontext.org/projects/\u0007Open Context" ],
+      "ids": [ "http://opencontext.org/projects/" ]
+    },
     "categories": [{
       "label": "Archaeology",
       "uri": "http://vocab.getty.edu/aat/300054328"
