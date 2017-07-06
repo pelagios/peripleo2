@@ -125,7 +125,7 @@ require([
                         });
                     },
 
-                    fetchReferences = API.getReferences(uri).then(function(references) {
+                    fetchReferences = API.getRelated(uri).then(function(references) {
                       // Run filtered searches for the first two references of each type,
                       // so we can display info in the UI
                       var places = (references.PLACE) ? references.PLACE.slice(0, 1) : false,

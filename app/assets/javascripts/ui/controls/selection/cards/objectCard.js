@@ -51,29 +51,22 @@ define([
               refId = (args.selected_via) ?
                 args.selected_via.is_conflation_of[0].identifiers[0] : false,
 
-              renderSnippet = function(context) {
-                var terms = args.query_phrase.split(' ');
-                    snippet = context.trim();
-
-                terms.forEach(function(term) {
-                  snippet = snippet.replace(term, '<em>' + term + '</em>');
-                });
-
-                snippetsEl.append('<div class="snippet">...' + snippet + '...</div>');
+              renderSnippets = function(snippets) {
+                snippetsEl.append('<div class="snippet">... ' + snippets.join(' ... ') + ' ...</div>');
               };
 
           if (refId)
-            API.getSnippets(itemId, refId, args.query_phrase).done(function(result) {
+            API.getReferences(itemId, refId, args.query_phrase).done(function(result) {
               // TODO animate
               snippetsEl.show();
               if (result.total > 0)
                 result.items.forEach(function(ref) {
-                  renderSnippet(ref.context);
+                  renderSnippets(ref.snippets);
                 });
             });
         },
 
-        renderReferences = function() {
+        renderRelated = function() {
           var places =
                 (args.selected_via) ?
                   [{ title: args.selected_via.title, identifiers: args.selected_via.is_conflation_of[0].identifiers }] :
@@ -133,7 +126,7 @@ define([
 
     renderInfo();
     renderSnippets();
-    renderReferences();
+    renderRelated();
   };
 
   return ObjectCard;

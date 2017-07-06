@@ -1,16 +1,17 @@
 package services.item.search
 
-import com.sksamuel.elastic4s.ElasticDsl._
 import com.sksamuel.elastic4s._
+import com.sksamuel.elastic4s.ElasticDsl._
 import javax.inject.{ Inject, Singleton }
+import org.elasticsearch.script.ScriptService.ScriptType
+import org.elasticsearch.search.aggregations.bucket.terms.Terms
 import play.api.libs.json.Json
 import scala.concurrent.{ Future, ExecutionContext }
 import scala.language.reflectiveCalls
 import services.{ ES, Page }
 import services.item.{ Item, ItemService }
-import org.elasticsearch.script.ScriptService.ScriptType
-import org.elasticsearch.search.aggregations.bucket.histogram.InternalHistogram
-import services.item.search.filters.TermFilter
+// import org.elasticsearch.search.aggregations.bucket.histogram.InternalHistogram
+// import services.item.search.filters.TermFilter
 import services.notification.NotificationService
 
 @Singleton
@@ -44,7 +45,7 @@ class SearchService @Inject() (
     }.getOrElse(Seq(matchAllQuery))
   }
 
-  private def buildPlaceQuery(args: SearchArgs, filter: QueryDefinition) =    
+  private def buildTopRelatedQuery(args: SearchArgs, filter: QueryDefinition) =    
     search in ES.PERIPLEO / ES.REFERENCE query {
       constantScoreQuery {
         bool {
@@ -59,16 +60,15 @@ class SearchService @Inject() (
         }
       }
     } start 0 limit 0 aggregations (
-      aggregation
-        terms "by_place"
-        field "reference_to.doc_id"
-        size 600,
-        
-      aggregation
-        terms "by_relation"
-        field "relation"
-        size 10
-    ) // TODO sub-aggregate places vs people vs periods etc. to places only
+      // Aggregate by reference type (PLACE | PERSON | PERIOD)
+      aggregation terms "by_related" field "reference_type" size 10 aggregations (
+        // Sub-aggregate by root URI
+        aggregation terms "by_doc_id" field "reference_to.doc_id" size ES.MAX_SIZE
+      ),
+      
+      // Aggregate by relation at top level
+      aggregation terms "by_relation" field "relation" size 10
+    )
   
   /** Common query components used to build item result and time histogram **/
   private def itemBaseQuery(args: SearchArgs, filter: QueryDefinition) =       
@@ -112,10 +112,11 @@ class SearchService @Inject() (
     // Building filters is an async process as some may require expansion
     SearchFilter.build(args).flatMap { filter =>
       
-      val fPlaceQuery =
-        es.client execute { buildPlaceQuery(args, filter.withDateRangeFilter) } map { response =>
-          // TODO build by-relation aggregation (it's already included in the response)
-          Aggregation.parseTerms(response.aggregations.get("by_place")).buckets
+      val fTopRelatedQuery =
+        es.client execute { buildTopRelatedQuery(args, filter.withDateRangeFilter) } map { response =>
+          val topRelated = TopRelated.parseAggregation(response.aggregations)  
+          val byRelation = Aggregation.parseTerms(response.aggregations.get("by_relation")).buckets
+          (topRelated, byRelation)
         }
 
       val fItemQuery = es.client execute {
@@ -147,22 +148,21 @@ class SearchService @Inject() (
        else
           Future.successful(None)
       
-      if (args.settings.topPlaces) {
+      if (args.settings.topRelated) {
         val fResults = for {
           (totalHits, items, aggregations) <- fItemQuery
-          placeCounts <- fPlaceQuery
+          (unresolvedTopRelated, byRelation) <- fTopRelatedQuery
           histogram <- fHistogramQuery
-          places <- ItemService.resolveItems(placeCounts.map(_._1))
-        } yield (totalHits, items, aggregations, placeCounts, histogram, places)
+          topRelated <- unresolvedTopRelated.resolve()
+        } yield (totalHits, items, aggregations, byRelation, histogram, topRelated)
   
-        fResults.map { case (totalHits, items, aggregations, placeCounts, histogram, places) =>
-          val topPlaces = TopPlaces.build(placeCounts, places)
+        fResults.map { case (totalHits, items, aggregations, byRelation, histogram, topRelated) =>
           val aggs = histogram match {
             case Some(h) => aggregations :+ h
             case None => aggregations
           }
           
-          RichResultPage(System.currentTimeMillis - startTime, totalHits, args.offset, args.limit, items, aggs, Some(topPlaces))
+          RichResultPage(System.currentTimeMillis - startTime, totalHits, args.offset, args.limit, items, aggs, Some(topRelated))
         }
       } else {
         val fResults = for {

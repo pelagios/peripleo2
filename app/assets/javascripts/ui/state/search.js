@@ -26,7 +26,7 @@ define([], function() {
 
             termAggregations: false,
 
-            topPlaces: true
+            topRelated: true
 
           }
 
@@ -71,17 +71,17 @@ define([], function() {
         buildFirstPageQuery = function(settings) {
           var url = buildBaseQuery();
 
-              // In terms of UI navigation, there's a dependency between 'top_places' and
+              // In terms of UI navigation, there's a dependency between 'top_related' and
               // the 'places' filter. If a 'places' filter is set 'top_places' will be
               // useless for mapping (it will only include the filter place itself, plus
               // related places). In this case, we simply omit top_places altogether.
-              includeTopPlaces = settings.topPlaces && !searchArgs.filters.places;
+              includeTopRelated = settings.topRelated && !searchArgs.filters.places;
 
           // First page query includes aggregations
           url = appendIfExists(settings.timeHistogram, 'time_histogram', url);
           url = appendIfExists(settings.termAggregations, 'facets', url);
 
-          if (includeTopPlaces) url += '&top_places=true';
+          if (includeTopRelated) url += '&top_related=true';
 
           // Reset offset for subsequent next page queries
           currentOffset = 0;

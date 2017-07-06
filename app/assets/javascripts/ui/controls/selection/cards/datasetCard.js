@@ -6,7 +6,7 @@ define([
 ], function(AggregationUtils, Formatting, ItemUtils, API) {
 
   var DatasetCard  = function(parentEl, dataset, args) {
-    
+
     var infoEl = jQuery(
           '<div class="item-info">' +
             '<p class="item-is-in"></p>' +
@@ -96,7 +96,7 @@ define([
 
         renderStats = function() {
           var totalItems = args.total,
-              topPlaces = args.top_places,
+              topPlaces = args.top_related.PLACE,
               topPlacesCount = (topPlaces.length < 500) ? topPlaces.length: '500+';
 
           statsEl.append(

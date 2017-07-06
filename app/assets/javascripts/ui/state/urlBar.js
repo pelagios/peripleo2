@@ -34,7 +34,7 @@ define([], function() {
             settings : {
               timeHistogram    : segments.filters,
               termAggregations : segments.filters,
-              topPlaces        : true
+              topRelated       : true
             }
           },
           selected: decodeIfDefined(segments.selected),

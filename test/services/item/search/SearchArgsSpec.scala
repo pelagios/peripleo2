@@ -22,7 +22,7 @@ class SearchArgsSpec extends PlaySpec {
          "places" -> Seq("http://pleiades.stoa.org/places/579885"),
          "langs" -> Seq("la,de"),
          "ex_categories" -> Seq("archaeology"),
-         "top_places" -> Seq("true"),
+         "top_related" -> Seq("true"),
          "facets" -> Seq("true"),
          "time_histogram" -> Seq("false"))
        
@@ -40,7 +40,7 @@ class SearchArgsSpec extends PlaySpec {
        parsed.filters.placeFilter mustBe Some(TermFilter(Seq("http://pleiades.stoa.org/places/579885"), TermFilter.ONLY))       
        parsed.filters.languageFilter mustBe Some(TermFilter(Seq("la", "de"), TermFilter.ONLY))
        parsed.filters.categoryFilter mustBe Some(TermFilter(Seq("archaeology"), TermFilter.EXCLUDE))
-       parsed.settings.topPlaces mustBe true
+       parsed.settings.topRelated mustBe true
        parsed.settings.termAggregations mustBe true
        parsed.settings.timeHistogram mustBe false
      }

@@ -6,12 +6,16 @@ define([], function() {
       return jsRoutes.controllers.api.ItemAPIController.getItem(identifier).ajax();
     },
 
-    getReferences : function(identifier) {
-      return jsRoutes.controllers.api.ItemAPIController.getReferences(identifier).ajax();
-    },
-
     getParts : function(identifier) {
       return jsRoutes.controllers.api.ItemAPIController.getParts(identifier).ajax();
+    },
+
+    getRelated : function(identifier, refId, query) {
+      return jsRoutes.controllers.api.ItemAPIController.getRelated(identifier, refId, query).ajax();
+    },
+
+    getReferences : function(identifier, refId, query) {
+      return jsRoutes.controllers.api.ItemAPIController.getReferences(identifier, refId, query).ajax();
     },
 
     suggest : function(query) {
@@ -38,7 +42,7 @@ define([], function() {
             settings:  {
               timeHistogram   : true,
               termAggregations: true,
-              topPlaces       : true
+              topRelated      : true
             }
           };
 
@@ -46,13 +50,6 @@ define([], function() {
         response.request_args = requestArgs;
         return response;
       });
-    },
-
-    /**
-     * Yet another hack, to be made clean and official later.
-     */
-    getSnippets : function(itemId, refId, query) {
-      return jsRoutes.controllers.api.ItemAPIController.getSnippets(itemId, refId, query).ajax();
     }
 
   };

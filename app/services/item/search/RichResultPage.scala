@@ -20,7 +20,7 @@ case class RichResultPage(
   
   aggregations: Seq[Aggregation],
   
-  topPlaces: Option[TopPlaces]
+  topPlaces: Option[ResolvedTopRelated]
   
 )
 
@@ -35,7 +35,7 @@ object RichResultPage extends HasNullableSeq {
     (JsPath \ "items").write[Seq[Item]] and
     (JsPath \ "aggregations").writeNullable[Seq[Aggregation]]
       .contramap[Seq[Aggregation]](toOptSeq) and
-    (JsPath \ "top_places").writeNullable[TopPlaces]
+    (JsPath \ "top_related").writeNullable[ResolvedTopRelated]
   )(unlift(RichResultPage.unapply))
   
 }

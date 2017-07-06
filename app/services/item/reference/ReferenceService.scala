@@ -28,6 +28,17 @@ trait ReferenceService { self: ItemService =>
       (ref, id, parent)
     }
   }
+  
+  private implicit object RefAndHighlightHitAs extends HitAs[(Reference, Seq[String])] {
+    override def as(hit: RichSearchHit): (Reference, Seq[String]) = {
+      val reference = Json.fromJson[Reference](Json.parse(hit.sourceAsString)).get
+      val snippets = hit.highlightFields.headOption
+        .map(_._2.fragments.map(_.string.trim).toSeq.distinct)
+        .getOrElse(Seq.empty[String])
+        
+      (reference, snippets)
+    }
+  }
 
   /** Turns unbound references into bound ones, filtering those that are unresolvable **/
   private[item] def resolveReferences(unbound: Seq[UnboundReference]): Future[Seq[Reference]] = {
@@ -133,27 +144,8 @@ trait ReferenceService { self: ItemService =>
       Future.successful(true)
     }
   }
-  
-  /** Retrieves references by parent URI, destination URI, and context query **/ 
-  def findReference(parentUri: String, destinationUri: String, query: String, offset: Int = 0, limit: Int = 20) =
-    es.client execute {
-      search in ES.PERIPLEO / ES.REFERENCE query {
-        bool {
-          must (
-            termQuery("parent_uri" -> parentUri),
-            termQuery("reference_to.uri" -> destinationUri),
-            queryStringQuery(query).field("context")
-          )
-        }
-      } highlighting (
-        highlight field "context" fragmentSize 200
-      )
-    } map { response =>
-      Page(response.tookInMillis, response.totalHits, offset, limit, response.as[Reference])
-    }
 
-  // TODO rename - there's currently some ambiguity (also in the API) between *references* and *stats about references*
-  def getReferenceStats(identifier: String): Future[ReferenceStats] = {
+  def getRelated(identifier: String): Future[ReferenceStats] = {
 
     val fStats =
       es.client execute {
@@ -190,8 +182,26 @@ trait ReferenceService { self: ItemService =>
     for {
       stats <- fStats
       // TODO horrible intermediate hack! Flattens place URIs from stats
-      places <- ItemService.resolveItems(stats.flatMap(_._2._2.map(_._1)).toSeq)(self.es, self.ctx)
+      places <- ItemService.resolveItems(stats.flatMap(_._2._2.map(_._1)).toSeq.map(id => UUID.fromString(id)))(self.es, self.ctx)
     } yield(ReferenceStats.build(stats, places.toSet))
   }
+
+  /** Retrieves references by parent URI, destination URI, and context query ** **/
+  def getReferences(parentUri: String, destinationUri: Option[String], query: Option[String], offset: Int = 0, limit: Int = 20) =
+    es.client execute {
+      search in ES.PERIPLEO / ES.REFERENCE query {
+        bool {
+          must (
+            termQuery("parent_uri" -> parentUri),
+            termQuery("reference_to.uri" -> destinationUri.get),
+            queryStringQuery(query.get).field("context")
+          )
+        }
+      } highlighting (
+        highlight field "context" fragmentSize 200
+      )
+    } map { response =>
+      Page(response.tookInMillis, response.totalHits, offset, limit, response.as[(Reference, Seq[String])])
+    }  
 
 }

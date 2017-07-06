@@ -36,12 +36,12 @@ object ItemService {
     override def json(r: Reference): String = Json.stringify(Json.toJson(r))
   }
 
-  def resolveItems(ids: Seq[String])(implicit es: ES, ctx: ExecutionContext): Future[Seq[Item]] =
+  def resolveItems(ids: Seq[UUID])(implicit es: ES, ctx: ExecutionContext): Future[Seq[Item]] =
     if (ids.isEmpty)
       Future.successful(Seq.empty[Item])
     else
       es.client execute {
-        multiget ( ids.map(id => get id id from ES.PERIPLEO / ES.ITEM ) )
+        multiget ( ids.map(id => get id id.toString from ES.PERIPLEO / ES.ITEM ) )
       } map {_.responses.flatMap { _.response.flatMap { response =>
         Option(response.getSourceAsString).flatMap(json =>
           Json.fromJson[Item](Json.parse(json)).asOpt)

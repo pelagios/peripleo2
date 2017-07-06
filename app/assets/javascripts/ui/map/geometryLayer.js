@@ -27,7 +27,7 @@ define([
 
           // Determine min/max results per marker
           places.forEach(function(place) {
-            var count = place.result_count;
+            var count = place.related_count;
             if (count < min)
               min = count;
             if (count > max)
@@ -91,7 +91,7 @@ define([
 
           if (pt) {
             latlng = [ pt[1], pt[0] ];
-            size = markerScaleFn(place.result_count);
+            size = markerScaleFn(place.related_count);
             marker = new SelectableMarker(latlng, size).addTo(markers);
             marker.on('click', onMarkerClicked);
             marker.place = place;
@@ -108,18 +108,19 @@ define([
          * TODO properly support non-place items with geometry
          */
         mergeGeometries = function(results) {
-          var itemsWithGeometry = results.items.filter(function(item) {
+          var topPlaces = results.top_related.PLACE,
+
+              itemsWithGeometry = results.items.filter(function(item) {
                 // Skips all items without geometries
                 return item.representative_point;
               }),
 
               // Shorthand so we can quickly test which places exist in top_places
-              topPlaceIds = (results.top_places) ?
-                results.top_places.map(function(p) { return p.doc_id; }) : [],
+              topPlaceIds = (topPlaces) ? topPlaces.map(function(p) { return p.doc_id; }) : [],
 
               // Clone top_places
-              merged = (results.top_places) ?
-                results.top_places.map(function(p) { return jQuery.extend(true, {}, p); }) : [];
+              merged = (topPlaces) ?
+                topPlaces.map(function(p) { return jQuery.extend(true, {}, p); }) : [];
 
           itemsWithGeometry.forEach(function(item) {
             var existsIdx = topPlaceIds.indexOf(item.doc_id);
@@ -140,10 +141,10 @@ define([
 
           // Don't update the map if there's a place filter
           if (!hasPlaceFilter) {
-            var placeCounts = mergeGeometries(results);
-            computeMarkerScaleFn(placeCounts);
+            var placesWithCounts = mergeGeometries(results);
+            computeMarkerScaleFn(placesWithCounts);
             clearLayer();
-            placeCounts.forEach(createMarker);
+            placesWithCounts.forEach(createMarker);
           }
         },
 

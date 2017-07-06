@@ -33,7 +33,7 @@ object ReferenceStats extends HasNullableSeq {
     (JsPath \ "title").write[String] and
     (JsPath \ "descriptions").formatNullable[Seq[String]]
       .inmap[Seq[String]](fromOptSeq[String], toOptSeq[String]) and
-    (JsPath \ "count").write[Long]
+    (JsPath \ "reference_count").write[Long]
   )(tuple => (
       tuple._1.identifiers,
       tuple._1.title,
