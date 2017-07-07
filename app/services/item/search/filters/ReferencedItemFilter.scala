@@ -7,7 +7,7 @@ import scala.concurrent.{ ExecutionContext, Future }
 import services.ES
 import services.item.Item
 
-case class PlaceFilter(uris: Seq[String], setting: TermFilter.Setting) {
+case class ReferencedItemFilter(uris: Seq[String], setting: TermFilter.Setting) {
   
  def filterDefinition()(implicit es: ES, ctx: ExecutionContext, hitAs: HitAs[Item]): Future[QueryDefinition] = {
     
@@ -24,12 +24,12 @@ case class PlaceFilter(uris: Seq[String], setting: TermFilter.Setting) {
       hasChildQuery(ES.REFERENCE) query { termQuery("reference_to.doc_id", docId.toString) }
    
     if (uris.size == 1)
-      // One Place URIs - just use a single filter clause
+      // One item URI - just use a single filter clause
       resolve.map(docIds => filter(docIds.head))   
     else
-      // Multiple Place URIs - multiple filter clauses, OR'ed together
-      // TODO support AND later
-      resolve.map(docIds => should { docIds.map(filter(_)) })
+      // Multiple URIs - multiple filter clauses, AND'ed together
+      // TODO support OR later
+      resolve.map(docIds => must { docIds.map(filter(_)) })
   }
   
 }

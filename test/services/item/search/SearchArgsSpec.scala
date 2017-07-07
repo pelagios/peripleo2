@@ -19,7 +19,7 @@ class SearchArgsSpec extends PlaySpec {
          "offset" -> Seq("10"),
          "from" -> Seq("-330"),
          "to" -> Seq("200"),
-         "places" -> Seq("http://pleiades.stoa.org/places/579885"),
+         "referencing" -> Seq("http://pleiades.stoa.org/places/579885"),
          "langs" -> Seq("la,de"),
          "ex_categories" -> Seq("archaeology"),
          "top_referenced" -> Seq("true"),
@@ -38,7 +38,7 @@ class SearchArgsSpec extends PlaySpec {
          DateRangeFilter.INTERSECT
        ))
        
-       parsed.filters.placeFilter mustBe Some(PlaceFilter(Seq("http://pleiades.stoa.org/places/579885"), TermFilter.ONLY))
+       parsed.filters.referencedItemFilter mustBe Some(ReferencedItemFilter(Seq("http://pleiades.stoa.org/places/579885"), TermFilter.ONLY))
        parsed.filters.languageFilter mustBe Some(TermFilter(Seq("la", "de"), TermFilter.ONLY))
        parsed.filters.categoryFilter mustBe Some(TermFilter(Seq("archaeology"), TermFilter.EXCLUDE))
        parsed.settings.topReferenced mustBe true

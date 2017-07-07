@@ -45,8 +45,8 @@ class SearchFilter(args: SearchArgs, placeFilterDefinition: Option[QueryDefiniti
 object SearchFilter {
 
 	/** Different handling required depending on whether there's a place filter or not **/
-	def build(args: SearchArgs)(implicit es: ES, ctx: ExecutionContext, hitAs: HitAs[Item]) = args.filters.placeFilter match {
-    case Some(placeFilter) => placeFilter.filterDefinition().map(f => new SearchFilter(args, Some(f)))
+	def build(args: SearchArgs)(implicit es: ES, ctx: ExecutionContext, hitAs: HitAs[Item]) = args.filters.referencedItemFilter match {
+    case Some(itemFilter) => itemFilter.filterDefinition().map(f => new SearchFilter(args, Some(f)))
     case None => Future.successful(new SearchFilter(args))
   }
   
