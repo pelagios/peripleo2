@@ -49,8 +49,8 @@ GET     /api/gazetteers                              controllers.api.GazetteerAP
 GET     /api/search                                  controllers.api.SearchAPIController.search
 GET     /api/suggest                                 controllers.api.SearchAPIController.suggest(q: String)
 GET     /api/items/:id/parts                         controllers.api.ItemAPIController.getParts(id: String, offset: Int ?= 0, limit: Int ?= 20)
-GET     /api/items/:id/related                       controllers.api.ItemAPIController.getRelated(id: String)
 GET     /api/items/:id/references                    controllers.api.ItemAPIController.getReferences(id: String, to: Option[String], query: Option[String], offset: Int ?= 0, limit: Int ?= 20)
+GET     /api/items/:id/top_referenced                controllers.api.ItemAPIController.getTopReferenced(id: String)
 GET     /api/items/:id                               controllers.api.ItemAPIController.getItem(id: String)
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -96,7 +96,7 @@ define([
 
         renderStats = function() {
           var totalItems = args.total,
-              topPlaces = args.top_related.PLACE,
+              topPlaces = args.top_referenced.PLACE,
               topPlacesCount = (topPlaces.length < 500) ? topPlaces.length: '500+';
 
           statsEl.append(

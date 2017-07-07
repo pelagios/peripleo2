@@ -4,6 +4,7 @@ import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
 import services.item.Item
+import services.item.reference.TopReferenced
 import services.HasNullableSeq
 
 case class RichResultPage(
@@ -20,7 +21,7 @@ case class RichResultPage(
   
   aggregations: Seq[Aggregation],
   
-  topRelated: Option[ResolvedTopRelated]
+  topReferenced: Option[TopReferenced]
   
 )
 
@@ -35,7 +36,7 @@ object RichResultPage extends HasNullableSeq {
     (JsPath \ "items").write[Seq[Item]] and
     (JsPath \ "aggregations").writeNullable[Seq[Aggregation]]
       .contramap[Seq[Aggregation]](toOptSeq) and
-    (JsPath \ "top_related").writeNullable[ResolvedTopRelated]
+    (JsPath \ "top_referenced").writeNullable[TopReferenced]
   )(unlift(RichResultPage.unapply))
   
 }

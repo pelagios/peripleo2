@@ -11,7 +11,6 @@ import scala.concurrent.Future
 import scala.util.Try
 import services.{ ES, Page }
 import services.item.{ Item, ItemService }
-import services.item.search.{ TopRelated, ResolvedTopRelated }
 
 trait ReferenceService { self: ItemService =>
   
@@ -146,7 +145,28 @@ trait ReferenceService { self: ItemService =>
     }
   }
 
-  def getRelated(identifier: String): Future[ResolvedTopRelated] = {
+  def getReferences(parentUri: String, destinationUri: Option[String], query: Option[String], offset: Int = 0, limit: Int = 20) = {
+    val clauses = 
+      Seq(
+        Some(termQuery("parent_uri" -> parentUri)),
+        destinationUri.map(uri => termQuery("reference_to.uri" -> uri)),
+        query.map(q => queryStringQuery(q).field("context"))).flatten
+    
+    es.client execute {
+      search in ES.PERIPLEO / ES.REFERENCE query {
+        bool {
+          must ( clauses )
+        }
+      } highlighting (
+        highlight field "context" fragmentSize 200
+      )
+    } map { response =>
+      Page(response.tookInMillis, response.totalHits, offset, limit, response.as[(Reference, Seq[String])])
+    }
+  }
+    
+  def getTopReferenced(identifier: String): Future[TopReferenced] = {
+    
     val fRelatedQuery =
       es.client execute {
         search in ES.PERIPLEO / ES.REFERENCE query {
@@ -164,7 +184,7 @@ trait ReferenceService { self: ItemService =>
           )
         )
       } map { response =>
-        TopRelated.parseAggregation(response.aggregations) 
+        TopReferenced.parseAggregation(response.aggregations) 
       }
 
     for {
@@ -172,23 +192,5 @@ trait ReferenceService { self: ItemService =>
       related <- unresolvedRelated.resolve()(self.es, self.ctx, self.notifications)
     } yield(related)
   }
-
-  /** Retrieves references by parent URI, destination URI, and context query ** **/
-  def getReferences(parentUri: String, destinationUri: Option[String], query: Option[String], offset: Int = 0, limit: Int = 20) =
-    es.client execute {
-      search in ES.PERIPLEO / ES.REFERENCE query {
-        bool {
-          must (
-            termQuery("parent_uri" -> parentUri),
-            termQuery("reference_to.uri" -> destinationUri.get),
-            queryStringQuery(query.get).field("context")
-          )
-        }
-      } highlighting (
-        highlight field "context" fragmentSize 200
-      )
-    } map { response =>
-      Page(response.tookInMillis, response.totalHits, offset, limit, response.as[(Reference, Seq[String])])
-    }  
 
 }

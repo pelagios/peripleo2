@@ -10,12 +10,12 @@ define([], function() {
       return jsRoutes.controllers.api.ItemAPIController.getParts(identifier).ajax();
     },
 
-    getRelated : function(identifier, refId, query) {
-      return jsRoutes.controllers.api.ItemAPIController.getRelated(identifier, refId, query).ajax();
-    },
-
     getReferences : function(identifier, refId, query) {
       return jsRoutes.controllers.api.ItemAPIController.getReferences(identifier, refId, query).ajax();
+    },
+
+    getTopReferenced : function(identifier) {
+      return jsRoutes.controllers.api.ItemAPIController.getTopReferenced(identifier).ajax();
     },
 
     suggest : function(query) {
@@ -40,9 +40,9 @@ define([], function() {
             filters:   { datasets: [ identifier ] },
             timerange: { from: false, to : false },
             settings:  {
-              timeHistogram   : true,
-              termAggregations: true,
-              topRelated      : true
+              timeHistogram    : true,
+              termAggregations : true,
+              topReferenced    : true
             }
           };
 

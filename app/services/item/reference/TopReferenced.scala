@@ -1,4 +1,4 @@
-package services.item.search
+package services.item.reference
 
 import java.util.UUID
 import org.elasticsearch.search.aggregations.Aggregations
@@ -11,10 +11,9 @@ import scala.collection.JavaConverters._
 import scala.concurrent.{ ExecutionContext, Future }
 import services.ES
 import services.item.{ Item, ItemService }
-import services.item.reference.ReferenceType
 import services.notification._
 
-case class UnresolvedTopRelated private (parsed: Seq[(ReferenceType.Value, Seq[(UUID, Long)])]) {
+case class UnresolvedTopReferenced private (parsed: Seq[(ReferenceType.Value, Seq[(UUID, Long)])]) {
   
   private def logError(triedIds: Seq[UUID], resolvedItems: Seq[Item])(implicit notifications: NotificationService) = {
     val failedIds = triedIds diff resolvedItems.map(_.docId)
@@ -27,7 +26,7 @@ case class UnresolvedTopRelated private (parsed: Seq[(ReferenceType.Value, Seq[(
       "Failed to resolve " + failedIds.mkString(", ") + " (" + failedIds.size + " out of " + triedIds.size + ")"))
   }
   
-  def resolve()(implicit es: ES, ctx: ExecutionContext, notifications: NotificationService): Future[ResolvedTopRelated] =  {
+  def resolve()(implicit es: ES, ctx: ExecutionContext, notifications: NotificationService): Future[TopReferenced] =  {
     val uuidsToResolve = parsed.flatMap(_._2.map(_._1))
     
     ItemService.resolveItems(uuidsToResolve).map { items =>
@@ -45,32 +44,28 @@ case class UnresolvedTopRelated private (parsed: Seq[(ReferenceType.Value, Seq[(
       if (resolvedItems.size < uuidsToResolve.size)
         logError(uuidsToResolve, resolvedItems)
       
-      ResolvedTopRelated(resolved)
+      TopReferenced(resolved)
     }
   }
   
 }
 
-case class ResolvedTopRelated private (resolved: Seq[(ReferenceType.Value, Seq[(Item, Long)])])
+case class TopReferenced private (resolved: Seq[(ReferenceType.Value, Seq[(Item, Long)])])
 
-object ResolvedTopRelated {
+object TopReferenced {
   
   implicit val itemCountWrites: Writes[(Item, Long)] = (
     (JsPath).write[Item] and
     (JsPath \ "related_count").write[Long]
   )(t => (t._1, t._2))
       
-  implicit val topRelatedWrites = 
-    Writes[ResolvedTopRelated] { related =>
+  implicit val topReferencedWrites = 
+    Writes[TopReferenced] { related =>
       val asMap = related.resolved.map(t => (t._1.toString, t._2)).toMap
       Json.toJson(asMap) 
     }
-   
-}
-    
-object TopRelated {
   
-  def parseAggregation(aggregations: Aggregations): UnresolvedTopRelated = {
+  def parseAggregation(aggregations: Aggregations): UnresolvedTopReferenced = {
     
     // Shorthand
     def getBuckets(aggs: Aggregations, key: String) = aggs.get[Terms](key).getBuckets.asScala.toSeq 
@@ -88,7 +83,7 @@ object TopRelated {
       (relation, subBuckets)
     }
     
-    UnresolvedTopRelated(parsed)
+    UnresolvedTopReferenced(parsed)
   }
   
 }

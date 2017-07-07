@@ -108,7 +108,7 @@ define([
          * TODO properly support non-place items with geometry
          */
         mergeGeometries = function(results) {
-          var topPlaces = results.top_related.PLACE,
+          var topPlaces = results.top_referenced.PLACE,
 
               itemsWithGeometry = results.items.filter(function(item) {
                 // Skips all items without geometries

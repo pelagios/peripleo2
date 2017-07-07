@@ -10,8 +10,7 @@ import scala.concurrent.{ Future, ExecutionContext }
 import scala.language.reflectiveCalls
 import services.{ ES, Page }
 import services.item.{ Item, ItemService }
-// import org.elasticsearch.search.aggregations.bucket.histogram.InternalHistogram
-// import services.item.search.filters.TermFilter
+import services.item.reference.TopReferenced
 import services.notification.NotificationService
 
 @Singleton
@@ -112,11 +111,11 @@ class SearchService @Inject() (
     // Building filters is an async process as some may require expansion
     SearchFilter.build(args).flatMap { filter =>
       
-      val fTopRelatedQuery =
+      val fTopReferencedQuery =
         es.client execute { buildTopRelatedQuery(args, filter.withDateRangeFilter) } map { response =>
-          val topRelated = TopRelated.parseAggregation(response.aggregations)  
+          val topReferenced = TopReferenced.parseAggregation(response.aggregations)  
           val byRelation = Aggregation.parseTerms(response.aggregations.get("by_relation")).buckets
-          (topRelated, byRelation)
+          (topReferenced, byRelation)
         }
 
       val fItemQuery = es.client execute {
@@ -148,21 +147,21 @@ class SearchService @Inject() (
        else
           Future.successful(None)
       
-      if (args.settings.topRelated) {
+      if (args.settings.topReferenced) {
         val fResults = for {
           (totalHits, items, aggregations) <- fItemQuery
-          (unresolvedTopRelated, byRelation) <- fTopRelatedQuery
+          (unresolvedTopReferenced, byRelation) <- fTopReferencedQuery
           histogram <- fHistogramQuery
-          topRelated <- unresolvedTopRelated.resolve()
-        } yield (totalHits, items, aggregations, byRelation, histogram, topRelated)
+          topReferenced <- unresolvedTopReferenced.resolve()
+        } yield (totalHits, items, aggregations, byRelation, histogram, topReferenced)
   
-        fResults.map { case (totalHits, items, aggregations, byRelation, histogram, topRelated) =>
+        fResults.map { case (totalHits, items, aggregations, byRelation, histogram, topReferenced) =>
           val aggs = histogram match {
             case Some(h) => aggregations :+ h
             case None => aggregations
           }
           
-          RichResultPage(System.currentTimeMillis - startTime, totalHits, args.offset, args.limit, items, aggs, Some(topRelated))
+          RichResultPage(System.currentTimeMillis - startTime, totalHits, args.offset, args.limit, items, aggs, Some(topReferenced))
         }
       } else {
         val fResults = for {

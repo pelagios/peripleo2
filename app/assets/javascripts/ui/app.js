@@ -125,7 +125,7 @@ require([
                         });
                     },
 
-                    fetchRelated = API.getRelated(uri).then(function(related) {
+                    fetchRelated = API.getTopReferenced(uri).then(function(related) {
                       // Run filtered searches for the first two related items of each type,
                       // so we can display info in the UI
                       var places  = (related.PLACE)  ? related.PLACE.slice(0, 1)  : false,

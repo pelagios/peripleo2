@@ -15,7 +15,7 @@ class ItemAPIController @Inject() (
   itemService: ItemService,
   implicit val ctx: ExecutionContext
 ) extends Controller with HasPrettyPrintJSON {
-  
+
   implicit val snippetWrites: Writes[(Reference, Seq[String])] = (
     (JsPath).write[Reference] and
     (JsPath \ "snippets").write[Seq[String]]
@@ -34,25 +34,25 @@ class ItemAPIController @Inject() (
     // IMO it makes sense to keep the API clean by providing proper HTTP 404 when the item doesn't exist
     // rather than just 0 results
     itemService.findByIdentifier(identifier).flatMap {
-      case Some(item) => itemService.findPartsOf(identifier, offset, limit).map(parts => jsonOk(Json.toJson(parts)))          
+      case Some(item) => itemService.findPartsOf(identifier, offset, limit).map(parts => jsonOk(Json.toJson(parts)))
       case None => Future.successful(NotFound)
     }
   }
 
-  /** Lists information about related items, along with reference statistics **/
-  def getRelated(identifier: String) = Action.async { implicit request =>
-    itemService.getRelated(identifier).map { stats => 
-      jsonOk(Json.toJson(stats))
-    }
-  }
-  
   /** Lists the references contained in this item.
-    *  
+    *
     * Optionally, filtered by destination URL or query phrase (applied to the reference context)
     */
   def getReferences(identifier: String, to: Option[String], query: Option[String], offset: Int, limit: Int) = Action.async { implicit request =>
     itemService.getReferences(identifier, to, query).map { refs =>
-      jsonOk(Json.toJson(refs)) 
+      jsonOk(Json.toJson(refs))
+    }
+  }
+
+  /** Lists information about top referenced items, along with reference statistics **/
+  def getTopReferenced(identifier: String) = Action.async { implicit request =>
+    itemService.getTopReferenced(identifier).map { stats =>
+      jsonOk(Json.toJson(stats))
     }
   }
 

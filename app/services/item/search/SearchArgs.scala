@@ -47,7 +47,7 @@ case class ResponseSettings(
   
   termAggregations: Boolean,
   
-  topRelated: Boolean
+  topReferenced: Boolean
     
 )
   
@@ -132,7 +132,7 @@ object SearchArgs {
     val settings = ResponseSettings( 
       getArg("time_histogram", q).map(_.toBoolean).getOrElse(false),
       getArg("facets", q).map(_.toBoolean).getOrElse(false),
-      getArg("top_related", q).map(_.toBoolean).getOrElse(false)
+      getArg("top_referenced", q).map(_.toBoolean).getOrElse(false)
     )
    
     SearchArgs(
