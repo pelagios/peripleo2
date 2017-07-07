@@ -324,7 +324,7 @@ require([
               };
 
           if (place)
-            if (place.related_count === 0)
+            if (place.referenced_count.total === 0)
               selectPlace();
             else
               selectFirstResultAt();

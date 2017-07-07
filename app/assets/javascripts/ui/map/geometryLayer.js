@@ -27,7 +27,7 @@ define([
 
           // Determine min/max results per marker
           places.forEach(function(place) {
-            var count = place.related_count;
+            var count = place.referenced_count.total;
             if (count < min)
               min = count;
             if (count > max)
@@ -38,10 +38,10 @@ define([
             // All places are equal (or just one place) - use min marker size
             markerScaleFn = function() { return MIN_MARKER_SIZE; };
           } else {
-            // Marker size y = fn(related_count) is linear fn according to y = k * x + d
+            // Marker size y = fn(referenced_count.total) is linear fn according to y = k * x + d
             k = (MAX_MARKER_SIZE - MIN_MARKER_SIZE) / (max - min);
             d = ((MIN_MARKER_SIZE * max) - (MAX_MARKER_SIZE * min)) / (max - min);
-            markerScaleFn = function(relCount) { return k * relCount + d; };
+            markerScaleFn = function(refCount) { return k * refCount + d; };
           }
         },
 
@@ -91,7 +91,7 @@ define([
 
           if (pt) {
             latlng = [ pt[1], pt[0] ];
-            size = markerScaleFn(place.related_count);
+            size = markerScaleFn(place.referenced_count.total);
             marker = new SelectableMarker(latlng, size).addTo(markers);
             marker.on('click', onMarkerClicked);
             marker.place = place;
@@ -126,10 +126,10 @@ define([
             var existsIdx = topPlaceIds.indexOf(item.doc_id);
             if (existsIdx < 0)
               // Item is not already in topPlaces - add to end of array
-              merged.push(jQuery.extend(true, {},  item, { related_count: 0 }));
+              merged.push(jQuery.extend(true, {},  item, { referenced_count : { total: 0 } }));
             else
               // Item is in topPlaces already - increment result_count
-              merged[existsIdx].related_count += 1;
+              merged[existsIdx].referenced_count.total += 1;
           });
 
           return merged;

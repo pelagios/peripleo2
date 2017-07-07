@@ -12,8 +12,11 @@ import scala.concurrent.{ ExecutionContext, Future }
 import services.ES
 import services.item.{ Item, ItemService }
 import services.notification._
+import services.HasNullableSeq
 
-case class UnresolvedTopReferenced private (parsed: Seq[(ReferenceType.Value, Seq[(UUID, Long)])]) {
+case class TopReferenced private (resolved: Seq[(ReferenceType.Value, Seq[(Item, Long, Seq[(Relation.Value, Long)])])])
+
+case class UnresolvedTopReferenced private (parsed: Seq[(ReferenceType.Value, Seq[(UUID, Long, Seq[(Relation.Value, Long)])])]) {
   
   private def logError(triedIds: Seq[UUID], resolvedItems: Seq[Item])(implicit notifications: NotificationService) = {
     val failedIds = triedIds diff resolvedItems.map(_.docId)
@@ -32,11 +35,11 @@ case class UnresolvedTopReferenced private (parsed: Seq[(ReferenceType.Value, Se
     ItemService.resolveItems(uuidsToResolve).map { items =>
       val asTable = items.map { item => (item.docId, item) }.toMap 
       
-      val resolved = parsed.map { case (relation, keyVals) =>
-        val resolvedKeyVals = keyVals.flatMap { case (id, count) =>
-          asTable.get(id).map(item => (item, count)) }
+      val resolved = parsed.map { case (relation, buckets) =>
+        val resolvedBuckets = buckets.flatMap { case (id, count, byRelation) =>
+          asTable.get(id).map(item => (item, count, byRelation)) }
         
-        (relation, resolvedKeyVals)
+        (relation, resolvedBuckets)
       }
       
       // Cross-check if all items were resolved
@@ -50,14 +53,19 @@ case class UnresolvedTopReferenced private (parsed: Seq[(ReferenceType.Value, Se
   
 }
 
-case class TopReferenced private (resolved: Seq[(ReferenceType.Value, Seq[(Item, Long)])])
-
-object TopReferenced {
+object TopReferenced extends HasNullableSeq {
   
-  implicit val itemCountWrites: Writes[(Item, Long)] = (
+  implicit val byRelationWrites = Writes[Seq[(Relation.Value, Long)]] { byRelation =>
+    val asMap = byRelation.map(t => (t._1.toString, t._2)).toMap
+    Json.toJson(asMap)
+  }
+  
+  implicit val itemBucketWrites: Writes[(Item, Long, Seq[(Relation.Value, Long)])] = (
     (JsPath).write[Item] and
-    (JsPath \ "related_count").write[Long]
-  )(t => (t._1, t._2))
+    (JsPath \ "referenced_count" \ "total").write[Long] and
+    (JsPath \ "referenced_count" \ "by_relation").writeNullable[Seq[(Relation.Value, Long)]]
+      .contramap[Seq[(Relation.Value, Long)]](toOptSeq)
+  )(t => (t._1, t._2, t._3))
       
   implicit val topReferencedWrites = 
     Writes[TopReferenced] { related =>
@@ -70,17 +78,26 @@ object TopReferenced {
     // Shorthand
     def getBuckets(aggs: Aggregations, key: String) = aggs.get[Terms](key).getBuckets.asScala.toSeq 
       
-    val parsed = getBuckets(aggregations, "by_related").map { bucket =>
-      // First aggregation level by relation type (PLACE, PERSON, etc.)
-      val relation = ReferenceType.withName(bucket.getKey.toString) 
-      val subBuckets = getBuckets(bucket.getAggregations, "by_doc_id").map { subBucket =>
-        val docId = UUID.fromString(subBucket.getKeyAsString)
-        val count = subBucket.getDocCount
+    // First aggregation level by reference type (PLACE, PERSON, etc.)
+    val parsed = getBuckets(aggregations, "by_related").map { typeBucket =>
+      val refType = ReferenceType.withName(typeBucket.getKeyAsString)
+      
+      // Second aggregation level by item docID
+      val byDocId = getBuckets(typeBucket.getAggregations, "by_doc_id").map { docIdBucket =>
+        val docId = UUID.fromString(docIdBucket.getKeyAsString)
+        val countByDocId = docIdBucket.getDocCount
         
-        (docId, count)
+        // Third aggregation level by relation
+        val byRelation = getBuckets(docIdBucket.getAggregations, "by_relation").map { relationBucket =>
+          val relation = Relation.withName(relationBucket.getKeyAsString)
+          val countByRelation = relationBucket.getDocCount
+          (relation, countByRelation)
+        }
+        
+        (docId, countByDocId, byRelation)
       }
       
-      (relation, subBuckets)
+      (refType, byDocId)
     }
     
     UnresolvedTopReferenced(parsed)
