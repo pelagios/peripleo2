@@ -33,13 +33,23 @@ class SuggestService @Inject() (val es: ES, implicit val ctx: ExecutionContext) 
   
   def suggest(query: String): Future[Seq[Suggestion]] =
     es.client execute {
-      search in ES.PERIPLEO / ES.ITEM suggestions (
-        phraseSuggestion("phrases") field("title") text(query) size 3,
+      search in ES.PERIPLEO suggestions (
+        phraseSuggestion("from_titles") field("title") text(query) gramSize 3 size 3,
+        phraseSuggestion("from_descriptions") field("is_conflation_of.descriptions.description") text(query)  gramSize 3 size 3,
+        phraseSuggestion("from_context") field("context") text(query)  gramSize 3 size 3,
         fuzzyCompletionSuggestion("entities").fuzzyPrefixLength(3) field("suggest") text(query) size 4
       ) size 0
     } map { response =>
-      val phrases = response.suggestion("phrases").entries
-        .flatMap(option => option.optionsText.map(Suggestion(_)))
+      val phrases =
+        Seq(
+          response.suggestion("from_titles").entries,
+          response.suggestion("from_descriptions").entries,
+          response.suggestion("from_context").entries
+        ).flatten
+         .flatMap(suggestion => suggestion.options)
+         .sortBy(- _.score)
+         .take(3)
+         .map(option => Suggestion(option.text))
 
       // Completion response carry payload - need to go through Java API to get that      
       val entities = response.getSuggest.getSuggestion("entities").asInstanceOf[CompletionSuggestion]
