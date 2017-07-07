@@ -31,8 +31,6 @@ object Suggestion {
 @Singleton
 class SuggestService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
   
-  // TODO needs to be more complex once we get to entity-based
-  // TODO suggestions. Probably need a SuggestResponse case class? 
   def suggest(query: String): Future[Seq[Suggestion]] =
     es.client execute {
       search in ES.PERIPLEO / ES.ITEM suggestions (
@@ -48,7 +46,6 @@ class SuggestService @Inject() (val es: ES, implicit val ctx: ExecutionContext) 
         .getEntries.asScala
         .flatMap(_.getOptions.asScala)
         .map { option =>
-          // val text = option.getText.string
           val payload = option.getPayloadAsMap
           Suggestion(
             option.getText.string,
