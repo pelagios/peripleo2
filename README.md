@@ -1,4 +1,5 @@
 # Peripleo 2
+[![Project Stats](https://www.openhub.net/p/peripleo2/widgets/project_thin_badge.gif)](https://www.openhub.net/p/peripleo2)
 
 Home of Peripleo v.2 - a search frontend to [Pelagios](http://commons.pelagios.org/). Track
 our progress on [Waffle.io](http://waffle.io/pelagios/peripleo2).
