@@ -66,18 +66,18 @@ define([
             });
         },
 
-        renderRelated = function() {
-          var places = (args.selected_via) ? [ args.selected_via ] : args.related.PLACE,
+        renderReferenced = function() {
+          var places = (args.selected_via) ? [ args.selected_via ] : args.referenced.PLACE,
 
               head = (places && places.length > 3) ? places.slice(0, 3) : places,
 
-              people = args.related.PERSON;
+              people = args.referenced.PERSON;
 
           if (head) {
             head.forEach(function(place) {
               var identifiers = ItemUtils.getURIs(place),
 
-                  counts = jQuery.grep(args.relatedCounts, function(r) {
+                  counts = jQuery.grep(args.referenceCounts, function(r) {
                     return identifiers.indexOf(r.identifier) > -1;
                   }),
 
@@ -93,7 +93,7 @@ define([
                                 moreLabel + '</a>' +
                             '<span>');
 
-                      el.find('a').data('related', place);
+                      el.find('a').data('referencing', place);
                       return el;
                     } else {
                       return false;
@@ -125,7 +125,7 @@ define([
 
     renderInfo();
     renderSnippets();
-    renderRelated();
+    renderReferenced();
   };
 
   return ObjectCard;

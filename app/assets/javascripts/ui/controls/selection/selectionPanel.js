@@ -116,13 +116,14 @@ define([
 
         onSetFilter = function(e) {
           var link = jQuery(e.target),
-              related = link.data('related'),
+              referenced = link.data('referencing'),
 
               filter = {
-                filter : 'places',
+                filter : 'referencing',
                 values : [{
-                  identifier: related.is_conflation_of[0].identifiers[0],
-                  label: related.title
+                  identifier: referenced.is_conflation_of[0].identifiers[0],
+                  label: referenced.title,
+                  type: ItemUtils.getItemType(referenced)
                 }]
               };
 

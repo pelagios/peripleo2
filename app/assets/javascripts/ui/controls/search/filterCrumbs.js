@@ -3,10 +3,24 @@ define(['ui/common/hasEvents'], function(HasEvents) {
   var SLIDE_DURATION = 200,
 
       ICONS = {
+        // 'referencing' filter sub-types
+        'PLACE'  : '&#xf041;',
+        'PERSON' : '&#xf007;',
+
+        // other filters
         'types'   : '&#xf03a;',
-        'places'  : '&#xf041;',
         'datasets': '&#xf187;'
+      },
+
+      getIcon = function(filterType, value) {
+        if (filterType === 'referencing')
+          // Different icons depending on the type of item reference
+          return ICONS[value.type];
+        else
+          // Otherwise, icon by filter type
+          return ICONS[filterType];
       };
+
   var FilterCrumbs = function(parentEl) {
 
     var self = this,
@@ -48,7 +62,7 @@ define(['ui/common/hasEvents'], function(HasEvents) {
           f.values.forEach(function(v) {
             filterListEl.append(
               '<li class="' + cssClass + '">' +
-                '<span class="icon">' + ICONS[f.filter] + '</span>' +
+                '<span class="icon">' + getIcon(f.filter, v) + '</span>' +
                 '<spann class="label">' + v.label + '</span>' +
               '</li>');
           });

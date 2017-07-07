@@ -103,7 +103,7 @@ define([
         },
 
         /**
-         * Merges the geometries of the search results and top_places
+         * Merges the geometries of the search results and top referenced places
          *
          * TODO properly support non-place items with geometry
          */
@@ -115,20 +115,20 @@ define([
                 return item.representative_point;
               }),
 
-              // Shorthand so we can quickly test which places exist in top_places
+              // Shorthand so we can quickly test which places exist in topPlaces
               topPlaceIds = (topPlaces) ? topPlaces.map(function(p) { return p.doc_id; }) : [],
 
-              // Clone top_places
+              // Clone topPlaces
               merged = (topPlaces) ?
                 topPlaces.map(function(p) { return jQuery.extend(true, {}, p); }) : [];
 
           itemsWithGeometry.forEach(function(item) {
             var existsIdx = topPlaceIds.indexOf(item.doc_id);
             if (existsIdx < 0)
-              // Item is not already in top_places - add to end of array
+              // Item is not already in topPlaces - add to end of array
               merged.push(jQuery.extend(true, {},  item, { related_count: 0 }));
             else
-              // Item is in top_places already - increment result_count
+              // Item is in topPlaces already - increment result_count
               merged[existsIdx].related_count += 1;
           });
 
@@ -136,8 +136,9 @@ define([
         },
 
         update = function(results) {
+          // TODO change this
           var hasPlaceFilter = (results.request_args.filters) ?
-                results.request_args.filters.places : false;
+                results.request_args.filters.referencing : false;
 
           // Don't update the map if there's a place filter
           if (!hasPlaceFilter) {

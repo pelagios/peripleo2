@@ -74,7 +74,7 @@ require([
               },
 
               deselectPlace = function(item) {
-                state.updateFilters({ places : false });
+                state.updateFilters({ referencing : false });
                 deselectItem(item);
               },
 
@@ -110,27 +110,27 @@ require([
           var uri = ItemUtils.getURIs(item)[0],
 
               /**
-               * For objects, we fetch their references (e.g. places they link to), plus
-               * the total number of other results at that reference.
+               * For objects, we fetch the items they references, plus
+               * the total number of other results at that referenced item.
                */
               selectObject = function(item) {
 
                 var fetchResultCountForReference = function(uri) {
-                      var filter = { places : [ uri ] };
+                      var filter = { referencing : [ uri ] };
 
                       return state.updateFilters(filter, { pushState: false })
                         .then(function(results) {
-                          state.updateFilters({ places: false }, NOOP);
+                          state.updateFilters({ referencing: false }, NOOP);
                           return { 'identifier' : uri, 'resultCount' : results.total };
                         });
                     },
 
-                    fetchRelated = API.getTopReferenced(uri).then(function(related) {
+                    fetchRelated = API.getTopReferenced(uri).then(function(referenced) {
                       // Run filtered searches for the first two related items of each type,
                       // so we can display info in the UI
-                      var places  = (related.PLACE)  ? related.PLACE.slice(0, 1)  : false,
-                          people  = (related.PERSON) ? related.PERSON.slice(0, 1) : false,
-                          periods = (related.PERIOD) ? related.PERIOD.slice(0, 1) : false,
+                      var places  = (referenced.PLACE)  ? referenced.PLACE.slice(0, 1)  : false,
+                          people  = (referenced.PERSON) ? referenced.PERSON.slice(0, 1) : false,
+                          periods = (referenced.PERIOD) ? referenced.PERIOD.slice(0, 1) : false,
 
                           fRelatedCounts; // TODO support person and period references
 
@@ -142,11 +142,11 @@ require([
 
                         // TODO this doesn't seem to work as expected!
                         return jQuery.when.apply(jQuery, fRelatedCounts).then(function() {
-                          return { related: related, relatedCounts: arguments };
+                          return { referenced: referenced, referenceCounts: arguments };
                         });
                       } else {
                         return jQuery.Deferred().resolve(this).then(function() {
-                          return { related: related, relatedCounts: [] };
+                          return { referenced: related, referenceCounts: [] };
                         });
                       }
                     });
@@ -167,26 +167,26 @@ require([
 
                   // Note: selection may have happend through the map, so technically no
                   // need for this - but the map is designed to handle this situation
-                  map.setSelectedItem(item, response.related.PLACE);
+                  map.setSelectedItem(item, response.referenced.PLACE);
                 });
               },
 
               /**
                * For places, we fetch the total result count at that place (i.e.
-               * the total number of items that link to that place).
+               * the total number of items that reference that place).
                */
               selectPlace = function(place) {
 
                 var fetchRelated  = function() {
                       // Transient search, filtered by URI of the place, but without queryphrase
-                      var filter = { places: [ uri ] },
+                      var filter = { referencing: [ uri ] },
                           origQuery = state.getQueryPhrase();
 
                       state.setQueryPhrase(false, NOOP);
                       return state.updateFilters(filter, { pushState: false })
                         .then(function(results) {
                           // Change back to original settings
-                          state.updateFilters({ places: false }, NOOP);
+                          state.updateFilters({ referencing: false }, NOOP);
                           state.setQueryPhrase(origQuery, NOOP);
                           return results;
                         });
@@ -213,15 +213,15 @@ require([
 
                 // TODO total redundancy with selectPlace - clean up
                 var fetchRelated  = function() {
-                      // Transient search, filtered by URI of the place, but without queryphrase
-                      var filter = { places: [ uri ] },
+                      // Transient search, filtered by URI of the person, but without queryphrase
+                      var filter = { referencing: [ uri ] },
                           origQuery = state.getQueryPhrase();
 
                       state.setQueryPhrase(false, NOOP);
                       return state.updateFilters(filter, { pushState: false })
                         .then(function(results) {
                           // Change back to original settings
-                          state.updateFilters({ places: false }, NOOP);
+                          state.updateFilters({ referencing: false }, NOOP);
                           state.setQueryPhrase(origQuery, NOOP);
                           return results;
                         });
@@ -314,11 +314,11 @@ require([
               selectFirstResultAt = function() {
                 searchPanel.setLoading(true);
                 var uri = ItemUtils.getURIs(place)[0],
-                    filter = { places : [ uri ] };
+                    filter = { referencing : [ uri ] };
 
                 return state.updateFilters(filter, { pushState: false })
                   .done(function(results) {
-                    state.updateFilters({ places: false }, NOOP);
+                    state.updateFilters({ referencing: false }, NOOP);
                     onSelectItem(results.items[0], place);
                   });
               };
@@ -378,15 +378,17 @@ require([
          * dealing with a reference object, whereas in onLocalSearch, we're dealing
          * with the entity object.
          */
-        onLocalSearch = function(place) {
+        onLocalSearch = function(item) {
           // Convert to key/value format required by state
-          var identifier = place.is_conflation_of[0].identifiers[0],
-              asFilterSetting = { 'places': [ identifier ]};
+          var identifier = item.is_conflation_of[0].identifiers[0],
+              itemType = ItemUtils.getItemType(item),
+              asFilterSetting = { referencing: [ identifier ]};
 
           searchPanel.setLoading(true);
-          searchPanel.updateFilterCrumbs({ filter: 'places', values: [{
+          searchPanel.updateFilterCrumbs({ filter: 'referencing', values: [{
             identifier: identifier,
-            label: place.title
+            label: item.title,
+            type: itemType
           }]});
           selectionPanel.hide();
 
