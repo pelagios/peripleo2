@@ -11,36 +11,51 @@ define([
 
         element = jQuery('<div id="searchpanel"></div>').appendTo(parentEl),
 
+        /** The query input field and associated autocomplete drop-down **/
         searchBox = new SearchBox(element),
 
+        /** The 'filter crumbs' bar in between the search box and the panel footer **/
         filterCrumbs = new FilterCrumbs(element),
 
+        /** The collapsible filterpanel and footer **/
         filterPane = new FilterPane(element),
 
-        /** Activates the loading spinner **/
+        /** (De)activates the loading spinner **/
         setLoading = function(loading) {
           searchBox.setLoading(loading);
         },
 
+        /** (De)activates the 'filter by viewport' indicator icon **/
         setFilterByViewport = function(filter) {
           filterPane.setFilterByViewport(filter);
         },
 
-        setSearchResponse = function(searchResponse) {
-          // TODO if the search includes any filter - set X icon
-          searchBox.setLoading(false);
-          filterPane.setResponse(searchResponse);
+        /** Updates the filterCrumbs bar **/
+        updateFilterCrumbs = function(diff) {
+          filterCrumbs.update(diff);
         },
 
+        /** Updates all components with a new search response **/
+        setSearchResponse = function(searchResponse) {
+          searchBox.setLoading(false);
+          filterPane.setSearchResponse(searchResponse);
+        },
+
+        /**
+         * Sets a new state on all components.
+         *
+         * This happends on page load (based on initial query URL args), or because
+         * the user clicked the back button. The only relevant state parameters at
+         * the moment are:
+         * - the query phrase
+         * - the open/closed state of the panel
+         */
         setState = function(state) {
           searchBox.setQuery(state.search.query);
           filterPane.setOpen(state.ui.filterPaneOpen);
-        },
-
-        updateFilterCrumbs = function(diff) {
-          filterCrumbs.update(diff);
         };
 
+    // Forward events from child components up the hierarchy
     searchBox.on('change', this.forwardEvent('queryChange'));
     searchBox.on('selectSuggestOption', this.forwardEvent('selectSuggestOption'));
 
@@ -51,11 +66,11 @@ define([
     filterPane.on('setFilter', this.forwardEvent('setFilter'));
     filterPane.on('timerangeChange', this.forwardEvent('timerangeChange'));
 
-    this.setSearchResponse = setSearchResponse;
-    this.setState = setState;
     this.setLoading = setLoading;
     this.setFilterByViewport = setFilterByViewport;
     this.updateFilterCrumbs = updateFilterCrumbs;
+    this.setSearchResponse = setSearchResponse;
+    this.setState = setState;
 
     HasEvents.apply(this);
   };

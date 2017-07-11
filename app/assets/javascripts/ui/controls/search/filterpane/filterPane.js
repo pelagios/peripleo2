@@ -32,7 +32,7 @@ define([
           else self.fireEvent('open');
         },
 
-        setResponse = function(response) {
+        setSearchResponse = function(response) {
           if (response.aggregations) {
             var byTime = response.aggregations.find(function(agg) {
                   return agg.name === 'by_time'; });
@@ -59,7 +59,7 @@ define([
     footer.on('toggle', togglePane);
 
     this.setOpen = setOpen;
-    this.setResponse = setResponse;
+    this.setSearchResponse = setResponse;
     this.setFilterByViewport = footer.setFilterByViewport;
 
     HasEvents.apply(this);
