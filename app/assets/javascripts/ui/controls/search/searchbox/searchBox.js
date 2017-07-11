@@ -21,26 +21,21 @@ define([
 
          autocomplete = new Autocomplete(searchBoxForm, searchBoxInput),
 
-         currentIconClass = 'icon search',
+         /** En- or disables the loading spinner **/
+         setLoading = function(loading) {
+           if (loading)
+             searchBoxIcon.attr('class', 'icon loading');
+           else
+             searchBoxIcon.attr('class', 'icon search');
+         },
 
+         /** Only click on the spyglass icon triggers a search, not on the load spinner **/
          onIconClicked = function() {
-           if (searchBoxIcon.hasClass('search')) {
-             // Click on spyglass triggers search
+           if (searchBoxIcon.hasClass('search'))
              onSubmit();
-           } else if (searchBoxIcon.hasClass('clear')) {
-             // Click on X clears the search
-             setQuery();
-
-             // TODO fire event so app.js gets notified
-           }
          },
 
-         /** As soon as anything is typed, force spyglass icon **/
-         onKeydown = function() {
-           currentIconClass = 'icon search';
-           searchBoxIcon.attr('class', currentIconClass);
-         },
-
+         /** Minimal cleanup when search is triggered **/
          onSubmit = function() {
            var chars = searchBoxInput.val().trim();
 
@@ -53,6 +48,10 @@ define([
            return false;
          },
 
+         /**
+          * The user picked an auto-suggest option. Handle differently, depending on
+          * whether it was a suggested item, or just a suggested search phrase.
+          */
          onSelectOption = function(option) {
            if (option.identifier)
              self.fireEvent('selectSuggestOption', option.identifier);
@@ -60,29 +59,19 @@ define([
              onSubmit();
          },
 
-         /** Sets the query string - does NOT fire a change event **/
+         /** Sets the query string WITHOUT FIRING A CHANGE EVENT **/
          setQuery = function(query) {
            if (query) searchBoxInput.val(query);
            else searchBoxInput.val('');
-         },
-
-         /** En- or disables the loading indicator **/
-         setLoading = function(loading) {
-           if (loading)
-             searchBoxIcon.attr('class', 'icon loading');
-           else
-             searchBoxIcon.attr('class', currentIconClass);
          };
 
     searchBoxForm.submit(onSubmit);
-    searchBoxForm.keydown(onKeydown);
-
     searchBoxIcon.click(onIconClicked);
 
     autocomplete.on('selectOption', onSelectOption);
 
-    this.setQuery = setQuery;
     this.setLoading = setLoading;
+    this.setQuery = setQuery;
 
     HasEvents.apply(this);
   };
