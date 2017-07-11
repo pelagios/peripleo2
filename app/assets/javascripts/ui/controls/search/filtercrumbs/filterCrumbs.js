@@ -1,25 +1,9 @@
-define(['ui/common/hasEvents'], function(HasEvents) {
+define([
+  'ui/common/hasEvents',
+  'ui/controls/search/filtercrumbs/crumb'
+], function(HasEvents, Crumb) {
 
-  var SLIDE_DURATION = 200,
-
-      ICONS = {
-        // 'referencing' filter sub-types
-        'PLACE'  : '&#xf041;',
-        'PERSON' : '&#xf007;',
-
-        // other filters
-        'types'   : '&#xf03a;',
-        'datasets': '&#xf187;'
-      },
-
-      getIcon = function(filterType, value) {
-        if (filterType === 'referencing')
-          // Different icons depending on the type of item reference
-          return ICONS[value.type];
-        else
-          // Otherwise, icon by filter type
-          return ICONS[filterType];
-      };
+  var SLIDE_DURATION = 200;
 
   var FilterCrumbs = function(parentEl) {
 
@@ -33,6 +17,7 @@ define(['ui/common/hasEvents'], function(HasEvents) {
           '</div>').hide().appendTo(parentEl),
 
         filterListEl = el.find('.fc-filters'),
+
         btnClear   = el.find('.fc-clear'),
 
         // Filters are described by { type:..., identifier:..., el: ... }
@@ -54,17 +39,10 @@ define(['ui/common/hasEvents'], function(HasEvents) {
 
         },
 
-        update = function(f) {
-          var cssClass = (f.filter === 'types') ?
-                'types ' + f.values[0].label.toLowerCase() : f.filter;
-
+        update = function(filterSetting) {
           // TODO handle existing filters?
-          f.values.forEach(function(v) {
-            filterListEl.append(
-              '<li class="' + cssClass + '">' +
-                '<span class="icon">' + getIcon(f.filter, v) + '</span>' +
-                '<spann class="label">' + v.label + '</span>' +
-              '</li>');
+          filterSetting.values.forEach(function(v) {
+            new Crumb(filterListEl, filterSetting, v);
           });
           show();
         },
