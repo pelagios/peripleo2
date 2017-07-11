@@ -1,14 +1,12 @@
 define([], function() {
 
-  var SEPARATOR = '\u0007';
-
   return {
 
     /** Returns the aggregation with the specified name **/
     getAggregation : function(aggs, name) {
-      var aggregation = aggs.find(function(agg) {
-            return agg.name === name;
-          }),
+      var SEPARATOR = '\u0007',
+
+          aggregation = aggs.find(function(agg) { return agg.name === name; }),
 
           parseBuckets = function(asObj) {
             return asObj.map(function(obj) {
@@ -68,6 +66,10 @@ define([], function() {
       return flattened;
     },
 
+    /**
+     * Within a set of buckets, this function returns the count for the
+     * bucket with the specified ID.
+     */
     getCountForId : function(buckets, id) {
       var matches = buckets.filter(function(b) {
             var leaf = b.path[b.path.length - 1];
