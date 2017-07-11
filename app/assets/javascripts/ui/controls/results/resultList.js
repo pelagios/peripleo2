@@ -8,102 +8,92 @@ define([
 
     var self = this,
 
-        element = jQuery(
+        container = jQuery(
           '<div id="result-list">' +
-            '<div class="rl-body">' +
+            '<div class="rl-inner">' +
               '<ul></ul>' +
               '<div class="rl-wait"><img src="/assets/images/wait-circle.gif"/></div>' +
             '</div>' +
           '</div>').appendTo(parentEl),
 
-        bodyEl = element.find('.rl-body'),
-        listEl = bodyEl.find('ul'),
-        waitSpinner = bodyEl.find('.rl-wait').hide(),
+        element = container.find('.rl-inner'),
+        list    = container.find('ul'),
 
-        // To keep track of the current selection
+        waitSpinner = container.find('.rl-wait').hide(),
+
+        /** Keeps track of the current selection **/
         currentSelection = false,
 
-        // Flag to record whether page load is currently in progress
+        /** Flag to record whether page load is currently in progress **/
         waitingForNextPage = false,
 
-        // Flag to record whether more search result pages are available
+        /** Flag to record whether more search result pages are available **/
         isMoreAvailable = true,
 
-        // See .setSelectedItem below
+        /** Workaround - see .setSelectedItem below **/
         lastScrollTop = 0,
 
-        createRow = function(item) {
-          var el = Templates.createRow(item).appendTo(listEl);
-          el.data('item', item);
-        },
-
-        onSelect = function(e) {
-          var li = jQuery(e.target).closest('li'),
-              item = li.data('item');
-
-          self.fireEvent('select', item);
-        },
-
-        onScroll = function() {
-          lastScrollTop = bodyEl.scrollTop();
-
-          if (isMoreAvailable) {
-            var scrollPos = bodyEl.scrollTop() + bodyEl.innerHeight(),
-                scrollBottom = bodyEl[0].scrollHeight - waitSpinner.outerHeight();
-
-            if (scrollPos >= scrollBottom && !waitingForNextPage) {
-              // Keep a flag, so that no more requests are fired before the next page arrives
-              waitingForNextPage = true;
-              self.fireEvent('nextPage');
-            }
-          }
-        },
-
+        /** Renders a new search response, either by replacing or appending to the current list **/
         renderResponse = function(response, append) {
           isMoreAvailable = response.total > (response.offset + response.limit);
 
+          // Show or hide wait spinner
           if (isMoreAvailable) waitSpinner.show();
           else waitSpinner.hide();
 
           if (!append) {
-            listEl.empty();
-            bodyEl.scrollTop(0);
-
-            // If the response replaces the current list, remove selection
+            list.empty();
+            element.scrollTop(0);
             currentSelection = false;
           }
 
-          response.items.forEach(createRow);
+          response.items.forEach(function(item) {
+            var el = Templates.createRow(item).appendTo(list);
+            el.data('item', item);
+          });
         },
 
         setSearchResponse = function(response) {
           renderResponse(response, false);
         },
 
+        appendNextPage = function(response) {
+          renderResponse(response, true);
+          waitingForNextPage = false;
+        },
+
+        /** Selects the specified item and scrolls it into view **/
         setSelectedItem = function(item) {
-          var select = function() {
-                var setCurrentSelection = function() {
-                      // TODO there are various ways to optimize if needed (indexed lookup etc.)
-                      listEl.children('li').each(function(idx, node) {
-                        var el = jQuery(node),
-                            docId = el.data('item').doc_id;
 
-                        if (docId === item.doc_id) {
-                          el.addClass('selected');
-                          currentSelection = el;
-                          return false;
-                        }
-                      });
-                    };
+              // Helper to set find the item in the list
+          var findListElement = function() {
+                var found = false;
 
-                if (currentSelection) {
-                  if (currentSelection.data('item').doc_id !== item.doc_id) {
+                // This could be optimized if needed with an indexed lookup
+                list.children('li').each(function(idx, node) {
+                  var el = jQuery(node),
+                      docId = el.data('item').doc_id;
+
+                      if (docId === item.doc_id) {
+                        found = el;
+                        return false;
+                      }
+                });
+
+                return found;
+              },
+
+              select = function() {
+                var newSelection = findListElement();
+
+                // Remove previous selection, if needed
+                if (currentSelection && currentSelection.data('item').doc_id !== item.doc_id)
                     currentSelection.removeClass('selected');
-                    setCurrentSelection();
-                  }
-                } else {
-                  setCurrentSelection();
-                }
+
+                if (newSelection)
+                  newSelection.addClass('selected');
+
+                currentSelection = newSelection;
               },
 
               deselect = function() {
@@ -118,23 +108,42 @@ define([
           else
             deselect();
 
-          // The element's scroll position jumps when a selection is made (flexbox...).
+          // The element's scroll position jumps when a selection is made (thanks to flexbox...).
           // Therefore we force the scroll position back to what it was before selection
           var scrollTop = lastScrollTop;
-          setTimeout(function() { bodyEl[0].scrollTop = scrollTop; }, 1);
+          setTimeout(function() { element[0].scrollTop = scrollTop; }, 1);
         },
 
-        appendPage = function(response) {
-          renderResponse(response, true);
-          waitingForNextPage = false;
+        /** Handles list selection and forwards the event up the component hierarchy **/
+        onSelect = function(e) {
+          var li = jQuery(e.target).closest('li'),
+              item = li.data('item');
+
+          self.fireEvent('select', item);
+        },
+
+        /** Triggers next page load in case there's more **/
+        onScroll = function() {
+          lastScrollTop = element.scrollTop();
+
+          if (isMoreAvailable) {
+            var scrollPos = element.scrollTop() + element.innerHeight(),
+                scrollBottom = element[0].scrollHeight - waitSpinner.outerHeight();
+
+            if (scrollPos >= scrollBottom && !waitingForNextPage) {
+              // Keep a flag, so that no more requests are fired before the next page arrives
+              waitingForNextPage = true;
+              self.fireEvent('nextPage');
+            }
+          }
         };
 
-    bodyEl.on('click', 'li', onSelect);
-    bodyEl.scroll(onScroll);
+    element.on('click', 'li', onSelect);
+    element.scroll(onScroll);
 
-    this.appendPage = appendPage;
     this.setSearchResponse = setSearchResponse;
     this.setSelectedItem = setSelectedItem;
+    this.appendNextPage = appendNextPage;
 
     HasEvents.apply(this);
   };

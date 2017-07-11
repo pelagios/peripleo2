@@ -462,7 +462,7 @@ require([
     selectionPanel.on('localSearch', onLocalSearch);
 
     resultList.on('select', onSelectItem);
-    resultList.on('nextPage', seq(state.loadNextPage, resultList.appendPage));
+    resultList.on('nextPage', seq(state.loadNextPage, resultList.appendNextPage));
 
     state.on('stateChange', onStateChange);
     state.init();
