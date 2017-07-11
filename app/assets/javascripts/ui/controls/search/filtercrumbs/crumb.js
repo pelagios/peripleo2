@@ -40,7 +40,15 @@ define([], function() {
           '<li class="' + getCSSClass(filterSetting) + '">' +
             '<span class="icon">' + getIcon(filterSetting.filter, value) + '</span>' +
             '<spann class="label">' + value.label + '</span>' +
-          '</li>').appendTo(parentEl);
+          '</li>').appendTo(parentEl),
+
+        collapse = function() {
+          // TODO implement
+        },
+
+        expand = function() {
+          // TODO implement
+        };
 
   };
 
