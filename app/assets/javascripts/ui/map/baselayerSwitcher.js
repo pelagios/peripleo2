@@ -57,7 +57,7 @@ define(['ui/common/hasEvents'], function(HasEvents) {
 
                 // Don't trigger select if the click was on a link
                 if (a.length === 0) {
-                  self.fireEvent('changeLayer', layerName);
+                  self.fireEvent('changeBasemap', layerName);
                   close();
                 }
               };

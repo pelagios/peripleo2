@@ -1,8 +1,6 @@
 define([], function() {
 
-  /**
-   * A utility to convert between state objects and the URL hash
-   */
+  /** A utility to convert between state objects and the URL hash **/
   return {
 
     parseHash : function() {
@@ -39,6 +37,7 @@ define([], function() {
           },
           selected: decodeIfDefined(segments.selected),
           ui: {
+            basemap        : segments.basemap,
             filterPaneOpen : segments.filters
           }
         };
@@ -60,6 +59,7 @@ define([], function() {
       setIfDefined(state.search.timerange.to, 'to');
       setIfDefined(state.selection, 'selected');
       setIfDefined(state.ui.filterPaneOpen, 'filters');
+      setIfDefined(state.ui.basemap, 'basemap');
 
       return jQuery.map(urlParams, function(val, key) {
         return key + '=' + val;

@@ -23,19 +23,17 @@ define([], function() {
     },
 
     /**
-     * Bit of a hack, but might later be rolled into an official API method.
-     * A transient query, completely bypassing the search state, with the following properties:
-     *
+     * Bit of a hack, but we might later roll it into an official API method. It's a transient
+     * query, completely bypassing the search state, with the following properties:
      * - limit = 0
-     * - top places = true
+     * - top_referenced = true
+     * - facets         = true
      * - time_histogram = true
-     * - datasets = identifier
+     * - datasets       = {identifier}
      */
     getDatasetInfo : function(identifier) {
-      var url = '/api/search?limit=20&facets=true&top_referenced=true&time_histogram=true&datasets=' + identifier,
+      var url = '/api/search?limit=0&facets=true&top_referenced=true&time_histogram=true&datasets=' + identifier,
 
-          // 'Fake' request args, so that this requests behaves just like a standard search
-          // request made through application state
           requestArgs = {
             filters:   { datasets: [ identifier ] },
             timerange: { from: false, to : false },

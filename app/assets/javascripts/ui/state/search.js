@@ -3,7 +3,7 @@ define([], function() {
       /** Number of results per page **/
   var PAGE_SIZE = 20,
 
-      // To throttle traffic, we'll stay idle between requests for this time in millis
+      /** To throttle traffic, we'll stay idle between requests for this time in millis **/
       IDLE_MS = 200;
 
   var Search = function() {
@@ -11,46 +11,32 @@ define([], function() {
     var self = this,
 
         searchArgs = {
-
-          query: false,
-
-          filters: {}, // key -> [ value, value, value, ...]
-
-          timerange: { from: false, to : false },
-
-          bbox: false,
-
-          settings: {
-
-            timeHistogram : false,
-
-            termAggregations: false,
-
-            topReferenced: true
-
+          query     : false,
+          filters   : { }, // key -> [ value, value, value, ...]
+          timerange : { from: false, to : false },
+          bbox      : false,
+          settings  : {
+            timeHistogram    : false,
+            termAggregations : false,
+            topReferenced    : true
           }
-
         },
 
         currentOffset = 0,
 
-        // Are we currently waiting for an API response?
+        /** Are we currently waiting for an API response? **/
         busy = false,
 
-        // Last pending request that arrived while busy
+        /** Last pending request that arrived while busy **/
         pendingRequest = false,
 
-        /** Returns (a clone of) the current search args **/
-        getCurrentArgs = function() {
-          return jQuery.extend({}, searchArgs);
-        },
-
-        // DRY helper
+        /** DRY helper **/
         appendIfExists = function(param, key, url) {
           if (param) return url + '&' + key + '=' + param;
           else return url;
         },
 
+        /** Builds the common parts of all query URLs **/
         buildBaseQuery = function() {
           var url = '/api/search?limit=' + PAGE_SIZE;
 
@@ -68,20 +54,19 @@ define([], function() {
           return url;
         },
 
+        /**
+         * Builds the initial request.
+         *
+         * The inital request includes top_referenced entities, aggregations and
+         * time histogram (if needed) and starts at offset = 0.
+         */
         buildFirstPageQuery = function(settings) {
           var url = buildBaseQuery();
-
-              // In terms of UI navigation, there's a dependency between 'top_referenced' and
-              // the 'places' filter. If a 'places' filter is set 'top_places' will be
-              // useless for mapping (it will only include the filter place itself, plus
-              // related places). In this case, we simply omit top_places altogether.
-              includeTopReferenced = settings.topReferenced && !searchArgs.filters.places;
 
           // First page query includes aggregations
           url = appendIfExists(settings.timeHistogram, 'time_histogram', url);
           url = appendIfExists(settings.termAggregations, 'facets', url);
-
-          if (includeTopReferenced) url += '&top_referenced=true';
+          url = appendIfExists(settings.topReferenced, 'top_referenced', url);
 
           // Reset offset for subsequent next page queries
           currentOffset = 0;
@@ -89,12 +74,18 @@ define([], function() {
           return url;
         },
 
+        /** Next page requests are just the base query with offset **/
         buildNextPageQuery = function() {
-          // TODO more to come later
           return buildBaseQuery() + '&offset=' + (currentOffset + PAGE_SIZE);
         },
 
-        makeRequest = function(opt_settings) {
+        /**
+         * Request handling (and throttling) for loading a new first result page.
+         *
+         * Triggers a request through the API, or stashes the request for later if
+         * we're currently busy.
+         */
+        loadFirstPage = function(opt_settings) {
 
           var deferred = jQuery.Deferred(),
 
@@ -122,7 +113,7 @@ define([], function() {
                     requestArgs = jQuery.extend({}, searchArgs);
 
                 // Clone request args at time of request, so we can add them to the response
-                requestArgs.settings = jQuery.extend({}, requestArgs.settings, settings);
+                requestArgs.settings = jQuery.extend(true, {}, requestArgs.settings, settings);
 
                 jQuery.getJSON(buildFirstPageQuery(settings), function(response) {
                   response.request_args = requestArgs;
@@ -140,6 +131,7 @@ define([], function() {
           return deferred.promise(this);
         },
 
+        /** Request handling for loading subsequent result pages **/
         loadNextPage = function() {
           var deferred = jQuery.Deferred();
 
@@ -151,73 +143,84 @@ define([], function() {
           return deferred.promise(this);
         },
 
-        set = function(args) {
+        /** Sets new search args (completely replacing the previous) and triggers a new search **/
+        setArgs = function(args) {
           searchArgs = args;
-          return makeRequest();
+          return loadFirstPage();
         },
 
+        /** Returns a clone of the current search args **/
+        getArgs = function() {
+          return jQuery.extend({}, searchArgs);
+        },
+
+        /** Clears all search args, optionally triggering a new request **/
         clear = function(makeReq) {
           searchArgs.query = false;
           searchArgs.filters = {};
           searchArgs.timerange = { from: false, to : false };
-
-          if (makeReq) return makeRequest();
+          if (makeReq) return loadFirstPage();
         },
 
+        /** Clears the filters, optionally triggering a new request **/
         clearFilters = function(makeReq) {
           searchArgs.filters = {};
-          if (makeReq) return makeRequest();
+          if (makeReq) return loadFirstPage();
         },
 
+        /** Updates the filters, optionally triggering a new request **/
+        updateFilters = function(diff, makeReq) {
+          jQuery.extend(searchArgs.filters, diff);
+          if (makeReq) return loadFirstPage();
+        },
+
+        /**
+         * Sets the time range and triggers a new request.
+         *
+         * Note: there's no need to recompute the histogram in case the time range changes,
+         * so we force the settings to 'time_histogram=false'.
+         */
+        setTimerange = function(range) {
+          searchArgs.timerange = range;
+          return loadFirstPage({ timeHistogram: false });
+        },
+
+        /** Sets a new query phrase, optionally triggering a new request **/
         setQuery = function(query, makeReq) {
           searchArgs.query = query;
-          if (makeReq) return makeRequest();
+          if (makeReq) return loadFirstPage();
         },
 
+        /** Returns the current search query **/
         getQuery = function() {
           return searchArgs.query;
         },
 
-        updateFilters = function(diff, makeReq) {
-          jQuery.extend(searchArgs.filters, diff);
-          if (makeReq) return makeRequest();
-        },
-
-        setTimerange = function(range) {
-          // There's no need to re-compute the time histogram in case the time range changes
-          searchArgs.timerange = range;
-          return makeRequest({ timeHistogram: false });
-        },
-
-        updateSettings = function(diff, makeReq) {
-          jQuery.extend(searchArgs.settings, diff);
-          if (makeReq) return makeRequest();
-        },
-
+        /** Sets termAggregations and time histogram setting, optionally triggering a new request **/
         setAggregationsEnabled = function(enabled, makeReq) {
-          return updateSettings({
+          jQuery.extend(searchArgs.settings,{
             timeHistogram    : enabled,
             termAggregations : enabled,
           }, makeReq);
         },
 
+        /** Updates the viewport bbox, optionally triggering a new request **/
         setViewport = function(bounds, makeReq) {
           searchArgs.bbox = bounds;
-          if (makeReq) return makeRequest();
+          if (makeReq) return loadFirstPage();
         };
 
+    this.setArgs = setArgs;
+    this.getArgs = getArgs;
     this.clear = clear;
     this.clearFilters = clearFilters;
-    this.getCurrentArgs = getCurrentArgs;
-    this.loadNextPage = loadNextPage;
-    this.set = set;
-    this.setAggregationsEnabled = setAggregationsEnabled;
+    this.updateFilters = updateFilters;
+    this.setTimerange = setTimerange;
     this.setQuery = setQuery;
     this.getQuery = getQuery;
-    this.setTimerange = setTimerange;
-    this.updateFilters = updateFilters;
-    this.updateSettings = updateSettings;
+    this.setAggregationsEnabled = setAggregationsEnabled;
     this.setViewport = setViewport;
+    this.loadNextPage = loadNextPage;
   };
 
   return Search;

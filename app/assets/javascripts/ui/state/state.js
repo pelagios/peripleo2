@@ -9,21 +9,39 @@ define([
 
     var self = this,
 
-        search = new Search(), // TODO set initial search state from URL bar
+        search = new Search(),
 
         history = new History(),
 
         currentSelection = false,
 
         uiState = {
-          // The current map viewport
-          viewportBounds   : false,
+          basemap          : false, // the current basemap
+          viewportBounds   : false, // the current map viewport
+          filterPaneOpen   : false, // open/closed state of the filter panel
+          filterByViewport : false  // state of the 'filter by viewport' toggle button
+        },
 
-          // Open/closed state of the filter panel
-          filterPaneOpen   : false,
+        /** Shorthand to push search, current selection and UI state into the page history **/
+        pushState = function() {
+          history.pushState(search.getArgs(), currentSelection, jQuery.extend({}, uiState));
+        },
 
-          // State of the 'filter by viewport' button
-          filterByViewport : false
+        /**
+         * Sets (rather than updates) a new state, completely replacing the old one.
+         *
+         * This method is used only when:
+         * - initializing a new UI, based on the URL bar
+         * - a 'changeState' event comes in from the history (i.e. the user clicked the back button)
+         */
+        setState = function(state) {
+          if (state) {
+            uiState = state.ui;
+            self.fireEvent('stateChange', {
+              state   : state,
+              request : search.setArgs(state.search)
+            });
+          }
         },
 
         init = function() {
@@ -32,25 +50,11 @@ define([
           pushState();
         },
 
-        pushState = function() {
-          history.pushState(search.getCurrentArgs(), currentSelection, jQuery.extend({}, uiState));
-        },
-
-        setState = function(state) {
-          if (state) {
-            uiState = state.ui;
-            self.fireEvent('stateChange', {
-              state   : state,
-              request : search.set(state.search)
-            });
-          }
-        },
-
         getUIState = function() {
           return uiState;
         },
 
-        // Common functionality for changing properties of the search
+        /** Common functionality for changing properties of the search **/
         changeSearch = function(change, options) {
           var pState = (options) ? options.pushState !== false : true, // default true
               makeRequest = (options) ? options.makeRequest !== false : true,
@@ -60,14 +64,17 @@ define([
           return promise;
         },
 
+        /** Completely clears the search, removing all filters and clearing the query **/
         clearSearch = function(options) {
           return changeSearch(search.clear, options);
         },
 
+        /** Clears the search filters - does not affect the time interval! **/
         clearFilters = function(options) {
           return changeSearch(search.clearFilters, options);
         },
 
+        /** Changes the search query phrase, leaving all other settings unchanged **/
         setQueryPhrase = function(query, options) {
           var changeFn = function(makeRequest)  {
                 return search.setQuery(query, makeRequest);
@@ -75,6 +82,7 @@ define([
           return changeSearch(changeFn, options);
         },
 
+        /** Updates the search filters **/
         updateFilters = function(diff, options) {
           var changeFn = function(makeRequest) {
                 return search.updateFilters(diff, makeRequest);
@@ -82,6 +90,14 @@ define([
           return changeSearch(changeFn, options);
         },
 
+        /** Sets the search time range **/
+        setTimerange = function(range) {
+          var promise = search.setTimerange(range);
+          pushState();
+          return promise;
+        },
+
+        /** Opens the filter pane (triggering a new search by default) **/
         setFilterPaneOpen = function(open, options) {
           var changeFn = function(makeRequest) {
                 return search.setAggregationsEnabled(open, makeRequest);
@@ -91,12 +107,7 @@ define([
           return changeSearch(changeFn, options);
         },
 
-        setTimerange = function(range) {
-          var promise = search.setTimerange(range);
-          pushState();
-          return promise;
-        },
-
+        /** Updates the viewport state (and triggers a new search if necessary) **/
         setViewport = function(bounds, options) {
           // Update UI state
           uiState.viewportBounds = bounds;
@@ -110,6 +121,7 @@ define([
           }
         },
 
+        /** Toggles viewport filtering **/
         setFilterByViewport = function(filter) {
           uiState.filterByViewport = filter;
 
@@ -123,11 +135,13 @@ define([
           return promise;
         },
 
-        setLayerChanged = function(name) {
-          // TODO update URL bar
-          // TODO should we treat this as a history step as well? (Probably...)
+        /** Updates the base map state **/
+        setBasemap = function(name) {
+          uiState.basemap = name;
+          pushState();
         },
 
+        /** Updates the selected item state **/
         setSelectedItem = function(item) {
           currentSelection = item.is_conflation_of[0].uri;
           pushState();
@@ -136,19 +150,19 @@ define([
     history.on('changeState', setState);
 
     this.init = init;
+    this.getUIState = getUIState;
     this.clearSearch = clearSearch;
     this.clearFilters = clearFilters;
-    this.loadNextPage = search.loadNextPage;
     this.setQueryPhrase = setQueryPhrase;
     this.getQueryPhrase = search.getQuery;
-    this.getUIState = getUIState;
     this.updateFilters = updateFilters;
     this.setTimerange = setTimerange;
     this.setFilterPaneOpen = setFilterPaneOpen;
-    this.setFilterByViewport = setFilterByViewport;
-    this.setLayerChanged = setLayerChanged;
-    this.setSelectedItem = setSelectedItem;
     this.setViewport = setViewport;
+    this.setFilterByViewport = setFilterByViewport;
+    this.setBasemap = setBasemap;
+    this.setSelectedItem = setSelectedItem;
+    this.loadNextPage = search.loadNextPage;
 
     HasEvents.apply(this);
   };

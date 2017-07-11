@@ -445,6 +445,7 @@ require([
     map.on('filterByViewport', onFilterByViewport);
     map.on('selectPlace', onSelectMapMarker);
     map.on('move', onMapMove);
+    map.on('changeBasemap', state.setBasemap);
 
     searchPanel.on('open', onOpenFilterPane);
     searchPanel.on('close', onCloseFilterPane);

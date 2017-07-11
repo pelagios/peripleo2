@@ -83,12 +83,16 @@ define([
           }
         },
 
-        onChangeLayer = function(name) {
+        onChangeBasemap = function(name) {
           var layer = BASE_LAYERS[name];
+
           if (layer && layer !== currentBaseLayer) {
             map.addLayer(layer);
             map.removeLayer(currentBaseLayer);
+
             currentBaseLayer = layer;
+
+            self.fireEvent('changeBasemap', name);
           }
         },
 
@@ -127,7 +131,7 @@ define([
           // TODO - what if the places are not in the topPlaceLayer yet (happens for autosuggest selections!)
           // TODO - the item may have geometry itself
 
-          geometryLayer.selectByURIs(placeURIs);
+          // geometryLayer.selectByURIs(placeURIs);
         },
 
         onToggleFilterByView = function() {
@@ -140,7 +144,7 @@ define([
           self.fireEvent('filterByViewport', !isEnabled);
         };
 
-    baseLayerSwitcher.on('changeLayer', onChangeLayer);
+    baseLayerSwitcher.on('changeBasemap', onChangeBasemap);
 
     btnFilterByView.click(onToggleFilterByView);
     btnLayers.click(function() { baseLayerSwitcher.open(); });
