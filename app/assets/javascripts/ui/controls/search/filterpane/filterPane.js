@@ -59,7 +59,7 @@ define([
     footer.on('toggle', togglePane);
 
     this.setOpen = setOpen;
-    this.setSearchResponse = setResponse;
+    this.setSearchResponse = setSearchResponse;
     this.setFilterByViewport = footer.setFilterByViewport;
 
     HasEvents.apply(this);
