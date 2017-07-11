@@ -3,6 +3,7 @@ define([
   'ui/common/hasEvents'
 ], function(Formatting, HasEvents) {
 
+  // Time (milliseconds) for the rotate anim of the arrow
   var ROTATE_DURATION = 250;
 
   var Footer = function(parentEl) {
@@ -18,45 +19,53 @@ define([
             '<span class="pane-toggle"></span>' +
           '</div>').appendTo(parentEl),
 
-        icon = footer.find('.icon'),
-
+        icon  = footer.find('.icon'),
         label = footer.find('.label'),
+        btnToggleFilterPane = footer.find('.pane-toggle'),
 
-        btnTogglePane = footer.find('.pane-toggle'),
-
-        onTogglePane = function(cancelEvent) {
-          var isOpen = btnTogglePane.hasClass('open');
-
-          if (isOpen) {
-            btnTogglePane.removeClass('open');
-            btnTogglePane.velocity({ rotateZ: '0deg' }, { duration: ROTATE_DURATION });
-          } else {
-            btnTogglePane.addClass('open');
-            btnTogglePane.velocity({ rotateZ: '-180deg' }, { duration: ROTATE_DURATION });
-          }
-
-          if (cancelEvent !== true) self.fireEvent('toggle');
-        },
-
+        /** Updates the 'filter by viewport' icon **/
         setFilterByViewport = function(filter) {
           if (filter) icon.addClass('by-viewport');
           else icon.removeClass('by-viewport');
         },
 
-        setOpen = function(open) {
-          var isOpen = btnTogglePane.hasClass('open');
-          if (open != isOpen) onTogglePane(true);
+        /** Updates the search result count **/
+        setSearchResponse = function(response) {
+          label.html(Formatting.formatNumber(response.total) + ' results');
         },
 
-        update = function(response) {
-          label.html(Formatting.formatNumber(response.total) + ' results');
+        /**
+         * Sets the state of the 'toggle pane' icon to open/closed.
+         *
+         * Note that the footer is passive component. The state of the icon
+         * is not connected to the actual state of the filter pane at all.
+         * Strings are pulled by filterPane.js.
+         */
+        setOpen = function(open) {
+          var isStateOpen = btnToggleFilterPane.hasClass('open');
+          if (open && !isStateOpen) {
+            btnToggleFilterPane.addClass('open');
+            btnToggleFilterPane.velocity({ rotateZ: '-180deg' }, { duration: ROTATE_DURATION });
+          } else if (!open && isStateOpen){
+            btnToggleFilterPane.removeClass('open');
+            btnToggleFilterPane.velocity({ rotateZ: '0deg' }, { duration: ROTATE_DURATION });
+          }
+        },
+
+        /**
+         * Forwards clicks on the toggle button up the component hierarchy.
+         * Note that the footer is a passive component, so this does not affect
+         * the state of the icon. (Remember: strings are pulled by filterPane.js)
+         */
+        onClickToggle = function() {
+          self.fireEvent('toggle');
         };
 
-    btnTogglePane.click(onTogglePane);
+    btnToggleFilterPane.click(onClickToggle);
 
-    this.update = update;
-    this.setOpen = setOpen;
     this.setFilterByViewport = setFilterByViewport;
+    this.setSearchResponse = setSearchResponse;
+    this.setOpen = setOpen;
 
     HasEvents.apply(this);
   };

@@ -27,6 +27,7 @@ define([
               action = (visible) ? 'slideUp' : 'slideDown';
 
           body.velocity(action, { duration: SLIDE_DURATION });
+          footer.setOpen(!visible);
 
           if (visible) self.fireEvent('close');
           else self.fireEvent('open');
@@ -41,7 +42,7 @@ define([
             facetsPane.update(response.aggregations);
           }
 
-          footer.update(response);
+          footer.setSearchResponse(response);
         },
 
         setOpen = function(open) {

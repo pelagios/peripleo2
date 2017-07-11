@@ -201,7 +201,8 @@ define([], function() {
           jQuery.extend(searchArgs.settings,{
             timeHistogram    : enabled,
             termAggregations : enabled,
-          }, makeReq);
+          });
+          if (makeReq) return loadFirstPage();
         },
 
         /** Updates the viewport bbox, optionally triggering a new request **/
