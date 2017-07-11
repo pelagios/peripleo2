@@ -5,7 +5,7 @@ define([
   'ui/controls/search/filterpane/facets/typeFacet'
 ], function(AggregationUtils, HasEvents, FacetChart, TypeFacet) {
 
-  var FacetsOverview = function(parentEl) {
+  var FacetSection = function(parentEl) {
 
     var el = jQuery(
           '<div class="facets-pane">' +
@@ -102,8 +102,8 @@ define([
 
     HasEvents.apply(this);
   };
-  FacetsOverview.prototype = Object.create(HasEvents.prototype);
+  FacetSection.prototype = Object.create(HasEvents.prototype);
 
-  return FacetsOverview;
+  return FacetSection;
 
 });
