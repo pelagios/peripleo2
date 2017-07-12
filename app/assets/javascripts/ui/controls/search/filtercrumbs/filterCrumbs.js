@@ -21,13 +21,6 @@ define([
 
         crumbs = [],
 
-        /** Returns true if the filter is already in the list **
-        findFilter = function(type, identifier) {
-          return filters.find(function(f) {
-            return f.type === type && f.identifier === identifier;
-          });
-        },*/
-
         existsFilterCrumb = function(filter, value) {
           return crumbs.find(function(crumb) {
             return crumb.matches(filter, value);
@@ -61,7 +54,7 @@ define([
           if (element.is(':visible'))
             element.velocity('slideUp', {
               duration: SLIDE_DURATION,
-              
+
               // TODO destroy filter crumbs
               complete: function() { list.empty(); }
             });
