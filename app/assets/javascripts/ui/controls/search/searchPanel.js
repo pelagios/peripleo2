@@ -31,8 +31,8 @@ define([
         },
 
         /** Updates the filterCrumbs bar **/
-        updateFilterCrumbs = function(diff) {
-          filterCrumbs.update(diff);
+        updateFilterCrumbs = function(filterSetting) {
+          filterCrumbs.update(filterSetting);
         },
 
         /** Updates all components with a new search response **/

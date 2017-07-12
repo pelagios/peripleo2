@@ -9,59 +9,69 @@ define([
 
     var self = this,
 
-        el = jQuery(
+        element = jQuery(
           '<div class="filtercrumbs">' +
             '<div class="fc-label icon">&#xf0b0;</div>' +
             '<ul class="fc-filters"></ul>' +
             '<div class="fc-clear icon stroke7">&#xe680;</div>' +
           '</div>').hide().appendTo(parentEl),
 
-        filterListEl = el.find('.fc-filters'),
+        list        = element.find('.fc-filters'),
+        btnClearAll = element.find('.fc-clear'),
 
-        btnClear   = el.find('.fc-clear'),
+        crumbs = [],
 
-        // Filters are described by { type:..., identifier:..., el: ... }
-        filters = [],
-
-        /** Returns true if the filter is already in the list **/
+        /** Returns true if the filter is already in the list **
         findFilter = function(type, identifier) {
           return filters.find(function(f) {
             return f.type === type && f.identifier === identifier;
           });
+        },*/
+
+        existsFilterCrumb = function(filter, value) {
+          // TODO implement
+          return false;
         },
 
-        show = function() {
-          if (!el.is(':visible'))
-            el.velocity('slideDown', { duration: SLIDE_DURATION });
-        },
-
-        hide = function() {
-
-        },
-
+        /**
+         * Adds a filter setting to the list. Reminder:
+         * a filter setting is a combination of one filter type, and
+         * one or more filter values. Therefore, one setting may
+         * correspond to multiple crumbs.
+         */
         update = function(filterSetting) {
-          // TODO handle existing filters?
-          filterSetting.values.forEach(function(v) {
-            new Crumb(filterListEl, filterSetting, v);
-          });
+          var filter = filterSetting.filter,
+
+              show = function() {
+                if (!el.is(':visible'))
+                  el.velocity('slideDown', { duration: SLIDE_DURATION });
+              };
+
+          filterSetting.values.forEach(function(value) {
+            if (!existsFilterCrumb(filter, value))
+              crumbs.push(new Crumb(filterListEl, filter, value));
+          }, []);
+
           show();
         },
 
-        clear = function() {
-          if (el.is(':visible')) {
+        /** Clears all filter crumbs **/
+        clearAll = function() {
+
+          // TODO destroy filter crumbs
+
+          if (el.is(':visible'))
             el.velocity('slideUp', {
               duration: SLIDE_DURATION,
               complete: function() { filterListEl.empty(); }
             });
 
-            self.fireEvent('removeAll');
-          }
+          self.fireEvent('removeAll');
         };
 
-    btnClear.click(clear);
+    btnClearAll.click(clearAll);
 
     this.update = update;
-    this.clear = clear;
 
     HasEvents.apply(this);
   };

@@ -17,13 +17,13 @@ define([], function() {
        * (Reminder: a filter can have one type, and multiple values. Example: 'referencing' with
        * a Place and a Person value.)
        */
-      getIcon = function(filterType, value) {
-        if (filterType === 'referencing')
+      getIcon = function(filter, value) {
+        if (filter === 'referencing')
           // Different icons depending on the type of item reference
           return ICONS[value.type];
         else
           // Otherwise, icon by filter type
-          return ICONS[filterType];
+          return ICONS[filter];
       },
 
       /**
@@ -31,16 +31,16 @@ define([], function() {
        * CSS styling depends on the type of item. Otherwise, base styling just
        * depends on the filter type.
        */
-      getCSSClass = function(filterSetting) {
-        return (filterSetting.filter === 'types') ?
-          'types ' + filterSetting.values[0].label.toLowerCase() : filterSetting.filter;
+      getCSSClass = function(filter, value) {
+        return (filter === 'types') ?
+          'types ' + value.label.toLowerCase() : filter;
       };
 
-  var Crumb = function(parentEl, filterSetting, value) {
+  var Crumb = function(parentEl, filter, value) {
 
     var element = jQuery(
-          '<li class="' + getCSSClass(filterSetting) + '">' +
-            '<span class="icon">' + getIcon(filterSetting.filter, value) + '</span>' +
+          '<li class="' + getCSSClass(filter, value) + '">' +
+            '<span class="icon">' + getIcon(filter, value) + '</span>' +
             '<span class="label"><span class="label-inner">' + value.label + '</span></span>' +
           '</li>').appendTo(parentEl),
 
@@ -66,7 +66,7 @@ define([], function() {
           if (isCollapsed())
             label.animate({ 'width': width }, COLLAPSE_DURATION);
         };
-        
+
     this.collapse = collapse;
     this.expand = expand;
   };
