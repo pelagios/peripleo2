@@ -6,8 +6,11 @@ define([
   var SLIDE_DURATION = 200,
 
       /** Helper to compute array diff (a - b) **/
-      diff = function(a, b) {
-        return a.filter(function(x) { return b.indexOf(x) < 0; });
+      diff = function(arr, b) {
+        if (jQuery.isArray(b))
+          return arr.filter(function(x) { return b.indexOf(x) < 0; });
+        else
+          return arr.filter(function(x) {  return x !== b; });
       };
 
   var FilterCrumbs = function(parentEl) {
@@ -79,8 +82,24 @@ define([
             });
 
           self.fireEvent('removeAll');
+        },
+
+        onExpand = function(e) {
+          var li = jQuery(e.target).closest('li'),
+
+              crumb = crumbs.find(function(c) {
+                return c.isAttachedTo(li);
+              });
+
+          if (crumb) {
+            crumb.expand();
+            diff(crumbs, crumb).forEach(function(c) {
+              c.collapse();
+            });
+          }
         };
 
+    list.on('click', 'li', onExpand);
     btnClearAll.click(clearAll);
 
     this.update = update;

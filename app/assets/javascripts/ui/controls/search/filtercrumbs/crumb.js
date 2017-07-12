@@ -57,6 +57,18 @@ define([], function() {
           return f === filter && v.identifier === value.identifier;
         },
 
+        /**
+         * A helper to test whether this Crumb is attached to the given
+         * LI jQuery element. Used by filterCrumb.js to determine the appropriate
+         * crumb after a user clicked on an LI. Not the nicest solution... but
+         * don't really know a way with less cross-dependency.
+         * (Alternative would be to attach the crumb to the LI via .data(), but introduces
+         * the same cross-dependency.)
+         */
+        isAttachedTo = function(li) {
+          return li.is(element);
+        },
+
         isCollapsed = function() {
           return label.width() === 0;
         },
@@ -70,17 +82,11 @@ define([], function() {
         expand = function() {
           if (isCollapsed())
             label.animate({ 'width': width }, COLLAPSE_DURATION);
-        },
-
-        onClick = function() {
-          // TODO implement
-          console.log('expand me!');
         };
-
-    element.click(onClick);
 
     this.collapse = collapse;
     this.expand = expand;
+    this.isAttachedTo = isAttachedTo;
     this.matches = matches;
   };
 
