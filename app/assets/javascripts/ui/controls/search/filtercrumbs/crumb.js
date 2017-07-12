@@ -1,6 +1,8 @@
 define([], function() {
 
-  var ICONS = {
+  var COLLAPSE_DURATION = 150,
+
+      ICONS = {
         // 'referencing' filter sub-types
         'PLACE'  : '&#xf041;',
         'PERSON' : '&#xf007;',
@@ -39,17 +41,34 @@ define([], function() {
     var element = jQuery(
           '<li class="' + getCSSClass(filterSetting) + '">' +
             '<span class="icon">' + getIcon(filterSetting.filter, value) + '</span>' +
-            '<spann class="label">' + value.label + '</span>' +
+            '<span class="label"><span class="label-inner">' + value.label + '</span></span>' +
           '</li>').appendTo(parentEl),
 
+        label = element.find('.label'),
+
+        /**
+         * To be determined before collapsing happens. Otherwise label.width() can be 0
+         * directly after attaching to parentEl.
+          */
+        width,
+
+        isCollapsed = function() {
+          return label.width() === 0;
+        },
+
         collapse = function() {
-          // TODO implement
+          if (!isCollapsed())
+            width = label.width();
+            label.animate({ 'width' : 0 }, COLLAPSE_DURATION);
         },
 
         expand = function() {
-          // TODO implement
+          if (isCollapsed())
+            label.animate({ 'width': width }, COLLAPSE_DURATION);
         };
-
+        
+    this.collapse = collapse;
+    this.expand = expand;
   };
 
   return Crumb;
