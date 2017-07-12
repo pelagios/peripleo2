@@ -12,6 +12,10 @@ define([], function() {
         'datasets': '&#xf187;'
       },
 
+      TOOLTIPS = {
+
+      },
+
       /**
        * Returns the appropriate icon for the specified filter type and filter value.
        * (Reminder: a filter can have one type, and multiple values. Example: 'referencing' with
@@ -34,12 +38,20 @@ define([], function() {
       getCSSClass = function(filter, value) {
         return (filter === 'types') ?
           'types ' + value.label.toLowerCase() : filter;
+      },
+
+      getTitle = function(filter, value) {
+        if (filter === 'referencing') {
+          return 'Show only items linked to ' + value.label;
+        } else if (filter === 'types') {
+          return 'Show only ' + value.label;         
+        }
       };
 
   var Crumb = function(parentEl, filter, value) {
 
     var element = jQuery(
-          '<li class="' + getCSSClass(filter, value) + '">' +
+          '<li class="' + getCSSClass(filter, value) + '" title="' + getTitle(filter, value) + '">' +
             '<span class="icon">' + getIcon(filter, value) + '</span>' +
             '<span class="label"><span class="label-inner">' + value.label + '</span></span>' +
           '</li>').appendTo(parentEl),
