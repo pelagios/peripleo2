@@ -52,6 +52,11 @@ define([], function() {
           */
         width,
 
+        /** Returns true if this crumb corresponds to the specified filter/value combination **/
+        matches = function(f, v) {
+          return f === filter && v.identifier === value.identifier;
+        },
+
         isCollapsed = function() {
           return label.width() === 0;
         },
@@ -69,6 +74,7 @@ define([], function() {
 
     this.collapse = collapse;
     this.expand = expand;
+    this.matches = matches;
   };
 
   return Crumb;

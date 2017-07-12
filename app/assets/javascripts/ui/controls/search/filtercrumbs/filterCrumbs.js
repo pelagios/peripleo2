@@ -29,8 +29,9 @@ define([
         },*/
 
         existsFilterCrumb = function(filter, value) {
-          // TODO implement
-          return false;
+          return crumbs.find(function(crumb) {
+            return crumb.matches(filter, value);
+          });
         },
 
         /**
@@ -43,13 +44,13 @@ define([
           var filter = filterSetting.filter,
 
               show = function() {
-                if (!el.is(':visible'))
-                  el.velocity('slideDown', { duration: SLIDE_DURATION });
+                if (!element.is(':visible'))
+                  element.velocity('slideDown', { duration: SLIDE_DURATION });
               };
 
           filterSetting.values.forEach(function(value) {
             if (!existsFilterCrumb(filter, value))
-              crumbs.push(new Crumb(filterListEl, filter, value));
+              crumbs.push(new Crumb(list, filter, value));
           }, []);
 
           show();
@@ -57,13 +58,12 @@ define([
 
         /** Clears all filter crumbs **/
         clearAll = function() {
-
-          // TODO destroy filter crumbs
-
-          if (el.is(':visible'))
-            el.velocity('slideUp', {
+          if (element.is(':visible'))
+            element.velocity('slideUp', {
               duration: SLIDE_DURATION,
-              complete: function() { filterListEl.empty(); }
+              
+              // TODO destroy filter crumbs
+              complete: function() { list.empty(); }
             });
 
           self.fireEvent('removeAll');
