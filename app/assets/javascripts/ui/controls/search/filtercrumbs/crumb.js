@@ -86,9 +86,10 @@ define([], function() {
         },
 
         collapse = function() {
-          if (!isCollapsed())
-            width = label.width();
+          if (!isCollapsed()) {
+            if (!width) width = label.outerWidth() + 1;
             label.animate({ 'width' : 0 }, COLLAPSE_DURATION);
+          }
         },
 
         expand = function() {
@@ -99,6 +100,7 @@ define([], function() {
     this.collapse = collapse;
     this.expand = expand;
     this.isAttachedTo = isAttachedTo;
+    this.isCollapsed = isCollapsed;
     this.matches = matches;
   };
 

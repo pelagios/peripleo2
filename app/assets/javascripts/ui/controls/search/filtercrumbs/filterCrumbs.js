@@ -84,7 +84,7 @@ define([
           self.fireEvent('removeAll');
         },
 
-        onExpand = function(e) {
+        onClick = function(e) {
           var li = jQuery(e.target).closest('li'),
 
               crumb = crumbs.find(function(c) {
@@ -92,14 +92,19 @@ define([
               });
 
           if (crumb) {
-            crumb.expand();
-            diff(crumbs, crumb).forEach(function(c) {
-              c.collapse();
-            });
+            if (crumb.isCollapsed()) {
+              // Expand this crumb and collapse all others
+              crumb.expand();
+              diff(crumbs, crumb).forEach(function(c) {
+                c.collapse();
+              });
+            } else {
+              crumb.collapse();
+            }
           }
         };
 
-    list.on('click', 'li', onExpand);
+    list.on('click', 'li', onClick);
     btnClearAll.click(clearAll);
 
     this.update = update;
