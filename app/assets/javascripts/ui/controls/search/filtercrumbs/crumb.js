@@ -44,7 +44,7 @@ define([], function() {
         if (filter === 'referencing') {
           return 'Show only items linked to ' + value.label;
         } else if (filter === 'types') {
-          return 'Show only ' + value.label;         
+          return 'Show only ' + value.label;
         }
       };
 
