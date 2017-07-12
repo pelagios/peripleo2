@@ -28,7 +28,6 @@ define([
 
         findFilterCrumb = function(filter, value) {
           return crumbs.find(function(crumb) {
-            console.log(crumb);
             return crumb.matches(filter, value);
           });
         },
@@ -73,9 +72,10 @@ define([
           if (element.is(':visible'))
             element.velocity('slideUp', {
               duration: SLIDE_DURATION,
-
-              // TODO destroy filter crumbs
-              complete: function() { list.empty(); }
+              complete: function() {
+                list.empty();
+                crumbs = [];
+              }
             });
 
           self.fireEvent('removeAll');

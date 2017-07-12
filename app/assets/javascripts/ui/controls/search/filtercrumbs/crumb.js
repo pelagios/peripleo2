@@ -70,7 +70,14 @@ define([], function() {
         expand = function() {
           if (isCollapsed())
             label.animate({ 'width': width }, COLLAPSE_DURATION);
+        },
+
+        onClick = function() {
+          // TODO implement
+          console.log('expand me!');
         };
+
+    element.click(onClick);
 
     this.collapse = collapse;
     this.expand = expand;
