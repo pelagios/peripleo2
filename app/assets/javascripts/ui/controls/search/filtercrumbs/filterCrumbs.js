@@ -3,7 +3,12 @@ define([
   'ui/controls/search/filtercrumbs/crumb'
 ], function(HasEvents, Crumb) {
 
-  var SLIDE_DURATION = 200;
+  var SLIDE_DURATION = 200,
+
+      /** Helper to compute array diff (a - b) **/
+      diff = function(a, b) {
+        return a.filter(function(x) { return b.indexOf(x) < 0; });
+      };
 
   var FilterCrumbs = function(parentEl) {
 
@@ -21,8 +26,9 @@ define([
 
         crumbs = [],
 
-        existsFilterCrumb = function(filter, value) {
+        findFilterCrumb = function(filter, value) {
           return crumbs.find(function(crumb) {
+            console.log(crumb);
             return crumb.matches(filter, value);
           });
         },
@@ -37,15 +43,28 @@ define([
           var filter = filterSetting.filter,
 
               show = function() {
+                toExpand.forEach(function(c) { c.expand(); });
+                toCollapse.forEach(function(c) { c.collapse(); });
+
                 if (!element.is(':visible'))
                   element.velocity('slideDown', { duration: SLIDE_DURATION });
-              };
+              },
+
+              toExpand = [], toCollapse = [],  toAdd = [];
 
           filterSetting.values.forEach(function(value) {
-            if (!existsFilterCrumb(filter, value))
-              crumbs.push(new Crumb(list, filter, value));
-          }, []);
+            var existingCrumb = findFilterCrumb(filter, value);
+            if (existingCrumb)
+              // The crumb for this filter exists already - expand
+              toExpand.push(existingCrumb);
+            else
+              // Add a new crumb
+              toAdd.push(new Crumb(list, filter, value));
+          });
 
+          // Compute toCollapse, update crumbs array and render
+          toCollapse = diff(crumbs, toExpand);
+          crumbs = crumbs.concat(toAdd);
           show();
         },
 
