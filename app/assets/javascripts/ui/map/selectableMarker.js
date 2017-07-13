@@ -1,10 +1,18 @@
-define(['ui/map/styles'], function(Styles) {
+define([], function() {
+
+  var BASE_STYLE = {
+    color       : '#a64a40',
+    opacity     : 1,
+    fillColor   : '#e75444',
+    fillOpacity : 1,
+    weight      : 1.5
+  };
 
   var SelectableMarker = function(latlng, size) {
 
     var self = this,
 
-        style = jQuery.extend({}, Styles.POINT.RED, { radius: size }),
+        style = jQuery.extend({}, BASE_STYLE, { radius: size }),
 
         selection = false,
 
