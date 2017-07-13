@@ -14,20 +14,24 @@ define([], function() {
 
         style = jQuery.extend({}, BASE_STYLE, { radius: size }),
 
+        /** The selection marker (if any) **/
         selection = false,
 
         select = function() {
-          var icon = L.divIcon({
-                iconSize  : [ 50, 50 ],
-                iconAnchor: [ 25, 25 ],
-                className : 'marker-selected',
-                html      : '<div class="inner"></div>'
-              });
+          selection = L.marker(latlng, {
+            icon: L.divIcon({
+              iconSize  : [ 50, 50 ],
+              iconAnchor: [ 25, 25 ],
+              className : 'marker-selected',
+              html      : '<div class="inner"></div>'
+            })
+          });
 
-          selection = L.marker(latlng, { icon: icon });
           selection.on('add', function() {
+            // Start animation right after add
             setTimeout(function() { jQuery(selection._icon).css('padding', 0); }, 10);
           });
+
           selection.addTo(self._map);
         },
 
@@ -38,12 +42,17 @@ define([], function() {
             jQuery(marker._icon).css('padding', '25px');
             setTimeout(function() { marker.remove(); }, 150);
           }
+        },
+
+        isSelected = function() {
+          return selection !== false;
         };
 
-    this.isSelected = function() { return selection !== false; };
     this.select = select;
     this.deselect = deselect;
+    this.isSelected = isSelected;
 
+    // Inherits from Leaflet's default circle marker
     L.CircleMarker.apply(this, [ latlng, style ]);
   };
   SelectableMarker.prototype = Object.create(L.CircleMarker.prototype);
