@@ -9,7 +9,6 @@ define([
   /** A helper that creates a hash of TileLayer objects for all base layers **/
   var LAYERS = (function() {
     var layers = {};
-
     BaseLayers.all().forEach(function(layer) {
       layers[layer.id] = L.tileLayer(layer.tile_url, {
         attribution : layer.attribution,
@@ -17,7 +16,6 @@ define([
         maxZoom     : layer.max_zoom
       });
     });
-
     return layers;
   })();
 
@@ -34,7 +32,7 @@ define([
           layers: [ currentBaseLayer ]
         }),
 
-        controlsEl = jQuery(
+        controls = jQuery(
           '<div id="map-controls">' +
             '<div class="control filter-by-viewport"><span class="icon">&#xf0b0;</span></div>' +
             '<div class="control layers icon" title="Change base layer">&#xf0c9;</div>' +
@@ -44,25 +42,22 @@ define([
             '</div>' +
           '</div>').appendTo(document.body),
 
+        btnFilterByView = controls.find('.filter-by-viewport'),
+        btnLayers       = controls.find('.layers'),
+        btnZoomIn       = controls.find('.zoom-in'),
+        btnZoomOut      = controls.find('.zoom-out'),
+
         geometryLayer = new GeometryLayer(map),
 
         baseLayerSwitcher = new BaseLayerSwitcher(),
-
-        btnFilterByView = controlsEl.find('.filter-by-viewport'),
-        btnLayers       = controlsEl.find('.layers'),
-        btnZoomIn       = controlsEl.find('.zoom-in'),
-        btnZoomOut      = controlsEl.find('.zoom-out'),
 
         // Flag so we can tell apart user-initiated zoom/pan from automatic fit movement
         isAutoFit = false,
 
         fitBounds = function() {
           var topPlacesBounds = geometryLayer.getBounds();
-
-          // TODO get item bounds + compute union
           if (topPlacesBounds.isValid()) {
             isAutoFit = true;
-
             map.fitBounds(topPlacesBounds, {
               paddingTopLeft: [440, 20],
               paddingBottomRight: [20, 20],
@@ -73,7 +68,6 @@ define([
 
         onChangeBasemap = function(name) {
           var layer = LAYERS[name];
-
           if (layer && layer !== currentBaseLayer) {
             map.addLayer(layer);
             map.removeLayer(currentBaseLayer);
@@ -99,29 +93,16 @@ define([
           }
         },
 
-        // We're stopping event propagation on markers, so this click is on the basemap - deselect!
+        /**
+         * Note: we're stopping event propagation on markers, therefore we
+         * know this click is coming from the basemap - deselect!
+         */
         onClick = function(e) {
           geometryLayer.clearSelection();
           self.fireEvent('selectPlace');
         },
 
-        setState = function(state) {
-
-        },
-
-        setSelectedItem = function(item, relatedPlaces) {
-          // The item won't necessarily have place references
-          var placeURIs = (relatedPlaces) ?
-                relatedPlaces.map(function(p) { return p.is_conflation_of[0].identifiers[0]; }) :
-                [];
-
-          // TODO rethink all possible situtations
-          // TODO - what if the places are not in the topPlaceLayer yet (happens for autosuggest selections!)
-          // TODO - the item may have geometry itself
-
-          // geometryLayer.selectByURIs(placeURIs);
-        },
-
+        /** Toggles the 'filter by view' button **/
         onToggleFilterByView = function() {
           var isEnabled = btnFilterByView.hasClass('enabled');
           if (isEnabled)
@@ -130,6 +111,26 @@ define([
             btnFilterByView.addClass('enabled');
 
           self.fireEvent('filterByViewport', !isEnabled);
+        },
+
+        setState = function(state) {
+          // TODO called on load and Back button - might have effect on map position
+        },
+
+        setSelectedItem = function(item, referencedPlaces) {
+
+          // TODO rethink this API - we don't necessarily want to select all places this
+          // TODO item references. (We also need to break the loop in app.js)
+
+          // var placeURIs = (referencedPlaces) ?
+          //      referencedPlaces.map(function(p) { return p.is_conflation_of[0].identifiers[0]; }) :
+          //      [];
+
+          // TODO rethink all possible situtations
+          // TODO - what if the places are not in the topPlaceLayer yet (happens for autosuggest selections!)
+          // TODO - the item may have geometry itself
+
+          // geometryLayer.selectByURIs(placeURIs);
         };
 
     baseLayerSwitcher.on('changeBasemap', onChangeBasemap);
