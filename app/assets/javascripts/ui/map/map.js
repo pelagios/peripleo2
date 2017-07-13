@@ -1,43 +1,31 @@
 define([
   'ui/common/hasEvents',
   'ui/common/itemUtils',
+  'ui/map/baselayers',
   'ui/map/baselayerSwitcher',
   'ui/map/geometryLayer'
-], function(HasEvents, ItemUtils, BaseLayerSwitcher, GeometryLayer) {
+], function(HasEvents, ItemUtils, BaseLayers, BaseLayerSwitcher, GeometryLayer) {
 
-  // TODO can we make these configurable? Cf. E-ARK demo (where we used a JSON file)
-  // TODO move these into BaseLayerSwitcher?
-  var BASE_LAYERS = {
+  /** A helper that creates a hash of TileLayer objects for all base layers **/
+  var LAYERS = (function() {
+    var layers = {};
 
-        DARE   : L.tileLayer('http://pelagios.org/tilesets/imperium/{z}/{x}/{y}.png', {
-                   attribution: 'Tiles: <a href="http://imperium.ahlfeldt.se/">DARE 2014</a>',
-                   minZoom:3,
-                   maxZoom:11
-                 }),
+    BaseLayers.all().forEach(function(layer) {
+      layers[layer.id] = L.tileLayer(layer.tile_url, {
+        attribution : layer.attribution,
+        minZoom     : layer.min_zoom,
+        maxZoom     : layer.max_zoom
+      });
+    });
 
-        AWMC   : L.tileLayer('http://a.tiles.mapbox.com/v3/isawnyu.map-knmctlkh/{z}/{x}/{y}.png', {
-                   attribution: 'Tiles &copy; <a href="http://mapbox.com/" target="_blank">MapBox</a> | ' +
-                     'Data &copy; <a href="http://www.openstreetmap.org/" target="_blank">OpenStreetMap</a> and contributors, CC-BY-SA | '+
-                     'Tiles and Data &copy; 2013 <a href="http://www.awmc.unc.edu" target="_blank">AWMC</a> ' +
-                     '<a href="http://creativecommons.org/licenses/by-nc/3.0/deed.en_US" target="_blank">CC-BY-NC 3.0</a>'
-                 }),
-
-        OSM    : L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                   attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
-                 }),
-
-        AERIAL : L.tileLayer('http://api.tiles.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoicGVsYWdpb3MiLCJhIjoiMWRlODMzM2NkZWU3YzkxOGJkMDFiMmFiYjk3NWZkMmUifQ.cyqpSZvhsvBGEBwRfniVrg', {
-                   attribution: '<a href="https://www.mapbox.com/about/maps/">&copy; Mapbox</a> <a href="http://www.openstreetmap.org/about/">&copy; OpenStreetMap</a>',
-                   maxZoom:22
-                 })
-
-      };
+    return layers;
+  })();
 
   var Map = function(containerDiv) {
 
     var self = this,
 
-        currentBaseLayer = BASE_LAYERS.AWMC,
+        currentBaseLayer = LAYERS.AWMC,
 
         map = L.map(containerDiv, {
           center: [ 48, 16 ],
@@ -84,7 +72,7 @@ define([
         },
 
         onChangeBasemap = function(name) {
-          var layer = BASE_LAYERS[name];
+          var layer = LAYERS[name];
 
           if (layer && layer !== currentBaseLayer) {
             map.addLayer(layer);
