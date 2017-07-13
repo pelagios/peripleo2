@@ -45,7 +45,7 @@
       }
 
       .label {
-        max-width:120px;
+        max-width:100px;
         box-sizing:border-box;
         position:relative;
       }
@@ -64,8 +64,12 @@
         overflow:hidden;
         text-overflow:ellipsis;
 
-        .seg {
-          display:inline;
+        .separator::after {
+          font-family:FontAwesome;
+          font-size:14px;
+          content:'\f105';
+          padding:0 3px 0 4px;
+          line-height:21px;
         }
 
       }

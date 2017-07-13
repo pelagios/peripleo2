@@ -11,9 +11,7 @@ define([
 
       /** Shorthand to fetch labels from a path **/
       toLabel = function(path) {
-        return path.map(function(segment) {
-          return '<span class="seg">' + segment.label + '</span>';
-        }).join(' ');
+        return path.map(function(segment) { return segment.label; }).join('\u0007');
       };
 
   var FacetChart = function(parentEl) {
@@ -72,7 +70,7 @@ define([
 
                 el.data('path', bucket.path);
                 el.find('.count').html(Formatting.formatNumber(bucket.count));
-                el.find('.label').html(toLabel(bucket.path));
+                el.find('.label').html(toLabel(bucket.path).replace('\u0007', '<span class="separator"></span>'));
 
                 return el;
               };

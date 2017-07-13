@@ -12,8 +12,14 @@ define([], function() {
         'datasets': '&#xf187;'
       },
 
-      TOOLTIPS = {
-
+      /**
+       * If it's a type filter (Objects, Places, People, Periods), then base
+       * CSS styling depends on the type of item. Otherwise, base styling just
+       * depends on the filter type.
+       */
+      getCSSClass = function(filter, value) {
+        return (filter === 'types') ?
+          'types ' + value.label.toLowerCase() : filter;
       },
 
       /**
@@ -30,30 +36,25 @@ define([], function() {
           return ICONS[filter];
       },
 
-      /**
-       * If it's a type filter (Objects, Places, People, Periods), then base
-       * CSS styling depends on the type of item. Otherwise, base styling just
-       * depends on the filter type.
-       */
-      getCSSClass = function(filter, value) {
-        return (filter === 'types') ?
-          'types ' + value.label.toLowerCase() : filter;
-      },
-
-      getTitle = function(filter, value) {
+      getTooltip = function(filter, value) {
+        var label = value.label.replace('\u0007', ' > ');
         if (filter === 'referencing') {
-          return 'Show only items linked to ' + value.label;
+          return 'Show only items linked to ' + label;
         } else if (filter === 'types') {
-          return 'Show only ' + value.label;
+          return 'Show only ' + label;
+        } else if (filter === 'datasets') {
+          return 'Show only items from ' + label;
         }
       };
 
   var Crumb = function(parentEl, filter, value) {
 
     var element = jQuery(
-          '<li class="' + getCSSClass(filter, value) + '" title="' + getTitle(filter, value) + '">' +
+          '<li class="' + getCSSClass(filter, value) + '" title="' + getTooltip(filter, value) + '">' +
             '<span class="icon">' + getIcon(filter, value) + '</span>' +
-            '<span class="label"><span class="label-inner">' + value.label + '</span></span>' +
+            '<span class="label"><span class="label-inner">' +
+              value.label.replace('\u0007', '<span class="separator"></span>') +
+            '</span></span>' +
           '</li>').appendTo(parentEl),
 
         label = element.find('.label'),
