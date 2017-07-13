@@ -1,7 +1,8 @@
 define([
   'ui/common/formatting',
-  'ui/common/itemUtils'
-], function(Formatting, ItemUtils) {
+  'ui/common/itemUtils',
+  'ui/controls/selection/cards/baseCard'
+], function(Formatting, ItemUtils, BaseCard) {
 
   var distinct = function(arr) {
         return arr.reduce(function(distinct, elem) {
@@ -12,7 +13,9 @@ define([
 
   var PlaceCard  = function(parentEl, place, args) {
 
-    var infoEl = jQuery(
+    var self = this,
+
+        element = jQuery(
           '<div class="item-info">' +
             '<h3 class="item-title"></h3>' +
             '<ul class="item-identifiers"></ul>' +
@@ -21,69 +24,52 @@ define([
             '<p class="item-temporal-bounds"></p>' +
           '</div>').appendTo(parentEl),
 
-        titleEl       = infoEl.find('.item-title'),
-        identifiersEl = infoEl.find('.item-identifiers'),
-        namesEl       = infoEl.find('.place-names'),
-        descriptionEl = infoEl.find('.item-description'),
-        tempBoundsEl  = infoEl.find('.item-temporal-bounds'),
+        title       = element.find('.item-title'),
+        identifiers = element.find('.item-identifiers'),
+        names       = element.find('.place-names'),
+        description = element.find('.item-description'),
+        tempBounds  = element.find('.item-temporal-bounds'),
 
-        referencesEl =
+        references =
           jQuery('<div class="place references"><span class="icon">&#xf0c1;</span></div>').appendTo(parentEl),
 
         renderInfo = function() {
-          var identifiers = ItemUtils.getURIs(place).map(function(uri) { return ItemUtils.parseEntityURI(uri); }),
-              descriptions = ItemUtils.getDescriptions(place).map(function(d) { return d.description; }),
-              names = distinct(ItemUtils.getNames(place).map(function(n) { return n.name; }));
-
-          titleEl.html(place.title);
-
-          identifiers.forEach(function(id) {
-            var formatted = (id.shortcode) ? id.shortcode + ':' + id.id : id.uri,
-                li = jQuery('<li><a href="' + id.uri + '" target="_blank">' + formatted + '</a></li>');
-
-            if (id.color) li.css('background-color', id.color);
-            identifiersEl.append(li);
-          });
-
-          if (descriptions.length > 0)
-            descriptionEl.html(descriptions[0]);
-
-          namesEl.html(names.join(', '));
-
-          if (place.temporal_bounds)
-            tempBoundsEl.html(Formatting.formatTemporalBounds(place.temporal_bounds));
+          self.fill(title, place.title);
+          self.renderIdentifiers(identifiers, ItemUtils.getURIs(place));
+          self.fillWithFirst(description,
+            ItemUtils.getDescriptions(place).map(function(d) { return d.description; }));
+          self.fill(names,
+            distinct(ItemUtils.getNames(place).map(function(n) { return n.name; })));
+          self.fillTemporalBounds(place.temporal_bounds);
         },
 
-        renderRelations = function() {
-          var related = args.relatedPlaces,
-              refEl;
-
+        renderReferences = function() {
           if (args.results > 0) {
-            refEl = jQuery(
+            var ref = jQuery(
               '<span class="inbound-links">' +
                 '<a class="local-search" href="#">' + Formatting.formatNumber(args.results) + ' items</a> link here' +
               '</span>');
 
-            refEl.find('a').data('at', place);
-
-            referencesEl.append(refEl);
+            ref.find('a').data('at', place);
+            references.append(ref);
           } else {
-            referencesEl.append('No items link here');
+            references.append('No items link here');
           }
 
-          /*
-          if (related.length > 0)
-            referencesEl.append(
-              '·<span class="related-entities">' +
-                  '<span class="icon">&#xf140;</span>' +
-                  '<a href="#">' + related.length + ' related places</a>' +
-                '</span>');
-         */
+          // TODO render related place count
+          // references.append(
+          // '·<span class="related-entities">' +
+          //    '<span class="icon">&#xf140;</span>' +
+          //     '<a href="#">' + related.length + ' related places</a>' +
+          // '</span>');
         };
 
+    BaseCard.apply(this);
+
     renderInfo();
-    renderRelations();
+    renderReferences();
   };
+  PlaceCard.prototype = Object.create(BaseCard.prototype);
 
   return PlaceCard;
 

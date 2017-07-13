@@ -2,12 +2,15 @@ define([
   'ui/common/aggregationUtils',
   'ui/common/formatting',
   'ui/common/itemUtils',
+  'ui/controls/selection/cards/baseCard',
   'ui/api'
-], function(AggregationUtils, Formatting, ItemUtils, API) {
+], function(AggregationUtils, Formatting, ItemUtils, BaseCard, API) {
 
   var DatasetCard  = function(parentEl, dataset, args) {
 
-    var infoEl = jQuery(
+    var self = this,
+
+        element = jQuery(
           '<div class="item-info">' +
             '<p class="item-is-in"></p>' +
             '<h3 class="item-title"></h3>' +
@@ -16,11 +19,11 @@ define([
             '<p class="item-temporal-bounds"></p>' +
           '</div>').appendTo(parentEl),
 
-        partOfEl      = infoEl.find('.item-is-in'),
-        titleEl       = infoEl.find('.item-title'),
-        homepageEl    = infoEl.find('.item-homepage'),
-        descriptionEl = infoEl.find('.item-description'),
-        tempBoundsEl  = infoEl.find('.item-temporal-bounds'),
+        partOf      = element.find('.item-is-in'),
+        title       = element.find('.item-title'),
+        homepage    = element.find('.item-homepage'),
+        description = element.find('.item-description'),
+        tempBounds  = element.find('.item-temporal-bounds'),
 
         subsetsEl = jQuery(
           '<div class="dataset subsets"><ul></ul></div>').appendTo(parentEl).hide(),
@@ -44,29 +47,21 @@ define([
         },
 
         renderInfo = function() {
-          var descriptions = ItemUtils.getDescriptions(dataset),
-              timeHistogram = args.aggregations.filter(function(agg) {
+          var timeHistogram = args.aggregations.filter(function(agg) {
                 return agg.name === 'by_time';
               })[0].buckets;
 
-          if (record.is_part_of)
-            ItemUtils.getHierarchyPath(record.is_part_of).forEach(function(segment) {
-              partOfEl.append('<span>' +
-                '<a class="destination" data-id="' + segment.id + '" href="#">' + segment.title +
-                '</a></span>');
-            });
+          self.renderHierarchyPath(partOf, record.is_part_of);
 
           if (record.homepage) {
-            titleEl.html(
-              '<a href="' + record.homepage + '" target="_blank">' + dataset.title + '</a>');
-            homepageEl.html(
-              '<a href="' + record.homepage + '" target="_blank">' + record.homepage + '</a>');
+            self.fill(title, '<a href="' + record.homepage + '" target="_blank">' + dataset.title + '</a>');
+            self.fill(homepage, '<a href="' + record.homepage + '" target="_blank">' + record.homepage + '</a>');
           } else {
-            titleEl.html(dataset.title);
+            self.fill(title, dataset.title);
           }
 
-          if (descriptions.length > 0)
-            descriptionEl.html(descriptions[0].description);
+          self.fillWithFirst(description,
+            ItemUtils.getDescriptions(place).map(function(d) { return d.description; }));
 
           // TODO what if there are no dates?
           tempBoundsEl.html(Formatting.formatTemporalBounds(getTemporalBounds(timeHistogram)));
@@ -115,6 +110,8 @@ define([
             '</span>');
         };
 
+    BaseCard.apply(this);
+
     renderInfo();
     renderStats();
 
@@ -122,6 +119,7 @@ define([
       if (parts.total > 0) renderSubsets(parts);
     });
   };
+  DatasetCard.prototype = Object.create(BaseCard.prototype);
 
   return DatasetCard;
 

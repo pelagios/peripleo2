@@ -1,11 +1,14 @@
 define([
   'ui/common/formatting',
-  'ui/common/itemUtils'
-], function(Formatting, ItemUtils) {
+  'ui/common/itemUtils',
+  'ui/controls/selection/cards/baseCard'
+], function(Formatting, ItemUtils, BaseCard) {
 
   var PeriodCard  = function(parentEl, period, args) {
 
-    var infoEl = jQuery(
+    var self = this,
+
+        element = jQuery(
           '<div class="item-info">' +
             '<p class="item-is-in"></p>' +
             '<h3 class="item-title"></h3>' +
@@ -13,31 +16,25 @@ define([
             '<p class="item-temporal-bounds"></p>' +
           '</div>').appendTo(parentEl),
 
-          inDatasetEl  = infoEl.find('.item-is-in'),
-          titleEl      = infoEl.find('.item-title'),
-          homepageEl   = infoEl.find('.item-homepage'),
-          tempBoundsEl = infoEl.find('.item-temporal-bounds'),
+        inDataset  = element.find('.item-is-in'),
+        title      = element.find('.item-title'),
+        homepage   = element.find('.item-homepage'),
+        tempBounds = element.find('.item-temporal-bounds'),
 
-          render = function() {
-            // For the time being, periods only come from PeriodO, so one record only
-            var record = period.is_conflation_of[0];
+        render = function() {
+          // For the time being, periods only come from PeriodO, so one record only
+          var record = period.is_conflation_of[0];
+          self.renderHierarchyPath(inDataset, record.is_in_dataset);
+          self.fill(title, period.title);
+          self.fill(homepage, record.uri);
+          self.fillIfExists(tempBounds, period.temporal_bounds);
+        };
 
-            ItemUtils.getHierarchyPath(record.is_in_dataset).forEach(function(segment) {
-              inDatasetEl.append(
-                '<span><a class="destination" data-id="' + segment.id + '" href="#">' +
-                  segment.title +
-                '</a></span>');
-            });
-
-            titleEl.html(period.title);
-            homepageEl.html(record.uri);
-
-            if (period.temporal_bounds)
-              tempBoundsEl.html(Formatting.formatTemporalBounds(period.temporal_bounds));
-          };
+    BaseCard.apply(this);
 
     render();
   };
+  PeriodCard.prototype = Object.create(BaseCard.prototype);
 
   return PeriodCard;
 
