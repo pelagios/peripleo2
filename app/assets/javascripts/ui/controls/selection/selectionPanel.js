@@ -16,7 +16,7 @@ define([
   PlaceCard
 ) {
 
-  var SLIDE_DURATION = 120;
+  var SLIDE_OPTS = { duration: 120 };
 
   var SelectionPanel = function(parentEl) {
 
@@ -29,18 +29,20 @@ define([
             '<div class="card"></div>' +
           '</div>').hide().appendTo(parentEl),
 
-        dogearEl = element.find('.dogear'),
-        depictionEl = element.find('.depiction').hide(),
-        cardEl = element.find('.card'),
+        dogear    = element.find('.dogear'),
+        depiction = element.find('.depiction').hide(),
+        card      = element.find('.card'),
 
         empty = function() {
-          depictionEl.css('background-image', 'none');
-          cardEl.empty();
+          depiction.css('background-image', 'none');
+          card.empty();
         },
 
+        /** Sets or removes the depiction image, sliding the panel up or down as needed **/
         setDepiction = function(item) {
-          var isPanelVisible = depictionEl.is(':visible');
+          var isPanelVisible = depiction.is(':visible');
 
+              // Essentially an item.is_conflation_of.flatMap(_.depictions)
               depictions = item.is_conflation_of.reduce(function(depictions, record) {
                 if (record.depictions) return depictions.concat(record.depictions);
                 else return depictions;
@@ -48,82 +50,77 @@ define([
 
           if (depictions.length > 0) {
             // TODO pre-load image & report in case of 404
-            depictionEl.css('background-image', 'url(' + depictions[0].url + ')');
-            if (!isPanelVisible)
-              depictionEl.velocity('slideDown', { duration: SLIDE_DURATION });
+            depiction.css('background-image', 'url(' + depictions[0].url + ')');
+            if (!isPanelVisible) depiction.velocity('slideDown', SLIDE_OPTS);
           } else if (isPanelVisible) {
-            depictionEl.velocity('slideUp', { duration: SLIDE_DURATION });
-          } else {
-            depictionEl.hide();
+            depiction.velocity('slideUp', SLIDE_OPTS);
           }
         },
 
         show = function(item, args) {
-          var visible = element.is(':visible'),
+          var isVisible = element.is(':visible'),
 
-              slideAction = (visible && !item) ? 'slideUp' : // Open + deselect
-                (!visible && item) ? 'slideDown' : false, // Closed + select
+              slideAction = (isVisible && !item) ? 'slideUp' : // Open + deselect
+                (!isVisible && item) ? 'slideDown' : false, // Closed + select
 
               itemType = ItemUtils.getItemType(item);
 
-          dogearEl.attr('class', 'dogear ' + itemType);
-          cardEl.attr('class', 'card ' + itemType);
+          dogear.attr('class', 'dogear ' + itemType);
+          card.attr('class', 'card ' + itemType);
 
-          // Clear & set depiction in any case
+          // Clear & set depiction
           empty();
           setDepiction(item);
 
           // Then defer to the appropriate card implementation
           switch(itemType) {
             case 'OBJECT':
-              new ObjectCard(cardEl, item, args);
+              new ObjectCard(card, item, args);
               break;
             case 'PLACE':
-              new PlaceCard(cardEl, item, args);
+              new PlaceCard(card, item, args);
               break;
             case 'PERSON':
-              new PersonCard(cardEl, item, args);
+              new PersonCard(card, item, args);
               break;
             case 'PERIOD':
-              new PeriodCard(cardEl, item, args);
+              new PeriodCard(card, item, args);
               break;
             case 'DATASET':
-              new DatasetCard(cardEl, item, args);
+              new DatasetCard(card, item, args);
               break;
             default:
-              // TODO implement future types
+              // Should never happen, unless we have different types in the future
               console.log(item);
           }
 
           // Close/open as needed
-          if (slideAction)
-            element.velocity(slideAction, { duration: SLIDE_DURATION });
+          if (slideAction) element.velocity(slideAction, SLIDE_OPTS);
         },
 
         hide = function() {
-          if (element.is(':visible'))
-            element.velocity('slideUp', { duration: SLIDE_DURATION });
+          if (element.is(':visible')) element.velocity('slideUp', SLIDE_OPTS);
         },
 
-        /** User clicked a direct link to a different item **/
+        /** User clicked a navigation link to select a different item **/
         onSelectDestination = function(e) {
           var link = jQuery(e.target),
               identifier = link.data('id');
-
           self.fireEvent('select', identifier);
           return false;
         },
 
+        /** The user clicked a filter link to filter by referenced item **/
         onSetFilter = function(e) {
           var link = jQuery(e.target),
-              referenced = link.data('referencing'),
+              referencing = link.data('referencing'),
 
               filter = {
                 filter : 'referencing',
                 values : [{
-                  identifier: referenced.is_conflation_of[0].identifiers[0],
-                  label: referenced.title,
-                  type: ItemUtils.getItemType(referenced)
+                  identifier: referencing.is_conflation_of[0].identifiers[0],
+                  label: referencing.title,
+                  type: ItemUtils.getItemType(referencing)
                 }]
               };
 
@@ -132,20 +129,19 @@ define([
         },
 
         /**
-         * 'Local search' means we'll show ALL items at this place, not just those
-         * matching the query phrase.
+         * The user clicked a local search link to switch into a search for EVERYTHING
+         * linked to this item.
          */
         onLocalSearch = function(e) {
           var link = jQuery(e.target),
               place = link.data('at');
-
           self.fireEvent('localSearch', place);
           return false;
         };
 
     element.on('click', '.destination', onSelectDestination);
-    element.on('click', '.local-search', onLocalSearch);
     element.on('click', '.filter', onSetFilter);
+    element.on('click', '.local-search', onLocalSearch);
 
     this.show = show;
     this.hide = hide;
