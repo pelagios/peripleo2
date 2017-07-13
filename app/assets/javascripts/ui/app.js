@@ -396,12 +396,6 @@ require([
           stashedQuery = state.getQueryPhrase();
           state.setQueryPhrase(false, NOOP);
           state.updateFilters(asFilterSetting).done(function(response) {
-            // Exclude the place itself from the response
-            response.total = response.total - 1;
-            response.items = response.items.filter(function(r) {
-              return r.doc_id !== place.doc_id;
-            });
-
             searchPanel.setSearchResponse(response);
             resultList.setSearchResponse(response);
           });
@@ -415,7 +409,22 @@ require([
           searchPanel.setLoading(true);
           searchPanel.updateFilterCrumbs(f);
           selectionPanel.hide();
-          state.updateFilters(asFilterSetting).done(onSearchResponse);
+          state.updateFilters(asFilterSetting).done(function(results) {
+            var hasPlaceFilter = (f.filter === 'referencing') && f.values.find(function(v) {
+                  return v.type === 'PLACE';
+                });
+
+            searchPanel.setSearchResponse(results);
+            resultList.setSearchResponse(results);
+
+            // If this search was filtered by PLACE, we don't want to update the map,
+            // otherwise it would remove all dots except: i) the place by which the
+            // the search was filtered; ii) the related places.
+            // Note: we may wan to treat this differently later, perhaps depending on
+            // a user setting?
+            if (!hasPlaceFilter)
+              map.setSearchResponse(results);
+          });
         },
 
         onRemoveAllFilters = function() {

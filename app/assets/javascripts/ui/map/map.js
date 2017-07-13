@@ -148,7 +148,7 @@ define([
 
     this.fitBounds = fitBounds;
     this.setState = setState;
-    this.setSearchResponse = geometryLayer.update;
+    this.setSearchResponse = geometryLayer.setSearchResponse;
     this.setSelectedItem = setSelectedItem;
 
     HasEvents.apply(this);
