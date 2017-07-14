@@ -30,6 +30,19 @@ define([], function() {
         return this.formatYear(bounds.from);
       else
         return this.formatYear(bounds.from) + ' - ' + this.formatYear(bounds.to);
+    },
+
+    formatClickableURL : function(url) {
+      if (url.indexOf('http') === 0) {
+        var withoutProtocol = url.substring(url.indexOf(':') + 3),
+            label = (withoutProtocol.indexOf('/') > -1) ?
+              withoutProtocol.substring(0, withoutProtocol.indexOf('/')) :
+              withoutProtocol;
+
+        return '<a href="' + url + '" target="_blank">' + label  + '</a>';
+      } else {
+        return url;
+      }
     }
 
   };
