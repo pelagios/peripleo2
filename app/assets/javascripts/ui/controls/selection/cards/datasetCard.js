@@ -25,31 +25,28 @@ define([
         description = element.find('.item-description'),
         tempBounds  = element.find('.item-temporal-bounds'),
 
-        subsetsEl = jQuery(
-          '<div class="dataset subsets"><ul></ul></div>').appendTo(parentEl).hide(),
+        subsets = jQuery('<div class="dataset subsets"><ul></ul></div>')
+          .appendTo(parentEl).hide(),
 
-        subsetsListEl = subsetsEl.find('ul'),
+        stats = jQuery('<div class="item references"></div>').appendTo(parentEl),
 
-        statsEl = jQuery(
-          '<div class="item references"></div>').appendTo(parentEl),
-
-        // Safe to assume that datasets only have one record
+        /** It's safe to assume that datasets will have exactly one record **/
         record = dataset.is_conflation_of[0],
-
-        getTemporalBounds = function(histogram) {
-          var first = histogram[0],
-              last = histogram[ histogram.length - 1 ],
-              getYear = function(obj) {
-                return parseInt(Object.keys(obj)[0]);
-              };
-
-          return { from: getYear(first), to: getYear(last) };
-        },
 
         renderInfo = function() {
           var timeHistogram = args.aggregations.filter(function(agg) {
                 return agg.name === 'by_time';
-              })[0].buckets;
+              })[0].buckets,
+
+              temporalBounds = (function() {
+                var first = timeHistogram[0],
+                    last = timeHistogram[timeHistogram.length - 1],
+                    getYear = function(obj) {
+                      return parseInt(Object.keys(obj)[0]);
+                    };
+
+                return { from: getYear(first), to: getYear(last) };
+              })();
 
           self.renderHierarchyPath(partOf, record.is_part_of);
 
@@ -61,32 +58,8 @@ define([
           }
 
           self.fillWithFirst(description,
-            ItemUtils.getDescriptions(place).map(function(d) { return d.description; }));
-
-          // TODO what if there are no dates?
-          tempBoundsEl.html(Formatting.formatTemporalBounds(getTemporalBounds(timeHistogram)));
-        },
-
-        renderSubsets = function(subsets) {
-          var counts = AggregationUtils.getAggregation(args.aggregations, 'by_dataset');
-
-          subsets.items.slice(0, 5).forEach(function(subset) {
-            var id = subset.is_conflation_of[0].identifiers[0];
-            subsetsListEl.append(
-              '<li>' +
-                '<a class="destination" data-id="' + id + '" href="#">' + subset.title + '</a>' +
-                '<span class="count">(' +
-                  Formatting.formatNumber(AggregationUtils.getCountForId(counts, id)) +
-                ' items)<span>' +
-              '</li>');
-          });
-
-          // TODO make this link do something
-          if (subsets.items.length > 5)
-            subsetsEl.append(
-              '<span class="more-subsets">+ <a href="#">' + (subsets.items.length - 5) + ' more</a></span>');
-
-          subsetsEl.show();
+            ItemUtils.getDescriptions(dataset).map(function(d) { return d.description; }));
+          self.fillTemporalBounds(tempBounds, temporalBounds);
         },
 
         renderStats = function() {
@@ -94,7 +67,7 @@ define([
               topPlaces = args.top_referenced.PLACE,
               topPlacesCount = (topPlaces.length < 500) ? topPlaces.length: '500+';
 
-          statsEl.append(
+          stats.append(
             '<span class="stats-items">' +
               '<span class="icon">&#xf219</span>' +
               '<span class="count">' +
@@ -108,16 +81,43 @@ define([
                 topPlacesCount +
               '</span> places' +
             '</span>');
+        },
+
+        /** Fetches subset info via the API and inserts the info into the card **/
+        renderSubsetsAsync = function() {
+          var list = subsets.find('ul'),
+
+              counts = AggregationUtils.getAggregation(args.aggregations, 'by_dataset'),
+
+              render = function(parts) {
+                parts.items.slice(0, 5).forEach(function(part) {
+                  var id = part.is_conflation_of[0].identifiers[0];
+                  list.append(
+                    '<li>' +
+                      '<a class="destination" data-id="' + id + '" href="#">' + part.title + '</a>' +
+                      '<span class="count">(' +
+                        Formatting.formatNumber(AggregationUtils.getCountForId(counts, id)) +
+                      ' items)<span>' +
+                    '</li>');
+                });
+
+                if (parts.items.length > 5)
+                  subsets.append('<span class="more-subsets">+ <a href="#">' + (parts.items.length - 5) + ' more</a></span>');
+
+                subsets.show();
+              };
+
+          API.getParts(record.identifiers[0]).done(function(parts) {
+            if (parts.total > 0)
+              render(parts);
+          });
         };
 
     BaseCard.apply(this);
 
     renderInfo();
+    renderSubsetsAsync();
     renderStats();
-
-    API.getParts(record.identifiers[0]).done(function(parts) {
-      if (parts.total > 0) renderSubsets(parts);
-    });
   };
   DatasetCard.prototype = Object.create(BaseCard.prototype);
 
