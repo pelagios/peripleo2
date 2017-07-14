@@ -22,7 +22,7 @@ define([
         tempBounds = element.find('.item-temporal-bounds'),
 
         snippetsContainer = jQuery(
-          '<div class="item snippets"></div>').hide().appendTo(parentEl),
+          '<div class="snippets-outer"><div class="snippets-inner"></div></div>').hide().appendTo(parentEl),
 
         references = jQuery('<div class="item references"></div>').appendTo(parentEl),
 
@@ -41,8 +41,10 @@ define([
         },
 
         renderSnippets = function() {
+          var snippetsInner = snippetsContainer.find('.snippets-inner'),
+
               // Identifier of this object
-          var identifier = record.identifiers[0],
+              identifier = record.identifiers[0],
 
               // Identifier of the item by which the references search should be restricted
               referencing = (args.selected_via) ?
@@ -52,7 +54,7 @@ define([
               // Each snippet is one query-match inside this reference's text context.
               renderSnippets = function(reference) {
                 var element = jQuery('<div class="reference"><ul></ul></div>')
-                      .appendTo(snippetsContainer),
+                      .appendTo(snippetsInner),
                     ul = element.find('ul');
 
                 reference.snippets.forEach(function(s) {

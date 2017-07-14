@@ -69,3 +69,11 @@
   border-top-right-radius: @radius;
   border-bottom-right-radius: @radius;
 }
+
+.gradient-v (@start, @end) {
+  background-image: -webkit-linear-gradient(top, @start, @end);
+  background-image:    -moz-linear-gradient(top, @start, @end);
+  background-image:     -ms-linear-gradient(top, @start, @end);
+  background-image:      -o-linear-gradient(top, @start, @end);
+  background-image:         linear-gradient(top, @start, @end);
+}
