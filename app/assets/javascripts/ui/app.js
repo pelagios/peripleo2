@@ -142,7 +142,7 @@ require([
 
                         // TODO this doesn't seem to work as expected!
                         return jQuery.when.apply(jQuery, fRelatedCounts).then(function() {
-                          return { referenced: referenced, referenceCounts: arguments };
+                          return { referenced: referenced, referenceCounts: Array.from(arguments) };
                         });
                       } else {
                         return jQuery.Deferred().resolve(this).then(function() {

@@ -74,70 +74,14 @@ define([
                 snippetsContainer.show();
               }
             });
-        },
-
-        renderReferenced = function() {
-          var places = (args.selected_via) ? [ args.selected_via ] : args.referenced.PLACE,
-
-              head = (places && places.length > 3) ? places.slice(0, 3) : places,
-
-              people = args.referenced.PERSON;
-
-          if (head) {
-            head.forEach(function(place) {
-              var identifiers = ItemUtils.getURIs(place),
-
-                  counts = jQuery.grep(args.referenceCounts, function(r) {
-                    return identifiers.indexOf(r.identifier) > -1;
-                  }),
-
-                  moreResultsEl = (function() {
-                    // Show 'more results' link of there's at least 1 more result
-                    if (counts.length > 0 && counts[0].resultCount > 1) {
-                      var moreCount = counts[0].resultCount - 1,
-                          moreLabel = (moreCount > 1) ? ' more results' : ' more result',
-
-                          el = jQuery(
-                            '<span class="more"> · ' +
-                              '<a class="filter" href="#">' + Formatting.formatNumber(moreCount) +
-                                moreLabel + '</a>' +
-                            '<span>');
-
-                      el.find('a').data('referencing', place);
-                      return el;
-                    } else {
-                      return false;
-                    }
-                  })(),
-
-                  refEl = jQuery(
-                    '<p class="ref place">' +
-                      '<span class="title"><a href="#">' + place.title + '</a></span>' +
-                    '</p>');
-
-              if (moreResultsEl) // Append the 'more results link' if there is one
-                refEl.append(moreResultsEl);
-
-              references.append(refEl);
-            });
-          }
-
-          if (people) {
-            // TODO hack!
-            people.forEach(function(p) {
-              references.append(
-                '<p class="ref person">' +
-                  '<span class="title"><a href="#" class="destination" data-id="' + p.identifiers[0] + '">' + p.title + '</a></span>' +
-                '</p>');
-            });
-          }
         };
 
     BaseCard.apply(this);
 
     renderInfo();
     renderSnippets();
-    renderReferenced();
+
+    self.renderReferenced(references, args.referenced, args.referenceCounts, args.selected_via);
   };
   ObjectCard.prototype = Object.create(BaseCard.prototype);
 
