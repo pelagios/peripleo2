@@ -1,9 +1,11 @@
 define([
   'ui/common/aggregationUtils',
   'ui/common/hasEvents',
-  'ui/controls/search/filterpane/facets/facetChart',
+  'ui/controls/search/filterpane/facets/facetDetails',
   'ui/controls/search/filterpane/facets/typeIndicator'
-], function(AggregationUtils, HasEvents, FacetChart, TypeIndicator) {
+], function(AggregationUtils, HasEvents, FacetDetails, TypeIndicator) {
+
+  var SLIDE_DURATION = 200;
 
   var FacetsPane = function(parentEl) {
 
@@ -53,57 +55,77 @@ define([
 
           '</div>').appendTo(parentEl),
 
-        slidingPane   = element.find('.sliding-pane'),
-
-        typeIndicator = new TypeIndicator(element.find('.type-indicator'), element.find('.summary-row.types')),
+        slidingPane = element.find('.sliding-pane'),
 
         sourceCount = element.find('.col.sources .count'),
         topicCount  = element.find('.col.topics .count'),
         peopleCount = element.find('.col.people .count'),
         periodCount = element.find('.col.periods .count'),
 
-        // TODO dummy only
-        facetChart = new FacetChart(element.find('.facet-details').hide()),
+        typeIndicator =
+          new TypeIndicator(element.find('.type-indicator'), element.find('.summary-row.types')),
 
-        update = function(aggs) {
-          var byType = AggregationUtils.getAggregation(aggs, 'by_type'),
-              bySource = AggregationUtils.getAggregation(aggs, 'by_dataset'),
-              byCategory = AggregationUtils.getAggregation(aggs, 'by_category'),
-              topPeople = AggregationUtils.getAggregation(aggs, 'top_people'),
-              topPeriods = AggregationUtils.getAggregation(aggs, 'top_periods');
+        facetDetails =
+          new FacetDetails(element.find('.facet-details').hide()),
 
-          if (byType) typeIndicator.update(byType);
+        /** Facet data from last update, as a hash { type -> data } **/
+        facetData = {},
 
-          if (bySource) {
-            // TODO dummy only - for testing
-            sourceCount.html(AggregationUtils.flattenBuckets(bySource).length);
-            facetChart.update(AggregationUtils.flattenBuckets(bySource));
-          } else {
-            sourceCount.html('0');
-          }
-        },
-
+        /** Toggles between facet count overview and counts by item type **/
         toggleSlidePane = function() {
           var offset = parseInt(slidingPane.css('top')),
               top = (offset === 0) ? -38 : 0;
+          slidingPane.velocity({ top: top }, { duration: SLIDE_DURATION });
+        },
 
-          slidingPane.velocity({ top: top }, { duration: 200 });
+        update = function(aggs) {
+              // Shorthand to get flattened buckets by key
+          var getFacetData = function(key) {
+                var agg = AggregationUtils.getAggregation(aggs, key);
+                if (agg)
+                  return AggregationUtils.flattenBuckets(agg);
+              },
+
+              renderCount = function(element, key) {
+                var buckets = facetData[key];
+                if (buckets)
+                  element.html(buckets.length);
+                else
+                  element.html('0');
+              },
+
+              byType = AggregationUtils.getAggregation(aggs, 'by_type');
+
+          // Store facet details data
+          facetData.sources = getFacetData('by_dataset');
+          facetData.topics  = getFacetData('by_category');
+          facetData.people  = getFacetData('top_people');
+          facetData.periods = getFacetData('top_periods');
+
+          // Update type indicator and counts immediately
+          if (byType) typeIndicator.update(byType);
+          renderCount(sourceCount, 'sources');
+          renderCount(topicCount,  'topics');
+          renderCount(peopleCount, 'people');
+          renderCount(periodCount, 'periods');
         },
 
         onShowDetails = function(e) {
           var col = jQuery(e.target).closest('.col'),
-              facet = col.data('facet');
+              facet = col.data('facet'),
+              buckets = facetData[facet];
 
-          // TODO dummy
-          facetChart.toggle();
+          if (buckets && buckets.length > 0) {
+            facetDetails.update(buckets);
+            facetDetails.toggle();
+          }
         };
+
+    element.on('click', '.col', onShowDetails);
 
     typeIndicator.on('click', toggleSlidePane);
     typeIndicator.on('setFilter', this.forwardEvent('setFilter'));
-    
-    facetChart.on('setFilter', this.forwardEvent('setFilter'));
-
-    element.on('click', '.col', onShowDetails);
+    facetDetails.on('setFilter', this.forwardEvent('setFilter'));
 
     this.update = update;
 
