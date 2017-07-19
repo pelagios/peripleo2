@@ -2,17 +2,18 @@ define([
   'ui/common/aggregationUtils',
   'ui/common/hasEvents',
   'ui/controls/search/filterpane/facets/facetChart',
-  'ui/controls/search/filterpane/facets/typeFacet'
-], function(AggregationUtils, HasEvents, FacetChart, TypeFacet) {
+  'ui/controls/search/filterpane/facets/typeIndicator'
+], function(AggregationUtils, HasEvents, FacetChart, TypeIndicator) {
 
-  var FacetSection = function(parentEl) {
+  var FacetsPane = function(parentEl) {
 
-    var el = jQuery(
+    var element = jQuery(
           '<div class="facets-pane">' +
             '<div class="summary-section">' +
               '<div class="summary-section-inner">' +
                 '<div class="sliding-pane">' +
-                  // Section 1: facet counts
+
+                  // Top of the sliding panel: facet counts
                   '<div class="summary-row facets">' +
                     '<ul>' +
                       '<li class="col sources" data-facet="sources">' +
@@ -36,27 +37,33 @@ define([
                       '</li>' +
                     '</ul>' +
                   '</div>' +
-                  // Section 2: type counts
+
+                  // Bottom of the sliding panel: type counts
                   '<div class="summary-row types"></div>' +
-                '</div>' + // .sliding-pane
-              '</div>' + //.summary-section-inner
-            '</div>' + // .summary-section
-            '<div class="type-bar"></div>' + // Multicolor item type 'piechart' bar
-            '<div class="chart-section"></div>' + // Collapsible section for detail facet charts
+
+                '</div>' +
+              '</div>' +
+            '</div>' +
+
+            // The item type indicator bar
+            '<div class="type-indicator"></div>' +
+
+            // Facet details section (donut chart + top 3 list)
+            '<div class="facet-details"></div>' +
+
           '</div>').appendTo(parentEl),
 
-        typeGraph = el.find('.type-bar'),
-        slidingPane = el.find('.sliding-pane'),
+        slidingPane   = element.find('.sliding-pane'),
 
-        typeFacet = new TypeFacet(el.find('.type-bar'), el.find('.summary-row.types')),
+        typeIndicator = new TypeIndicator(element.find('.type-indicator'), element.find('.summary-row.types')),
 
-        sourceCount = el.find('.col.sources .count'),
-        topicCount  = el.find('.col.topics .count'),
-        peopleCount = el.find('.col.people .count'),
-        periodCount = el.find('.col.periods .count'),
+        sourceCount = element.find('.col.sources .count'),
+        topicCount  = element.find('.col.topics .count'),
+        peopleCount = element.find('.col.people .count'),
+        periodCount = element.find('.col.periods .count'),
 
         // TODO dummy only
-        facetChart = new FacetChart(el.find('.chart-section').hide()),
+        facetChart = new FacetChart(element.find('.facet-details').hide()),
 
         update = function(aggs) {
           var byType = AggregationUtils.getAggregation(aggs, 'by_type'),
@@ -65,7 +72,7 @@ define([
               topPeople = AggregationUtils.getAggregation(aggs, 'top_people'),
               topPeriods = AggregationUtils.getAggregation(aggs, 'top_periods');
 
-          if (byType) typeFacet.update(byType);
+          if (byType) typeIndicator.update(byType);
 
           if (bySource) {
             // TODO dummy only - for testing
@@ -91,19 +98,19 @@ define([
           facetChart.toggle();
         };
 
-    typeGraph.click(toggleSlidePane);
-
-    typeFacet.on('setFilter', this.forwardEvent('setFilter'));
+    typeIndicator.on('click', toggleSlidePane);
+    typeIndicator.on('setFilter', this.forwardEvent('setFilter'));
+    
     facetChart.on('setFilter', this.forwardEvent('setFilter'));
 
-    el.on('click', '.col', onShowDetails);
+    element.on('click', '.col', onShowDetails);
 
     this.update = update;
 
     HasEvents.apply(this);
   };
-  FacetSection.prototype = Object.create(HasEvents.prototype);
+  FacetsPane.prototype = Object.create(HasEvents.prototype);
 
-  return FacetSection;
+  return FacetsPane;
 
 });

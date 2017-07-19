@@ -1,9 +1,9 @@
 define([
   'ui/common/hasEvents',
-  'ui/controls/search/filterpane/facets/facetSection',
+  'ui/controls/search/filterpane/facets/facetsPane',
   'ui/controls/search/filterpane/footer',
   'ui/controls/search/filterpane/timeHistogram'
-], function(HasEvents, FacetSection, Footer, TimeHistogram) {
+], function(HasEvents, FacetsPane, Footer, TimeHistogram) {
 
   var SLIDE_OPTS = { duration: 180 };
 
@@ -18,7 +18,7 @@ define([
 
         body = element.find('#filterpane-body').hide(),
 
-        facetSection  = new FacetSection(body),
+        facetsPane    = new FacetsPane(body),
         timeHistogram = new TimeHistogram(body, 320, 40),
         footer        = new Footer(element),
 
@@ -59,7 +59,7 @@ define([
                   return agg.name === 'by_time';
                 });
 
-            facetSection.update(response.aggregations);
+            facetsPane.update(response.aggregations);
             if (byTime) timeHistogram.update(byTime.buckets);
           }
 
@@ -67,7 +67,7 @@ define([
           footer.setSearchResponse(response);
         };
 
-    facetSection.on('setFilter', this.forwardEvent('setFilter'));
+    facetsPane.on('setFilter', this.forwardEvent('setFilter'));
     timeHistogram.on('selectionChange', this.forwardEvent('timerangeChange'));
     footer.on('toggle', togglePane);
 
