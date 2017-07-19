@@ -7,18 +7,22 @@ define([
 
       SEGMENT_COLORS = [ '#70a8dc', '#9cc1d7', '#377bbc' ],
 
-      ROW_TEMPLATE = '<tr><td class="count"></td><td class="label"></td></tr>',
+      /** Translates facet dimension labels to filter names **/
+      FILTER_NAMES = {
+        sources : 'datasets',
+        topics  : 'categories'
+      },
 
       /** Shorthand to fetch labels from a path **/
       toLabel = function(path) {
         return path.map(function(segment) { return segment.label; }).join('\u0007');
       };
 
-  var FacetChart = function(parentEl) {
+  var FacetDetails = function(parentEl) {
 
     var self = this,
 
-        el = jQuery(
+        element = jQuery(
           '<div class="chart-container">' +
             '<div class="donut">' +
               '<svg width="100%" height="100%" viewBox="0 0 42 42" class="donut">' +
@@ -30,69 +34,72 @@ define([
             '<table></table>' +
           '</div>').appendTo(parentEl),
 
-        tableEl = el.find('table'),
+        table = element.find('table'),
+
+        /** The current facet dimension (sources | topics | people | periods) **/
+        facetDimension = false,
 
         /**
          * Approach taken from
          * https://medium.com/@heyoka/scratch-made-svg-donut-pie-charts-in-html5-2c587e935d72
          */
         renderDonut = function(percentages) {
-          var svg = el.find('svg')[0];
+          var svg = element.find('svg')[0],
 
-          el.find('.donut-segment').remove();
-          percentages.reduce(function(offset, pcnt, idx) {
-            var color = SEGMENT_COLORS[idx];
+              renderSegment = function(offset, pcnt, idx) {
+                var color = SEGMENT_COLORS[idx];
 
-                // SVG is namespaced, so we can't just use jQuery
-                circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                    // SVG is namespaced, so we can't just use jQuery
+                    circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
 
-            circle.setAttribute('class', 'donut-segment');
-            circle.setAttribute('cx', 21);
-            circle.setAttribute('cy', 21);
-            circle.setAttribute('r', 15.91549430918954);
-            circle.setAttribute('fill', 'transparent');
-            circle.setAttribute('stroke', color);
-            circle.setAttribute('stroke-width', 5);
-            circle.setAttribute('stroke-dasharray', pcnt + ' ' + (100 - pcnt));
-            circle.setAttribute('stroke-dashoffset', offset);
+                circle.setAttribute('class', 'donut-segment');
+                circle.setAttribute('cx', 21);
+                circle.setAttribute('cy', 21);
+                circle.setAttribute('r', 15.91549430918954);
+                circle.setAttribute('fill', 'transparent');
+                circle.setAttribute('stroke', color);
+                circle.setAttribute('stroke-width', 5);
+                circle.setAttribute('stroke-dasharray', pcnt + ' ' + (100 - pcnt));
+                circle.setAttribute('stroke-dashoffset', offset);
 
-            svg.appendChild(circle);
+                svg.appendChild(circle);
 
-            offset -= pcnt;
-            if (offset < 0) offset += 100;
-            return offset;
-          }, 25); // Initial offset 25% counter-clockwise = 12 o'clock position
+                offset -= pcnt;
+                if (offset < 0) offset += 100;
+                return offset;
+              };
+
+          element.find('.donut-segment').remove();
+          percentages.reduce(renderSegment, 25); // Initial offset 25% counter-clockwise = 12 o'clock position
         },
 
         renderTable = function(buckets) {
           var renderRow = function(bucket) {
-                var el = jQuery(ROW_TEMPLATE);
+                var tr = jQuery('<tr><td class="count"></td><td class="label"></td></tr>');
+                tr.data('path', bucket.path);
+                tr.find('.count').html(Formatting.formatNumber(bucket.count));
+                tr.find('.label').html(toLabel(bucket.path).replace('\u0007', '<span class="separator"></span>'));
+                table.append(tr);
+              },
 
-                el.data('path', bucket.path);
-                el.find('.count').html(Formatting.formatNumber(bucket.count));
-                el.find('.label').html(toLabel(bucket.path).replace('\u0007', '<span class="separator"></span>'));
-
-                return el;
+              renderHasMore = function() {
+                table.append(
+                  '<tr>' +
+                    '<td></td>' +
+                    '<td class="more">+ ' +
+                      '<span class="label">' + (buckets.length - 3) + ' more</span>' +
+                    '</td>' +
+                  '</tr>');
               };
 
-          tableEl.empty();
+          table.empty();
 
-          // Only show top three buckets
-          buckets.slice(0, 3).forEach(function(bucket) {
-            tableEl.append(renderRow(bucket));
-          });
-
-          if (buckets.length > 3)
-            tableEl.append(
-              '<tr>' +
-                '<td></td>' +
-                '<td class="more">+ ' +
-                  '<span class="label">' + (buckets.length - 3) + ' more</span>' +
-                '</td>' +
-              '</tr>');
+          // Only show top three buckets (and 'has more' hint if needed)
+          buckets.slice(0, 3).forEach(renderRow);
+          if (buckets.length > 3) renderHasMore();
         },
 
-        update = function(buckets) {
+        update = function(dimension, buckets) {
           var totalCount = buckets.reduce(function(total, bucket) {
                 return total + bucket.count;
               }, 0),
@@ -100,6 +107,8 @@ define([
               percentages = buckets.slice(0, 3).map(function(bucket) {
                 return Math.round(100 * bucket.count / totalCount);
               });
+
+          facetDimension = dimension;
 
           renderTable(buckets);
           renderDonut(percentages);
@@ -117,7 +126,7 @@ define([
               path = li.data('path');
 
           self.fireEvent('setFilter', {
-            filter: 'datasets', // TODO just a quick hack
+            filter: FILTER_NAMES[facetDimension],
             values: [{
               identifier: path[path.length - 1].id,
               label: toLabel(path)
@@ -132,8 +141,8 @@ define([
 
     HasEvents.apply(this);
   };
-  FacetChart.prototype = Object.create(HasEvents.prototype);
+  FacetDetails.prototype = Object.create(HasEvents.prototype);
 
-  return FacetChart;
+  return FacetDetails;
 
 });

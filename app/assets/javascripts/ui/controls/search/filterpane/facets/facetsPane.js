@@ -116,7 +116,7 @@ define([
               buckets = facetData[facet];
 
           if (buckets && buckets.length > 0) {
-            facetDetails.update(buckets);
+            facetDetails.update(facet, buckets);
             facetDetails.toggle();
           }
         };
