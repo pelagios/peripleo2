@@ -37,7 +37,6 @@ define([
 
         /** Updates all components with a new search response **/
         setSearchResponse = function(searchResponse) {
-          searchBox.setLoading(false);
           filterPane.setSearchResponse(searchResponse);
         },
 
