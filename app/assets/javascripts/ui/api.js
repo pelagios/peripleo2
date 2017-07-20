@@ -25,14 +25,14 @@ define([], function() {
     /**
      * Bit of a hack, but we might later roll it into an official API method. It's a transient
      * query, completely bypassing the search state, with the following properties:
-     * - limit = 0
+     * - limit = default
      * - top_referenced = true
      * - facets         = true
      * - time_histogram = true
      * - datasets       = {identifier}
      */
     getDatasetInfo : function(identifier) {
-      var url = '/api/search?limit=0&facets=true&top_referenced=true&time_histogram=true&datasets=' + identifier,
+      var url = '/api/search?facets=true&top_referenced=true&time_histogram=true&datasets=' + identifier,
 
           requestArgs = {
             filters:   { datasets: [ identifier ] },

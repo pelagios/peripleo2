@@ -70,6 +70,11 @@ define([], function() {
           return f === filter && v.identifier === value.identifier;
         },
 
+        /** Returns true if this crumb has the specified filter type **/
+        hasType = function(t) {
+          return t === filter;
+        },
+
         /**
          * A helper to test whether this Crumb is attached to the given
          * LI jQuery element. Used by filterCrumb.js to determine the appropriate
@@ -98,11 +103,13 @@ define([], function() {
             label.animate({ 'width': width }, COLLAPSE_DURATION);
         };
 
+    this.element = element;
     this.collapse = collapse;
     this.expand = expand;
     this.isAttachedTo = isAttachedTo;
     this.isCollapsed = isCollapsed;
     this.matches = matches;
+    this.hasType = hasType;
   };
 
   return Crumb;

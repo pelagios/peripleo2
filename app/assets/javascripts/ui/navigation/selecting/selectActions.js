@@ -4,8 +4,16 @@ define([
   'ui/navigation/selecting/item/objectActions',
   'ui/navigation/selecting/item/periodActions',
   'ui/navigation/selecting/item/personActions',
-  'ui/navigation/selecting/item/placeActions'
-], function(ItemUtils, DatasetActions, ObjectActions, PeriodActions, PersonActions, PlaceActions) {
+  'ui/navigation/selecting/item/placeActions',
+  'ui/api'
+], function(
+  ItemUtils,
+  DatasetActions,
+  ObjectActions,
+  PeriodActions,
+  PersonActions,
+  PlaceActions,
+  API) {
 
   var SelectActions = function(map, searchPanel, selectionPanel, resultList, state, stashedQuery) {
 

@@ -35,6 +35,10 @@ define([
           filterCrumbs.update(filterSetting);
         },
 
+        removeFilterCrumbs = function(filterType, opt_identifier) {
+          filterCrumbs.remove(filterType, opt_identifier);
+        },
+
         /** Updates all components with a new search response **/
         setSearchResponse = function(searchResponse) {
           filterPane.setSearchResponse(searchResponse);
@@ -68,6 +72,7 @@ define([
     this.setLoading = setLoading;
     this.setFilterByViewport = setFilterByViewport;
     this.updateFilterCrumbs = updateFilterCrumbs;
+    this.removeFilterCrumbs = removeFilterCrumbs;
     this.setSearchResponse = setSearchResponse;
     this.setState = setState;
 

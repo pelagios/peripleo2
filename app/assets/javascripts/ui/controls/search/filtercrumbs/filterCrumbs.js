@@ -25,7 +25,7 @@ define([
           '</div>').hide().appendTo(parentEl),
 
         list        = element.find('.fc-filters'),
-        btnClearAll = element.find('.fc-clear'),
+        btnRemoveAll = element.find('.fc-clear'),
 
         crumbs = [],
 
@@ -71,7 +71,7 @@ define([
         },
 
         /** Clears all filter crumbs **/
-        clearAll = function() {
+        removeAll = function() {
           if (element.is(':visible'))
             element.velocity('slideUp', {
               duration: SLIDE_DURATION,
@@ -82,6 +82,25 @@ define([
             });
 
           self.fireEvent('removeAll');
+        },
+
+        /** Removes one specific filter (or all of a specific type) **/
+        remove = function(filterType, opt_identifier) {
+          var toRemove = crumbs.find(function(c) {
+                return c.hasType(filterType);
+              });
+
+          if (toRemove) {
+            // Remove crumb from array
+            crumbs.splice(crumbs.indexOf(toRemove), 1);
+
+            // Remove LI element from list
+            toRemove.element.remove();
+
+            // Hide if empty
+            if (crumbs.length === 0 && element.is(':visible'))
+              element.velocity('slideUp', { duration: SLIDE_DURATION });
+          }
         },
 
         onClick = function(e) {
@@ -105,9 +124,10 @@ define([
         };
 
     list.on('click', 'li', onClick);
-    btnClearAll.click(clearAll);
+    btnRemoveAll.click(removeAll);
 
     this.update = update;
+    this.remove = remove;
 
     HasEvents.apply(this);
   };
