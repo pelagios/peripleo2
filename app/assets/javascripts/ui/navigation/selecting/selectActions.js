@@ -67,7 +67,7 @@ define([
             deselect();
         },
 
-        onSelectItem = function(item) {
+        onSelectItem = function(item, opt_via) {
           if (item) {
             searchPanel.setLoading(true);
 
@@ -76,7 +76,7 @@ define([
                 datasetActions.select(item);
                 break;
               case 'OBJECT':
-                objectActions.select(item);
+                objectActions.select(item, opt_via);
                 break;
               case 'PERIOD':
                 periodActions.select(item);

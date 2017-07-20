@@ -1,84 +1,80 @@
-define(['ui/navigation/selecting/item/baseActions'], function(BaseActions) {
+define([
+  'ui/navigation/selecting/item/baseActions',
+  'ui/api'
+], function(BaseActions, API) {
 
   var ObjectActions = function(map, searchPanel, selectionPanel, resultList, state, stashedQuery) {
 
-    var select = function(item) {
+    var self = this,
 
+        /**
+         * Fetches the number of search results linked to the referenced item, so that we can,
+         * e.g., display information like "Athens - 2.232 more results".
+         *
+         * Note: this function takes into account the current search state, so all currently set
+         * filters, the time range restriction, the query, etc. influence the result.
+         */
+        fetchResultsAtReferenced = function(uri, opt_prev) {
+              // So we can chain results
+          var previous = opt_prev || [],
+              filter = { referencing : [ uri ] };
+
+          return state.updateFilters(filter, { pushState: false })
+            .then(function(results) {
+              state.updateFilters({ referencing: false }, self.NOOP);
+              previous.push({ 'identifier' : uri, 'resultCount' : results.total });
+              return previous;
+            });
+        },
+
+        /**
+         * Fetches:
+         * 1. the top items referenced by the item with the specified URI
+         * 2. for the first three items of each type, the result count (using
+         *    the fetchResultsAtReferenced function)
+         */
+        fetchTopReferencedData = function(uri) {
+          return API.getTopReferenced(uri).then(function(referenced) {
+                // Get first three items for types Place, Person, Period
+            var topPlaces  = (referenced.PLACE)  ? referenced.PLACE.slice(0, 3)  : [],
+                topPeople  = (referenced.PERSON) ? referenced.PERSON.slice(0, 3) : [],
+                topPeriods = (referenced.PERIOD) ? referenced.PERIOD.slice(0, 3) : [],
+
+                topURIs = topPlaces.concat(topPeople, topPeriods).map(function(item) {
+                  return item.is_conflation_of[0].identifiers[0];
+                });
+
+            // Chain promises, so that they run in sequence
+            return topURIs.reduce(function(p, uri) {
+              return p.then(function(result) {
+                return fetchResultsAtReferenced(uri, result);
+              });
+            }, jQuery.Deferred().resolve().promise()).then(function(results) {
+              return { referenced: referenced, referenceCounts: results };
+            });
+          });
+        },
+
+        select = function(item, opt_via) {
+          fetchTopReferencedData(item.is_conflation_of[0].identifiers[0]).done(function(results) {
+            state.setSelectedItem(item);
+            resultList.setSelectedItem(item);
+
+            // Reminder: selection panel uses via for ref list & query phrase for text snippets
+            selectionPanel.show(item, jQuery.extend({}, results, {
+              selected_via : opt_via,
+              query_phrase : state.getQueryPhrase()
+            }));
+
+            searchPanel.setLoading(false);
+
+            // Note: selection may have happend through the map, so technically no
+            // need for this - but the map is designed to handle this situation
+            // map.setSelectedItem(item, response.referenced.PLACE);
+          });
         };
 
     this.select = select;
-
-    /**
-    /** Common select functionality **
-    onSelectItem = function(item, opt_via_ref) {
-
-      var uri = ItemUtils.getURIs(item)[0],
-
-          /**
-           * For objects, we fetch the items they references, plus
-           * the total number of other results at that referenced item.
-           *
-          selectObject = function(item) {
-
-            var fetchResultCountForReference = function(uri) {
-                  var filter = { referencing : [ uri ] };
-
-                  return state.updateFilters(filter, { pushState: false })
-                    .then(function(results) {
-                      state.updateFilters({ referencing: false }, NOOP);
-                      return { 'identifier' : uri, 'resultCount' : results.total };
-                    });
-                },
-
-                fetchRelated = API.getTopReferenced(uri).then(function(referenced) {
-                  // Run filtered searches for the first two related items of each type,
-                  // so we can display info in the UI
-                  var places  = (referenced.PLACE)  ? referenced.PLACE.slice(0, 1)  : false,
-                      people  = (referenced.PERSON) ? referenced.PERSON.slice(0, 1) : false,
-                      periods = (referenced.PERIOD) ? referenced.PERIOD.slice(0, 1) : false,
-
-                      fRelatedCounts; // TODO support person and period references
-
-                  if (places) {
-                    fRelatedCounts = places.map(function(item) {
-                      var identifiers = ItemUtils.getURIs(item);
-                      return fetchResultCountForReference(identifiers[0]);
-                    });
-
-                    // TODO this doesn't seem to work as expected!
-                    return jQuery.when.apply(jQuery, fRelatedCounts).then(function() {
-                      return { referenced: referenced, referenceCounts: Array.from(arguments) };
-                    });
-                  } else {
-                    return jQuery.Deferred().resolve(this).then(function() {
-                      return { referenced: related, referenceCounts: [] };
-                    });
-                  }
-                });
-
-            fetchRelated.done(function(response) {
-              state.setSelectedItem(item);
-              resultList.setSelectedItem(item);
-
-              selectionPanel.show(item, jQuery.extend({}, response, {
-                query_phrase : state.getQueryPhrase(),
-                selected_via : opt_via_ref
-              }));
-
-              searchPanel.setLoading(false);
-
-              // TODO currentSelection = { item: item, references: references }
-              currentSelection = item;
-
-              // Note: selection may have happend through the map, so technically no
-              // need for this - but the map is designed to handle this situation
-              map.setSelectedItem(item, response.referenced.PLACE);
-            });
-          };
-
-    };
-
-    */
 
     BaseActions.apply(this, [ selectionPanel, resultList, state ]);
   };
