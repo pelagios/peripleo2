@@ -2,13 +2,11 @@ define(['ui/navigation/selecting/item/baseActions'], function(BaseActions) {
 
   var PeriodActions = function(map, searchPanel, selectionPanel, resultList, state, stashedQuery) {
 
-    var select = function(period) {
-          // TODO redundancy with selectObject!
-          state.setSelectedItem(period);
-          resultList.setSelectedItem(period);
-          selectionPanel.show(period);
-          // TODO currentSelection = { item: item, references: references }
-          currentSelection = period;
+    var self = this,
+
+        select = function(period) {
+          self.setSelected(period);
+          searchPanel.setLoading(false);
         };
 
     this.select = select;
