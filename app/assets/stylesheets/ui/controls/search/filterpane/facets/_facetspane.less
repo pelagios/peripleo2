@@ -1,6 +1,7 @@
+@import "_facetdetails.less";
+
 .facets-pane {
 
-  @icon-color:lighten(@light-grey-type, 10%);
   @clickbuffer:6px;
 
   text-align:center;
@@ -66,7 +67,7 @@
         padding-right:5px;
         position:relative;
         top:-1px;
-        color:@icon-color;
+        color:lighten(@light-grey-type, 10%);
       }
 
       .count {
@@ -122,81 +123,6 @@
     [data-type='PERSON']::before  { background-color: @type-person; content:'\f007'; }
     [data-type='PERIOD']::before  { background-color: @type-period; content:'\f017'; }
     [data-type='DATASET']::before { background-color: @type-dataset; content:'\f187'; }
-
-  }
-
-  .facet-details {
-    border-bottom:1px solid @light-grey-border;
-    position:relative;
-    padding-bottom:5px;
-
-    .chart-container {
-      display:flex;
-      justify-content:center;
-      align-items:center;
-
-      .donut {
-        display:inline-block;
-        width:50px;
-        height:50px;
-        padding-right:5px;
-        position:relative;
-
-        .icon {
-          position:absolute;
-          font-size:14px;
-          color:@icon-color;
-          top:18px;
-          left:18px;
-        }
-
-      }
-
-      table {
-        display:inline-block;
-      }
-
-      tr {
-        cursor:pointer;
-        vertical-align:bottom;
-      }
-
-      td {
-        color:@dark-grey-type;
-        font-size:13px;
-      }
-
-      td.count {
-        font-size:14px;
-        font-weight:500;
-        text-align:right;
-      }
-
-      td.label {
-        padding-left:5px;
-
-        .separator::after {
-          font-family:FontAwesome;
-          font-size:14px;
-          content:'\f105';
-          padding:0 3px 0 4px;
-        }
-
-      }
-
-      tr:hover td.label {
-        color:@ocean-dark;
-      }
-
-      td.more {
-        color:@ocean-dark;
-      }
-
-      tr:hover td.more .label {
-        text-decoration:underline;
-      }
-
-    }
 
   }
 
