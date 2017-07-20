@@ -3,6 +3,8 @@ define([
   'ui/controls/search/searchbox/autocomplete'
 ], function(HasEvents, Autocomplete) {
 
+  var SPINNER_STOP_DELAY = 300;
+
   var SearchBox = function(parentEl) {
 
     var self = this,
@@ -21,12 +23,27 @@ define([
 
          autocomplete = new Autocomplete(searchBoxForm, searchBoxInput),
 
+         /**
+          * We introduce a little delay for stopping the load spinner, in order
+          * to avoid jittery on/off behavior when many search requests happen
+          * in fast succession, when dragging the time slider. This var
+          * keeps track of the timeout function
+          */
+         stopSpinner = false,
+
          /** En- or disables the loading spinner **/
          setLoading = function(loading) {
-           if (loading)
+           if (loading) {
+             if (stopSpinner) {
+               clearTimeout(stopSpinner);
+               stopSpinner = false;
+             }
              searchBoxIcon.attr('class', 'icon loading');
-           else
-             searchBoxIcon.attr('class', 'icon search');
+           } else if (!loading && !stopSpinner) {
+             stopSpinner = setTimeout(function() {
+               searchBoxIcon.attr('class', 'icon search');
+             }, SPINNER_STOP_DELAY);
+           }
          },
 
          /** Only click on the spyglass icon triggers a search, not on the load spinner **/
