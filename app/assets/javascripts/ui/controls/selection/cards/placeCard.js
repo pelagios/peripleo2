@@ -19,14 +19,14 @@ define([
           '<div class="item-info">' +
             '<h3 class="item-title"></h3>' +
             '<ul class="item-identifiers"></ul>' +
-            '<p class="place-names"></p>' +
+            '<p class="item-names"></p>' +
             '<p class="item-description"></p>' +
             '<p class="item-temporal-bounds"></p>' +
           '</div>').appendTo(parentEl),
 
         title       = element.find('.item-title'),
         identifiers = element.find('.item-identifiers'),
-        names       = element.find('.place-names'),
+        names       = element.find('.item-names'),
         description = element.find('.item-description'),
         tempBounds  = element.find('.item-temporal-bounds'),
 
