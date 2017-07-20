@@ -1,4 +1,5 @@
 @import "../_iteminfo.less";
+@import "types/_base.less";
 @import "types/_dataset.less";
 @import "types/_person.less";
 @import "_snippets.less";
@@ -62,99 +63,6 @@
     content:'\e674';
     font-size:22px;
     top:-48px;
-  }
-
-  .depiction {
-    min-height:60px;
-    height:25%;
-    max-height:240px;
-    background-color:@blueish-white;
-    background-size:cover;
-    background-position:50% 20%;
-    cursor:pointer;
-    .rounded-corners-top(2px);
-    border-bottom:1px solid @light-grey-border;
-  }
-
-  .item-info {
-    padding:16px 22px 16px 12px;
-  }
-
-  .references {
-    background-color:@blueish-white;
-    border-top:1px solid @light-grey-border;
-    .rounded-corners-bottom(2px);
-    color:@light-grey-type-hover;
-    padding:16px 12px;
-  }
-
-  .item.references {
-
-    .ref {
-
-      a {
-        text-decoration:none;
-      }
-
-      .title a {
-        color:@light-grey-type-hover;
-      }
-
-      .more {
-        color:@ocean;
-        a { color:@ocean; }
-      }
-
-      a:hover {
-        text-decoration:underline;
-      }
-
-    }
-
-    .ref {
-      margin:0;
-    }
-
-    .ref::before {
-      font-family:FontAwesome;
-      font-size:14px;
-      padding-right:5px;
-    }
-
-    .ref.place::before { content:'\f140'; }
-    .ref.person::before { content:'\f007'; }
-
-  }
-
-  .references {
-    overflow:hidden;
-    white-space:nowrap;
-    text-overflow:ellipsis;
-
-    a {
-      text-decoration:none;
-      color:@light-grey-type-hover;
-    }
-
-    a:hover {
-      text-decoration:underline;
-    }
-
-    .icon {
-      position:relative;
-      top:1px;
-      font-size:14px;
-      padding-right:5px;
-    }
-
-    .inbound-links {
-      padding-right:10px;
-    }
-
-    .related-entities {
-      padding-left:10px;
-    }
-
   }
 
 }
