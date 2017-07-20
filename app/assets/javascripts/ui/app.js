@@ -4,24 +4,13 @@ require.config({
 });
 
 require([
-  'ui/common/itemUtils',
   'ui/controls/results/resultList',
   'ui/controls/search/searchPanel',
   'ui/controls/selection/selectionPanel',
   'ui/map/map',
   'ui/navigation/navigation',
-  'ui/state/state',
-  'ui/api',
-], function(ItemUtils, ResultList, SearchPanel, SelectionPanel, Map, Navigation, State, API) {
-
-      /** Shorthand for a 'transient query' state update **/
-  var NOOP = { pushState: false, makeRequest: false },
-
-      /**
-       * A composition helper that puts a function in sequences with a jQuery deferred function.
-       * I.e. function b is called after function a is .done(), with the results of a as input.
-       */
-      seq = function(a, b) { return function(arg) { a(arg).done(b); }; };
+  'ui/state/state'
+], function(ResultList, SearchPanel, SelectionPanel, Map, Navigation, State) {
 
   jQuery(document).ready(function() {
 
@@ -54,16 +43,14 @@ require([
     searchPanel.on('selectSuggestOption', navigation.onSelectIdentifier);
     searchPanel.on('setFilter', navigation.onSetFilter);
     searchPanel.on('removeAllFilters', navigation.onRemoveAllFilters);
-
-    // TODO activate load spinner
-    // searchPanel.on('timerangeChange', seq(state.setTimerange, onSearchResponse));
+    searchPanel.on('timerangeChange', navigation.onTimerangeChange);
 
     selectionPanel.on('select', navigation.onSelectIdentifier);
     selectionPanel.on('setFilter', navigation.onSetFilter);
     selectionPanel.on('localSearch', navigation.onLocalSearch);
 
     resultList.on('select', navigation.onSelectItem);
-    resultList.on('nextPage', seq(state.loadNextPage, resultList.appendNextPage));
+    resultList.on('nextPage', navigation.onNextPage);
 
     state.on('stateChange', navigation.onStateChange);
 

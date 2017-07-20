@@ -57,6 +57,11 @@ define([
           });
         },
 
+        onTimerangeChange = function(range) {
+          searchPanel.setLoading(true);
+          state.setTimerange(range).done(updateAll);
+        },
+
         /**
          * 'Local search' means we'll show ALL items at this place, not just those
          * matching the query phrase. I.e. in addition to setting the filter we also
@@ -94,13 +99,19 @@ define([
           // whether the user has enabled filtering by viewport!
           var promise = state.setViewport(bounds);
           if (promise) promise.done(updateAll);
+        },
+
+        onNextPage = function() {
+          state.loadNextPage().done(resultList.appendNextPage);
         };
 
     // Implemented directly in navigation.js
     this.onStateChange = onStateChange;
     this.onQueryPhraseChanged = onQueryPhraseChanged;
+    this.onTimerangeChange = onTimerangeChange;
     this.onLocalSearch = onLocalSearch;
     this.onMapMove = onMapMove;
+    this.onNextPage = onNextPage;
 
     // Split out into filterActions.js for better code readability
     this.onOpenFilterPane = filterActions.onOpenFilterPane;
