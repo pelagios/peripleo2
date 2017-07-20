@@ -118,19 +118,16 @@ define([
         },
 
         setSelectedItem = function(item, referencedPlaces) {
-
-          // TODO rethink this API - we don't necessarily want to select all places this
-          // TODO item references. (We also need to break the loop in app.js)
-
-          // var placeURIs = (referencedPlaces) ?
-          //      referencedPlaces.map(function(p) { return p.is_conflation_of[0].identifiers[0]; }) :
-          //      [];
+          // TODO hack - need to completely revise this method
+          var refURIs = (referencedPlaces) ?
+                referencedPlaces.map(function(p) { return p.is_conflation_of[0].identifiers[0]; }) :
+                [];
 
           // TODO rethink all possible situtations
           // TODO - what if the places are not in the topPlaceLayer yet (happens for autosuggest selections!)
           // TODO - the item may have geometry itself
 
-          // geometryLayer.selectByURIs(placeURIs);
+          geometryLayer.selectByURIs(refURIs);
         };
 
     baseLayerSwitcher.on('changeBasemap', onChangeBasemap);

@@ -68,9 +68,7 @@ define([
 
             searchPanel.setLoading(false);
 
-            // Note: selection may have happend through the map, so technically no
-            // need for this - but the map is designed to handle this situation
-            // map.setSelectedItem(item, response.referenced.PLACE);
+            if (!opt_via) map.setSelectedItem(item, results.referenced.PLACE);
           });
         };
 
