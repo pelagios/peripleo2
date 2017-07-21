@@ -39,7 +39,7 @@ define([
           searchPanel.setState(state);
           map.setState(state);
 
-          if (state.selected) onSelectIdentifier(state.selected);
+          if (state.selected) selectActions.onSelectIdentifier(state.selected);
 
           request.done(updateAll);
         },

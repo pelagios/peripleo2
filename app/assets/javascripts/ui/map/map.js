@@ -117,17 +117,10 @@ define([
           // TODO called on load and Back button - might have effect on map position
         },
 
+        /** Highlights the item along with the referenced places **/
         setSelectedItem = function(item, referencedPlaces) {
-          // TODO hack - need to completely revise this method
-          var refURIs = (referencedPlaces) ?
-                referencedPlaces.map(function(p) { return p.is_conflation_of[0].identifiers[0]; }) :
-                [];
-
-          // TODO rethink all possible situtations
-          // TODO - what if the places are not in the topPlaceLayer yet (happens for autosuggest selections!)
-          // TODO - the item may have geometry itself
-
-          geometryLayer.selectByURIs(refURIs);
+          var refs = referencedPlaces || [];
+          geometryLayer.highlightItems([ item ].concat(refs));
         };
 
     baseLayerSwitcher.on('changeBasemap', onChangeBasemap);

@@ -11,7 +11,7 @@ define(['ui/navigation/selecting/item/baseActions'], function(BaseActions) {
 
             // Note: selection may have happend through the map, so technically no
             // need for this - but the map is designed to handle this situation
-            // map.setSelectedItem(item, references.PLACE);
+            map.setSelectedItem(place);
           });
         },
 

@@ -15,7 +15,8 @@ define([
         /** Index of markers by URI **/
         markerIndex = {},
 
-        markerScaleFn,
+        /** Function to compute marker size from no. of referencing items **/
+        markerScaleFn = function() { return MARKER_SIZE.MIN; },
 
         /** List of currently selected markers **/
         currentSelection = [],
@@ -85,21 +86,25 @@ define([
 
         /** Creates a marker for the given place **/
         createMarker = function(place) {
-          var pt   = (place.representative_point) ? place.representative_point : false,
-              uris = ItemUtils.getURIs(place),
-              latlng, size, marker;
+          var pt   = (place.representative_point) ? place.representative_point : false;
 
           if (pt) {
-            latlng = [ pt[1], pt[0] ];
-            size = markerScaleFn(place.referenced_count.total);
+            var uris = ItemUtils.getURIs(place),
+                latlng = [ pt[1], pt[0] ],
 
-            marker = new SelectableMarker(latlng, size).addTo(markers);
+                // Place might be there as a direct result, or as a place referenced by a result
+                refCount = (place.referenced_count) ? place.referenced_count.total : 1,
+                size = markerScaleFn(refCount),
+                marker = new SelectableMarker(latlng, size).addTo(markers);
+
             marker.on('click', onMarkerClicked);
             marker.place = place;
 
             uris.forEach(function(uri) {
               markerIndex[uri] = marker;
             });
+
+            return marker;
           }
         },
 
@@ -137,38 +142,29 @@ define([
           placesWithCounts.forEach(createMarker);
         },
 
-        selectByURIs = function(uris) {
-          var markersToSelect = uris.map(function(uri) {
-                return markerIndex[uri];
-              }).filter(function(n) { return n !== undefined; }),
+        highlightItems = function(items) {
+          var itemsWithGeometry = items.filter(function(i) { return i.representative_point; }),
 
-              // Just a minimal plausbility check - see below
-              isEqualToCurrentSelection = function(markers) {
-                if (markers.length !== currentSelection.length)
-                  return false;
+              // Look up all items in the index, to see which ones are on the map already
+              indexLookupResult = itemsWithGeometry.map(function(i) {
+                var marker = markerIndex[i.is_conflation_of[0].identifiers[0]];
+                return { item: i, marker: marker };
+              });
 
-                return markers.filter(function(m) {
-                  return currentSelection.indexOf(m) < 0;
-                }).length === 0;
-              };
+          // TODO don't re-select markers that are already selected
+          clearSelection();
 
-          // Note: this checks equality on the entire selection. Ideally, we may want
-          // to compute a diff instead in the future, and then just modify the selection
-          // as needed.
-          if (!isEqualToCurrentSelection(markersToSelect)) {
-            clearSelection();
-            markersToSelect.forEach(function(marker) {
-              marker.select();
-            });
-
-            currentSelection = markersToSelect;
-          }
+          indexLookupResult.forEach(function(t) {
+            var marker = t.marker || createMarker(t.item);
+            marker.select();
+            currentSelection.push(marker);
+          });
         };
 
     this.getBounds = getBounds;
     this.clearSelection = clearSelection;
     this.setSearchResponse = setSearchResponse;
-    this.selectByURIs = selectByURIs;
+    this.highlightItems = highlightItems;
 
     HasEvents.apply(this);
   };
