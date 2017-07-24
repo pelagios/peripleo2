@@ -118,16 +118,17 @@ define([], function() {
 
                 jQuery.getJSON(buildFirstPageQuery(settings), function(response) {
 
-                  // If there are no top-referenced places in the result (despite the settings
-                  // requesting them), we automatically fetch a large next page. This way,
-                  // we might at least get a larger number of geometries to show on the map.
-                  var loadMoreGeometries =
+                  // When a response doesn't have top-referenced places (despite the search
+                  // args requesting them) we automatically follow up with a next-page
+                  // request of length 600, so we can plot more item geometries
+                  var makeFollowUpReq =
                     requestArgs.settings.topReferenced && !response.top_referenced.PLACE;
 
                   response.request_args = requestArgs;
 
-                  if (loadMoreGeometries)
+                  if (makeFollowUpReq)
                     loadNextPage(600).done(function(nextPage) {
+                      // Merge next page with first page result
                       response.items = response.items.concat(nextPage.items);
                       deferred.resolve(response);
                     });

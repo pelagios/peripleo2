@@ -35,9 +35,8 @@ define([], function() {
       var url = '/api/search?facets=true&top_referenced=true&time_histogram=true&datasets=' + identifier,
 
           /**
-           * Helper to fetch more than just the first 20 items.
-           * This is needed in case the dataset does not link to places (e.g. because it is
-           * a gazetteer that consists of places itself).
+           * Reproduces the follow-up functionality that's also included in the
+           * main search.js component.
            */
           fetchMore = function(response, n) {
             var nextPageURL = '/api/search?limit=' + n + '&datasets=' + identifier;
