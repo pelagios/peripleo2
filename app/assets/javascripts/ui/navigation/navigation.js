@@ -44,17 +44,30 @@ define([
           request.done(updateAll);
         },
 
+        /**
+         * Depending on whether the query is defined or not, we either
+         * trigger a new request, or clear the search.
+         */
         onQueryPhraseChanged = function(query) {
-          searchPanel.setLoading(true);
-          selectionPanel.hide();
+          var search = function() {
+                searchPanel.setLoading(true);
+                state.setQueryPhrase(query).done(function(response) {
+                  updateAll(response);
+                  map.fitBounds();
+                });
+              },
+
+              clear = function() {
+                state.setQueryPhrase(false, { makeRequest: false });
+                resultList.close();
+                map.clear();
+              };
 
           // If there's a stashed query, it's no longer relevant
           stashedQuery.clear();
-
-          state.setQueryPhrase(query).done(function(response) {
-            updateAll(response);
-            map.fitBounds();
-          });
+          selectionPanel.hide();
+          if (query) search();
+          else clear();
         },
 
         onTimerangeChange = function(range) {

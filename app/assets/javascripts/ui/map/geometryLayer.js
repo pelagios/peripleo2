@@ -51,7 +51,7 @@ define([
         },
 
         /** Removes all markers **/
-        clearLayer = function() {
+        clear = function() {
           markerIndex = {};
           markers.clearLayers();
         },
@@ -138,7 +138,7 @@ define([
         setSearchResponse = function(results) {
           var placesWithCounts = mergeGeometries(results);
           computeMarkerScaleFn(placesWithCounts);
-          clearLayer();
+          clear();
           placesWithCounts.forEach(createMarker);
         },
 
@@ -162,6 +162,7 @@ define([
         };
 
     this.getBounds = getBounds;
+    this.clear = clear;
     this.clearSelection = clearSelection;
     this.setSearchResponse = setSearchResponse;
     this.highlightItems = highlightItems;

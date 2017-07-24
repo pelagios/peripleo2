@@ -136,6 +136,10 @@ define([
               self.fireEvent('nextPage');
             }
           }
+        },
+
+        close = function() {
+          list.empty();
         };
 
     element.on('click', 'li', onSelect);
@@ -144,6 +148,7 @@ define([
     this.setSearchResponse = setSearchResponse;
     this.setSelectedItem = setSelectedItem;
     this.appendNextPage = appendNextPage;
+    this.close = close;
 
     HasEvents.apply(this);
   };

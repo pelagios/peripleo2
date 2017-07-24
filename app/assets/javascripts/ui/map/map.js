@@ -140,6 +140,7 @@ define([
     this.setState = setState;
     this.setSearchResponse = geometryLayer.setSearchResponse;
     this.setSelectedItem = setSelectedItem;
+    this.clear = geometryLayer.clear;
 
     HasEvents.apply(this);
   };
