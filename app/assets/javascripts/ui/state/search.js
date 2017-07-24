@@ -37,8 +37,9 @@ define([], function() {
         },
 
         /** Builds the common parts of all query URLs **/
-        buildBaseQuery = function() {
-          var url = '/api/search?limit=' + PAGE_SIZE;
+        buildBaseQuery = function(opt_limit) {
+          var limit = (opt_limit) ? opt_limit : PAGE_SIZE,
+              url = '/api/search?limit=' + limit;
 
           url = appendIfExists(searchArgs.query, 'q', url);
 
@@ -75,8 +76,8 @@ define([], function() {
         },
 
         /** Next page requests are just the base query with offset **/
-        buildNextPageQuery = function() {
-          return buildBaseQuery() + '&offset=' + (currentOffset + PAGE_SIZE);
+        buildNextPageQuery = function(opt_limit) {
+          return buildBaseQuery(opt_limit) + '&offset=' + (currentOffset + PAGE_SIZE);
         },
 
         /**
@@ -116,8 +117,22 @@ define([], function() {
                 requestArgs.settings = jQuery.extend(true, {}, requestArgs.settings, settings);
 
                 jQuery.getJSON(buildFirstPageQuery(settings), function(response) {
+
+                  // If there are no top-referenced places in the result (despite the settings
+                  // requesting them), we automatically fetch a large next page. This way,
+                  // we might at least get a larger number of geometries to show on the map.
+                  var loadMoreGeometries =
+                    requestArgs.settings.topReferenced && !response.top_referenced.PLACE;
+
                   response.request_args = requestArgs;
-                  deferred.resolve(response);
+
+                  if (loadMoreGeometries)
+                    loadNextPage(600).done(function(nextPage) {
+                      response.items = response.items.concat(nextPage.items);
+                      deferred.resolve(response);
+                    });
+                  else
+                    deferred.resolve(response);
                 }).always(handlePending);
               };
 
@@ -132,10 +147,10 @@ define([], function() {
         },
 
         /** Request handling for loading subsequent result pages **/
-        loadNextPage = function() {
+        loadNextPage = function(opt_limit) {
           var deferred = jQuery.Deferred();
 
-          jQuery.getJSON(buildNextPageQuery(), function(response) {
+          jQuery.getJSON(buildNextPageQuery(opt_limit), function(response) {
             currentOffset = response.offset;
             deferred.resolve(response);
           });
