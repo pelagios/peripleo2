@@ -56,7 +56,7 @@ define([
 
                 return state.updateFilters(filter, { pushState: false })
                   .done(function(results) {
-                    state.updateFilters({ referencing: false }, NOOP);
+                    state.updateFilters({ referencing: false }, { pushState: false, makeRequest: false });
                     onSelectItem(results.items[0], place);
                   });
               };

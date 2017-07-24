@@ -56,7 +56,7 @@ define([
         },
 
         select = function(item, opt_via) {
-          var via = opt_via && jQuery.isPlainObject(opt_via);
+          var via = (opt_via && jQuery.isPlainObject(opt_via)) ? opt_via : false;
 
           return fetchTopReferencedData(item.is_conflation_of[0].identifiers[0]).done(function(results) {
             state.setSelectedItem(item);

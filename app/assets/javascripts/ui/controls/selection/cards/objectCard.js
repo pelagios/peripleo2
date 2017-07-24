@@ -41,6 +41,9 @@ define([
         },
 
         renderSnippets = function() {
+
+          console.log(args.selected_via);
+
           var snippetsInner = snippetsContainer.find('.snippets-inner'),
 
               // Identifier of this object
