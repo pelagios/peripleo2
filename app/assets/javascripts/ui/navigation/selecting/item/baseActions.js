@@ -21,10 +21,10 @@ define([], function() {
   };
 
   /**
-   * Fetches items 'related' to this item, i.e. those that are co-referenced by
-   * other items.
+   * Fetches items referencing this item, along with those items that are 'related' to it,
+   * i.e. those that co-occur in other items references.
    */
-  BaseSelectActions.prototype.fetchRelated = function(item) {
+  BaseSelectActions.prototype.fetchReferencingAndRelated = function(item) {
     // Transient search, filtered by URI of the place, but without queryphrase
     var state = this.state,
         uri = item.is_conflation_of[0].identifiers[0],

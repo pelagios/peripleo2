@@ -5,8 +5,17 @@ define(['ui/navigation/selecting/item/baseActions'], function(BaseActions) {
     var self = this,
 
         select = function(place) {
-          return self.fetchRelated(place).done(function(results) {
-            self.setSelected(place, { results: results.total, relatedPlaces: results.top_places });
+          return self.fetchReferencingAndRelated(place).done(function(results) {
+            var refCount = results.total,
+
+                // Top-referenced places include the place itself - exclude from related places
+                related = results.top_referenced.PLACE.filter(function(p) {
+                  return p.doc_id != place.doc_id;
+                });
+
+            self.setSelected(place,
+              { referencingCount: refCount, relatedPlaces: related });
+
             searchPanel.setLoading(false);
 
             // Note: selection may have happend through the map, so technically no

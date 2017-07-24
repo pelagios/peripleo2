@@ -12,9 +12,6 @@ define([
       };
 
   var PlaceCard  = function(parentEl, place, args) {
-
-    console.log(place);
-
     var self = this,
 
         element = jQuery(
@@ -32,7 +29,7 @@ define([
         description = element.find('.item-description'),
         tempBounds  = element.find('.item-temporal-bounds'),
 
-        references =
+        refRel =
           jQuery('<div class="place references"><span class="icon">&#xf0c1;</span></div>').appendTo(parentEl),
 
         renderInfo = function() {
@@ -45,31 +42,37 @@ define([
           self.fillTemporalBounds(place.temporal_bounds);
         },
 
-        renderReferences = function() {
-          if (args.results > 0) {
+        /**
+         * Renders information about
+         * - the no. of items referencing this place
+         * - the no. of other places related to this place
+         */
+        renderConnected = function() {
+          if (args.referencingCount > 0) {
             var ref = jQuery(
               '<span class="inbound-links">' +
-                '<a class="local-search" href="#">' + Formatting.formatNumber(args.results) + ' items</a> link here' +
+                '<a class="local-search" href="#">' +
+                  Formatting.formatNumber(args.referencingCount) + ' items</a> link here' +
               '</span>');
 
             ref.find('a').data('at', place);
-            references.append(ref);
+            refRel.append(ref);
           } else {
-            references.append('No items link here');
+            refRel.append('No items link here');
           }
 
-          // TODO render related place count
-          // references.append(
-          // '·<span class="related-entities">' +
-          //    '<span class="icon">&#xf140;</span>' +
-          //     '<a href="#">' + related.length + ' related places</a>' +
-          // '</span>');
+          if (args.relatedPlaces.length > 0)
+            refRel.append(
+              '·<span class="related-entities">' +
+               '<span class="icon">&#xf140;</span>' +
+                 '<a href="#">' + args.relatedPlaces.length + ' related places</a>' +
+               '</span>');
         };
 
     BaseCard.apply(this);
 
     renderInfo();
-    renderReferences();
+    renderConnected();
   };
   PlaceCard.prototype = Object.create(BaseCard.prototype);
 

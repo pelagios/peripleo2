@@ -5,7 +5,7 @@ define(['ui/navigation/selecting/item/baseActions'], function(BaseActions) {
     var self = this,
 
         select = function(person) {
-          self.fetchRelated(person).done(function(results) {
+          self.fetchReferencingAndRelated(person).done(function(results) {
             self.setSelected(person, { results: results.total });
             searchPanel.setLoading(false);
           });
