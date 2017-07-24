@@ -35,19 +35,31 @@ define([
          * - a 'changeState' event comes in from the history (i.e. the user clicked the back button)
          */
         setState = function(state) {
-          if (state) {
-            uiState = state.ui;
-            self.fireEvent('stateChange', {
-              state   : state,
-              request : search.setArgs(state.search)
-            });
-          }
+          var isSearchDefined = function() {
+                var s = state.search;
+                return s.query ||
+                  !jQuery.isEmptyObject(s.filters) ||
+                  s.timerange.from || s.timerange.to ||
+                  s.bbox;
+              },
+
+              // We only need to trigger a search if there are search args, or the filter pane
+              // is open (in which case it's ok to have a 'match all' query)
+              makeReq = state.ui.filterPaneOpen || isSearchDefined();
+
+          uiState = state.ui;
+          self.fireEvent('stateChange', {
+            state   : state,
+            request : search.setArgs(state.search, makeReq)
+          });
         },
 
         init = function() {
           var initialState = URLBar.parseHash();
-          setState(initialState);
-          pushState();
+          if (initialState) {
+            setState(initialState);
+            pushState();
+          }
         },
 
         getUIState = function() {

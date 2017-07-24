@@ -41,7 +41,14 @@ define([
 
           if (state.selected) selectActions.onSelectIdentifier(state.selected);
 
-          request.done(updateAll);
+          if (request) {
+            // The state change triggered a search requeset - update UI when complete
+            request.done(updateAll);
+          } else {
+            // State change to an 'empty search' - clear UI
+            resultList.close();
+            map.clear();
+          }
         },
 
         /**

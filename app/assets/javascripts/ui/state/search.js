@@ -144,9 +144,9 @@ define([], function() {
         },
 
         /** Sets new search args (completely replacing the previous) and triggers a new search **/
-        setArgs = function(args) {
+        setArgs = function(args, makeReq) {
           searchArgs = args;
-          return loadFirstPage();
+          if (makeReq) return loadFirstPage();
         },
 
         /** Returns a clone of the current search args **/
