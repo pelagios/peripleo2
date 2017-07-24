@@ -22,6 +22,11 @@ define([
         timeHistogram = new TimeHistogram(body, 320, 40),
         footer        = new Footer(element),
 
+        /** Clears the footer result count **/
+        clearFooter = function() {
+          footer.clear();
+        },
+
         /** Toggles the visibility of the filter pane **/
         togglePane = function() {
           var isVisible = body.is(':visible'),
@@ -71,6 +76,7 @@ define([
     timeHistogram.on('selectionChange', this.forwardEvent('timerangeChange'));
     footer.on('toggle', togglePane);
 
+    this.clearFooter = clearFooter;
     this.setOpen = setOpen;
     this.setSearchResponse = setSearchResponse;
     this.setFilterByViewport = footer.setFilterByViewport;

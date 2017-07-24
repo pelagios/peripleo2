@@ -56,19 +56,21 @@ define([
         },
 
         select = function(item, opt_via) {
-          fetchTopReferencedData(item.is_conflation_of[0].identifiers[0]).done(function(results) {
+          var via = opt_via && jQuery.isPlainObject(opt_via);
+
+          return fetchTopReferencedData(item.is_conflation_of[0].identifiers[0]).done(function(results) {
             state.setSelectedItem(item);
             resultList.setSelectedItem(item);
 
             // Reminder: selection panel uses via for ref list & query phrase for text snippets
             selectionPanel.show(item, jQuery.extend({}, results, {
-              selected_via : opt_via,
+              selected_via : via,
               query_phrase : state.getQueryPhrase()
             }));
 
             searchPanel.setLoading(false);
 
-            if (!opt_via) map.setSelectedItem(item, results.referenced.PLACE);
+            if (!via) map.setSelectedItem(item, results.referenced.PLACE);
           });
         };
 

@@ -54,6 +54,7 @@ define([
         clear = function() {
           markerIndex = {};
           markers.clearLayers();
+          markerScaleFn = function() { return MARKER_SIZE.MIN; };
         },
 
         /** Clears the selection (if any) **/

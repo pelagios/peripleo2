@@ -23,6 +23,11 @@ define([
         label = footer.find('.label'),
         btnToggleFilterPane = footer.find('.pane-toggle'),
 
+        /** Clears the footer result count **/
+        clear = function() {
+          label.empty();
+        },
+
         /** Updates the 'filter by viewport' icon **/
         setFilterByViewport = function(filter) {
           if (filter) icon.addClass('by-viewport');
@@ -63,6 +68,7 @@ define([
 
     btnToggleFilterPane.click(onClickToggle);
 
+    this.clear = clear;
     this.setFilterByViewport = setFilterByViewport;
     this.setSearchResponse = setSearchResponse;
     this.setOpen = setOpen;

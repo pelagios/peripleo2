@@ -24,6 +24,11 @@ define([
         setLoading = function(loading) {
           searchBox.setLoading(loading);
         },
+        
+        /** Clears the footer result count **/
+        clearFooter = function() {
+          filterPane.clearFooter();
+        },
 
         /** (De)activates the 'filter by viewport' indicator icon **/
         setFilterByViewport = function(filter) {
@@ -70,6 +75,7 @@ define([
     filterPane.on('timerangeChange', this.forwardEvent('timerangeChange'));
 
     this.setLoading = setLoading;
+    this.clearFooter = clearFooter;
     this.setFilterByViewport = setFilterByViewport;
     this.updateFilterCrumbs = updateFilterCrumbs;
     this.removeFilterCrumbs = removeFilterCrumbs;

@@ -34,12 +34,13 @@ define([
 
         onSelectIdentifier = function(identifier) {
           searchPanel.setLoading(true);
+          searchPanel.clearFooter();
+          resultList.close();
+          map.clear();
           API.getItem(identifier)
-            .done(function(response) {
-              // The shorter alternative would be .done(onSelectItem).
-              // But then the AJAX API response would add a second call arg ("success")
-              // which onSelectItem would mis-interpret as 'via' argument
-              onSelectItem(response);
+            .then(onSelectItem)
+            .done(function() {
+              map.fitBounds();
             }).fail(function(error) {
               // TODO shouldn't happen unless connection or backend is down
               // TODO show error popup
@@ -73,20 +74,15 @@ define([
 
             switch(ItemUtils.getItemType(item)) {
               case 'DATASET':
-                datasetActions.select(item);
-                break;
+                return datasetActions.select(item);
               case 'OBJECT':
-                objectActions.select(item, opt_via);
-                break;
+                return objectActions.select(item, opt_via);
               case 'PERIOD':
-                periodActions.select(item);
-                break;
+                return periodActions.select(item);
               case 'PERSON':
-                personActions.select(item);
-                break;
+                return personActions.select(item);
               case 'PLACE':
-                placeActions.select(item);
-                break;
+                return placeActions.select(item);
             }
 
             currentSelection = item;

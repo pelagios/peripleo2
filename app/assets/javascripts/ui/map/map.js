@@ -55,15 +55,18 @@ define([
         isAutoFit = false,
 
         fitBounds = function() {
-          var topPlacesBounds = geometryLayer.getBounds();
-          if (topPlacesBounds.isValid()) {
-            isAutoFit = true;
-            map.fitBounds(topPlacesBounds, {
+          var bounds = geometryLayer.getBounds(),
+              isPoint = bounds.getSouthWest().equals(bounds.getNorthEast());
+
+          isAutoFit = true;
+          if (isPoint)
+            map.panTo(bounds.getSouthWest());
+          else
+            map.fitBounds(bounds, {
               paddingTopLeft: [440, 20],
               paddingBottomRight: [20, 20],
               animate: true
             });
-          }
         },
 
         onChangeBasemap = function(name) {

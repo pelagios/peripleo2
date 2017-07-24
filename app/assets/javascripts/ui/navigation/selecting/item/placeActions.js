@@ -5,7 +5,7 @@ define(['ui/navigation/selecting/item/baseActions'], function(BaseActions) {
     var self = this,
 
         select = function(place) {
-          self.fetchRelated(place).done(function(results) {
+          return self.fetchRelated(place).done(function(results) {
             self.setSelected(place, { results: results.total, relatedPlaces: results.top_places });
             searchPanel.setLoading(false);
 
