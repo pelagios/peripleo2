@@ -56,17 +56,20 @@ define([
 
         fitBounds = function() {
           var bounds = geometryLayer.getBounds(),
-              isPoint = bounds.getSouthWest().equals(bounds.getNorthEast());
+              isPoint;
 
-          isAutoFit = true;
-          if (isPoint)
-            map.panTo(bounds.getSouthWest());
-          else
-            map.fitBounds(bounds, {
-              paddingTopLeft: [440, 20],
-              paddingBottomRight: [20, 20],
-              animate: true
-            });
+          if (bounds.isValid()) {
+            isAutoFit = true;
+            isPoint = bounds.getSouthWest().equals(bounds.getNorthEast());
+            if (isPoint)
+              map.panTo(bounds.getSouthWest());
+            else
+              map.fitBounds(bounds, {
+                paddingTopLeft: [440, 20],
+                paddingBottomRight: [20, 20],
+                animate: true
+              });
+          }
         },
 
         onChangeBasemap = function(name) {
