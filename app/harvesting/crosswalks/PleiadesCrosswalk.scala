@@ -11,7 +11,7 @@ import services.item._
 
 object PleiadesCrosswalk extends BaseGeoJSONCrosswalk {
 
-  private val PLEIADES = PathHierarchy("Pleiades", "Pleiades")
+  private val PLEIADES = PathHierarchy("pleiades", "pleiades")
 
   private def computeTemporalBounds(names: Seq[PleiadesName]): Option[TemporalBounds] = {
     val startDate= names.flatMap(_.startDate)
@@ -22,7 +22,7 @@ object PleiadesCrosswalk extends BaseGeoJSONCrosswalk {
       Some(TemporalBounds.fromYears(startDate.min, endDate.max))
   }
 
-  def fromJson(record: String): Option[ItemRecord] = super.fromJson[PleiadesRecord](record, { pleiades =>    
+  def fromJson(record: String): Option[ItemRecord] = super.fromJson[PleiadesRecord](record, { pleiades =>
     val names = pleiades.names.flatMap(_.toNames)
     ItemRecord(
       ItemRecord.normalizeURI(pleiades.uri),
@@ -84,7 +84,7 @@ object PleiadesName {
     (JsPath \ "start").readNullable[Int] and
     (JsPath \ "end").readNullable[Int]
   )(PleiadesName.apply _)
-  
+
 }
 
 case class PleiadesRecord(

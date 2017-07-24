@@ -34,6 +34,19 @@ define([], function() {
     getDatasetInfo : function(identifier) {
       var url = '/api/search?facets=true&top_referenced=true&time_histogram=true&datasets=' + identifier,
 
+          /**
+           * Helper to fetch more than just the first 20 items.
+           * This is needed in case the dataset does not link to places (e.g. because it is
+           * a gazetteer that consists of places itself).
+           */
+          fetchMore = function(response, n) {
+            var nextPageURL = '/api/search?limit=' + n + '&datasets=' + identifier;
+            return jQuery.getJSON(nextPageURL).then(function(nextPage) {
+              response.items = response.items.concat(nextPage.items);
+              return response;
+            });
+          },
+
           requestArgs = {
             filters:   { datasets: [ identifier ] },
             timerange: { from: false, to : false },
@@ -46,7 +59,10 @@ define([], function() {
 
       return jQuery.getJSON(url).then(function(response) {
         response.request_args = requestArgs;
-        return response;
+        if (response.top_referenced.PLACE)
+          return response;
+        else
+          return fetchMore(response, 600);
       });
     }
 

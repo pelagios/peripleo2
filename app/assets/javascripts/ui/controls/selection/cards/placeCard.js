@@ -13,6 +13,8 @@ define([
 
   var PlaceCard  = function(parentEl, place, args) {
 
+    console.log(place);
+
     var self = this,
 
         element = jQuery(

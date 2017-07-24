@@ -66,7 +66,7 @@ define([
 
         renderStats = function() {
           var totalItems = args.total,
-              topPlaces = args.top_referenced.PLACE,
+              topPlaces = (args.top_referenced.PLACE) ? args.top_referenced.PLACE : [],
               topPlacesCount = (topPlaces.length < 500) ? topPlaces.length: '500+';
 
           stats.append(
@@ -75,14 +75,16 @@ define([
               '<span class="count">' +
                 Formatting.formatNumber(totalItems) +
               '</span> items' +
-            '</span><span class="sep"></span>' +
+            '</span><span class="sep"></span>');
 
-            '<span class="stats-links">' +
-              '<span class="icon">&#xf0c1;</span> linked to ' +
-              '<span class="count">' +
-                topPlacesCount +
-              '</span> places' +
-            '</span>');
+          if (topPlaces.length > 0)
+            stats.append(
+              '<span class="stats-links">' +
+                '<span class="icon">&#xf0c1;</span> linked to ' +
+                '<span class="count">' +
+                  topPlacesCount +
+                '</span> places' +
+              '</span>');
         },
 
         /** Fetches subset info via the API and inserts the info into the card **/
