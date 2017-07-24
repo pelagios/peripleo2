@@ -39,13 +39,15 @@ define([
               })[0].buckets,
 
               temporalBounds = (function() {
-                var first = timeHistogram[0],
-                    last = timeHistogram[timeHistogram.length - 1],
-                    getYear = function(obj) {
-                      return parseInt(Object.keys(obj)[0]);
-                    };
+                if (timeHistogram.length > 0) {
+                  var first = timeHistogram[0],
+                      last = timeHistogram[timeHistogram.length - 1],
+                      getYear = function(obj) {
+                        return parseInt(Object.keys(obj)[0]);
+                      };
 
-                return { from: getYear(first), to: getYear(last) };
+                  return { from: getYear(first), to: getYear(last) };
+                }
               })();
 
           self.renderHierarchyPath(partOf, record.is_part_of);
