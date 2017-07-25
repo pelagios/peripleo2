@@ -34,6 +34,8 @@ define([], function() {
               return v.type === 'PLACE';
             });
 
+            searchPanel.setLoading(false);
+
             searchPanel.setSearchResponse(results);
             resultList.setSearchResponse(results);
 
