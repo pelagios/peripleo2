@@ -138,8 +138,8 @@ define([
 
         setSearchResponse = function(results) {
           var placesWithCounts = mergeGeometries(results);
-          computeMarkerScaleFn(placesWithCounts);
           clear();
+          computeMarkerScaleFn(placesWithCounts);
           placesWithCounts.forEach(createMarker);
         },
 
