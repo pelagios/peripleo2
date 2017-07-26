@@ -29,7 +29,11 @@ class SearchService @Inject() (
   private def phraseQuery(query: Option[String]): Seq[QueryDefinition] = {
     query.map { q =>
       Seq(
-        queryStringQuery(q).field("is_conflation_of.title").field("is_conflation_of.descriptions.description").defaultOperator("AND"),
+        queryStringQuery(q)
+          .field("is_conflation_of.title")
+          .field("is_conflation_of.names.name")
+          .field("is_conflation_of.descriptions.description")
+          .defaultOperator("AND").queryName("item_meta_match"),
 
         // Search inside record titles...
         matchPhraseQuery("is_conflation_of.title.raw", q).boost(5.0),
@@ -40,7 +44,7 @@ class SearchService @Inject() (
         matchPhraseQuery("is_conflation_of.names.name", q),
 
         // ...and descriptions (with lower boost)
-        matchQuery("is_conflation_of.descriptions.description", q).operator("AND"))
+        matchQuery("is_conflation_of.descriptions.description", q))
     }.getOrElse(Seq(matchAllQuery))
   }
 
