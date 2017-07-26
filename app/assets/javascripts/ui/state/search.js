@@ -122,7 +122,8 @@ define([], function() {
                   // args requesting them) we automatically follow up with a next-page
                   // request of length 600, so we can plot more item geometries
                   var makeFollowUpReq =
-                    requestArgs.settings.topReferenced && !response.top_referenced.PLACE;
+                    requestArgs.settings.topReferenced &&
+                    (!response.top_referenced.PLACE || response.top_referenced.PLACE.length < 600);
 
                   response.request_args = requestArgs;
 

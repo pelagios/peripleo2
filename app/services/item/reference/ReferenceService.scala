@@ -160,7 +160,7 @@ trait ReferenceService { self: ItemService =>
       } highlighting (
         highlight field "context" fragmentSize 200
       )
-    } map { response =>
+    } map { response =>      
       Page(response.tookInMillis, response.totalHits, offset, limit, response.as[(Reference, Seq[String])])
     }
   }
