@@ -82,7 +82,7 @@ class SearchService @Inject() (
 
             // If there is a query, search reference contexts
             args.query
-              .map { q => Seq(hasChildQuery(ES.REFERENCE) query { queryStringQuery(q).field("context") }) }
+              .map { q => Seq(hasChildQuery(ES.REFERENCE) query { queryStringQuery(q).field("context") } queryName("ref_context_match") ) }
               .getOrElse(Seq.empty[QueryDefinition])
           )
         ) filter (filter)
@@ -124,6 +124,9 @@ class SearchService @Inject() (
       val fItemQuery = es.client execute {
         buildItemQuery(args, filter.withDateRangeFilter)
       } map { response =>
+        
+        // play.api.Logger.info(response.toString)
+        
         val items = response.as[Item].toSeq
         val aggregations =
           Option(response.aggregations) match {
