@@ -38,7 +38,7 @@ define([
           self.fillWithFirst(description,
             ItemUtils.getDescriptions(place).map(function(d) { return d.description; }));
           self.fill(names,
-            distinct(ItemUtils.getNames(place).map(function(n) { return n.name; })));
+            distinct(ItemUtils.getNames(place).map(function(n) { return n.name; })).join(', '));
           self.fillTemporalBounds(place.temporal_bounds);
         },
 
