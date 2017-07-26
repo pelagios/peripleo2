@@ -2,7 +2,6 @@ package harvesting.crosswalks.tei
 
 import java.io.InputStream
 import org.joda.time.DateTime
-import play.api.Logger
 import scala.xml.{ Elem, Node, Text, XML }
 import services.item._
 import services.item.reference.{ UnboundReference, ReferenceType }
@@ -35,6 +34,21 @@ object TeiCrosswalk {
   }
   
   private def parseBody(identifier: String, xml: Elem): Seq[UnboundReference] = {
+    
+    // Returns the ref attribute of the node, if any
+    def getRef(node: Node) = 
+      node.attribute("ref").flatMap(_.headOption).map(_.text) 
+    
+    // Builds an UnboundReferences from a ref URI and text context
+    def toReference(uri: String, context: String) = UnboundReference(
+        identifier,
+        ReferenceType.PLACE,
+        ItemRecord.normalizeURI(uri),
+        None, // relation
+        None, // homepage
+        Some(context),
+        None // Depiction
+      )
    
     // Flattens the node to a list of text and placeName tags
     def flattenNode(node: Node, flattened: Seq[Node] = Seq.empty[Node]): Seq[Node] = {      
@@ -66,7 +80,7 @@ object TeiCrosswalk {
         }
       }
     
-    flattened.sliding(2).foldLeft((Option.empty[Node], Seq.empty[UnboundReference])) { case ((maybePrev, refs), currentAndNext) =>
+    val references = flattened.sliding(2).foldLeft((Option.empty[Node], Seq.empty[UnboundReference])) { case ((maybePrev, refs), currentAndNext) =>
       val current = currentAndNext.head
       val next = currentAndNext(1)
       
@@ -75,7 +89,7 @@ object TeiCrosswalk {
         (Some(current), refs)
       } else {
         // We know that this is an entity node - append prev and next iff they are text
-        current.attribute("ref").flatMap(_.headOption).map(_.text) match { 
+        getRef(current) match { 
           
           case Some(entityURI) =>
             // The text before this entity
@@ -92,28 +106,37 @@ object TeiCrosswalk {
             // Concatenated text context
             val context = Seq(prefix, Some(current.text), suffix).flatten.mkString("")     
             
-            val reference = UnboundReference(
-              identifier,
-              ReferenceType.PLACE,
-              ItemRecord.normalizeURI(entityURI),
-              None, // relation
-              None, // homepage
-              Some(context),
-              None // Depiction
-            )
-    
-            (Some(current), refs :+ reference)
+            (Some(current), refs :+ toReference(entityURI, context))
             
           // This is an entity node, but without a "ref" attribute - skip
           case None =>
             (Some(current), refs)
             
         }
-        
 
       }
       
     }._2
+    
+    // Sliding window stops when it reaches the end of the list, whereas we need it to go one step further
+    // i.e. when the *start* of the window is at the last position in the list - append this last step here
+    if (flattened.size > 1) {
+      val lastPair = flattened.takeRight(2)
+      val (prefix, current) = (lastPair(0), lastPair(1))
+      val maybeRef = getRef(current)
+      
+      if (current.isInstanceOf[Text] || maybeRef.isEmpty)
+        // Last node is a text node, or an entity node without a ref - nothing to do
+        references
+      else if (prefix.isInstanceOf[Text])
+        // Last node is an entity with a ref attribute, and prefix is text
+        references :+ toReference(maybeRef.get, prefix.text + current.text)
+      else
+        // Last node is an entity with a ref, prefix is also an entity
+        references
+    } else {
+      references  
+    }
   }
   
   private[tei] def parseTEIXML(identifier: String, dataset: PathHierarchy, stream: InputStream): (ItemRecord, Seq[UnboundReference]) = {
