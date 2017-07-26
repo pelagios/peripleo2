@@ -146,23 +146,55 @@ trait ReferenceService { self: ItemService =>
   }
 
   def getReferences(parentUri: String, destinationUri: Option[String], query: Option[String], offset: Int = 0, limit: Int = 20) = {
-    val clauses = 
-      Seq(
-        Some(termQuery("parent_uri" -> parentUri)),
-        destinationUri.map(uri => termQuery("reference_to.uri" -> uri)),
-        query.map(q => queryStringQuery(q).field("context"))).flatten
     
-    es.client execute {
-      search in ES.PERIPLEO / ES.REFERENCE query {
-        bool {
-          must ( clauses )
-        }
-      } highlighting (
-        highlight field "context" fragmentSize 200
-      )
-    } map { response =>      
-      Page(response.tookInMillis, response.totalHits, offset, limit, response.as[(Reference, Seq[String])])
+    def executeQuery(docId: Option[UUID]) = {
+      val clauses = 
+        Seq(
+          Some(termQuery("parent_uri" -> parentUri)),
+          docId.map(id => termQuery("reference_to.doc_id" -> id.toString)),
+          query.map(q => queryStringQuery(q).field("context"))).flatten
+      
+      es.client execute {
+        search in ES.PERIPLEO / ES.REFERENCE query {
+          bool {
+            must ( clauses )
+          }
+        } highlighting (
+          highlight field "context" fragmentSize 200
+        )
+      } map { response =>      
+        Page(response.tookInMillis, response.totalHits, offset, limit, response.as[(Reference, Seq[String])])
+      }
+      
     }
+    
+    destinationUri match {
+      
+      // Query is filtered by destination URI
+      case Some(uri) => for {
+        
+        // Resolve destination URI        
+        destinationItem <- self.findByIdentifier(uri)
+        
+        // If destination item exists, execute query, else return empty page
+        references <- destinationItem match {
+          
+          case Some(item) => 
+            executeQuery(Some(item.docId))
+          
+          case None => 
+            Future.successful(Page.empty[(Reference, Seq[String])])
+        
+        }
+        
+      } yield (references)
+        
+     
+      // Query is not filtered by destination URI - execute
+      case None => 
+        executeQuery(None)  
+    }
+    
   }
     
   def getTopReferenced(identifier: String): Future[TopReferenced] = {
