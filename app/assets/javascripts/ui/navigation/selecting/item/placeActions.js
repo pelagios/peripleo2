@@ -6,12 +6,14 @@ define(['ui/navigation/selecting/item/baseActions'], function(BaseActions) {
 
         select = function(place) {
           return self.fetchReferencingAndRelated(place).done(function(results) {
+            
             var refCount = results.total,
 
                 // Top-referenced places include the place itself - exclude from related places
-                related = results.top_referenced.PLACE.filter(function(p) {
-                  return p.doc_id != place.doc_id;
-                });
+                related =
+                  (results.top_referenced.PLACE) ? results.top_referenced.PLACE.filter(function(p) {
+                    return p.doc_id != place.doc_id;
+                  }) : [];
 
             self.setSelected(place,
               { referencingCount: refCount, relatedPlaces: related });

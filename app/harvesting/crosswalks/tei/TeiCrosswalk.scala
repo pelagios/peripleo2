@@ -2,9 +2,11 @@ package harvesting.crosswalks.tei
 
 import java.io.InputStream
 import org.joda.time.DateTime
+import play.api.Logger
 import scala.xml.{ Elem, Node, Text, XML }
 import services.item._
 import services.item.reference.{ UnboundReference, ReferenceType }
+import scala.collection.mutable.ListBuffer
 
 object TeiCrosswalk {
   
@@ -34,62 +36,91 @@ object TeiCrosswalk {
   
   private def parseBody(identifier: String, xml: Elem): Seq[UnboundReference] = {
    
-    val body = (xml \\ "body")(0)
-    val placeNameNodes = body \\ "placeName"
-    
-    // Helper to clean up text extracted from XML
-    def trim(str: String): String = str.replaceAll("\\s\\s+", " ").trim
-    
-    def getTextBetween(from: Option[Node], to: Option[Node]): Option[String] = {
-      val allChildren = body.descendant
-      
-      val fromIdx = from.map { node =>
-        // Skip placeName node, plus all its children
-        val idx = allChildren.indexOf(node)
-        val innerNodes = node.descendant
-        (idx + innerNodes.size + 1)
-      }.getOrElse(0)
-      
-      val toIdx = to.map(allChildren.indexOf(_)).getOrElse(allChildren.size)
-      
-      val text = allChildren.slice(fromIdx, toIdx).filter(_.isInstanceOf[Text]).mkString(" ").trim
-      if (text.size > 0) Some(trim(text))
-      else None
+    // Flattens the node to a list of text and placeName tags
+    def flattenNode(node: Node, flattened: Seq[Node] = Seq.empty[Node]): Seq[Node] = {      
+      if (node.child.isEmpty || node.label == "placeName")
+        flattened :+ node
+      else
+        flattened ++ node.child.flatMap(n => flattenNode(n, flattened))
     }
-    
-    placeNameNodes.zipWithIndex.flatMap { case (node, idx) =>
-      node.attribute("ref").map(_.head.text).map { placeURI =>
 
-        val previousNode = 
-          if (idx > 0) Some(placeNameNodes(idx - 1))
-          else None
-        val prefix = getTextBetween(previousNode, Some(node))
-          
-        val nextNode = 
-          if (idx < placeNameNodes.size - 1) Some(placeNameNodes(idx + 1))
-          else None
-        val suffix = getTextBetween(Some(node), nextNode)
-        
-        val context = Seq(prefix, Some(node.text), suffix).flatten.mkString(" ")
+    val flattened =
+      // 'Flatten' the contents of the body to a linear list of texts and entity tags
+      flattenNode((xml \\ "body")(0))
+      // Merge consecutive text nodes
+      .foldLeft(Seq.empty[Node]) { case (list, node) =>
+        list.lastOption match {
+          // First iteration - new list
+          case None => Seq(node)
 
-        UnboundReference(
-          identifier,
-          ReferenceType.PLACE,
-          ItemRecord.normalizeURI(placeURI),
-          None, // relation
-          None, // homepage
-          Some(context),
-          None // Depiction
-        )
+          // Previous node was a text node
+          case Some(previous) if previous.isInstanceOf[Text] =>
+            if (node.isInstanceOf[Text]) {
+              list.dropRight(1) :+ Text(previous.text + node.text)
+            } else {
+              list :+ node
+            }
+            
+          // Previous node was an entity node - append
+          case _ => list :+ node
+        }
       }
-    }
+    
+    flattened.sliding(2).foldLeft((Option.empty[Node], Seq.empty[UnboundReference])) { case ((maybePrev, refs), currentAndNext) =>
+      val current = currentAndNext.head
+      val next = currentAndNext(1)
+      
+      if (current.isInstanceOf[Text]) {
+        // We only create a reference for entity nodes - skip this one
+        (Some(current), refs)
+      } else {
+        // We know that this is an entity node - append prev and next iff they are text
+        current.attribute("ref").flatMap(_.headOption).map(_.text) match { 
+          
+          case Some(entityURI) =>
+            // The text before this entity
+            val prefix = maybePrev match {
+              case Some(previous) if previous.isInstanceOf[Text] => Some(previous.text)
+              case _ => None
+            }
+            
+            // The text after this entity
+            val suffix = 
+              if (next.isInstanceOf[Text]) Some(next.text)
+              else None
+              
+            // Concatenated text context
+            val context = Seq(prefix, Some(current.text), suffix).flatten.mkString("")     
+            
+            val reference = UnboundReference(
+              identifier,
+              ReferenceType.PLACE,
+              ItemRecord.normalizeURI(entityURI),
+              None, // relation
+              None, // homepage
+              Some(context),
+              None // Depiction
+            )
+    
+            (Some(current), refs :+ reference)
+            
+          // This is an entity node, but without a "ref" attribute - skip
+          case None =>
+            (Some(current), refs)
+            
+        }
+        
+
+      }
+      
+    }._2
   }
   
   private[tei] def parseTEIXML(identifier: String, dataset: PathHierarchy, stream: InputStream): (ItemRecord, Seq[UnboundReference]) = {
-    val teiXml = XML.load(stream)
-    val record = parseHeader(identifier, dataset, teiXml)
+    val teiXml = XML.load(stream)        
+    val record = parseHeader(identifier, dataset, teiXml)    
     val references = parseBody(identifier, teiXml)
-    (record, references)
+    (record, references)    
   }
   
   def fromSingleFile(filename: String, dataset: PathHierarchy): InputStream => Seq[(ItemRecord, Seq[UnboundReference])] = { stream =>
