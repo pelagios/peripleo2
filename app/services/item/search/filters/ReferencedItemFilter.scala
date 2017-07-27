@@ -5,11 +5,11 @@ import com.sksamuel.elastic4s.{ HitAs, QueryDefinition }
 import java.util.UUID
 import scala.concurrent.{ ExecutionContext, Future }
 import services.ES
-import services.item.Item
+import services.item.search.RichResultItem
 
 case class ReferencedItemFilter(uris: Seq[String], setting: TermFilter.Setting) {
   
- def filterDefinition()(implicit es: ES, ctx: ExecutionContext, hitAs: HitAs[Item]): Future[QueryDefinition] = {
+ def filterDefinition()(implicit es: ES, ctx: ExecutionContext, hitAs: HitAs[RichResultItem]): Future[QueryDefinition] = {
     
     // In a first step, we need to get from URIs to DocIDs
     def resolve: Future[Seq[UUID]] = es.client execute {
@@ -18,7 +18,7 @@ case class ReferencedItemFilter(uris: Seq[String], setting: TermFilter.Setting) 
           should ( uris.map(termQuery("is_conflation_of.uri", _)) )
         }
       }
-    } map { _.as[Item].map(_.docId).toSeq }
+    } map { _.as[RichResultItem].map(_.item.docId).toSeq }
     
     def filter(docId: UUID) = 
       hasChildQuery(ES.REFERENCE) query { termQuery("reference_to.doc_id", docId.toString) }

@@ -19,10 +19,13 @@ class SearchService @Inject() (
   implicit val notifications: NotificationService,
   implicit val ctx: ExecutionContext
 ) {
-
-  implicit object ItemHitAs extends HitAs[Item] {
-    override def as(hit: RichSearchHit): Item =
-      Json.fromJson[Item](Json.parse(hit.sourceAsString)).get
+  
+  implicit object RichResultItemHitAs extends HitAs[RichResultItem] {
+    override def as(hit: RichSearchHit): RichResultItem = {
+      val item = Json.fromJson[Item](Json.parse(hit.sourceAsString)).get
+      val isHitOnReference = hit.matchedQueries.contains("ref_context_match")
+      RichResultItem(item, isHitOnReference)
+    }
   }
 
   /** The common phrase query part **/
@@ -127,11 +130,8 @@ class SearchService @Inject() (
 
       val fItemQuery = es.client execute {
         buildItemQuery(args, filter.withDateRangeFilter)
-      } map { response =>
-        
-        // play.api.Logger.info(response.toString)
-        
-        val items = response.as[Item].toSeq
+      } map { response =>        
+        val items = response.as[RichResultItem].toSeq
         val aggregations =
           Option(response.aggregations) match {
             case Some(aggs) =>

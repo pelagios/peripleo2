@@ -5,7 +5,6 @@ import com.sksamuel.elastic4s.{ HitAs, QueryDefinition, RangeQueryDefinition }
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.language.reflectiveCalls
 import services.ES
-import services.item.Item
 
 class SearchFilter(args: SearchArgs, placeFilterDefinition: Option[QueryDefinition] = None) {
 	
@@ -45,7 +44,7 @@ class SearchFilter(args: SearchArgs, placeFilterDefinition: Option[QueryDefiniti
 object SearchFilter {
 
 	/** Different handling required depending on whether there's a place filter or not **/
-	def build(args: SearchArgs)(implicit es: ES, ctx: ExecutionContext, hitAs: HitAs[Item]) = args.filters.referencedItemFilter match {
+	def build(args: SearchArgs)(implicit es: ES, ctx: ExecutionContext, hitAs: HitAs[RichResultItem]) = args.filters.referencedItemFilter match {
     case Some(itemFilter) => itemFilter.filterDefinition().map(f => new SearchFilter(args, Some(f)))
     case None => Future.successful(new SearchFilter(args))
   }
