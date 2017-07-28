@@ -55,18 +55,28 @@ define([
               renderSnippets = function(reference) {
                 var element = jQuery('<div class="reference"><ul></ul></div>')
                       .appendTo(snippetsInner),
-                    ul = element.find('ul');
+                    ul = element.find('ul'),
 
-                reference.snippets.forEach(function(s) {
+                    // TODO quick hack
+                    snippets = (item.hit_on_reference) ?
+                      reference.snippets : [ reference.context ];
+
+                snippets.forEach(function(s) {
                   ul.append('<li>' + s + '</li>');
                 });
 
                 if (reference.homepage)
                   element.append(Formatting.formatClickableURL(reference.homepage));
-              };
+              },
 
-          if (referencing)
-            API.getReferences(identifier, referencing, args.query_phrase).done(function(results) {
+              request;
+
+          if (referencing) {
+            request = (item.hit_on_reference) ?
+              API.getReferences(identifier, referencing, args.query_phrase) :
+              API.getReferences(identifier, referencing);
+
+            request.done(function(results) {
               if (results.total > 0) {
                 results.items.forEach(function(reference) {
                   renderSnippets(reference);
@@ -74,6 +84,8 @@ define([
                 snippetsContainer.show();
               }
             });
+          }
+
         };
 
     BaseCard.apply(this);

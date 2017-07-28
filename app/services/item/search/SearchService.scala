@@ -19,11 +19,11 @@ class SearchService @Inject() (
   implicit val notifications: NotificationService,
   implicit val ctx: ExecutionContext
 ) {
-  
+
   implicit object RichResultItemHitAs extends HitAs[RichResultItem] {
     override def as(hit: RichSearchHit): RichResultItem = {
       val item = Json.fromJson[Item](Json.parse(hit.sourceAsString)).get
-      val isHitOnReference = hit.matchedQueries.contains("ref_context_match")
+      val isHitOnReference = !hit.matchedQueries.contains("item_meta_match")
       RichResultItem(item, isHitOnReference)
     }
   }
@@ -130,7 +130,7 @@ class SearchService @Inject() (
 
       val fItemQuery = es.client execute {
         buildItemQuery(args, filter.withDateRangeFilter)
-      } map { response =>        
+      } map { response =>
         val items = response.as[RichResultItem].toSeq
         val aggregations =
           Option(response.aggregations) match {
