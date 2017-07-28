@@ -33,6 +33,24 @@ define([
         /** Workaround - see .setSelectedItem below **/
         lastScrollTop = 0,
 
+        /** Helper to find an item in the list **/
+        findListElement = function(item) {
+          var found = false;
+
+          // This could be optimized if needed with an indexed lookup
+          list.children('li').each(function(idx, node) {
+            var el = jQuery(node),
+                docId = el.data('item').doc_id;
+
+                if (docId === item.doc_id) {
+                  found = el;
+                  return false;
+                }
+          });
+
+          return found;
+        },
+
         /** Renders a new search response, either by replacing or appending to the current list **/
         renderResponse = function(response, append) {
           isMoreAvailable = response.total > (response.offset + response.limit);
@@ -62,29 +80,17 @@ define([
           waitingForNextPage = false;
         },
 
+        getPosition = function(item) {
+          var element = findListElement(item);
+              idx = (element) ? list.find('li').index(element) : -1;
+          return idx;
+        },
+
         /** Selects the specified item and scrolls it into view **/
         setSelectedItem = function(item) {
 
-              // Helper to set find the item in the list
-          var findListElement = function() {
-                var found = false;
-
-                // This could be optimized if needed with an indexed lookup
-                list.children('li').each(function(idx, node) {
-                  var el = jQuery(node),
-                      docId = el.data('item').doc_id;
-
-                      if (docId === item.doc_id) {
-                        found = el;
-                        return false;
-                      }
-                });
-
-                return found;
-              },
-
-              select = function() {
-                var newSelection = findListElement();
+          var select = function() {
+                var newSelection = findListElement(item);
 
                 // Remove previous selection, if needed
                 if (currentSelection && currentSelection.data('item').doc_id !== item.doc_id)
@@ -145,6 +151,7 @@ define([
     element.on('click', 'li', onSelect);
     element.scroll(onScroll);
 
+    this.getPosition = getPosition;
     this.setSearchResponse = setSearchResponse;
     this.setSelectedItem = setSelectedItem;
     this.appendNextPage = appendNextPage;

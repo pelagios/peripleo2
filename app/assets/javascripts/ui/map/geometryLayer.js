@@ -128,9 +128,9 @@ define([
             if (existsIdx < 0)
               // Item is not among topPlaces - append it to end of array
               merged.push(jQuery.extend(true, {},  item, { referenced_count : { total: 0 } }));
-            else
+            // else - // TODO we probably shouldn't increase the ref count - keep things clean!
               // Item is in topPlaces already (it's a place) - increment result_count
-              merged[existsIdx].referenced_count.total += 1;
+              // merged[existsIdx].referenced_count.total += 1;
           });
 
           return merged;

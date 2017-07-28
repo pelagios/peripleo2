@@ -52,12 +52,25 @@ define([
           var selectFirstResultAt = function() {
                 searchPanel.setLoading(true);
                 var uri = ItemUtils.getURIs(place)[0],
-                    filter = { referencing : [ uri ] };
+                    filter = { referencing : [ uri ] },
+                    idx = resultList.getPosition(place);
 
-                return state.updateFilters(filter, { pushState: false })
-                  .done(function(results) {
-                    state.updateFilters({ referencing: false }, { pushState: false, makeRequest: false });
-                    onSelectItem(results.items[0], place);
+                if (idx === 0)
+                  // Place at top position - don't even fetch first result
+                  onSelectItem(place);
+                else
+                  state.updateFilters(filter, { pushState: false })
+                    .done(function(results) {
+                      var firstItem = results.items[0],
+                          firstItemIdx = resultList.getPosition(firstItem);
+
+                      state.updateFilters({ referencing: false }, { pushState: false, makeRequest: false });
+
+                      if (idx > -1 && idx < firstItemIdx)
+                        // The place is in the list, and higher up than the item
+                        onSelectItem(place);
+                      else
+                        onSelectItem(firstItem, place);
                   });
               };
 
