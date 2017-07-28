@@ -96,8 +96,10 @@ define([
                 if (currentSelection && currentSelection.data('item').doc_id !== item.doc_id)
                     currentSelection.removeClass('selected');
 
-                if (newSelection)
+                if (newSelection) {
                   newSelection.addClass('selected');
+                  newSelection.scrollintoview();
+                }
 
                 currentSelection = newSelection;
               },
