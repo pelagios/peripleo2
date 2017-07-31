@@ -53,20 +53,21 @@ define([
               // One reference (generally) consists of multiple snippets.
               // Each snippet is one query-match inside this reference's text context.
               renderSnippets = function(reference) {
-                var element = jQuery('<div class="reference"><ul></ul></div>')
-                      .appendTo(snippetsInner),
+                var element = jQuery('<div class="reference"><ul></ul></div>'),
                     ul = element.find('ul'),
-
-                    // TODO quick hack
                     snippets = (item.hit_on_reference) ?
-                      reference.snippets : [ reference.context ];
+                      reference.snippets : (reference.context) ? [ reference.context ] : false;
 
-                snippets.forEach(function(s) {
-                  ul.append('<li>' + s + '</li>');
-                });
+                if (snippets) {
+                  snippets.forEach(function(s) {
+                    ul.append('<li>' + s + '</li>');
+                  });
 
-                if (reference.homepage)
-                  element.append(Formatting.formatClickableURL(reference.homepage));
+                  if (reference.homepage)
+                    element.append(Formatting.formatClickableURL(reference.homepage));
+
+                  element.appendTo(snippetsInner);
+                }
               },
 
               request;
@@ -85,7 +86,6 @@ define([
               }
             });
           }
-
         };
 
     BaseCard.apply(this);
