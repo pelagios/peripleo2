@@ -84,7 +84,7 @@ define([
         onSelectItem = function(item, opt_via) {
           if (item) {
             searchPanel.setLoading(true);
-
+            currentSelection = item;
             switch(ItemUtils.getItemType(item)) {
               case 'DATASET':
                 return datasetActions.select(item);
@@ -97,8 +97,6 @@ define([
               case 'PLACE':
                 return placeActions.select(item);
             }
-
-            currentSelection = item;
           } else {
             deselect();
           }
