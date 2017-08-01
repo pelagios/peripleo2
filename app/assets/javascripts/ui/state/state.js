@@ -155,7 +155,10 @@ define([
 
         /** Updates the selected item state **/
         setSelectedItem = function(item) {
-          currentSelection = item.is_conflation_of[0].uri;
+          if (item)
+            currentSelection = item.is_conflation_of[0].uri;
+          else
+            currentSelection = false;
           pushState();
         };
 

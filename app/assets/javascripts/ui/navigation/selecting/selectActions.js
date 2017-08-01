@@ -123,6 +123,7 @@ define([
                 break;
             }
 
+            state.setSelectedItem();
             currentSelection = false;
         };
 
