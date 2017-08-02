@@ -28,6 +28,8 @@ GET     /admin/analytics                             controllers.admin.analytics
 
 GET     /admin/notifications                         controllers.admin.notifications.NotificationAdminController.index
 
+GET     /admin/maintenance                           controllers.admin.maintenance.MaintenanceShaftController.index
+
 GET     /admin/datasets                              controllers.admin.AdminController.datasets
 GET     /admin/authorities                           controllers.admin.AdminController.authorities
 GET     /admin                                       controllers.admin.AdminController.index

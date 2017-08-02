@@ -76,6 +76,12 @@
             <span class="icon">&#xe677;</span><span class="label">Notifications</span>
           </a>
         </li>
+
+        <li>
+          <a @if(activeTab == "maintenance") { class="active" } href="@controllers.admin.maintenance.routes.MaintenanceShaftController.index">
+            <span class="icon">&#xe60a;</span><span class="label">Maintenance Shaft</span>
+          </a>
+        </li>
       </ul>
     </div> <!-- .sidebar -->
 
