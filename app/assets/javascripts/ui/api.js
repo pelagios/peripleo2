@@ -11,7 +11,10 @@ define([], function() {
     },
 
     getReferences : function(identifier, refId, query) {
-      return jsRoutes.controllers.api.ItemAPIController.getReferences(identifier, refId, query).ajax();
+      if (query)
+        return jsRoutes.controllers.api.ItemAPIController.getReferences(identifier, refId, query).ajax();
+      else
+        return jsRoutes.controllers.api.ItemAPIController.getReferences(identifier, refId).ajax();
     },
 
     getTopReferenced : function(identifier) {

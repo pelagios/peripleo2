@@ -37,13 +37,13 @@ object PelagiosAnnotationCrosswalk {
 
         val references = thing.annotations.flatMap { _.places.headOption.map { placeUri =>
           val uri = ItemRecord.normalizeURI(placeUri)
-          
+
           UnboundReference(
             thing.uri,
             uri,
             None, // relation
             None, // homepage
-            None, // context
+            None, // quote
             None  // depiction
           )
         }}

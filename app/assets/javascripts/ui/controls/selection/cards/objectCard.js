@@ -54,9 +54,33 @@ define([
               // Each snippet is one query-match inside this reference's text context.
               renderSnippets = function(reference) {
                 var element = jQuery('<div class="reference"><ul></ul></div>'),
+
                     ul = element.find('ul'),
-                    snippets = (item.hit_on_reference) ?
-                      reference.snippets : (reference.context) ? [ reference.context ] : false;
+
+                    snippets = (function() {
+                      var chars, context, offset;
+
+                      if (item.hit_on_reference) {
+                        // The item was hit due to a phrase match in the reference, therefore
+                        // we know the refernce must have highlight snippets
+                        return reference.snippets;
+                      } else if (reference.quote) {
+                        // The item is was hit based on metadata, therefore there will be
+                        // no highlight snippets. But the reference might still have a quote
+                        chars = reference.quote.chars;
+                        context = reference.quote.context; // Might be undefined
+                        offset = reference.quote.offset; // Is always defined if the context is
+
+                        if (context) {
+                          return [ context.substring(0, offset) +
+                            '<em>' + chars + '</em>' +
+                            context.substring(offset + chars.length) ];
+                        } else {
+                          // Just a quote (e.g. an image transcription)
+                          return [ chars ];
+                        }
+                      }
+                    })();
 
                 if (snippets) {
                   snippets.forEach(function(s) {

@@ -57,7 +57,7 @@ class SearchService @Inject() (
         bool {
           must (
             should (
-              queryStringQuery(args.query.getOrElse("*")).field("context") +:
+              queryStringQuery(args.query.getOrElse("*")).field("quote.context") +:
               phraseQuery(args.query).map { q => hasParentQuery(ES.ITEM) query { q } }
             )
           ) filter (
@@ -89,7 +89,7 @@ class SearchService @Inject() (
 
             // If there is a query, search reference contexts
             args.query
-              .map { q => Seq(hasChildQuery(ES.REFERENCE) query { queryStringQuery(q).field("context") } queryName("ref_context_match") ) }
+              .map { q => Seq(hasChildQuery(ES.REFERENCE) query { queryStringQuery(q).field("quote.context") } queryName("ref_context_match") ) }
               .getOrElse(Seq.empty[QueryDefinition])
           )
         ) filter (filter)
@@ -130,7 +130,7 @@ class SearchService @Inject() (
 
       val fItemQuery = es.client execute {
         buildItemQuery(args, filter.withDateRangeFilter)
-      } map { response =>        
+      } map { response =>
         val items = response.as[RichResultItem].toSeq
         val aggregations =
           Option(response.aggregations) match {

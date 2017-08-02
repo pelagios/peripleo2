@@ -13,7 +13,7 @@ import services.{ ES, Page }
 import services.item.{ Item, ItemService }
 
 trait ReferenceService { self: ItemService =>
-  
+
   private implicit object RefHitAs extends HitAs[Reference] {
     override def as(hit: RichSearchHit): Reference = {
       Json.fromJson[Reference](Json.parse(hit.sourceAsString)).get
@@ -28,14 +28,14 @@ trait ReferenceService { self: ItemService =>
       (ref, id, parent)
     }
   }
-  
+
   private implicit object RefAndHighlightHitAs extends HitAs[(Reference, Seq[String])] {
     override def as(hit: RichSearchHit): (Reference, Seq[String]) = {
       val reference = Json.fromJson[Reference](Json.parse(hit.sourceAsString)).get
       val snippets = hit.highlightFields.headOption
         .map(_._2.fragments.map(_.string.trim).toSeq.distinct)
         .getOrElse(Seq.empty[String])
-        
+
       (reference, snippets)
     }
   }
@@ -95,11 +95,11 @@ trait ReferenceService { self: ItemService =>
           } else {
             Future.successful(true)
           }
-          
+
         case None =>
           // Orphaned reference from previous failure? Clean up!
           Logger.warn("Cleaning up orphaned reference")
-          
+
           es.client execute {
             delete id id from ES.PERIPLEO / ES.REFERENCE parent parent
           } map { _ => true } recover { case t: Throwable => false }
@@ -146,59 +146,59 @@ trait ReferenceService { self: ItemService =>
   }
 
   def getReferences(parentUri: String, destinationUri: Option[String], query: Option[String], offset: Int = 0, limit: Int = 20) = {
-    
+
     def executeQuery(docId: Option[UUID]) = {
-      val clauses = 
+      val clauses =
         Seq(
           Some(termQuery("parent_uri" -> parentUri)),
           docId.map(id => termQuery("reference_to.doc_id" -> id.toString)),
-          query.map(q => queryStringQuery(q).field("context"))).flatten
-      
+          query.map(q => queryStringQuery(q).field("quote.context"))).flatten
+
       es.client execute {
         search in ES.PERIPLEO / ES.REFERENCE query {
           bool {
             must ( clauses )
           }
         } highlighting (
-          highlight field "context" fragmentSize 200
+          highlight field "quote.context" fragmentSize 200
         )
-      } map { response =>      
+      } map { response =>
         Page(response.tookInMillis, response.totalHits, offset, limit, response.as[(Reference, Seq[String])])
       }
-      
+
     }
-    
+
     destinationUri match {
-      
+
       // Query is filtered by destination URI
       case Some(uri) => for {
-        
-        // Resolve destination URI        
+
+        // Resolve destination URI
         destinationItem <- self.findByIdentifier(uri)
-        
+
         // If destination item exists, execute query, else return empty page
         references <- destinationItem match {
-          
-          case Some(item) => 
+
+          case Some(item) =>
             executeQuery(Some(item.docId))
-          
-          case None => 
+
+          case None =>
             Future.successful(Page.empty[(Reference, Seq[String])])
-        
+
         }
-        
+
       } yield (references)
-        
-     
+
+
       // Query is not filtered by destination URI - execute
-      case None => 
-        executeQuery(None)  
+      case None =>
+        executeQuery(None)
     }
-    
+
   }
-    
+
   def getTopReferenced(identifier: String): Future[TopReferenced] = {
-    
+
     val fRelatedQuery =
       es.client execute {
         search in ES.PERIPLEO / ES.REFERENCE query {
@@ -216,7 +216,7 @@ trait ReferenceService { self: ItemService =>
           )
         )
       } map { response =>
-        TopReferenced.parseAggregation(response.aggregations) 
+        TopReferenced.parseAggregation(response.aggregations)
       }
 
     for {
