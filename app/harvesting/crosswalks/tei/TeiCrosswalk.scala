@@ -40,15 +40,12 @@ object TeiCrosswalk {
       node.attribute("ref").flatMap(_.headOption).map(_.text) 
     
     // Builds an UnboundReferences from a ref URI and text context
-    def toReference(uri: String, context: String) = UnboundReference(
+    def toReference(uri: String, quote: ReferenceQuote) = UnboundReference(
         identifier,
         ItemRecord.normalizeURI(uri),
         None, // relation
         None, // homepage
-        
-        // TODO need to include chars and offset as well! 
-        Some(ReferenceQuote("", Some(context), None)),
-        
+        Some(quote),        
         None // Depiction
       )
    
@@ -106,14 +103,17 @@ object TeiCrosswalk {
               else None
               
             // Concatenated text context
-            val context = Seq(prefix, Some(current.text), suffix).flatten.mkString("")     
+            val chars = current.text
+            val context = Seq(prefix, Some(chars), suffix).flatten.mkString("")
+            val offset = prefix.map(_.size).getOrElse(0)
             
-            (Some(current), refs :+ toReference(entityURI, context))
+            val quote = ReferenceQuote(chars, Some(context), Some(offset))
+            
+            (Some(current), refs :+ toReference(entityURI, quote))
             
           // This is an entity node, but without a "ref" attribute - skip
           case None =>
             (Some(current), refs)
-            
         }
 
       }
@@ -127,15 +127,20 @@ object TeiCrosswalk {
       val (prefix, current) = (lastPair(0), lastPair(1))
       val maybeRef = getRef(current)
       
-      if (current.isInstanceOf[Text] || maybeRef.isEmpty)
+      if (current.isInstanceOf[Text] || maybeRef.isEmpty) {
         // Last node is a text node, or an entity node without a ref - nothing to do
         references
-      else if (prefix.isInstanceOf[Text])
+      } else if (prefix.isInstanceOf[Text]) {
         // Last node is an entity with a ref attribute, and prefix is text
-        references :+ toReference(maybeRef.get, prefix.text + current.text)
-      else
+        
+        // TODO need to include chars and offset as well! 
+        // Some(ReferenceQuote("", Some(context), None)),
+        val quote = ReferenceQuote(current.text, Some(prefix.text + current.text), Some(prefix.text.size))
+        references :+ toReference(maybeRef.get, quote)
+      } else {
         // Last node is an entity with a ref, prefix is also an entity
         references
+      }
     } else {
       references  
     }

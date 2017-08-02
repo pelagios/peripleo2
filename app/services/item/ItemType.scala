@@ -10,12 +10,20 @@ sealed trait ItemType {
   
   val parent: Option[ItemType]
   
-  lazy val asStrings: Seq[String] = parent match {
-    case Some(parent) => parent.asStrings :+ name
+  /** Returns all type declarations as a list of strings,
+    * starting with the lowest-granularity, and ending with
+    * the highest-granularity label, e.g.:
+    * 
+    * Seq(DATASET, AUTHORITY, AUTHORITY_PEOPLE)
+    * 
+    */
+  lazy val allAsString: Seq[String] = parent match {
+    case Some(parent) => parent.allAsString :+ name
     case None => Seq(name)
   }
   
-  override lazy val toString: String = asStrings.head
+  /** Default toString returns the highest-granularity label **/
+  override lazy val toString: String = allAsString.head
   
 }
 
@@ -56,7 +64,7 @@ object ItemType {
         FEATURE,
         PLACE,
         PERSON,
-        PERIOD).map(itemType => (itemType.asStrings.toSet -> itemType)).toMap
+        PERIOD).map(itemType => (itemType.allAsString.toSet -> itemType)).toMap
   
   def parse(s: Seq[String]): ItemType = LOOKUP_TABLE.get(s.toSet).get
   
@@ -64,7 +72,7 @@ object ItemType {
  
   implicit val itemTypeFormat: Format[ItemType] = Format(
     JsPath.read[JsArray].map(json => parse(json.as[Seq[String]])),
-    Writes[ItemType](t => Json.toJson(t.asStrings))
+    Writes[ItemType](t => Json.toJson(t.allAsString))
   )
  
 }
