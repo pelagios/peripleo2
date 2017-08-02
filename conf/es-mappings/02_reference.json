@@ -14,9 +14,11 @@
       "relation": { "type": "string", "index": "not_analyzed" },
       "homepage": { "type": "string", "index": "no" },
       "quote" : {
-        "chars": { "type": "string" },
-        "context": { "type": "string" },
-        "offset": { "type": "integer" }
+        "properties": {
+          "chars": { "type": "string" },
+          "context": { "type": "string" },
+          "offset": { "type": "integer" }
+        }
       },
       "depiction": {
         "properties": {
