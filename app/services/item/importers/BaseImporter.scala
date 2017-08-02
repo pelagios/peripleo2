@@ -47,7 +47,7 @@ abstract class BaseImporter(itemService: ItemService) {
     val selfReferences = i.references.filter { ref =>
       val identifiers = i.item.identifiers.toSet
       identifiers.contains(ref.uri)
-    }.map(_.toReference(i.item.docId, i.item.bbox))
+    }.map(_.toReference(i.item.docId, i.item.itemType, i.item.bbox))
 
     // Filter references, keeping only those that are not already indexed
     def indexableReferences(selfReferences: Seq[Reference], resolvableReferences: Seq[Reference]) = {
@@ -58,7 +58,7 @@ abstract class BaseImporter(itemService: ItemService) {
       // If we had an item merge, resolvable self-references may point to the old doc_id. Rebind.
       val rebound = resolvableReferences.map { reference =>
         if (reference.parentUri == reference.referenceTo.uri)
-          reference.rebind(i.item.docId, i.item.bbox)
+          reference.rebind(i.item.docId, i.item.itemType, i.item.bbox)
         else
           reference
       }

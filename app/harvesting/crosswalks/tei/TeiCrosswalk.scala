@@ -4,7 +4,7 @@ import java.io.InputStream
 import org.joda.time.DateTime
 import scala.xml.{ Elem, Node, Text, XML }
 import services.item._
-import services.item.reference.{ UnboundReference, ReferenceType }
+import services.item.reference.{ UnboundReference, ReferenceQuote }
 import scala.collection.mutable.ListBuffer
 
 object TeiCrosswalk {
@@ -42,11 +42,13 @@ object TeiCrosswalk {
     // Builds an UnboundReferences from a ref URI and text context
     def toReference(uri: String, context: String) = UnboundReference(
         identifier,
-        ReferenceType.PLACE,
         ItemRecord.normalizeURI(uri),
         None, // relation
         None, // homepage
-        Some(context),
+        
+        // TODO need to include chars and offset as well! 
+        Some(ReferenceQuote("", Some(context), None)),
+        
         None // Depiction
       )
    

@@ -7,7 +7,7 @@ import org.pelagios.Scalagios
 import org.pelagios.api.PeriodOfTime
 import org.pelagios.api.annotation.AnnotatedThing
 import services.item._
-import services.item.reference.{ ReferenceType, UnboundReference }
+import services.item.reference.UnboundReference
 import scala.util.Try
 
 object PelagiosAnnotationCrosswalk {
@@ -38,14 +38,8 @@ object PelagiosAnnotationCrosswalk {
         val references = thing.annotations.flatMap { _.places.headOption.map { placeUri =>
           val uri = ItemRecord.normalizeURI(placeUri)
           
-          // TODO temporary hack for Europeana data
-          val refType =
-            if (uri.contains("data.europeana.eu/agent")) ReferenceType.PERSON
-            else ReferenceType.PLACE
-          
           UnboundReference(
             thing.uri,
-            refType,
             uri,
             None, // relation
             None, // homepage

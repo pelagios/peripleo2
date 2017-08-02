@@ -10,13 +10,13 @@ import play.api.libs.functional.syntax._
 import scala.collection.JavaConverters._
 import scala.concurrent.{ ExecutionContext, Future }
 import services.ES
-import services.item.{ Item, ItemService }
+import services.item.{ Item, ItemService, ItemType }
 import services.notification._
 import services.HasNullableSeq
 
-case class TopReferenced private (resolved: Seq[(ReferenceType.Value, Seq[(Item, Long, Seq[(Relation.Value, Long)])])])
+case class TopReferenced private (resolved: Seq[(ItemType, Seq[(Item, Long, Seq[(Relation.Value, Long)])])])
 
-case class UnresolvedTopReferenced private (parsed: Seq[(ReferenceType.Value, Seq[(UUID, Long, Seq[(Relation.Value, Long)])])]) {
+case class UnresolvedTopReferenced private (parsed: Seq[(ItemType, Seq[(UUID, Long, Seq[(Relation.Value, Long)])])]) {
   
   private def logError(triedIds: Seq[UUID], resolvedItems: Seq[Item])(implicit notifications: NotificationService) = {
     val failedIds = triedIds diff resolvedItems.map(_.docId)
@@ -80,7 +80,8 @@ object TopReferenced extends HasNullableSeq {
       
     // First aggregation level by reference type (PLACE, PERSON, etc.)
     val parsed = getBuckets(aggregations, "by_related").map { typeBucket =>
-      val refType = ReferenceType.withName(typeBucket.getKeyAsString)
+      
+      val itemType = ItemType.withName(typeBucket.getKeyAsString)
       
       // Second aggregation level by item docID
       val byDocId = getBuckets(typeBucket.getAggregations, "by_doc_id").map { docIdBucket =>
@@ -97,7 +98,7 @@ object TopReferenced extends HasNullableSeq {
         (docId, countByDocId, byRelation)
       }
       
-      (refType, byDocId)
+      (itemType, byDocId)
     }
     
     UnresolvedTopReferenced(parsed)

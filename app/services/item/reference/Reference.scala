@@ -6,33 +6,34 @@ import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
 import services.HasGeometry
+import services.item.ItemType
 
 case class Reference(
   parentUri     : String,
-  referenceType : ReferenceType.Value,
   referenceTo   : ReferenceTo,
   relation      : Option[Relation.Value],
   homepage      : Option[String],
-  context       : Option[String],
+  quote         : Option[ReferenceQuote],
   depiction     : Option[ReferenceDepiction]
 ) {
   
   /** An unbound version of this reference **/
   lazy val unbind = UnboundReference(
     parentUri,
-    referenceType,
     referenceTo.uri,
     relation,
     homepage,
-    context,
+    quote,
     depiction)
     
-  def rebind(destination: UUID, bbox: Option[Envelope]): Reference =
-    this.copy(referenceTo = ReferenceTo(referenceTo.uri, destination, bbox))
+  def rebind(destination: UUID, itemType: ItemType, bbox: Option[Envelope]): Reference =
+    this.copy(referenceTo = ReferenceTo(destination, referenceTo.uri, itemType, bbox))
 
 }
 
-case class ReferenceTo(uri: String, docId: UUID, bbox: Option[Envelope])
+case class ReferenceTo(docId: UUID, uri: String, itemType: ItemType, bbox: Option[Envelope])
+
+case class ReferenceQuote(chars: String, context: Option[String], offset: Option[Int])
 
 case class ReferenceDepiction(url: String, thumbnail: Option[String])
 
@@ -40,11 +41,10 @@ object Reference {
 
   implicit val referenceFormat: Format[Reference] = (
     (JsPath \ "parent_uri").format[String] and
-    (JsPath \ "reference_type").format[ReferenceType.Value] and
     (JsPath \ "reference_to").format[ReferenceTo] and
     (JsPath \ "relation").formatNullable[Relation.Value] and
     (JsPath \ "homepage").formatNullable[String] and
-    (JsPath \ "context").formatNullable[String] and
+    (JsPath \ "quote").formatNullable[ReferenceQuote] and
     (JsPath \ "depiction").formatNullable[ReferenceDepiction]
   )(Reference.apply, unlift(Reference.unapply))
 
@@ -53,11 +53,22 @@ object Reference {
 object ReferenceTo extends HasGeometry {
 
   implicit val referenceToFormat: Format[ReferenceTo] = (
-    (JsPath \ "uri").format[String] and
     (JsPath \ "doc_id").format[UUID] and
+    (JsPath \ "uri").format[String] and
+    (JsPath \ "item_type").format[ItemType] and
     (JsPath \ "bbox").formatNullable[Envelope]
   )(ReferenceTo.apply, unlift(ReferenceTo.unapply))
 
+}
+
+object ReferenceQuote {
+  
+  implicit val referenceQuoteFormat: Format[ReferenceQuote] = (
+    (JsPath \ "chars").format[String] and
+    (JsPath \ "context").formatNullable[String] and
+    (JsPath \ "offset").formatNullable[Int]
+  )(ReferenceQuote.apply, unlift(ReferenceQuote.unapply))
+  
 }
 
 object ReferenceDepiction {

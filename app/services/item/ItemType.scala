@@ -57,6 +57,8 @@ object ItemType {
         PERIOD).map(itemType => (itemType.asString.toSet -> itemType)).toMap
   
   def parse(s: Seq[String]): ItemType = LOOKUP_TABLE.get(s.toSet).get
+  
+  def withName(s: String): ItemType = parse(Seq(s))
  
   implicit val itemTypeFormat: Format[ItemType] = Format(
     JsPath.read[JsArray].map(json => parse(json.as[Seq[String]])),

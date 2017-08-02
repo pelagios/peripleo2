@@ -70,7 +70,6 @@ object CSVCrosswalk {
         
       val reference = UnboundReference(
         uri,
-        ReferenceType.PLACE,
         "http://sws.geonames.org/" + geonamesId,
         Some(Relation.LOCATION),
         None, None, None)

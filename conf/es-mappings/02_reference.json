@@ -3,17 +3,21 @@
     "_parent": { "type": "item" },
     "properties": {
       "parent_uri": { "type": "string", "index": "not_analyzed" },
-      "reference_type": { "type": "string", "index": "not_analyzed" },
       "reference_to": {
         "properties": {
-          "uri": { "type": "string", "index": "not_analyzed" },
           "doc_id": { "type": "string", "index": "not_analyzed" },
+          "uri": { "type": "string", "index": "not_analyzed" },
+          "item_type": { "type": "string", "index": "not_analyzed" },
           "bbox": { "type": "geo_shape", "tree": "quadtree", "precision": "100m" }
         }
       },
       "relation": { "type": "string", "index": "not_analyzed" },
       "homepage": { "type": "string", "index": "no" },
-      "context": { "type": "string" },
+      "quote" : {
+        "chars": { "type": "string" },
+        "context": { "type": "string" },
+        "offset": { "type": "integer" }
+      },
       "depiction": {
         "properties": {
           "url": { "type": "string", "index": "not_analyzed" },

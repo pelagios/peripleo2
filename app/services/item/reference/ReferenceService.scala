@@ -63,7 +63,7 @@ trait ReferenceService { self: ItemService =>
         val items = response.as[(Item, Long)].map(_._1)
         unbound.flatMap { reference =>
           items.find(_.identifiers.contains(reference.uri)).map { case item =>
-            reference.toReference(item.docId, item.bbox)
+            reference.toReference(item.docId, item.itemType, item.bbox)
           }
         }
       }
@@ -84,7 +84,7 @@ trait ReferenceService { self: ItemService =>
           val newDestination = itemsAfterUpdate.find(_.identifiers.contains(ref.referenceTo.uri)).get
           if (oldDestination != newDestination.docId) {
             Logger.debug("Rewriting reference: " + ref.referenceTo.uri)
-            val updatedReference = ref.rebind(newDestination.docId, newDestination.bbox)
+            val updatedReference = ref.rebind(newDestination.docId, newDestination.itemType, newDestination.bbox)
             es.client execute {
               bulk (
                 delete id id from ES.PERIPLEO / ES.REFERENCE parent parent,

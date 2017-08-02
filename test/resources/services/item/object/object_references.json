@@ -1,17 +1,17 @@
 [{
   "parent_uri": "http://numismatics.org/collection/1991.60.36",
-  "reference_type": "PLACE",
   "reference_to": {
     "uri": "http://pleiades.stoa.org/places/589872",
-    "doc_id": "a4a60286-a9af-49ce-969f-177725a579ea"
+    "doc_id": "a4a60286-a9af-49ce-969f-177725a579ea",
+    "item_type": [ "PLACE" ]
   },
   "relation": "FINDSPOT"
 },{
   "parent_uri": "http://numismatics.org/collection/1991.60.36",
-  "reference_type": "PERSON",
   "reference_to": {
     "uri": "http://collection.britishmuseum.org/resource?uri=http://collection.britishmuseum.org/id/person-institution/56988",
-    "doc_id": "ae12f7eb-e5b1-4fca-9607-fdd212b0e0d4"
+    "doc_id": "ae12f7eb-e5b1-4fca-9607-fdd212b0e0d4",
+    "item_type": [ "PERSON" ]
   },
   "relation": "ATTESTATION"
 }]
