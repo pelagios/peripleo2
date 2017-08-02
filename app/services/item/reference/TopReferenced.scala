@@ -79,8 +79,7 @@ object TopReferenced extends HasNullableSeq {
     def getBuckets(aggs: Aggregations, key: String) = aggs.get[Terms](key).getBuckets.asScala.toSeq 
       
     // First aggregation level by reference type (PLACE, PERSON, etc.)
-    val parsed = getBuckets(aggregations, "by_related").map { typeBucket =>
-      
+    val parsed = getBuckets(aggregations, "by_related").map { typeBucket =>      
       val itemType = ItemType.withName(typeBucket.getKeyAsString)
       
       // Second aggregation level by item docID

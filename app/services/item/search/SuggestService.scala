@@ -36,7 +36,7 @@ class SuggestService @Inject() (val es: ES, implicit val ctx: ExecutionContext) 
       search in ES.PERIPLEO suggestions (
         phraseSuggestion("from_titles") field("title") text(query) gramSize 3 size 3,
         phraseSuggestion("from_descriptions") field("is_conflation_of.descriptions.description") text(query)  gramSize 3 size 3,
-        phraseSuggestion("from_context") field("context") text(query)  gramSize 3 size 3,
+        phraseSuggestion("from_context") field("quote.context") text(query)  gramSize 3 size 3,
         fuzzyCompletionSuggestion("entities").fuzzyPrefixLength(3) field("suggest") text(query) size 4
       ) size 0
     } map { response =>
