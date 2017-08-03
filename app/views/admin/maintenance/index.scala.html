@@ -4,7 +4,7 @@
   <div class="row">
     <div class="card search">
       <div class="inner">
-        <span class="label">Item ID</span>
+        <span class="label">Item Identifier</span>
         <form class="item-id">
           <input type="text">
         </form>
@@ -14,7 +14,7 @@
 
   <div class="row">
     <div class="card json">
-      <div class="error-message"></div>
+      <div class="error"><span class="icon">&#xf00d;</span><span class="message"></span></div>
       <div class="inner">
         <pre contenteditable="true"></pre>
       </div>
@@ -29,6 +29,7 @@
   <script src="@routes.WebJarAssets.at(webjars.locate("require.min.js"))" data-main="@routes.Assets.versioned("javascripts/admin/maintenance/app.js")"></script>
 
   @helper.javascriptRouter("jsRoutes")(
-    controllers.api.routes.javascript.ItemAPIController.getItem
+    controllers.api.routes.javascript.ItemAPIController.getItem,
+    controllers.admin.maintenance.routes.javascript.MaintenanceShaftController.updateItem
   )
 }

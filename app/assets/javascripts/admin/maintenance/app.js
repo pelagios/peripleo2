@@ -10,16 +10,28 @@ require([], function() {
     var form = jQuery('.item-id'),
         input = form.find('input'),
 
-        errorMsg = jQuery('.error-message'),
+        errorBox = jQuery('.error'),
+        errorMsg = errorBox.find('.message'),
 
         code = jQuery('.json pre'),
 
         btnStore = jQuery('button.store'),
         btnCancel = jQuery('button.cancel'),
 
+        showError = function(msg) {
+          errorMsg.html(msg);
+          errorBox.show();
+        },
+
+        hideError = function() {
+          errorBox.hide();
+          errorMsg.empty();
+        },
+
         fetchItem = function(identifier) {
           jsRoutes.controllers.api.ItemAPIController.getItem(identifier)
             .ajax().done(function(item) {
+              hideError();
               code.html(JSON.stringify(item, null, 2));
             });
         },
@@ -33,8 +45,7 @@ require([], function() {
 
         onCancel = function() {
           input.val('');
-          errorMsg.hide();
-          errorMsg.empty();
+          hideError();
           code.empty();
         },
 
@@ -52,15 +63,15 @@ require([], function() {
               })();
 
           if (validationError) {
-            errorMsg.html(validationError.message);
-            errorMsg.show();
-
-            // TODO show error message
+            showError(validationError.message);
           } else {
-            errorMsg.hide();
-            errorMsg.empty();
-
-            // TODO post item back to index
+            hideError();
+            jsRoutes.controllers.admin.maintenance.MaintenanceShaftController.updateItem().ajax({
+              data: { item: json }
+            }).done(function(response) {
+              console.log('done');
+              console.log(response);
+            });
           }
         };
 

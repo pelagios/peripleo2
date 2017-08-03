@@ -132,6 +132,16 @@ class ItemService @Inject() (
       references <- fReferences
     } yield group(items, references)
   }
+  
+  def updateItem(item: Item): Future[Boolean] = {
+    es.client execute {
+      update id item.docId.toString in ES.PERIPLEO / ES.ITEM source item
+    } map { _ =>
+      true
+    } recover {
+      case _ => false
+    }
+  }
 
   def deleteById(docId: UUID): Future[Boolean] = {
     // Delete all references this item has (start operation right now, using 'val')
