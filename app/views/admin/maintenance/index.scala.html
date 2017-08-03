@@ -2,10 +2,10 @@
 
 @views.html.admin._layout("Maintenance Shaft", "maintenance", "stylesheets/admin/maintenance/index.css") {
   <div class="row">
-    <div class="card">
+    <div class="card search">
       <div class="inner">
         <span class="label">Item ID</span>
-        <form id="item-id">
+        <form class="item-id">
           <input type="text">
         </form>
       </div>
@@ -13,14 +13,15 @@
   </div>
 
   <div class="row">
-    <div class="card">
+    <div class="card json">
+      <div class="error-message"></div>
       <div class="inner">
-        <pre id="json" contenteditable="true"></pre>
+        <pre contenteditable="true"></pre>
       </div>
 
       <div class="actions">
-        <button class="btn">Store</button>
-        <button class="btn outline">Cancel</button>
+        <button class="btn store">Store</button>
+        <button class="btn outline cancel">Cancel</button>
       </div>
     </div>
   </div>

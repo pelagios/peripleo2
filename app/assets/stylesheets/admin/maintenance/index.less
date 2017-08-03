@@ -1,1 +1,50 @@
 @import "../_globals.less";
+
+.card.search {
+
+}
+
+.card.json {
+  background-color:@haze;
+
+  .inner {
+    padding:10px;
+  }
+
+  .error-message {
+    display:none;
+    padding:12px 15px;
+    font-size:16px;
+    color:@error-msg-type;
+    background-color:@error-msg-bg;
+
+    .icon {
+      font-size:14px;
+      padding-right:3px;
+    }
+
+  }
+
+  pre {
+    margin:0px;
+    padding:5px 10px;
+    outline:none;
+    border:1px solid darken(@form-grey-border, 5%);
+    background-color:@haze-dark;
+    font-family:"Lucida Console", Monaco, monospace;
+    font-size:12px;
+    line-height:150%;
+    .rounded-corners(4px);
+    -webkit-box-shadow:inset 0 0 6px rgba(0, 0, 0, 0.05);
+       -moz-box-shadow:inset 0 0 6px rgba(0, 0, 0, 0.05);
+            box-shadow:inset 0 0 6px rgba(0, 0, 0, 0.05);
+  }
+
+  .actions {
+    border-top:1px solid @form-grey-border;
+    background-color:#fff;
+    text-align:right;
+    padding:8px;
+  }
+
+}
