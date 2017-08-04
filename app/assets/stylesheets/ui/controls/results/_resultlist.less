@@ -28,6 +28,7 @@
       width:8px;
       height:100%;
       box-sizing:border-box;
+      z-index:2;
     }
 
     li.object .item-color {
@@ -56,10 +57,14 @@
     }
 
     li.selected .item-info {
-      background-color:@blueish-white;
+      .box-shadow(0, 0, 12px, 0, rgba(0,0,0,0.3));
+      border-color:fade(#000, 18%);
+      z-index:1;
     }
 
     .item-info {
+      z-index:0;
+      position:relative;
       margin-left:8px;
       min-height:70px;
       padding:8px 12px 9px 12px;
@@ -68,7 +73,7 @@
     }
 
     li:hover .item-info {
-      background-color:darken(@blueish-white, 3%);
+      background-color:@blueish-white;
     }
 
     li:last-child > .item-icon, li:last-child > .item-info {
