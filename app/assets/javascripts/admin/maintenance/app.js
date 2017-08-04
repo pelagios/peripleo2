@@ -10,8 +10,9 @@ require([], function() {
     var form = jQuery('.item-id'),
         input = form.find('input'),
 
-        errorBox = jQuery('.error'),
-        errorMsg = errorBox.find('.message'),
+        flashMessageBox = jQuery('.flash-message'),
+        flashIcon = flashMessageBox.find('.icon'),
+        flashMessage = flashMessageBox.find('.message'),
 
         code = jQuery('.json pre'),
 
@@ -19,20 +20,30 @@ require([], function() {
         btnCancel = jQuery('button.cancel'),
 
         showError = function(msg) {
-          errorMsg.html(msg);
-          errorBox.show();
+          flashIcon.html('&#xf00d;');
+          flashMessage.html(msg);
+          flashMessageBox.attr('class', 'flash-message error');
+          flashMessageBox.show();
         },
 
-        hideError = function() {
-          errorBox.hide();
-          errorMsg.empty();
+        showSuccess = function(msg) {
+          flashIcon.html('&#xf00c;');
+          flashMessage.html(msg);
+          flashMessageBox.attr('class', 'flash-message success');
+          flashMessageBox.show();
+        },
+
+        hideFlashMessage = function() {
+          flashMessageBox.hide();
         },
 
         fetchItem = function(identifier) {
           jsRoutes.controllers.api.ItemAPIController.getItem(identifier)
             .ajax().done(function(item) {
-              hideError();
+              hideFlashMessage();
               code.html(JSON.stringify(item, null, 2));
+            }).fail(function() {
+              showError('Item &raquo;' + identifier + '&laquo; not found.');
             });
         },
 
@@ -45,7 +56,7 @@ require([], function() {
 
         onCancel = function() {
           input.val('');
-          hideError();
+          hideFlashMessage();
           code.empty();
         },
 
@@ -65,11 +76,13 @@ require([], function() {
           if (validationError) {
             showError(validationError.message);
           } else {
-            hideError();
+            hideFlashMessage();
             jsRoutes.controllers.admin.maintenance.MaintenanceShaftController.updateItem().ajax({
               data: { item: json }
             }).done(function(response) {
-              console.log('done');
+              showSuccess('The item was updated.');
+            }).fail(function(response) {
+              showError('There was an error updating the item');
               console.log(response);
             });
           }

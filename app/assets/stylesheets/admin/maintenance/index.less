@@ -25,12 +25,10 @@
     padding:10px;
   }
 
-  .error {
+  .flash-message {
     display:none;
     padding:12px 15px;
     font-size:16px;
-    color:@error-msg-type;
-    background-color:@error-msg-bg;
 
     .icon {
       font-size:14px;
@@ -39,6 +37,16 @@
       bottom:1px;
     }
 
+  }
+
+  .flash-message.error {
+    color:@error-msg-type;
+    background-color:@error-msg-bg;
+  }
+
+  .flash-message.success {
+    color:@success-msg-type;
+    background-color:@success-msg-bg;
   }
 
   pre {
