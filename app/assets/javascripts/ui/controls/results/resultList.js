@@ -97,6 +97,7 @@ define([
                     currentSelection.removeClass('selected');
 
                 if (newSelection) {
+                  element.addClass('has-selection');
                   newSelection.addClass('selected');
                   newSelection.scrollintoview();
                 }
@@ -106,6 +107,7 @@ define([
 
               deselect = function() {
                 if (currentSelection) {
+                  element.removeClass('has-selection');
                   currentSelection.removeClass('selected');
                   currentSelection = false;
                 }

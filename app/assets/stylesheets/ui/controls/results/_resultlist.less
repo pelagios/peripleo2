@@ -10,76 +10,82 @@
   .rl-inner {
     flex-shrink:1;
     overflow-y:auto;
+  }
 
-    ul {
-      list-style-type:none;
-      padding:0;
-      margin:0;
-    }
+  ul {
+    list-style-type:none;
+    padding:0;
+    margin:0;
+  }
 
-    li {
-      cursor:pointer;
-      position:relative;
-      min-height:70px;
-    }
+  li {
+    cursor:pointer;
+    position:relative;
+    min-height:70px;
+  }
 
-    .item-color {
-      position:absolute;
-      width:8px;
-      height:100%;
-      box-sizing:border-box;
-      z-index:2;
-    }
+  .item-color {
+    position:absolute;
+    width:8px;
+    height:100%;
+    box-sizing:border-box;
+    z-index:2;
+  }
 
-    li.object .item-color {
-      background-color:@type-object;
-      border-bottom:1px solid fade(#000, 5%);
-    }
+  li.object .item-color {
+    background-color:@type-object;
+    border-bottom:1px solid fade(#000, 5%);
+  }
 
-    li.place .item-color {
-      background-color:@type-place;
-      border-bottom:1px solid fade(#000, 7%);
-    }
+  li.place .item-color {
+    background-color:@type-place;
+    border-bottom:1px solid fade(#000, 7%);
+  }
 
-    li.person .item-color {
-      background-color:@type-person;
-      border-bottom:1px solid fade(#000, 6%);
-    }
+  li.person .item-color {
+    background-color:@type-person;
+    border-bottom:1px solid fade(#000, 6%);
+  }
 
-    li.period .item-color {
-      background-color:@type-period;
-      border-bottom:1px solid fade(#000, 6%);
-    }
+  li.period .item-color {
+    background-color:@type-period;
+    border-bottom:1px solid fade(#000, 6%);
+  }
 
-    li.dataset .item-color {
-      background-color:@type-dataset;
-      border-bottom:1px solid fade(#000, 9%);
-    }
+  li.dataset .item-color {
+    background-color:@type-dataset;
+    border-bottom:1px solid fade(#000, 9%);
+  }
 
-    li.selected .item-info {
-      .box-shadow(0, 0, 12px, 0, rgba(0,0,0,0.3));
-      border-color:fade(#000, 18%);
-      z-index:1;
-    }
+  li.selected {
+    .box-shadow(0, 0, 12px, 0, rgba(0,0,0,0.18));
+    z-index:1;
+  }
 
-    .item-info {
-      z-index:0;
-      position:relative;
-      margin-left:8px;
-      min-height:70px;
-      padding:8px 12px 9px 12px;
-      box-sizing:border-box;
-      border-bottom:1px solid fade(#000, 6%);
-    }
+  li.selected > * {
+    border-bottom-color:fade(#000, 16%);
+  }
 
-    li:hover .item-info {
-      background-color:@blueish-white;
-    }
+  .item-info {
+    z-index:0;
+    position:relative;
+    margin-left:8px;
+    min-height:70px;
+    padding:8px 12px 9px 12px;
+    box-sizing:border-box;
+    border-bottom:1px solid fade(#000, 6%);
+  }
 
-    li:last-child > .item-icon, li:last-child > .item-info {
-      border:none;
-    }
+  .has-selection .item-info {
+    background-color:@blueish-white;
+  }
 
+  li.selected .item-info {
+    background-color:#fff;
+  }
+
+  li:last-child > .item-icon, li:last-child > .item-info {
+    border:none;
   }
 
 }
