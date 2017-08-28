@@ -9,11 +9,11 @@ class ApplicationController @Inject() (
 ) extends Controller {
 
   def index() = Action { implicit request =>
-    Ok(views.html.index())
+    Ok(views.html.landing.index())
   }
 
-  def map() = Action { implicit request =>
-    Ok(views.html.map())
+  def ui() = Action { implicit request =>
+    Ok(views.html.ui.index())
   }
 
 }
