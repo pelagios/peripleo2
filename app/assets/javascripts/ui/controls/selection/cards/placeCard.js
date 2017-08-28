@@ -48,18 +48,7 @@ define([
          * - the no. of other places related to this place
          */
         renderConnected = function() {
-          if (args.referencingCount > 0) {
-            var ref = jQuery(
-              '<span class="inbound-links">' +
-                '<a class="local-search" href="#">' +
-                  Formatting.formatNumber(args.referencingCount) + ' items</a> link here' +
-              '</span>');
-
-            ref.find('a').data('at', place);
-            refRel.append(ref);
-          } else {
-            refRel.append('No items link here');
-          }
+          self.renderInboundLinks(refEl, place, args.referencingCount);
 
           if (args.relatedPlaces.length > 0)
             refRel.append(

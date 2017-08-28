@@ -43,16 +43,7 @@ define([
         },
 
         renderReferences = function() {
-          if (args.results > 0) {
-            var ref = jQuery(
-              '<span class="inbound-links">' +
-                '<a class="local-search" href="#">' + Formatting.formatNumber(args.results) + ' items</a> link to this person' +
-              '</span>');
-            ref.find('a').data('at', person);
-            references.append(ref);
-          } else {
-            references.append('No items link here');
-          }
+          self.renderInboundLinks(references, person, args.results);
         };
 
     BaseCard.apply(this);

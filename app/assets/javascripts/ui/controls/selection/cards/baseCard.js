@@ -115,7 +115,7 @@ define([
 
     if (selectedVia) {
       // We'll show the 'via' item as first in list
-      
+
       // TODO show 'and N others' label
       renderList([ selectedVia ]);
     } else {
@@ -123,6 +123,22 @@ define([
       renderList(referenced.PLACE);
       renderList(referenced.PERSON);
       renderList(referenced.PERIOD);
+    }
+  };
+
+  /** Renders the number of items that link to this item **/
+  BaseCard.prototype.renderInboundLinks = function(element, thisItem, count) {
+    if (count > 0) {
+      var ref = jQuery(
+        '<span class="inbound-links">' +
+          '<a class="local-search" href="#">' +
+            Formatting.formatNumber(count) + ' items</a> link here' +
+        '</span>');
+
+      ref.find('a').data('at', thisItem);
+      element.append(ref);
+    } else {
+      element.append('No items link here');
     }
   };
 
