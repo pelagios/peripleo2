@@ -62,6 +62,7 @@ define([
           if (!append) {
             list.empty();
             element.scrollTop(0);
+            element.removeClass('has-selection');
             currentSelection = false;
           }
 
