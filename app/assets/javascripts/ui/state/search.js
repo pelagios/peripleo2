@@ -1,7 +1,7 @@
 define([], function() {
 
       /** Number of results per page **/
-  var PAGE_SIZE = 20,
+  var PAGE_SIZE = 600,
 
       /** To throttle traffic, we'll stay idle between requests for this time in millis **/
       IDLE_MS = 200;
@@ -117,24 +117,8 @@ define([], function() {
                 requestArgs.settings = jQuery.extend(true, {}, requestArgs.settings, settings);
 
                 jQuery.getJSON(buildFirstPageQuery(settings), function(response) {
-
-                  // When a response doesn't have top-referenced places (despite the search
-                  // args requesting them) we automatically follow up with a next-page
-                  // request of length 600, so we can plot more item geometries
-                  var makeFollowUpReq =
-                    requestArgs.settings.topReferenced &&
-                    (!response.top_referenced.PLACE || response.top_referenced.PLACE.length < 600);
-
                   response.request_args = requestArgs;
-
-                  if (makeFollowUpReq)
-                    loadNextPage(600).done(function(nextPage) {
-                      // Merge next page with first page result
-                      response.items = response.items.concat(nextPage.items);
-                      deferred.resolve(response);
-                    });
-                  else
-                    deferred.resolve(response);
+                  deferred.resolve(response);
                 }).always(handlePending);
               };
 
