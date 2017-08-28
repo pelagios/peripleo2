@@ -61,7 +61,7 @@ object Item extends HasGeometry {
     Item(
       docId,
       itemType,
-      records.head.title,
+      getPreferredTitle(records),
       geom,
       point,
       temporalBoundsUnion,
@@ -69,6 +69,29 @@ object Item extends HasGeometry {
     )
   }
 
+  /** Picks a 'preferred title' for the item from the list of records **/
+  def getPreferredTitle(records: Seq[ItemRecord]): String = {
+    // The goal is to end up with the title from the 'most relevant' item record.
+    // For the time being, we'll use number of names + number of SKOS matches as
+    // an indicator. In addition, we'll boost the score if the matches contain
+    // a Wikidata or Wikipedia reference.
+    val ranked = records.sortBy { record =>
+      val score = record.allMatches.size + record.names.size
+      val boostWikidata = record.allMatches.contains("www.wikidata.org")
+      val boostWikipedia = record.allMatches.contains("wikipedia.org")
+      
+      val boost = 
+        if (boostWikidata && boostWikipedia) 1.44
+        else if (boostWikidata || boostWikipedia) 1.2
+        else 1
+        
+      // Sort descending
+      - score * boost
+    }
+    
+    ranked.head.title
+  }
+  
   /** Shorthand that creates an item from a single record **/
   def fromRecord(docId: UUID, itemType: ItemType, record: ItemRecord) =
     Item(
