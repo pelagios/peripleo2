@@ -20,12 +20,20 @@ define([
       templates : {
 
         suggestion: function(data) {
-          var element = jQuery('<div><span class="label">' + data.text + '</span></div>');
+          var element = jQuery(
+                '<div>' +
+                  '<div class="decoration"></div>' +
+                  '<div class="inner">' +
+                    '<span class="label">' + data.text + '</span>' +
+                  '</div>' +
+                '</div>'),
+
+              inner = element.find('.inner');
 
           if (data.item_type) {
             element.addClass('entity ' + data.item_type[0]);
             if (data.description)
-              element.append('<span class="description">' + data.description + '</span>');
+              inner.append('<span class="description">' + data.description + '</span>');
           } else {
             element.addClass('text');
           }

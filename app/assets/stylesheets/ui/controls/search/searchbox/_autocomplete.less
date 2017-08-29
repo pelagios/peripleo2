@@ -13,76 +13,92 @@
 
 .tt-suggestion {
   position:relative;
-  color:@light-grey-type-hover;
-  font-size:13px;
-  padding:8px 10px 8px 4px;
-  line-height:18px;
-  overflow:hidden;
-  white-space:nowrap;
-  text-overflow:ellipsis;
-  font-weight:300;
-  cursor:pointer;
-  border-top:1px solid @light-grey-border;
 
-  .description {
-    padding-left:5px;
+  .decoration {
+    position:absolute;
+    top:0;
+    left:0;
+    height:100%;
+    width:24px;
+    box-sizing:border-box;
+    border-top:1px solid @light-grey-border;
+  }
+
+  .decoration::before {
+    font-family:FontAwesome;
+    font-size:14px;
+    color:#fff;
+    display:inline-block;
+    text-align:center;
+    width:24px;
+    line-height:32px;
+  }
+
+  .inner {
+    display:inline-block;
+    width:376px;
+    box-sizing:border-box;
+    padding:8px 5px 8px 10px;
+    margin-left:24px;
+    color:@light-grey-type-hover;
+    font-size:13px;
+    line-height:18px;
+    overflow:hidden;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    font-weight:300;
+    cursor:pointer;
+    border-top:1px solid @light-grey-border;
+
+    .description {
+      padding-left:5px;
+    }
+
   }
 
 }
 
-.tt-suggestion::before {
-  font-family:FontAwesome;
-  font-size:14px;
-  color:#fff;
-  display:inline-block;
-  text-align:center;
-  width:24px;
-  height:24px;
-  line-height:24px;
-  margin:0 6px 0 2px;
-  .rounded-corners(3px);
-}
-
-.tt-suggestion.text::before {
+.tt-suggestion.text .decoration::before {
   font-size:12px;
   content:'\f002';
   color:lighten(@light-grey-type, 5%);
 }
 
-.tt-suggestion.entity.OBJECT::before {
-  content:'\f219';
+.tt-suggestion.entity.OBJECT .decoration {
   background-color:@type-object;
+  border-color:fade(#000, 6%);
 }
+.tt-suggestion.entity.OBJECT .decoration::before { content:'\f219'; }
 
-.tt-suggestion.entity.PLACE::before {
-  content:'\f041';
+.tt-suggestion.entity.PLACE .decoration {
   background-color:@type-place;
+  border-color:fade(#000, 6%);
 }
+.tt-suggestion.entity.PLACE .decoration::before { content:'\f041'; }
 
-.tt-suggestion.entity.PERSON::before {
-  content:'\f007';
+.tt-suggestion.entity.PERSON .decoration {
   background-color:@type-person;
+  border-color:fade(#000, 6%);
 }
+.tt-suggestion.entity.PERSON .decoration::before { content:'\f007'; }
 
-.tt-suggestion.entity.PERIOD::before {
-  content:'\f017';
+.tt-suggestion.entity.PERIOD .decoration {
   background-color:@type-period;
+  border-color:fade(#000, 6%);
 }
+.tt-suggestion.entity.PERIOD .decoration::before { content:'\f017'; }
 
-.tt-suggestion.entity.DATASET::before {
-  content:'\f187';
+.tt-suggestion.entity.DATASET .decoration {
   background-color:@type-dataset;
+  border-color:fade(#000, 6%);
 }
+.tt-suggestion.entity.DATASET .decoration::before { content:'\f187'; }
 
 .tt-suggestion.entity .label {
   color:@dark-grey-type;
   font-weight:normal;
 }
 
-.tt-suggestion:hover {
-  background-color:@blueish-white;
-}
-
-.tt-suggestion.tt-cursor {
+.tt-suggestion:hover, .tt-suggestion.tt-cursor {
   background-color:@blueish-white;
 }
