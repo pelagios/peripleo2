@@ -8,18 +8,22 @@ import play.api.libs.functional.syntax._
 import services.{ HasDate, HasGeometry, HasNullableSeq }
 
 case class Item private[item] (
-  docId               : UUID,
-  itemType            : ItemType,
-  title               : String,
-  geometry            : Option[Geometry],
-  representativePoint : Option[Coordinate],
-  temporalBounds      : Option[TemporalBounds],
-  isConflationOf      : Seq[ItemRecord]
+  docId                     : UUID,
+  itemType                  : ItemType,
+  title                     : String,
+  representativeGeometry    : Option[Geometry],
+  representativePoint       : Option[Coordinate],
+  temporalBounds            : Option[TemporalBounds],
+  isConflationOf            : Seq[ItemRecord],
+  private val storedBBox    : Option[Envelope] = None
 ) {
   
   lazy val identifiers = isConflationOf.flatMap(_.identifiers)
   
-  lazy val bbox = geometry.map(_.getEnvelopeInternal)
+  lazy val bbox = storedBBox match {
+    case Some(env) => Some(env)
+    case None => representativeGeometry.map(_.getEnvelopeInternal)
+  }
 
   private[item] lazy val autocomplete = AutocompleteData(
     isConflationOf.map(_.title) ++ isConflationOf.flatMap(_.names.map(_.name)),
@@ -57,11 +61,13 @@ object Item extends HasGeometry {
       case (None, Some(pt))    => (Some(factory.createPoint(pt)), Some(pt))
       case (None, None)        => (None, None)
     }
+    
+    val mostDetailed = getMostDetailedRecord(records)
 
     Item(
       docId,
       itemType,
-      getPreferredTitle(records),
+      mostDetailed.title,
       geom,
       point,
       temporalBoundsUnion,
@@ -69,13 +75,12 @@ object Item extends HasGeometry {
     )
   }
 
-  /** Picks a 'preferred title' for the item from the list of records **/
-  def getPreferredTitle(records: Seq[ItemRecord]): String = {
-    // The goal is to end up with the title from the 'most relevant' item record.
+  /** Picks a 'most detailed' record we can use for representative metadata **/
+  def getMostDetailedRecord(records: Seq[ItemRecord]) =
     // For the time being, we'll use number of names + number of SKOS matches as
-    // an indicator. In addition, we'll boost the score if the matches contain
+    // a measure. In addition, we'll boost the score if the matches contain
     // a Wikidata or Wikipedia reference.
-    val ranked = records.sortBy { record =>
+    records.sortBy { record =>
       val score = record.allMatches.size + record.names.size
       val boostWikidata = record.allMatches.contains("www.wikidata.org")
       val boostWikipedia = record.allMatches.contains("wikipedia.org")
@@ -87,10 +92,7 @@ object Item extends HasGeometry {
         
       // Sort descending
       - score * boost
-    }
-    
-    ranked.head.title
-  }
+    }.head
   
   /** Shorthand that creates an item from a single record **/
   def fromRecord(docId: UUID, itemType: ItemType, record: ItemRecord) =
@@ -110,19 +112,20 @@ object Item extends HasGeometry {
     (JsPath \ "doc_id").read[UUID] and
     (JsPath \ "item_type").read[ItemType] and
     (JsPath \ "title").read[String] and
-    (JsPath \ "geometry").readNullable[Geometry] and
+    (JsPath \ "representative_geometry").readNullable[Geometry] and
     (JsPath \ "representative_point").readNullable[Coordinate] and
     (JsPath \ "temporal_bounds").readNullable[TemporalBounds] and
-    (JsPath \ "is_conflation_of").read[Seq[ItemRecord]]
+    (JsPath \ "is_conflation_of").read[Seq[ItemRecord]] and
+    (JsPath \ "bbox").readNullable[Envelope]
   )(Item.apply _)
 
   implicit val itemWrites: Writes[Item] = (
     (JsPath \ "doc_id").write[UUID] and
     (JsPath \ "item_type").write[ItemType] and
     (JsPath \ "title").write[String] and
-    (JsPath \ "bbox").writeNullable[Envelope] and
-    (JsPath \ "geometry").writeNullable[Geometry] and
+    (JsPath \ "representative_geometry").writeNullable[Geometry] and
     (JsPath \ "representative_point").writeNullable[Coordinate] and
+    (JsPath \ "bbox").writeNullable[Envelope] and
     (JsPath \ "temporal_bounds").writeNullable[TemporalBounds] and
     (JsPath \ "is_conflation_of").write[Seq[ItemRecord]] and
     (JsPath \ "suggest").write[AutocompleteData]
@@ -130,9 +133,9 @@ object Item extends HasGeometry {
       item.docId,
       item.itemType,
       item.title,
-      item.bbox,
-      item.geometry,
+      item.representativeGeometry,
       item.representativePoint,
+      item.bbox,
       item.temporalBounds,
       item.isConflationOf,
       item.autocomplete

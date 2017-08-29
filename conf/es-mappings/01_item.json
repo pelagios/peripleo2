@@ -10,8 +10,9 @@
            "raw": { "type": "string", "analyzer":"lowercase_keyword" }
         }
       },
-      "bbox": { "type": "geo_shape", "tree": "quadtree", "precision": "100m" },
+      "representative_geometry": { "enabled": false },
       "representative_point": { "type": "geo_point" },
+      "bbox": { "type": "geo_shape", "tree": "quadtree", "precision": "100m" },
       "temporal_bounds": {
         "properties": {
           "from": { "type": "date", "format": "yyyy-MM-dd" },

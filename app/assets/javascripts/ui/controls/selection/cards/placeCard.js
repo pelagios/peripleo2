@@ -17,10 +17,10 @@ define([
         element = jQuery(
           '<div class="item-info">' +
             '<h3 class="item-title"></h3>' +
-            '<ul class="item-identifiers"></ul>' +
             '<p class="item-names"></p>' +
             '<p class="item-description"></p>' +
             '<p class="item-temporal-bounds"></p>' +
+            '<ul class="item-identifiers"></ul>' +
           '</div>').appendTo(parentEl),
 
         title       = element.find('.item-title'),
@@ -33,13 +33,16 @@ define([
           jQuery('<div class="place references"><span class="icon">&#xf0c1;</span></div>').appendTo(parentEl),
 
         renderInfo = function() {
+          // We'll split 'names' that are actually lists of comma-separated names as well
+          var distinctNames = distinct(ItemUtils.getNames(place).reduce(function(all, n) {
+                return all.concat(n.name.split(',').map(function(n) { return n.trim(); }));
+              }, []));
+
           self.fill(title, place.title);
-          self.renderIdentifiers(identifiers, ItemUtils.getURIs(place));
-          self.fillWithFirst(description,
-            ItemUtils.getDescriptions(place).map(function(d) { return d.description; }));
-          self.fill(names,
-            distinct(ItemUtils.getNames(place).map(function(n) { return n.name; })).join(', '));
+          self.fillDescription(description, ItemUtils.getDescriptions(place));
+          self.fill(names, distinctNames.join(', '));
           self.fillTemporalBounds(place.temporal_bounds);
+          self.renderIdentifiers(identifiers, ItemUtils.getURIs(place));
         },
 
         /**

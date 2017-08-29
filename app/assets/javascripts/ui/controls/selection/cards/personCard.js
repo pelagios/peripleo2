@@ -38,8 +38,7 @@ define([
               '<span class="person-death">' + deathDate + '</span>');
           }
 
-          self.fillWithFirst(description,
-            ItemUtils.getDescriptions(person).map(function(d) { return d.description; }));
+          self.fillDescription(description, ItemUtils.getDescriptions(person));
         },
 
         renderReferences = function() {

@@ -8,8 +8,6 @@
     overflow:hidden;
     margin:0;
     padding:0;
-    white-space:nowrap;
-    text-overflow:ellipsis;
   }
 
   .item-title {
@@ -33,11 +31,17 @@
   }
 
   .item-names {
-    white-space:nowrap;
-    text-overflow:ellipsis;
+    color:@light-grey-type-hover;
+    font-style:italic;
+  }
+
+  .item-description {
+    padding:5px 0;
   }
 
   .item-identifiers {
+    white-space:nowrap;
+    text-overflow:ellipsis;
 
     li, a {
       display:inline-block;

@@ -59,8 +59,7 @@ define([
             self.fill(title, dataset.title);
           }
 
-          self.fillWithFirst(description,
-            ItemUtils.getDescriptions(dataset).map(function(d) { return d.description; }));
+          self.fillDescription(description, ItemUtils.getDescriptions(dataset));
           self.fillTemporalBounds(tempBounds, temporalBounds);
         },
 

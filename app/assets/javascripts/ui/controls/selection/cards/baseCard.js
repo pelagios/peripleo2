@@ -16,13 +16,34 @@ define([
     if (html) element.html(html);
   };
 
-  /** Fills the element with the first value in the array **/
-  BaseCard.prototype.fillWithFirst = function(element, arr) {
-    if (arr.length > 0) element.html(arr[0]);
+  /**
+   * Fills the element with a 'preferred' description.
+   *
+   * Per convention (and for lack of something better) we'll pick the longest
+   * English description, or longest description without a language tag, if any.
+   */
+  BaseCard.prototype.fillDescription = function(element, arr) {
+    var sortedByLength = arr.sort(function(a, b) {
+          return b.description.length - a.description.length;
+        }),
+
+        englishOnly = sortedByLength.filter(function(d) {
+          return d.language === 'EN';
+        }),
+
+        topRanked = (englishOnly.length > 0) ? englishOnly[0] :
+          (sortedByLength.length > 0) ? sortedByLength[0] : false;
+
+    if (topRanked) element.html(topRanked.description);
   };
 
+  /** Fills the element with the first value in the array **
+  BaseCard.prototype.fillWithFirst = function(element, arr) {
+    if (arr.length > 0) element.html(arr[0]);
+  };*/
+
   BaseCard.prototype.renderIdentifiers = function(element, uris) {
-    var identifiers = uris.map(function(uri) { return ItemUtils.parseEntityURI(uri); });
+    var identifiers = uris.sort().map(function(uri) { return ItemUtils.parseEntityURI(uri); });
     identifiers.forEach(function(id) {
       var formatted = (id.shortcode) ? id.shortcode + ':' + id.id : id.uri,
           li = jQuery('<li><a href="' + id.uri + '" target="_blank">' + formatted + '</a></li>');

@@ -57,9 +57,9 @@ object RichResultItem extends HasGeometry with HasNullableBoolean {
     (JsPath \ "doc_id").write[UUID] and
     (JsPath \ "item_type").write[ItemType] and
     (JsPath \ "title").write[String] and
-    (JsPath \ "bbox").writeNullable[Envelope] and
-    (JsPath \ "geometry").writeNullable[Geometry] and
+    (JsPath \ "representative_geometry").writeNullable[Geometry] and
     (JsPath \ "representative_point").writeNullable[Coordinate] and
+    (JsPath \ "bbox").writeNullable[Envelope] and
     (JsPath \ "temporal_bounds").writeNullable[TemporalBounds] and
     (JsPath \ "hit_on_reference").formatNullable[Boolean]
       .inmap[Boolean](fromOptBool, toOptBool) and
@@ -68,9 +68,9 @@ object RichResultItem extends HasGeometry with HasNullableBoolean {
      r.item.docId,
      r.item.itemType,
      r.item.title,
-     r.item.bbox,
-     r.item.geometry,
+     r.item.representativeGeometry,
      r.item.representativePoint,
+     r.item.bbox,
      r.item.temporalBounds,
      r.isHitOnReference,
      r.item.isConflationOf

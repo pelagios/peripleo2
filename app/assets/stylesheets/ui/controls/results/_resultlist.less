@@ -57,15 +57,6 @@
     border-bottom:1px solid fade(#000, 9%);
   }
 
-  li.selected {
-    .box-shadow(0, 0, 12px, 0, rgba(0,0,0,0.18));
-    z-index:1;
-  }
-
-  li.selected > * {
-    border-bottom-color:fade(#000, 16%);
-  }
-
   .item-info {
     z-index:0;
     position:relative;
@@ -80,7 +71,11 @@
     background-color:@blueish-white;
   }
 
-  li.selected .item-info, li:hover .item-info {
+  li:hover .item-info {
+    background-color:lighten(@blueish-white, 1.5%);
+  }
+
+  li.selected .item-info {
     background-color:#fff;
   }
 
