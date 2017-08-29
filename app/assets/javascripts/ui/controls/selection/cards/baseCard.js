@@ -89,7 +89,7 @@ define([
     });
 
     if (more > 0)
-      element.append('<li class="more">+ ' + more + ' more</li>');
+      element.append('<li class="more">' + more + ' more</li>');
   };
 
   /** Fills the element with the given temporalBounds value **/
