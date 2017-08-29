@@ -20,11 +20,14 @@ define([
             '<p class="item-names"></p>' +
             '<p class="item-temporal-bounds"></p>' +
             '<p class="item-description"></p>' +
-            '<ul class="item-identifiers"></ul>' +
+            '<div class="item-identifiers">' +
+              '<ul></ul>' +
+              '<a href="#" class="ld-view-link">&#xe616;<a>' +
+            '</div>' +
           '</div>').appendTo(parentEl),
 
         title       = element.find('.item-title'),
-        identifiers = element.find('.item-identifiers'),
+        identifiers = element.find('.item-identifiers ul'),
         names       = element.find('.item-names'),
         description = element.find('.item-description'),
         tempBounds  = element.find('.item-temporal-bounds'),
@@ -39,7 +42,10 @@ define([
               }, []));
 
           self.fill(title, place.title);
-          self.fill(names, distinctNames.join(', '));
+          if (distinctNames.length > 12)
+            self.fill(names, distinctNames.slice(0,12).join(', ') + ',...');
+          else
+            self.fill(names, distinctNames.join(', '));
           self.fillTemporalBounds(tempBounds, place.temporal_bounds);
           self.fillDescription(description, place);
           self.renderIdentifiers(identifiers, ItemUtils.getURIs(place));

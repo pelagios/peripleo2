@@ -46,7 +46,7 @@ define([
 
     if (topRanked)
       element.html(topRanked.description +
-        ' <span class="source">(' + Formatting.formatClickableURL(topRanked.uri) + ')</span>');
+        ' <span class="source">' + Formatting.formatClickableURL(topRanked.uri) + '</span>');
   };
 
   BaseCard.prototype.renderIdentifiers = function(element, uris) {
