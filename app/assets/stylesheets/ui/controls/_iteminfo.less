@@ -36,7 +36,22 @@
   }
 
   .item-description {
-    padding:5px 0;
+    padding:8px 0;
+
+    .source {
+      white-space:nowrap;
+      color:@light-grey-type-hover;
+    }
+
+    a {
+      text-decoration:none;
+      color:@light-grey-type-hover;
+    }
+
+    a:hover {
+      text-decoration:underline;
+    }
+
   }
 
   .item-identifiers {
@@ -63,6 +78,11 @@
 
     li:first-child { margin-left: 0 }
     li:last-child { margin-right:0; }
+
+    li.more {
+      font-size:12px;
+      color:@light-grey-type-hover;
+    }
 
   }
 

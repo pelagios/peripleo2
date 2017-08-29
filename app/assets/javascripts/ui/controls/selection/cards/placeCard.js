@@ -18,8 +18,8 @@ define([
           '<div class="item-info">' +
             '<h3 class="item-title"></h3>' +
             '<p class="item-names"></p>' +
-            '<p class="item-description"></p>' +
             '<p class="item-temporal-bounds"></p>' +
+            '<p class="item-description"></p>' +
             '<ul class="item-identifiers"></ul>' +
           '</div>').appendTo(parentEl),
 
@@ -39,9 +39,9 @@ define([
               }, []));
 
           self.fill(title, place.title);
-          self.fillDescription(description, ItemUtils.getDescriptions(place));
           self.fill(names, distinctNames.join(', '));
-          self.fillTemporalBounds(place.temporal_bounds);
+          self.fillTemporalBounds(tempBounds, place.temporal_bounds);
+          self.fillDescription(description, place);
           self.renderIdentifiers(identifiers, ItemUtils.getURIs(place));
         },
 

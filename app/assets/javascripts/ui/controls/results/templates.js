@@ -30,7 +30,7 @@ define([
 
       /** Renders the identifer bubbles on places and persons **/
       renderIdentifiers = function(el, item) {
-        var identifiers = ItemUtils.getURIs(item).map(function(uri) {
+        var identifiers = ItemUtils.getURIs(item).sort().map(function(uri) {
               return ItemUtils.parseEntityURI(uri);
             }),
 

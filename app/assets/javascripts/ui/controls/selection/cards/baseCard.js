@@ -22,8 +22,18 @@ define([
    * Per convention (and for lack of something better) we'll pick the longest
    * English description, or longest description without a language tag, if any.
    */
-  BaseCard.prototype.fillDescription = function(element, arr) {
-    var sortedByLength = arr.sort(function(a, b) {
+  BaseCard.prototype.fillDescription = function(element, item) {
+    var descriptionsWithSource = item.is_conflation_of.reduce(function(all, record) {
+          if (record.descriptions)
+            return all.concat(record.descriptions.map(function(d) {
+                d.uri = record.uri;
+                return d;
+              }));
+          else
+            return all;
+        }, []),
+
+        sortedByLength = descriptionsWithSource.sort(function(a, b) {
           return b.description.length - a.description.length;
         }),
 
@@ -34,23 +44,52 @@ define([
         topRanked = (englishOnly.length > 0) ? englishOnly[0] :
           (sortedByLength.length > 0) ? sortedByLength[0] : false;
 
-    if (topRanked) element.html(topRanked.description);
+    if (topRanked)
+      element.html(topRanked.description +
+        ' <span class="source">(' + Formatting.formatClickableURL(topRanked.uri) + ')</span>');
   };
 
-  /** Fills the element with the first value in the array **
-  BaseCard.prototype.fillWithFirst = function(element, arr) {
-    if (arr.length > 0) element.html(arr[0]);
-  };*/
-
   BaseCard.prototype.renderIdentifiers = function(element, uris) {
-    var identifiers = uris.sort().map(function(uri) { return ItemUtils.parseEntityURI(uri); });
-    identifiers.forEach(function(id) {
+    var groupByShortcode = function(arr) {
+          return arr.reduce(function(grouped, identifier) {
+            (grouped[identifier.shortcode] = grouped[identifier.shortcode] || []).push(identifier);
+            return grouped;
+          }, {});
+        },
+
+        toList = function(identifiers) {
+          var grouped = groupByShortcode(identifiers),
+              keys = Object.keys(grouped),
+              firstOfEach = [],
+              remainder = [];
+
+          keys.forEach(function(key) {
+            var group = grouped[key];
+
+            firstOfEach.push(grouped[key][0]);
+            if (group.length > 1)
+              remainder = remainder.concat(group.slice(1));
+          });
+
+          return firstOfEach.concat(remainder);
+        },
+
+        identifiers = uris.sort().map(function(uri) { return ItemUtils.parseEntityURI(uri); }),
+
+        firstThree = toList(identifiers).slice(0, 3),
+
+        more = Math.max(0, identifiers.length - 3);
+
+    firstThree.forEach(function(id) {
       var formatted = (id.shortcode) ? id.shortcode + ':' + id.id : id.uri,
           li = jQuery('<li><a href="' + id.uri + '" target="_blank">' + formatted + '</a></li>');
 
       if (id.color) li.css('background-color', id.color);
       element.append(li);
     });
+
+    if (more > 0)
+      element.append('<li class="more">+ ' + more + ' more</li>');
   };
 
   /** Fills the element with the given temporalBounds value **/
