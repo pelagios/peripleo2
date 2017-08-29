@@ -109,6 +109,7 @@ define([
           stashedQuery = state.getQueryPhrase();
           state.setQueryPhrase(false, NOOP);
           state.updateFilters(asFilterSetting).done(function(response) {
+            searchPanel.setLoading(false);
             searchPanel.setSearchResponse(response);
             resultList.setSearchResponse(response);
           });

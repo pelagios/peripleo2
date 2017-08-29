@@ -26,8 +26,8 @@ define([
 
         element = jQuery(
           '<div id="current-selection">' +
-            '<div class="dogear"></div>' +
             '<div class="depiction"><span class="attribution"></span></div>' +
+            '<div class="dogear"></div>' +
             '<div class="card"></div>' +
           '</div>').hide().appendTo(parentEl),
 
