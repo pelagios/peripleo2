@@ -1,4 +1,5 @@
 define([
+  'ui/common/formatting',
   'ui/common/hasEvents',
   'ui/common/itemUtils',
   'ui/controls/selection/cards/datasetCard',
@@ -7,6 +8,7 @@ define([
   'ui/controls/selection/cards/personCard',
   'ui/controls/selection/cards/placeCard'
 ], function(
+  Formatting,
   HasEvents,
   ItemUtils,
   DatasetCard,
@@ -25,13 +27,14 @@ define([
         element = jQuery(
           '<div id="current-selection">' +
             '<div class="dogear"></div>' +
-            '<div class="depiction"></div>' +
+            '<div class="depiction"><span class="attribution"></span></div>' +
             '<div class="card"></div>' +
           '</div>').hide().appendTo(parentEl),
 
-        dogear    = element.find('.dogear'),
-        depiction = element.find('.depiction').hide(),
-        card      = element.find('.card'),
+        dogear         = element.find('.dogear'),
+        depiction      = element.find('.depiction').hide(),
+        imgAttribution = depiction.find('.attribution'),
+        card           = element.find('.card'),
 
         empty = function() {
           depiction.css('background-image', 'none');
@@ -44,13 +47,20 @@ define([
 
               // Essentially an item.is_conflation_of.flatMap(_.depictions)
               depictions = item.is_conflation_of.reduce(function(depictions, record) {
-                if (record.depictions) return depictions.concat(record.depictions);
-                else return depictions;
+                if (record.depictions) {
+                  return depictions.concat(record.depictions.map(function(d) {
+                    d.source = record.uri;
+                    return d;
+                  }));
+                } else {
+                  return depictions;
+                }
               }, []);
 
           if (depictions.length > 0) {
             // TODO pre-load image & report in case of 404
             depiction.css('background-image', 'url(' + depictions[0].url + ')');
+            imgAttribution.html(Formatting.formatClickableURL(depictions[0].source));
             if (!isPanelVisible) depiction.velocity('slideDown', SLIDE_OPTS);
           } else if (isPanelVisible) {
             depiction.velocity('slideUp', SLIDE_OPTS);
