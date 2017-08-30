@@ -14,7 +14,7 @@ define([
                 '</div>' +
                 '<div class="modal-body ldview-body">' +
                   '<div class="graph-container">' +
-                    '<svg width="500" height="400"></svg>' +
+                    '<svg width="100%" height="100%"></svg>' +
                   '</div>' +
                 '</div>' +
               '</div>' +
@@ -31,7 +31,7 @@ define([
           });
 
           require(['d3'], function(d3) {
-            graph = new LDGraph(d3, element.find('.ldview-body svg')[0], item);
+            graph = new LDGraph(d3, element.find('.ldview-body svg'), item);
           });
         };
 

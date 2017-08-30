@@ -64,12 +64,12 @@ define([], function() {
           d.fy = null;
         },
 
-        svg = d3.select(svgEl),
+        svg = d3.select(svgEl[0]),
 
         simulation = d3.forceSimulation()
-          .force('link', d3.forceLink().id(function(d) { return d.uri; }))
+          .force('link', d3.forceLink().id(function(d) { return d.uri; }).distance(160))
           .force('charge', d3.forceManyBody())
-          .force('center', d3.forceCenter(100, 100)),
+          .force('center', d3.forceCenter(svgEl.width() / 2, svgEl.height() / 2)),
 
         links = svg.append('g')
           .selectAll('line')
