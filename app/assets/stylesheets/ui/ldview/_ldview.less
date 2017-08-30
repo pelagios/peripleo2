@@ -5,15 +5,33 @@
 .ldview {
   height:90%;
   top:5%;
-  
-  .links line {
+
+  line {
     stroke: #999;
     stroke-opacity: 0.6;
   }
 
-  .nodes circle {
+  line.closeMatch {
+    stroke:blue;
+  }
+
+  line.exactMatch {
+    stroke:red;
+  }
+
+  circle {
     stroke: #fff;
     stroke-width: 1.5px;
   }
+
+  circle.anonymous {
+    stroke: black;
+    fill: #fff;
+  }
+
+  text {
+  pointer-events: none;
+  font: 10px sans-serif;
+}
 
 }
