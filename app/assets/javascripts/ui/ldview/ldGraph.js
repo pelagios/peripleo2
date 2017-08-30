@@ -1,6 +1,8 @@
-define([], function() {
+define(['ui/common/itemUtils'], function(ItemUtils) {
 
-  var computeGraph = function(item) {
+  var NODE_RADIUS = 9,
+
+      computeGraph = function(item) {
 
             /** All links, derived from SKOS close-/exactMatches **/
         var links = item.is_conflation_of.reduce(function(links, record) {
@@ -21,8 +23,7 @@ define([], function() {
 
             /** Nodes derived from the records in the item **/
             knownNodes = item.is_conflation_of.map(function(record) {
-              // TODO extend!
-              return { uri: record.uri };
+              return ItemUtils.parseEntityURI(record.uri);
             }),
 
             /** All nodes including 'anonymous' ones based on links to URIs outside of Peripleo **/
@@ -82,7 +83,9 @@ define([], function() {
           .data(graph.nodes)
           .enter()
             .append('g')
-            .attr('class', 'node')
+            .attr('class', function(d) {
+              return (d.shortcode) ? 'node ' + d.shortcode : 'node';
+            })
             .call(d3.drag()
               .on('start', onDragStart)
               .on('drag', onDragged)
@@ -105,16 +108,22 @@ define([], function() {
 
     // Somehow, I hate D3 syntax...
     nodes.append('circle')
-      .attr('r', 5)
+      .attr('r', NODE_RADIUS)
       .attr('class', function(d) { return (d.is_anonymous) ? 'anonymous' : ''; });
 
     nodes.append('title')
       .text(function(d) { return d.uri; });
 
     nodes.append('text')
-      .attr('dx', 12)
+      .attr('dx', 15)
       .attr('dy', '.35em')
-      .text(function(d) { return d.uri; });
+      .text(function(d) {
+        if (d.isKnownAuthority) {
+          return d.shortcode + ':' + d.id;
+        } else {
+          return d.uri;
+        }
+      });
 
     simulation.nodes(graph.nodes).on('tick', ticked);
     simulation.force('link').links(graph.links);

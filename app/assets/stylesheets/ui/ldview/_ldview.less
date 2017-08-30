@@ -9,34 +9,32 @@
   .graph-container {
     position:relative;
 
+    circle {
+      stroke:@dark-grey-type;
+      fill:#fff;
+      stroke-width:3px;
+    }
+
     line {
-      stroke: #999;
-      stroke-opacity: 0.6;
+      stroke:@dark-grey-type;
+      stroke-width:3px;
     }
 
     line.closeMatch {
-      stroke:blue;
-    }
-
-    line.exactMatch {
-      stroke:red;
-    }
-
-    circle {
-      stroke: #fff;
-      stroke-width: 1.5px;
-    }
-
-    circle.anonymous {
-      stroke: black;
-      fill: #fff;
+      stroke-dasharray:7;
     }
 
     text {
-      pointer-events: none;
-      font: 10px sans-serif;
+      pointer-events:none;
+      font-size:13px;
+      color:@dark-grey-type;
     }
 
   }
-  
+
+  .node.dare     circle { fill:#9e9ac8; }
+  .node.pleiades circle { fill:#5b9ec4; }
+  .node.vici     circle { fill:#d6616b; }
+  .node.geonames circle { fill:#74c476; }
+
 }
