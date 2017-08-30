@@ -1,6 +1,7 @@
 require.config({
   baseUrl : "/assets/javascripts",
   fileExclusionRegExp : /^lib$/,
+  paths: { d3: '../../../web-modules/main/webjars/' },
   modules : [
     { name : 'admin/authorities/gazetteers' },
     { name : 'admin/authorities/people' },

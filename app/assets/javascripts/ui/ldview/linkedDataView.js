@@ -1,4 +1,6 @@
-define([], function() {
+define([
+  'ui/ldview/ldGraph'
+], function(LDGraph) {
 
   var LinkedDataView = function(item) {
 
@@ -11,16 +13,26 @@ define([], function() {
                   '<button class="icon tonicons close">&#xe897;</button>' +
                 '</div>' +
                 '<div class="modal-body ldview-body">' +
-
-                  // TODO
-
+                  '<div class="graph-container">' +
+                    '<svg width="500" height="400"></svg>' +
+                  '</div>' +
                 '</div>' +
               '</div>' +
             '</div>' +
-          '</div>')/*.hide()*/.appendTo(document.body),
+          '</div>').appendTo(document.body),
 
+        /** Loads D3 asynchronously (if needed) and initializes the UI **/
         init = function() {
-          element.find('.close').click(function() { element.remove(); });
+          var graph;
+
+          element.find('.close').click(function() {
+            if (graph) graph.stop();
+            element.remove();
+          });
+
+          require(['d3'], function(d3) {
+            graph = new LDGraph(d3, element.find('.ldview-body svg')[0], item);
+          });
         };
 
     init();

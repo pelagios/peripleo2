@@ -1,6 +1,7 @@
 require.config({
   baseUrl: "/assets/javascripts/",
-  fileExclusionRegExp: /^lib$/
+  fileExclusionRegExp: /^lib$/,
+  paths: { d3: '/webjars/d3js/4.2.1/d3.min' }
 });
 
 require([
