@@ -9,13 +9,13 @@ define([
 
         element = jQuery(
           '<div class="clicktrap">' +
-            '<div class="ls-wrapper">' +
-              '<div class="layerswitcher">' +
-                '<div class="ls-header">' +
+            '<div class="modal-wrapper ls-wrapper">' +
+              '<div class="modal layerswitcher">' +
+                '<div class="modal-header ls-header">' +
                   '<h2>Select Base Map</h2>' +
                   '<button class="icon tonicons cancel">&#xe897;</button>' +
                 '</div>' +
-                '<div class="ls-body">' +
+                '<div class="modal-body ls-body">' +
                   '<ul></ul>' +
                 '</div>' +
               '</div>' +

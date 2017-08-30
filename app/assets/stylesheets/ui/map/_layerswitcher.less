@@ -1,74 +1,11 @@
-.clicktrap {
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  background-color:rgba(0, 0, 0, 0.6);
-  z-index:99999;
-}
-
 .ls-wrapper {
   max-width:800px;
   width:90%;
-  height:100%;
-  margin:0 auto;
-  position:relative;
 }
 
 .layerswitcher {
-  overflow:hidden;
   height:430px;
-  position:relative;
   top:10%;
-  right:0;
-  left:0;
-  margin:auto;
-  background-color:#fff;
-  .rounded-corners(4px);
-  .box-shadow(2px, 2px, 42px, 0, rgba(0, 0, 0, 0.4));
-  overflow:hidden;
-
-  .ls-header {
-    width:100%;
-    border-bottom:1px solid @light-grey-border;
-    display:inline-block;
-    height:42px;
-    position:relative;
-    cursor:move;
-
-    h2 {
-      font-size:16px;
-      font-weight:normal;
-      padding:2px 0;
-      color:@dark-grey-type;
-      line-height:13px;
-      margin-left:15px;
-    }
-
-    button.cancel {
-      outline:none;
-      background:none;
-      border:none;
-      color:@light-grey-type;
-      font-size:18px;
-      margin:0;
-      padding:0;
-      cursor:pointer;
-      position:absolute;
-      top:12px;
-      right:15px;
-    }
-
-  }
-
-  .ls-body {
-    position:absolute;
-    top:43px;
-    bottom:0;
-    left:0;
-    right:0;
-  }
 
   ul, h3, p {
     padding:0;
@@ -119,6 +56,6 @@
 
     a:hover { text-decoration:underline; }
 
-  } /* li */
+  }
 
 }
