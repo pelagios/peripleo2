@@ -1,6 +1,6 @@
 define([], function() {
 
-  var LinkedDataPanel = function() {
+  var LinkedDataView = function(item) {
 
     var element = jQuery(
           '<div class="clicktrap">' +
@@ -8,7 +8,7 @@ define([], function() {
               '<div class="modal ldview">' +
                 '<div class="modal-header ldview-header">' +
                   '<h2>Linked Data View</h2>' +
-                  '<button class="icon tonicons cancel">&#xe897;</button>' +
+                  '<button class="icon tonicons close">&#xe897;</button>' +
                 '</div>' +
                 '<div class="modal-body ldview-body">' +
 
@@ -17,10 +17,15 @@ define([], function() {
                 '</div>' +
               '</div>' +
             '</div>' +
-          '</div>').hide().appendTo(document.body);
+          '</div>')/*.hide()*/.appendTo(document.body),
 
+        init = function() {
+          element.find('.close').click(function() { element.remove(); });
+        };
+
+    init();
   };
 
-  return LinkedDataPanel;
+  return LinkedDataView;
 
 });

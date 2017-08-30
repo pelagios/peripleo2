@@ -1,10 +1,11 @@
 define([
   'ui/common/itemUtils',
+  'ui/ldview/linkedDataView',
   'ui/navigation/filtering/filterActions',
   'ui/navigation/selecting/selectActions',
   'ui/navigation/stashedQuery',
   'ui/api'
-], function(ItemUtils, FilterActions, SelectActions, StashedQuery, API) {
+], function(ItemUtils, LinkedDataView, FilterActions, SelectActions, StashedQuery, API) {
 
   /** Shorthand for a 'transient query' state update **/
   var NOOP = { pushState: false, makeRequest: false };
@@ -116,10 +117,8 @@ define([
         },
 
         onLinkedDataView = function(item) {
-
           // TODO record this in state/history
-          
-          console.log('showing LD view for', item);
+          new LinkedDataView(item);
         },
 
         onMapMove = function(bounds) {

@@ -13,7 +13,7 @@ define([
               '<div class="modal layerswitcher">' +
                 '<div class="modal-header ls-header">' +
                   '<h2>Select Base Map</h2>' +
-                  '<button class="icon tonicons cancel">&#xe897;</button>' +
+                  '<button class="icon tonicons close">&#xe897;</button>' +
                 '</div>' +
                 '<div class="modal-body ls-body">' +
                   '<ul></ul>' +
@@ -27,7 +27,7 @@ define([
         init = function() {
           var switcher = element.find('.layerswitcher'),
               handle   = element.find('.ls-header'),
-              cancel   = element.find('.cancel'),
+              btnClose = element.find('.close'),
 
               renderRow = function(layer) {
                 jQuery('<li data-name="' + layer.id + '">' +
@@ -53,7 +53,7 @@ define([
           BaseLayers.all().forEach(renderRow);
           switcher.draggable({ handle: handle });
           element.on('click', 'li', onSelect);
-          cancel.click(close);
+          btnClose.click(close);
         },
 
         open = function() {
@@ -65,9 +65,7 @@ define([
         };
 
     init();
-
     this.open = open;
-
     HasEvents.apply(this);
   };
   BaseLayerSwitcher.prototype = Object.create(HasEvents.prototype);
