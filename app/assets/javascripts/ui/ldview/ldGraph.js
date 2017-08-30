@@ -65,11 +65,24 @@ define(['ui/common/itemUtils'], function(ItemUtils) {
           d.fy = null;
         },
 
-        svg = d3.select(svgEl[0]),
+        svg = d3.select(svgEl[0]);
 
-        simulation = d3.forceSimulation()
+    svg.append('svg:defs').selectAll('marker')
+        .data(['end'])
+        .enter().append('marker')
+          .attr('id', String)
+          .attr('viewBox', '0 -5 10 10')
+          .attr('refX', 16)
+          .attr('refY', 0)
+          .attr('markerWidth', 5)
+          .attr('markerHeight', 6)
+          .attr('orient', 'auto')
+          .append('path')
+            .attr('d', 'M0,-5L10,0L0,5');
+
+    var simulation = d3.forceSimulation()
           .force('link', d3.forceLink().id(function(d) { return d.uri; }).distance(160))
-          .force('charge', d3.forceManyBody())
+          .force('charge', d3.forceManyBody().strength(-500))
           .force('center', d3.forceCenter(svgEl.width() / 2, svgEl.height() / 2)),
 
         links = svg.append('g')
@@ -77,7 +90,8 @@ define(['ui/common/itemUtils'], function(ItemUtils) {
           .data(graph.links)
           .enter()
             .append('line')
-            .attr('class', function(d) { return d.link; }),
+            .attr('class', function(d) { return d.link; })
+            .attr('marker-end', 'url(#end)'),
 
         nodes = svg.selectAll('.node')
           .data(graph.nodes)
@@ -107,6 +121,8 @@ define(['ui/common/itemUtils'], function(ItemUtils) {
         };
 
     // Somehow, I hate D3 syntax...
+
+
     nodes.append('circle')
       .attr('r', NODE_RADIUS)
       .attr('class', function(d) { return (d.is_anonymous) ? 'anonymous' : ''; });
