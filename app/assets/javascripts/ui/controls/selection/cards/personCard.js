@@ -42,7 +42,7 @@ define([
         },
 
         renderReferences = function() {
-          self.renderInboundLinks(references, person, args.results);
+          self.renderInboundLinks(references, args.results);
         };
 
     BaseCard.apply(this);

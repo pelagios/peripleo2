@@ -57,7 +57,7 @@ define([
          * - the no. of other places related to this place
          */
         renderConnected = function() {
-          self.renderInboundLinks(refRel, place, args.referencingCount);
+          self.renderInboundLinks(refRel, args.referencingCount);
 
           if (args.relatedPlaces.length > 0)
             refRel.append(

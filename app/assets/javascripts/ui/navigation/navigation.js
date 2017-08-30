@@ -115,6 +115,13 @@ define([
           });
         },
 
+        onLinkedDataView = function(item) {
+
+          // TODO record this in state/history
+          
+          console.log('showing LD view for', item);
+        },
+
         onMapMove = function(bounds) {
           // This may return a new search request, depending on
           // whether the user has enabled filtering by viewport!
@@ -131,6 +138,7 @@ define([
     this.onQueryPhraseChanged = onQueryPhraseChanged;
     this.onTimerangeChange = onTimerangeChange;
     this.onLocalSearch = onLocalSearch;
+    this.onLinkedDataView = onLinkedDataView;
     this.onMapMove = onMapMove;
     this.onNextPage = onNextPage;
 

@@ -187,19 +187,15 @@ define([
   };
 
   /** Renders the number of items that link to this item **/
-  BaseCard.prototype.renderInboundLinks = function(element, thisItem, count) {
-    if (count > 0) {
-      var ref = jQuery(
+  BaseCard.prototype.renderInboundLinks = function(element, count) {
+    if (count > 0)
+      element.append(
         '<span class="inbound-links">' +
           '<a class="local-search" href="#">' +
             Formatting.formatNumber(count) + ' items</a> link here' +
         '</span>');
-
-      ref.find('a').data('at', thisItem);
-      element.append(ref);
-    } else {
+    else
       element.append('No items link here');
-    }
   };
 
   return BaseCard;

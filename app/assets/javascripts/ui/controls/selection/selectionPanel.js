@@ -24,6 +24,8 @@ define([
 
     var self = this,
 
+        currentSelection = false,
+
         element = jQuery(
           '<div id="current-selection">' +
             '<div class="depiction"><span class="attribution"></span></div>' +
@@ -37,13 +39,14 @@ define([
         card           = element.find('.card'),
 
         empty = function() {
-          depiction.css('background-image', 'none');
+          depiction.hide().css('background-image', 'none');
           card.empty();
+          currentSelection = false;
         },
 
         /** Sets or removes the depiction image, sliding the panel up or down as needed **/
         setDepiction = function(item) {
-          var isPanelVisible = depiction.is(':visible');
+          var isPanelVisible = depiction.is(':visible'),
 
               // Essentially an item.is_conflation_of.flatMap(_.depictions)
               depictions = item.is_conflation_of.reduce(function(depictions, record) {
@@ -55,11 +58,16 @@ define([
                 } else {
                   return depictions;
                 }
-              }, []);
+              }, []),
+
+              randomIdx;
 
           if (depictions.length > 0) {
+            randomIdx = Math.floor(Math.random() * depictions.length);
+
             // TODO pre-load image & report in case of 404
-            depiction.css('background-image', 'url(' + depictions[0].url + ')');
+
+            depiction.css('background-image', 'url(' + depictions[randomIdx].url + ')');
             imgAttribution.html(Formatting.formatClickableURL(depictions[0].source));
             if (!isPanelVisible) depiction.velocity('slideDown', SLIDE_OPTS);
           } else if (isPanelVisible) {
@@ -81,6 +89,8 @@ define([
           // Clear & set depiction
           empty();
           setDepiction(item);
+
+          currentSelection = item;
 
           // Then defer to the appropriate card implementation
           switch(itemType) {
@@ -142,16 +152,20 @@ define([
          * The user clicked a local search link to switch into a search for EVERYTHING
          * linked to this item.
          */
-        onLocalSearch = function(e) {
-          var link = jQuery(e.target),
-              place = link.data('at');
-          self.fireEvent('localSearch', place);
+        onLocalSearch = function() {
+          self.fireEvent('localSearch', currentSelection);
+          return false;
+        },
+
+        onLinkedDataView = function() {
+          self.fireEvent('linkedDataView', currentSelection);
           return false;
         };
 
     element.on('click', '.destination', onSelectDestination);
     element.on('click', '.filter', onSetFilter);
     element.on('click', '.local-search', onLocalSearch);
+    element.on('click', '.ld-view-link', onLinkedDataView);
 
     this.show = show;
     this.hide = hide;

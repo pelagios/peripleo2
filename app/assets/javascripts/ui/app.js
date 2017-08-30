@@ -48,6 +48,7 @@ require([
     selectionPanel.on('select', navigation.onSelectIdentifier);
     selectionPanel.on('setFilter', navigation.onSetFilter);
     selectionPanel.on('localSearch', navigation.onLocalSearch);
+    selectionPanel.on('linkedDataView', navigation.onLinkedDataView);
 
     resultList.on('select', navigation.onSelectItem);
     resultList.on('nextPage', navigation.onNextPage);
