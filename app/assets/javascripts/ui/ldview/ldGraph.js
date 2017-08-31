@@ -128,15 +128,18 @@ define(['ui/common/itemUtils'], function(ItemUtils) {
     nodes.append('title')
       .text(function(d) { return d.uri; });
 
-    nodes.append('text')
-      .attr('dx', 15)
-      .attr('dy', '.35em')
-      .text(function(d) {
-        if (d.isKnownAuthority) {
-          return d.shortcode + ':' + d.id;
-        } else {
-          return d.uri;
-        }
+    nodes.append('svg:a')
+      .attr('xlink:href', function(d) { return (d.uri); })
+      .attr('target', '_blank')
+      .append('text')
+        .attr('dx', 15)
+        .attr('dy', '.35em')
+        .text(function(d) {
+          if (d.isKnownAuthority) {
+            return d.shortcode + ':' + d.id;
+          } else {
+            return d.uri;
+          }
       });
 
     simulation.nodes(graph.nodes).on('tick', ticked);
