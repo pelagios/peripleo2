@@ -1,9 +1,10 @@
 define(['ui/common/itemUtils'], function(ItemUtils) {
 
-  var NODE_RADIUS = 9,
+  var NODE_RADIUS = 7,
 
       KNOWN_NAMESPACES = [
-        { pattern: 'http://www.wikidata.org/entity/', shortcode: 'wikidata' }
+        { pattern: 'http://www.wikidata.org/entity/', shortcode: 'wikidata' },
+        { pattern: 'http://www.livius.org/place/',    shortcode: 'livius' }
       ],
 
       formatURI = function(url) {
@@ -80,11 +81,11 @@ define(['ui/common/itemUtils'], function(ItemUtils) {
           d.fy = null;
         },
 
-        svg = d3.select(svgEl[0]),
+        svg = d3.select(svgEl[0]).append('g'),
 
         simulation = d3.forceSimulation()
-          .force('link', d3.forceLink().id(function(d) { return d.uri; }).distance(160))
-          .force('charge', d3.forceManyBody().strength(-500))
+          .force('link', d3.forceLink().id(function(d) { return d.uri; }))
+          .force('charge', d3.forceManyBody().strength(-700).distanceMin(0).distanceMax(300))
           .force('center', d3.forceCenter(svgEl.width() / 2, svgEl.height() / 2)),
 
         links = svg.append('g')
