@@ -69,6 +69,8 @@
               "license": { "type": "string", "index": "not_analyzed" }
             }
           },
+          "geometry": { "enabled": false },
+          "representative_point": { "enabled": false },
           "temporal_bounds": {
             "properties": {
               "from": { "type": "date", "format": "yyyy-MM-dd" },
