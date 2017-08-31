@@ -2,6 +2,21 @@ define(['ui/common/itemUtils'], function(ItemUtils) {
 
   var NODE_RADIUS = 9,
 
+      KNOWN_NAMESPACES = [
+        { pattern: 'http://www.wikidata.org/entity/', shortcode: 'wikidata' }
+      ],
+
+      formatURI = function(url) {
+        var namespace = KNOWN_NAMESPACES.find(function(ns) {
+              return url.indexOf(ns.pattern) === 0;
+            });
+
+        if (namespace)
+          return namespace.shortcode + ':' + url.substring(namespace.pattern.length);
+        else
+          return url;
+      },
+
       computeGraph = function(item) {
 
             /** All links, derived from SKOS close-/exactMatches **/
@@ -138,7 +153,7 @@ define(['ui/common/itemUtils'], function(ItemUtils) {
           if (d.isKnownAuthority) {
             return d.shortcode + ':' + d.id;
           } else {
-            return d.uri;
+            return formatURI(d.uri);
           }
       });
 
