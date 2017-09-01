@@ -60,7 +60,7 @@ define(['ui/common/itemUtils'], function(ItemUtils) {
       };
 
   // Mostly http://bl.ocks.org/mbostock/4062045
-  var LDGraph = function(d3, svgEl, item) {
+  var GraphSection = function(d3, svgEl, item) {
 
     var graph = computeGraph(item),
 
@@ -164,6 +164,6 @@ define(['ui/common/itemUtils'], function(ItemUtils) {
     this.stop = stop;
   };
 
-  return LDGraph;
+  return GraphSection;
 
 });

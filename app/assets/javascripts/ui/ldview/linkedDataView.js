@@ -1,6 +1,7 @@
 define([
-  'ui/ldview/ldGraph'
-], function(LDGraph) {
+  'ui/ldview/sections/graphSection',
+  'ui/ldview/sections/mapSection'
+], function(Graph, Map) {
 
   var LinkedDataView = function(item) {
 
@@ -23,7 +24,7 @@ define([
 
         /** Loads D3 asynchronously (if needed) and initializes the UI **/
         init = function() {
-          var graph;
+          var graph, map;
 
           element.find('.close').click(function() {
             if (graph) graph.stop();
@@ -31,7 +32,8 @@ define([
           });
 
           require(['d3'], function(d3) {
-            graph = new LDGraph(d3, element.find('.ldview-body svg'), item);
+            graph = new Graph(d3, element.find('.ldview-body svg'), item);
+            map = new Map(element.find('.ldview-body .map-section'), item);
           });
         };
 
