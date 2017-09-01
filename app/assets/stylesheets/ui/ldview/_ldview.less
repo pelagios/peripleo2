@@ -1,3 +1,7 @@
+@import 'sections/_graph.less';
+@import 'sections/_map.less';
+@import 'sections/_table.less';
+
 .ldview-wrapper {
   width:90%;
 }
@@ -5,39 +9,32 @@
 .ldview {
   height:90%;
   top:5%;
+  position:relative;
 
-  .graph-container {
-    position:relative;
-
-    circle {
-      stroke:@dark-grey-type;
-      fill:#fff;
-      stroke-width:2px;
-    }
-
-    line {
-      stroke:@dark-grey-type;
-      stroke-width:2px;
-    }
-
-    line.closeMatch {
-      stroke-dasharray:4;
-    }
-
-    marker {
-      fill:@dark-grey-type;
-    }
-
-    text {
-      font-size:13px;
-      color:@dark-grey-type;
-    }
-
+  .graph-section {
+    position:absolute;
+    top:0;
+    left:0;
+    width:60%;
+    height:100%;
+    border-right:1px solid @light-grey-border;
   }
 
-  .node.dare     circle { fill:#9e9ac8; }
-  .node.pleiades circle { fill:#5b9ec4; }
-  .node.vici     circle { fill:#d6616b; }
-  .node.geonames circle { fill:#74c476; }
+  .map-section {
+    position:absolute;
+    top:0;
+    right:0;
+    width:40%;
+    height:60%;
+  }
+
+  .table-section {
+    position:absolute;
+    bottom:0;
+    right:0;
+    width:40%;
+    height:40%;
+    border-top:1px solid @light-grey-border;
+  }
 
 }

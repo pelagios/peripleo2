@@ -13,9 +13,9 @@ define([
                   '<button class="icon tonicons close">&#xe897;</button>' +
                 '</div>' +
                 '<div class="modal-body ldview-body">' +
-                  '<div class="graph-container">' +
-                    '<svg width="100%" height="100%"></svg>' +
-                  '</div>' +
+                  '<div class="graph-section"><svg width="100%" height="100%"></svg></div>' +
+                  '<div class="map-section"></div>' +
+                  '<div class="table-section"></div>' +
                 '</div>' +
               '</div>' +
             '</div>' +
