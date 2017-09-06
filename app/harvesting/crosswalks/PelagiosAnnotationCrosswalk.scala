@@ -61,7 +61,7 @@ object PelagiosAnnotationCrosswalk {
           thing.homepage,
           None, // license
           thing.languages.flatMap(Language.safeParse),
-          thing.depictions.map(url => Depiction(url, None, None, None, None, None)),
+          thing.depictions.map(img => Depiction(img.uri, None, img.iiifEndpoint, None, None, None, None)),
           None, // TODO geometry
           None, // TODO representative point
           thing.temporal.map(convertPeriodOfTime),

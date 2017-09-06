@@ -36,7 +36,7 @@ object PelagiosGazetteerCrosswalk {
         None, // homepage
         None, // license
         place.names.flatMap(_.lang).flatMap(Language.safeParse),
-        place.depictions.map(image => Depiction(image.uri, None, image.title, None, None, image.license)),
+        place.depictions.map(image => Depiction(image.uri, None, None, image.title, None, None, image.license)),
         place.location.map(_.geometry),
         place.location.map(_.pointLocation),
         place.temporalCoverage.map(convertPeriodOfTime(_)),
