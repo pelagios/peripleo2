@@ -6,11 +6,13 @@ import org.joda.time.{ DateTime, DateTimeZone }
 import org.pelagios.Scalagios
 import org.pelagios.api.PeriodOfTime
 import org.pelagios.api.annotation.AnnotatedThing
+import org.pelagios.api.dataset.Dataset
+import play.api.Logger
 import services.item._
 import services.item.reference.UnboundReference
 import scala.util.Try
 
-object PelagiosAnnotationCrosswalk {
+object PelagiosAnnotationCrosswalk extends PelagiosCrosswalk {
 
   // Bit annoying that this is duplication with the Place crosswalk - but would
   // rather have those few lines of duplication than pollute the code with a
@@ -23,13 +25,20 @@ object PelagiosAnnotationCrosswalk {
       new DateTime(startDate).withZone(DateTimeZone.UTC),
       new DateTime(endDate).withZone(DateTimeZone.UTC))
   }
+    
+  def findDatasetByUri(uri: String, parents: Seq[Dataset]) = {
+    val parentMatch = parents.find(_.uri == uri)
+    if (parentMatch.isDefined) parentMatch
+    else findSubsetRecursive(uri, parents.last)
+  }
 
   /** Returns a flat list of all things below this thing in the hierarchy **/
   private def flattenThingHierarchy(thing: AnnotatedThing): Seq[AnnotatedThing] =
     if (thing.parts.isEmpty) thing.parts
     else thing.parts ++ thing.parts.flatMap(flattenThingHierarchy)
 
-  def fromRDF(filename: String, inDataset: PathHierarchy): InputStream => Seq[(ItemRecord, Seq[UnboundReference])] = {
+  // def fromRDF(filename: String, inDataset: PathHierarchy): InputStream => Seq[(ItemRecord, Seq[UnboundReference])] = {
+  def fromRDF(filename: String, parents: Seq[Dataset]): InputStream => Seq[(ItemRecord, Seq[UnboundReference])] = {
 
     def convertAnnotatedThing(thing: AnnotatedThing): Seq[(ItemRecord, Seq[UnboundReference])] = {
       val flattenedHierarchy = thing +: flattenThingHierarchy(thing)
@@ -47,14 +56,27 @@ object PelagiosAnnotationCrosswalk {
             None  // depiction
           )
         }}
-
+        
+        val hierarchy = thing.inDataset match {
+          case None => parents
+          case Some(uri) =>
+            findDatasetByUri(uri, parents) match {
+              case Some(dataset) =>
+                findParents(dataset)
+                
+              case None =>
+                Logger.error("Unknown URI in void:inDataset: $uri")
+                throw new RuntimeException
+            }
+        }
+        
         val record = ItemRecord(
           thing.uri,
           Seq(Some(thing.uri), thing.identifier).flatten,
           DateTime.now().withZone(DateTimeZone.UTC),
           None, // lastChangedAt
           thing.title,
-          Some(inDataset),
+          Some(PathHierarchy(parents.map(d => (d.uri -> d.title)))),
           None, // TODO isPartOf
           thing.subjects.map(Category(_)),
           thing.description.map(d => Seq(Description(d))).getOrElse(Seq.empty[Description]),
