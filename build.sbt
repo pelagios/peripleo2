@@ -26,7 +26,7 @@ libraryDependencies ++= Seq(
   "org.webjars" %% "webjars-play" % "2.5.0",
 
   // Scalagios core + transient dependencies
-  "org.pelagios" % "scalagios-core" % "2.0.2" from "https://github.com/pelagios/scalagios/releases/download/v2.0.2/scalagios-core.jar",
+  "org.pelagios" % "scalagios-core" % "2.0.3" from "https://github.com/pelagios/scalagios/releases/download/v2.0.3/scalagios-core_2.11-2.0.3.jar",
   "org.openrdf.sesame" % "sesame-rio-n3" % "2.7.5",
   "org.openrdf.sesame" % "sesame-rio-rdfxml" % "2.7.5",
 
@@ -38,6 +38,7 @@ libraryDependencies ++= Seq(
   "org.webjars" % "typeaheadjs" % "0.11.1",
   "org.webjars" % "velocity" % "1.1.0",
   "org.webjars.npm" % "jquery.scrollintoview" % "1.9.4",
+  "org.webjars.npm" % "leaflet-iiif" % "1.2.1",
 
   "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test
 )

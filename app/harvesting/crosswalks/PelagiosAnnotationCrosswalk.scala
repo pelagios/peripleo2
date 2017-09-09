@@ -62,7 +62,7 @@ object PelagiosAnnotationCrosswalk extends PelagiosCrosswalk {
           case Some(uri) =>
             findDatasetByUri(uri, parents) match {
               case Some(dataset) =>
-                findParents(dataset)
+                findParents(dataset) :+ dataset
                 
               case None =>
                 Logger.error("Unknown URI in void:inDataset: $uri")
@@ -76,7 +76,7 @@ object PelagiosAnnotationCrosswalk extends PelagiosCrosswalk {
           DateTime.now().withZone(DateTimeZone.UTC),
           None, // lastChangedAt
           thing.title,
-          Some(PathHierarchy(parents.map(d => (d.uri -> d.title)))),
+          Some(PathHierarchy(hierarchy.map(d => (d.uri -> d.title)))),
           None, // TODO isPartOf
           thing.subjects.map(Category(_)),
           thing.description.map(d => Seq(Description(d))).getOrElse(Seq.empty[Description]),

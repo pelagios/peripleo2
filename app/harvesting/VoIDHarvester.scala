@@ -97,14 +97,12 @@ class VoIDHarvester @Inject() (
     val fImports = dumps.flatMap { case (dataset, tmpFiles) =>
       tmpFiles.map { tmp =>
         val parents = PelagiosVoIDCrosswalk.findParents(dataset).reverse :+ dataset
-        // val pathHierarchy = PathHierarchy(parents.map(d => (d.uri -> d.title)))
           
         val loader = new DumpLoader(taskService, taskType)
         loader.importDump(
           "Importing Pelagios annotations from " + tmp.file.getName,
           tmp.file,
           tmp.file.getName,
-          // PelagiosAnnotationCrosswalk.fromRDF(tmp.file.getName, pathHierarchy),
           PelagiosAnnotationCrosswalk.fromRDF(tmp.file.getName, parents),
           importer,
           username
