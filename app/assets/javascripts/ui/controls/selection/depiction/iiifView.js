@@ -15,6 +15,7 @@ define(['ui/common/formatting'], function(Formatting) {
           L.tileLayer.iiif(depiction.iiif_uri, { attribution: false, fitBounds: true }).addTo(iiifPane),
 
         destroy = function() {
+          iiifPane.remove();
           containerEl.empty();
         };
 
