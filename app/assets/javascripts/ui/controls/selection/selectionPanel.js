@@ -1,21 +1,23 @@
 define([
-  'ui/common/formatting',
   'ui/common/hasEvents',
   'ui/common/itemUtils',
   'ui/controls/selection/cards/datasetCard',
   'ui/controls/selection/cards/objectCard',
   'ui/controls/selection/cards/periodCard',
   'ui/controls/selection/cards/personCard',
-  'ui/controls/selection/cards/placeCard'
+  'ui/controls/selection/cards/placeCard',
+  'ui/controls/selection/depiction/iiifView',
+  'ui/controls/selection/depiction/imageView'
 ], function(
-  Formatting,
   HasEvents,
   ItemUtils,
   DatasetCard,
   ObjectCard,
   PeriodCard,
   PersonCard,
-  PlaceCard
+  PlaceCard,
+  IIIFView,
+  ImageView
 ) {
 
   var SLIDE_OPTS = { duration: 120 };
@@ -33,20 +35,22 @@ define([
             '<div class="card"></div>' +
           '</div>').hide().appendTo(parentEl),
 
-        dogear         = element.find('.dogear'),
-        depiction      = element.find('.depiction').hide(),
-        imgAttribution = depiction.find('.attribution'),
-        card           = element.find('.card'),
+        depictionContainer = element.find('.depiction').hide(),
+        dogear = element.find('.dogear'),
+        card = element.find('.card'),
+
+        depictionView = false,
 
         empty = function() {
-          depiction.hide().css('background-image', 'none');
+          depictionContainer.hide();
+          if (depictionView) depictionView.destroy();
           card.empty();
           currentSelection = false;
         },
 
         /** Sets or removes the depiction image, sliding the panel up or down as needed **/
         setDepiction = function(item) {
-          var isPanelVisible = depiction.is(':visible'),
+          var isPanelVisible = depictionContainer.is(':visible'),
 
               // Essentially an item.is_conflation_of.flatMap(_.depictions)
               depictions = item.is_conflation_of.reduce(function(depictions, record) {
@@ -60,18 +64,21 @@ define([
                 }
               }, []),
 
-              randomIdx;
+              randomIdx, randomDepiction;
 
           if (depictions.length > 0) {
             randomIdx = Math.floor(Math.random() * depictions.length);
+            randomDepiction = depictions[randomIdx];
 
-            // TODO pre-load image & report in case of 404
+            if (randomDepiction.iiif_uri)
+              depictionView = new IIIFView(depictionContainer, randomDepiction);
+            else
+              depictionView = new ImageView(depictionContainer, randomDepiction);
 
-            depiction.css('background-image', 'url(' + depictions[randomIdx].url + ')');
-            imgAttribution.html(Formatting.formatClickableURL(depictions[0].source));
-            if (!isPanelVisible) depiction.velocity('slideDown', SLIDE_OPTS);
+            if (!isPanelVisible) depictionContainer.velocity('slideDown', SLIDE_OPTS);
           } else if (isPanelVisible) {
-            depiction.velocity('slideUp', SLIDE_OPTS);
+            depictionContainer.velocity('slideUp', SLIDE_OPTS);
+            depictionView = false;
           }
         },
 
