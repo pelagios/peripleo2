@@ -47,6 +47,8 @@ case class RichResultItem(
   
   item : Item,
   
+  score: Float,
+  
   isHitOnReference: Boolean = false
 
 )
@@ -55,6 +57,7 @@ object RichResultItem extends HasGeometry with HasNullableBoolean {
     
   implicit val richResultItemWrites: Writes[RichResultItem] = (
     (JsPath \ "doc_id").write[UUID] and
+    (JsPath \ "match_score").write[Float] and
     (JsPath \ "item_type").write[ItemType] and
     (JsPath \ "title").write[String] and
     (JsPath \ "representative_geometry").writeNullable[Geometry] and
@@ -66,6 +69,7 @@ object RichResultItem extends HasGeometry with HasNullableBoolean {
     (JsPath \ "is_conflation_of").write[Seq[ItemRecord]]
   )(r => (
      r.item.docId,
+     r.score,
      r.item.itemType,
      r.item.title,
      r.item.representativeGeometry,

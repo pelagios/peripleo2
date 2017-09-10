@@ -24,7 +24,7 @@ class SearchService @Inject() (
     override def as(hit: RichSearchHit): RichResultItem = {
       val item = Json.fromJson[Item](Json.parse(hit.sourceAsString)).get
       val isHitOnReference = !hit.matchedQueries.contains("item_meta_match")
-      RichResultItem(item, isHitOnReference)
+      RichResultItem(item, hit.score, isHitOnReference)
     }
   }
 
