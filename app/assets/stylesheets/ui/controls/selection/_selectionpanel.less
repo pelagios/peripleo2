@@ -18,6 +18,7 @@
     right:0;
     width:0;
 	  height:0;
+    z-index: 9999; // So that we're above the IIIF pane
 	  border-top:52px solid transparent;
 	  border-left:52px solid transparent;
   }
@@ -63,6 +64,23 @@
     content:'\e674';
     font-size:22px;
     top:-48px;
+  }
+
+  .iiif-logo {
+    z-index:9999;
+    position:absolute;
+    top:5px;
+    left:8px;
+    width:38px;
+    opacity:0.75;
+  }
+
+  .attribution {
+    z-index:9999; // So that we're above the IIIF pane
+  }
+
+  .leaflet-control-attribution {
+    display:none;
   }
 
 }

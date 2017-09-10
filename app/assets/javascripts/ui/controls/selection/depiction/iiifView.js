@@ -1,12 +1,13 @@
-define([], function() {
+define(['ui/common/formatting'], function(Formatting) {
 
   var IIIFView = function(containerEl, depiction) {
 
-    var iiifPane = L.map(containerEl[0], {
+    var attributionEl = containerEl.find('.attribution'),
+
+        iiifPane = L.map(containerEl[0], {
           center: [0, 0],
           crs: L.CRS.Simple,
           zoom: 0,
-          maxZoom: 10,
           zoomControl: false
         }),
 
@@ -16,6 +17,9 @@ define([], function() {
         destroy = function() {
           containerEl.empty();
         };
+
+    attributionEl.html(Formatting.formatClickableURL(depiction.source));
+    containerEl.prepend('<img class="iiif-logo" src="/assets/images/iiif-logo.png">');
 
     this.destroy = destroy;
   };
