@@ -42,7 +42,6 @@ define([
         depictionView = false,
 
         empty = function() {
-          depictionContainer.hide();
           if (depictionView) depictionView.destroy();
           card.empty();
           currentSelection = false;

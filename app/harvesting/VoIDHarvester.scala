@@ -10,6 +10,7 @@ import org.pelagios.Scalagios
 import org.pelagios.api.dataset.Dataset
 import play.api.Logger
 import play.api.libs.ws.WSClient
+import play.api.libs.Files
 import play.api.libs.Files.TemporaryFile
 import scala.concurrent.{ Future, ExecutionContext }
 import services.item.{ ItemService, ItemType, PathHierarchy }
@@ -53,18 +54,18 @@ class VoIDHarvester @Inject() (
       val chunked = datasets.grouped(MAX_PARALLEL_DATASETS)
       
       def downladBatch(batch: Seq[Dataset]): Future[Seq[(Dataset, Seq[TemporaryFile])]] = {
-        Logger.info("Downloading next batch of " + MAX_PARALLEL_DATASETS + " datasets")
         Future.sequence(batch.map { dataset =>
-          val uris = dataset.datadumps
-          Future.sequence(uris.map { uri => 
-            download(uri).map { file =>
-              Thread.sleep(WAIT_TIME_MILLIS)
-              Some(file)
-            } recover { case t: Throwable =>
-              Logger.warn("Skipping failed download: " + t.getMessage)
-              None
+          dataset.datadumps.foldLeft(Future.successful(Seq.empty[Files.TemporaryFile])) { case (f, uri) =>
+            f.flatMap { results =>
+              download(uri).map { file =>
+                Thread.sleep(WAIT_TIME_MILLIS)
+                results :+ file
+              } recover { case t: Throwable =>
+                Logger.warn("Skipping failed download: " + t.getMessage)
+                results
+              }
             }
-          }) map { tmpFiles => (dataset, tmpFiles.flatten) }
+          } map { (dataset, _) }
         })
       }
       
