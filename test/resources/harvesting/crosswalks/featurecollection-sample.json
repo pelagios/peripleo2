@@ -1,0 +1,575 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "links": {
+        "close_matches": [
+          "http://sws.geonames.org/146853"
+        ]
+      },
+      "title": "Acheras/Ἀχερᾶς, monastery",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.053801,
+          33.140137
+        ]
+      },
+      "uri": "http://www.cyprusgazetteer.org/146853/551",
+      "id": "146853/551",
+      "names": [
+        {
+          "attestations": [
+            {
+              "link": "http://www.geonoma.gov.cy/myfiles/ekdoseis/cygazetteer/index.html",
+              "title": "Complete Gazetteer of Cyprus",
+              "type": "Geonoma publication",
+              "page": "206",
+              "feature_type": "Monastery"
+            }
+          ],
+          "name": "Acheras/Ἀχερᾶς, monastery",
+          "id": 829
+        },
+        {
+          "attestations": [
+            {
+              "link": "http://users.uoa.gr/~nektar/history/2romanity/makhairas_chronicle.htm",
+              "title": "Recital concerning the sweet land of Cyprus, entitled 'Chronicle'",
+              "type": "Book",
+              "page": "§32. pp.30-32",
+              "feature_type": "Toponym"
+            },
+            {
+              "link": "",
+              "title": "Χρονικό της Κύπρου, Manuscript V",
+              "type": "Manuscript",
+              "page": "83. MS. V 15v",
+              "feature_type": "Toponym"
+            },
+            {
+              "link": "",
+              "title": "Χρονικό της Κύπρου, Manuscript O",
+              "type": "Manuscript",
+              "page": "83, MS. O 8v",
+              "feature_type": "Toponym"
+            }
+          ],
+          "name": "Ἀχερᾶ",
+          "id": 928
+        },
+        {
+          "attestations": [
+            {
+              "link": "https://archive.org/stream/chroniquedelle00bustuoft#page/170/mode/2up",
+              "title": "Chronique de l'Île de Chypre de Florio Bustron",
+              "type": "Book",
+              "page": "171 etc",
+              "feature_type": "Toponym"
+            }
+          ],
+          "name": "Achiera ",
+          "id": 955
+        }
+      ],
+      "type": "Feature",
+      "properties": {
+        "feature_types": [
+          "Toponym",
+          "Monastery"
+        ]
+      }
+    },
+    {
+      "links": {
+        "close_matches": [
+          "http://sws.geonames.org/19282"
+        ]
+      },
+      "title": "Afroditi Akraia/Ἀφροδίτη Ἀκραία",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.69514,
+          34.58785
+        ]
+      },
+      "uri": "http://www.cyprusgazetteer.org/19282/528",
+      "id": "19282/528",
+      "names": [
+        {
+          "attestations": [
+            {
+              "link": "http://babel.hathitrust.org/cgi/pt?id=mdp.39015011401661;view=1up;seq=77",
+              "title": "Devia Cypria",
+              "type": "Geonoma publication",
+              "page": "55",
+              "feature_type": "Temple/sanctuary/shrine"
+            }
+          ],
+          "name": "Temple of Aphrodite Acraea",
+          "id": 759
+        },
+        {
+          "attestations": [
+            {
+              "link": " http://data.perseus.org/citations/urn:cts:greekLit:tlg0099.tlg001.perseus-grc1:14.6.3",
+              "type": "Book",
+              "page": "14.6.3",
+              "title": "Geographia (Strabo)"
+            },
+            {
+              "link": "http://www.geonoma.gov.cy/myfiles/ekdoseis/cygazetteer/index.html",
+              "title": "Complete Gazetteer of Cyprus",
+              "type": "Geonoma publication",
+              "page": "206",
+              "feature_type": "Ancient monument"
+            }
+          ],
+          "name": "Afroditi Akraia/Ἀφροδίτη Ἀκραία",
+          "id": 764
+        }
+      ],
+      "type": "Feature",
+      "properties": {
+        "feature_types": [
+          "Temple/sanctuary/shrine",
+          "Ancient Monument"
+        ]
+      }
+    },
+    {
+      "links": {
+        "close_matches": [
+          "http://sws.geonames.org/146131"
+        ]
+      },
+      "title": "Agia Aikaterini/ Ἁγία Αικατερίνη (Potamia)",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.039796,
+          33.442197
+        ]
+      },
+      "uri": "http://www.cyprusgazetteer.org/146131/405",
+      "id": "146131/405",
+      "names": [
+        {
+          "attestations": [
+            {
+              "link": "http://www.geonoma.gov.cy/myfiles/ekdoseis/cygazetteer/index.html",
+              "title": "Complete Gazetteer of Cyprus",
+              "type": "Geonoma publication",
+              "page": "7",
+              "feature_type": "Church/chapel/Christian place of worship"
+            }
+          ],
+          "name": "Agia Aikaterini/ Ἁγία Αικατερίνη (Potamia)",
+          "id": 497
+        },
+        {
+          "attestations": [
+            {
+              "link": "https://archive.org/stream/cu31924028551319#page/n221/mode/2up",
+              "title": "A description of the historic monuments of Cyprus",
+              "type": "Book",
+              "page": "204",
+              "feature_type": "Church/chapel/Christian place of worship"
+            }
+          ],
+          "name": "St. Catherine",
+          "id": 498
+        }
+      ],
+      "type": "Feature",
+      "properties": {
+        "feature_types": [
+          "Church/chapel/christian Place of Worship"
+        ]
+      }
+    },
+    {
+      "links": {
+        "close_matches": [
+          "http://sws.geonames.org/146516"
+        ]
+      },
+      "title": "Agia Anastasia/Ἁγία Ἀναστασία (Pano Polemidia)",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.700801,
+          33.000006
+        ]
+      },
+      "uri": "http://www.cyprusgazetteer.org/146516/215",
+      "id": "146516/215",
+      "names": [
+        {
+          "attestations": [
+            {
+              "link": "http://ibcc.dighum.kcl.ac.uk/entries/b0004.html",
+              "title": "Inventory of Byzantine Churches on Cyprus",
+              "type": "iBCC",
+              "page": "No: 4",
+              "feature_type": "Church/chapel/Christian place of worship"
+            }
+          ],
+          "name": "Anastasia, Saint",
+          "id": 124
+        },
+        {
+          "attestations": [
+            {
+              "link": "http://www.geonoma.gov.cy/myfiles/ekdoseis/cygazetteer/index.html",
+              "title": "Complete Gazetteer of Cyprus",
+              "type": "Geonoma publication",
+              "page": "7",
+              "feature_type": "Ancient monument"
+            }
+          ],
+          "name": "Agia Anastasia/Ἁγία Ἀναστασία (Pano Polemidia)",
+          "id": 228
+        }
+      ],
+      "type": "Feature",
+      "properties": {
+        "feature_types": [
+          "Ancient Monument",
+          "Church/chapel/christian Place of Worship"
+        ]
+      }
+    },
+    {
+      "links": {
+        "close_matches": [
+          "http://sws.geonames.org/146608"
+        ]
+      },
+      "title": "Church of St. Anna",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.520866,
+          34.303493
+        ]
+      },
+      "uri": "http://www.cyprusgazetteer.org/146608/537",
+      "id": "146608/537",
+      "names": [
+        {
+          "attestations": [
+            {
+              "link": "http://babel.hathitrust.org/cgi/pt?id=mdp.39015011401661;view=1up;seq=98",
+              "title": "Devia Cypria",
+              "type": "Book",
+              "page": "74",
+              "feature_type": "Church/chapel/Christian place of worship"
+            }
+          ],
+          "name": "Church of St. Anna",
+          "id": 783
+        },
+        {
+          "attestations": [
+            {
+              "link": "http://www.geonoma.gov.cy/myfiles/ekdoseis/cygazetteer/index.html",
+              "title": "Complete Gazetteer of Cyprus",
+              "type": "Geonoma publication",
+              "page": "7",
+              "feature_type": "Toponym"
+            }
+          ],
+          "name": "Agia Anna/Ἁγία Ἄννα",
+          "id": 788
+        }
+      ],
+      "type": "Feature",
+      "properties": {
+        "feature_types": [
+          "Church/chapel/christian Place of Worship",
+          "Toponym"
+        ]
+      }
+    },
+    {
+      "links": {
+        "close_matches": [
+          "http://sws.geonames.org/146577"
+        ]
+      },
+      "title": "Agia Anna/Ἁγία Ἄννα",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.012544,
+          32.88393
+        ]
+      },
+      "uri": "http://www.cyprusgazetteer.org/146577/169",
+      "id": "146577/169",
+      "names": [
+        {
+          "attestations": [
+            {
+              "link": "http://ibcc.dighum.kcl.ac.uk/entries/b0008.html",
+              "title": "Inventory of Byzantine Churches on Cyprus",
+              "type": "iBCC",
+              "page": "No: 8",
+              "feature_type": "Church/chapel/Christian place of worship"
+            }
+          ],
+          "name": "Anna, Saint",
+          "id": 132
+        },
+        {
+          "attestations": [
+            {
+              "link": "http://www.geonoma.gov.cy/myfiles/ekdoseis/cygazetteer/index.html",
+              "type": "Geonoma publication",
+              "page": "n/a",
+              "title": "Complete Gazetteer of Cyprus"
+            }
+          ],
+          "name": "Agia Anna/Ἁγία Ἄννα",
+          "id": 268
+        },
+        {
+          "attestations": [
+            {
+              "link": "https://archive.org/stream/cu31924028551319#page/n301/mode/2up",
+              "title": "A description of the historic monuments of Cyprus",
+              "type": "Book",
+              "page": "285",
+              "feature_type": "Church/chapel/Christian place of worship"
+            }
+          ],
+          "name": "St. Anne",
+          "id": 706
+        }
+      ],
+      "type": "Feature",
+      "properties": {
+        "feature_types": [
+          "Church/chapel/christian Place of Worship"
+        ]
+      }
+    },
+    {
+      "links": {
+        "close_matches": [
+          "http://sws.geonames.org/12003"
+        ]
+      },
+      "title": "Agia Argona/Ἁγία Ἀργῶνα",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.70703,
+          32.52185
+        ]
+      },
+      "uri": "http://www.cyprusgazetteer.org/12003/431",
+      "id": "12003/431",
+      "names": [
+        {
+          "attestations": [
+            {
+              "link": "http://babel.hathitrust.org/cgi/pt?id=mdp.39015011401661;view=1up;seq=58",
+              "title": "Devia Cypria",
+              "type": "Book",
+              "page": "42",
+              "feature_type": "Church/chapel/Christian place of worship"
+            }
+          ],
+          "name": "Agia Evresis",
+          "id": 551
+        },
+        {
+          "attestations": [
+            {
+              "link": "http://babel.hathitrust.org/cgi/pt?id=mdp.39015011401661;view=1up;seq=58",
+              "title": "Devia Cypria",
+              "type": "Book",
+              "page": "42",
+              "feature_type": "Church/chapel/Christian place of worship"
+            }
+          ],
+          "name": "Agia Ircona",
+          "id": 552
+        },
+        {
+          "attestations": [
+            {
+              "link": "http://www.geonoma.gov.cy/myfiles/ekdoseis/cygazetteer/index.html",
+              "title": "Complete Gazetteer of Cyprus",
+              "type": "Geonoma publication",
+              "page": "7",
+              "feature_type": "Toponym"
+            }
+          ],
+          "name": "Agia Argona/Ἁγία Ἀργῶνα",
+          "id": 800
+        }
+      ],
+      "type": "Feature",
+      "properties": {
+        "feature_types": [
+          "Church/chapel/christian Place of Worship",
+          "Toponym"
+        ]
+      }
+    },
+    {
+      "links": {
+        "close_matches": [
+          "http://sws.geonames.org/146105"
+        ]
+      },
+      "title": "Agia Athanasia/Ἅγία Ἀθανασία (Rizokarpaso)",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.615057,
+          34.398885
+        ]
+      },
+      "uri": "http://www.cyprusgazetteer.org/146105/133",
+      "id": "146105/133",
+      "names": [
+        {
+          "attestations": [
+            {
+              "link": "http://ibcc.dighum.kcl.ac.uk/entries/b0005.html",
+              "title": "Inventory of Byzantine Churches on Cyprus",
+              "type": "iBCC",
+              "page": "No: 5",
+              "feature_type": "Church/chapel/Christian place of worship"
+            }
+          ],
+          "name": "Andronikos and Athanasia, Saints",
+          "id": 67
+        },
+        {
+          "attestations": [
+            {
+              "link": "http://www.geonoma.gov.cy/myfiles/ekdoseis/cygazetteer/index.html",
+              "title": "Complete Gazetteer of Cyprus",
+              "type": "Geonoma publication",
+              "page": "6",
+              "feature_type": "Ancient monument"
+            }
+          ],
+          "name": "Agia Athanasia/Ἅγία Ἀθανασία (Rizokarpaso)",
+          "id": 311
+        }
+      ],
+      "type": "Feature",
+      "properties": {
+        "feature_types": [
+          "Ancient Monument",
+          "Church/chapel/christian Place of Worship"
+        ]
+      }
+    },
+    {
+      "links": {
+        "close_matches": [
+          "http://sws.geonames.org/146737"
+        ]
+      },
+      "title": "Agia Fotou/Ἁγία Φωτοῦ (Agios Andronikos)",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.502579,
+          34.16185
+        ]
+      },
+      "uri": "http://www.cyprusgazetteer.org/146737/556",
+      "id": "146737/556",
+      "names": [
+        {
+          "attestations": [
+            {
+              "link": "http://www.geonoma.gov.cy/myfiles/ekdoseis/cygazetteer/index.html",
+              "title": "Complete Gazetteer of Cyprus",
+              "type": "Geonoma publication",
+              "page": "20",
+              "feature_type": "Church/chapel/Christian place of worship"
+            }
+          ],
+          "name": "Agia Fotou/Ἁγία Φωτοῦ (Agios Andronikos)",
+          "id": 842
+        },
+        {
+          "attestations": [
+            {
+              "link": "http://users.uoa.gr/~nektar/history/2romanity/makhairas_chronicle.htm",
+              "title": "Recital concerning the sweet land of Cyprus, entitled 'Chronicle'",
+              "type": "Book",
+              "page": "§34. pp.32-34",
+              "feature_type": "Church/chapel/Christian place of worship"
+            },
+            {
+              "link": "",
+              "title": "Χρονικό της Κύπρου, Manuscript O",
+              "type": "Manuscript",
+              "page": "83, MS. O 9v",
+              "feature_type": "Funerary monument/tomb/grave"
+            }
+          ],
+          "name": "Ἁγία Φωτεινή",
+          "id": 843
+        },
+        {
+          "attestations": [
+            {
+              "link": "",
+              "type": "Manuscript",
+              "page": "84, MS. V 16v",
+              "title": "Χρονικό της Κύπρου, Manuscript V"
+            }
+          ],
+          "name": "Ἁγία Φοτηνή",
+          "id": 859
+        },
+        {
+          "attestations": [
+            {
+              "link": "",
+              "title": "Χρονικό της Κύπρου, Manuscript R",
+              "type": "Manuscript",
+              "page": "84, MS. R 11v, 12r",
+              "feature_type": "Funerary monument/tomb/grave"
+            }
+          ],
+          "name": "Ἁγία Φοτινί",
+          "id": 869
+        },
+        {
+          "attestations": [
+            {
+              "link": "https://archive.org/stream/chroniquedelle00bustuoft#page/34/mode/2up",
+              "title": "Chronique de l'Île de Chypre de Florio Bustron",
+              "type": "Book",
+              "page": "34",
+              "feature_type": "Cave "
+            }
+          ],
+          "name": "Santa Photini",
+          "id": 932
+        }
+      ],
+      "type": "Feature",
+      "properties": {
+        "feature_types": [
+          "Church/chapel/christian Place of Worship",
+          "Cave ",
+          "Funerary Monument/tomb/grave"
+        ]
+      }
+    }
+  ]
+}

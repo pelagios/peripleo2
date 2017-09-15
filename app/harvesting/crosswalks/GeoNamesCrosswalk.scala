@@ -48,7 +48,7 @@ case class GeoNamesRecord(
 
 object GeoNamesRecord extends HasGeometry {
 
-  implicit val pleiadesRecordReads: Reads[GeoNamesRecord] = (
+  implicit val geonamesRecordReads: Reads[GeoNamesRecord] = (
     (JsPath \ "uri").read[String] and
     (JsPath \ "title").read[String] and
     (JsPath \ "description").readNullable[String] and
