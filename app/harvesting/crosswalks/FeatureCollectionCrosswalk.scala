@@ -11,7 +11,7 @@ import services.item._
 
 object FeatureCollectionCrosswalk {
   
-   def fromGeoJSON(filename: String): InputStream => Seq[ItemRecord] = { in =>
+   def fromGeoJSON(dataset: PathHierarchy): InputStream => Seq[ItemRecord] = { in =>
      
      def toItemRecord(json: JsValue): ItemRecord = {
        val f = Json.fromJson[GazetteerFeature](json).get
@@ -21,7 +21,7 @@ object FeatureCollectionCrosswalk {
          DateTime.now(),
          None, // lastChangedAt
          f.title,
-         None, // TODO isInDataset: Option[PathHierarchy]
+         Some(dataset),
          None, // isPartOf
          Seq.empty[Category], // TODO get from properties > feature types?
          Seq.empty[Description],

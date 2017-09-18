@@ -4,6 +4,7 @@ import org.scalatestplus.play._
 import play.api.test._
 import play.api.test.Helpers._
 import java.io.FileInputStream
+import services.item.PathHierarchy
 
 class FeatureCollectionCrosswalkSpec extends PlaySpec {
   
@@ -12,7 +13,9 @@ class FeatureCollectionCrosswalkSpec extends PlaySpec {
   "The GeoJSON FeatureCollectionCrosswalk" should {
     
     "properly parse the sample collection" in {
-      val crosswalk = FeatureCollectionCrosswalk.fromGeoJSON(SAMPLE)
+      val dataset = PathHierarchy("http://www.example.com/gazetteer", "Example Gazetteer")
+        
+      val crosswalk = FeatureCollectionCrosswalk.fromGeoJSON(dataset)
       val in = new FileInputStream(SAMPLE)   
       val records = crosswalk(in)
       

@@ -10,7 +10,7 @@ import play.api.{ Configuration, Logger }
 import scala.concurrent.ExecutionContext
 import services.task.{ TaskService, TaskType }
 import services.user.{ Role, UserService }
-import services.item.{ ItemService, ItemType }
+import services.item.{ ItemService, ItemType, PathHierarchy }
 import services.item.importers.{ DatasetImporter, EntityImporter }
 
 @Singleton
@@ -27,13 +27,6 @@ class GazetteerAdminController @Inject() (
   
   private val taskType = TaskType("GAZETTEER_IMPORT")
 
-  private def upsertGazetteerMeta(filename: String) = {    
-    val name = filename.substring(0, filename.indexOf('.'))
-    upsertDatasetRecord(
-      name, // TODO should be a URI
-      name)
-  }
-
   def index = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>
     Ok(views.html.admin.authorities.gazetteers())
   }
@@ -43,14 +36,13 @@ class GazetteerAdminController @Inject() (
     val importer = new EntityImporter(itemService, ItemType.PLACE)
     
     request.body.asMultipartFormData.flatMap(_.file("file")) match {
+      
       case Some(formData) =>
         Logger.info("Importing gazetteer from " + formData.filename)
-
-
+        
         /** TEMPORARY HACK **/
-
-        upsertGazetteerMeta(formData.filename).map { success =>
-
+        val name = formData.filename.substring(0, formData.filename.indexOf('.'))
+        upsertDatasetRecord(name, name).map { success =>
           if (success) {
 
             if (formData.filename.contains(".ttl") || formData.filename.contains(".rdf")) {
@@ -93,6 +85,16 @@ class GazetteerAdminController @Inject() (
                 formData.ref.file,
                 formData.filename,
                 EuropeanaPlacesCrosswalk.fromJson,
+                importer,
+                loggedIn.username)
+            } else if (formData.filename.endsWith("json")) {
+              Logger.info("Using default GeoJSON crosswalk")
+
+              new DumpLoader(taskService, taskType).importDump(
+                formData.filename + " (GeoJSON Gazetteer)",
+                formData.ref.file,
+                formData.filename,
+                FeatureCollectionCrosswalk.fromGeoJSON(PathHierarchy(name, name)),
                 importer,
                 loggedIn.username)
             }
