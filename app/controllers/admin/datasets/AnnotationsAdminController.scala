@@ -18,6 +18,7 @@ import services.user.{ Role, UserService }
 import services.item.ItemService
 import services.item.importers.ItemImporter
 import harvesting.crosswalks.tei.TeiCrosswalk
+import org.pelagios.api.dataset.Dataset
 
 @Singleton
 class AnnotationsAdminController @Inject() (
