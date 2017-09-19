@@ -4,7 +4,7 @@
   <div class="row">
     <div class="card">
       <div class="inner">
-        <span class="dataset-count">-</span> Annotation Datasets
+        <span class="dataset-count">@datasets.total</span> Annotation Datasets
         <div class="add-data">
           <a href="#" class="btn outline register-void">Register VoID URL</a>
           <a href="#" class="btn new-upload" data-input="file">Upload New</a>
@@ -25,6 +25,8 @@
         @for(d <- datasets.items) {
           <p>@d.title</p>
         }
+
+        @views.html.pagination(controllers.admin.datasets.routes.AnnotationsAdminController.index().url, datasets)
       </div>
     </div>
   </div>
