@@ -69,6 +69,31 @@ class ItemService @Inject() (
       }
     } map { _.as[(Item, Long)].headOption.map(_._1) }
     
+  def findByType(itemType: ItemType, rootOnly: Boolean = true, offset: Int = 0, limit: Int = 20) = {
+    val f =
+      if (rootOnly)
+        bool {
+          must (
+            termQuery("item_type" -> itemType.toString)
+          ) not (
+            existsQuery("is_conflation_of.is_part_of")
+          )
+        }
+      else
+        termQuery("item_type" -> itemType.toString)      
+      
+    es.client execute {
+      search in ES.PERIPLEO / ES.ITEM query { 
+        constantScoreQuery {
+          filter ( f )
+        }
+      } start offset limit limit
+    } map { response =>
+      Page(response.tookInMillis, response.totalHits, offset, limit, response.as[(Item, Long)].map(_._1))
+    }
+    
+  }
+    
   def findPartsOf(identifier: String, offset: Int = 0, limit: Int = 20) =
     es.client execute {
       search in ES.PERIPLEO / ES.ITEM query {

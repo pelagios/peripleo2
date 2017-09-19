@@ -32,8 +32,10 @@ class AnnotationsAdminController @Inject() (
   implicit val webjars: WebJarAssets
 ) extends BaseAuthorityAdminController(new DatasetImporter(itemService, ItemType.DATASET.ANNOTATIONS)) {
   
-  def index = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>
-    Ok(views.html.admin.datasets.annotations())
+  def index = AsyncStack(AuthorityKey -> Role.ADMIN) { implicit request =>
+    itemService.findByType(ItemType.DATASET.ANNOTATIONS).map { page =>
+      Ok(views.html.admin.datasets.annotations(page))
+    }
   }
   
   def importData = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>

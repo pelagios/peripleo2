@@ -1,4 +1,4 @@
-@()(implicit request: RequestHeader, webjars: WebJarAssets)
+@(datasets: services.Page[services.item.Item])(implicit request: RequestHeader, webjars: WebJarAssets)
 
 @views.html.admin._layout("Dataset Administration | Annotations ", "annotations", "stylesheets/admin/datasets/index.css") {
   <div class="row">
@@ -16,6 +16,16 @@
       </div>
 
       <div class="uploads"></div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="card">
+      <div class="inner">
+        @for(d <- datasets.items) {
+          <p>@d.title</p>
+        }
+      </div>
     </div>
   </div>
 
