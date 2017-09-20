@@ -1,5 +1,6 @@
 package services.item
 
+import com.sksamuel.elastic4s._
 import com.sksamuel.elastic4s.ElasticDsl._
 import com.sksamuel.elastic4s.{ HitAs, RichSearchHit, RichSearchResponse, QueryDefinition }
 import com.sksamuel.elastic4s.source.Indexable
@@ -7,6 +8,7 @@ import es.ES
 import java.util.UUID
 import javax.inject.{ Inject, Singleton }
 import org.joda.time.DateTime
+import org.elasticsearch.script.ScriptService.ScriptType
 import play.api.Logger
 import play.api.libs.json.{ Json, JsSuccess, JsError }
 import scala.concurrent.{ ExecutionContext, Future }
@@ -97,9 +99,15 @@ class ItemService @Inject() (
   // TODO how to deal with cases where only want direct children?
   def findByParent(parentIdentifier: String, offset: Int = 0, limit: Int = 20) =
     es.client execute {
-      search in ES.PERIPLEO / ES.ITEM query {
+      search in ES.PERIPLEO / ES.ITEM query { 
         constantScoreQuery {
-          filter ( termQuery("is_conflation_of.is_part_of.ids" -> parentIdentifier) )
+          filter ( bool {
+            must (
+              termQuery("is_conflation_of.is_part_of.ids" -> parentIdentifier),
+              // TODO just for testing - remove '1' and replace with actual required parent count
+              ScriptQueryDefinition(script("parent_count") params(Map("parents" -> 1))  scriptType ScriptType.FILE) 
+            )
+          })
         }
       } start offset limit limit
     } map { response =>
