@@ -25,12 +25,19 @@ require(['admin/hasUploads'], function(Uploads) {
               id = tr.data('id');
           jsRoutes.controllers.admin.datasets.AnnotationsAdminController.deleteDataset(id).ajax();
           btn.prop('disabled', true);
+        },
+
+        formatNumber = function() {
+          var el = jQuery(this);
+          el.html(numeral(el.html()).format('0,0'));
         };
 
     jQuery('.timeago').timeago();
+    jQuery('.number').each(formatNumber);
 
     btnRegisterVoID.click(registerVoID);
     datasetList.on('click', '.btn.delete', deleteDataset);
+
 
     Uploads.enable('.new-upload');
   });

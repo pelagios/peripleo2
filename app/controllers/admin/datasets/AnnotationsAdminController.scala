@@ -1,7 +1,7 @@
 package controllers.admin.datasets
 
 import akka.actor.ActorSystem
-import controllers.WebJarAssets
+import controllers.{ WebJarAssets, HasDatasetStats }
 import controllers.admin.authorities.BaseAuthorityAdminController
 import harvesting.VoIDHarvester
 import harvesting.loaders.DumpLoader
@@ -13,6 +13,7 @@ import play.api.libs.Files
 import scala.concurrent.ExecutionContext
 import services.item.{ ItemType, PathHierarchy } 
 import services.item.importers.DatasetImporter
+import services.item.search.SearchService
 import services.task.{ TaskService, TaskType }
 import services.user.{ Role, UserService }
 import services.item.ItemService
@@ -27,13 +28,17 @@ class AnnotationsAdminController @Inject() (
   val taskService: TaskService,
   val users: UserService,
   val voidHarvester: VoIDHarvester,
+  implicit val searchService: SearchService,
   implicit val ctx: ExecutionContext,
   implicit val system: ActorSystem,
   implicit val webjars: WebJarAssets
-) extends BaseAuthorityAdminController(new DatasetImporter(itemService, ItemType.DATASET.ANNOTATIONS)) {
+) extends BaseAuthorityAdminController(new DatasetImporter(itemService, ItemType.DATASET.ANNOTATIONS)) with HasDatasetStats {
   
   def index = AsyncStack(AuthorityKey -> Role.ADMIN) { implicit request =>
-    itemService.findByType(ItemType.DATASET.ANNOTATIONS).map { page =>
+    
+    itemService.findByType(ItemType.DATASET.ANNOTATIONS).flatMap { datasets =>
+      addStats(datasets)
+    } map { page =>    
       Ok(views.html.admin.datasets.annotations(page))
     }
   }
