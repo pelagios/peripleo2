@@ -4,7 +4,7 @@ import com.sksamuel.elastic4s.ElasticDsl._
 import com.sksamuel.elastic4s.{ HitAs, QueryDefinition }
 import java.util.UUID
 import scala.concurrent.{ ExecutionContext, Future }
-import services.ES
+import es.ES
 import services.item.search.RichResultItem
 
 case class ReferencedItemFilter(uris: Seq[String], setting: TermFilter.Setting) {

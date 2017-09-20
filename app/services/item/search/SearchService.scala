@@ -8,7 +8,8 @@ import org.elasticsearch.search.aggregations.bucket.terms.Terms
 import play.api.libs.json.Json
 import scala.concurrent.{ Future, ExecutionContext }
 import scala.language.reflectiveCalls
-import services.{ ES, Page }
+import services.{ Page }
+import es.ES
 import services.item.{ Item, ItemService }
 import services.item.reference.TopReferenced
 import services.notification.NotificationService

@@ -3,13 +3,14 @@ package services.item.reference
 import com.sksamuel.elastic4s.ElasticDsl._
 import com.sksamuel.elastic4s.{ HitAs, RichSearchHit, RichSearchResponse }
 import com.sksamuel.elastic4s.source.Indexable
+import es.ES
 import java.util.UUID
 import org.elasticsearch.search.aggregations.bucket.terms.Terms
 import play.api.Logger
 import play.api.libs.json.Json
 import scala.concurrent.Future
 import scala.util.Try
-import services.{ ES, Page }
+import services.{ Page }
 import services.item.{ Item, ItemService }
 
 trait ReferenceService { self: ItemService =>

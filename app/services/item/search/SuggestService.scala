@@ -9,7 +9,7 @@ import play.api.libs.json._
 import play.api.libs.functional.syntax._
 import scala.collection.JavaConverters._
 import scala.concurrent.{ ExecutionContext, Future }
-import services.ES
+import es.ES
 import services.item.ItemType
 
 case class Suggestion(text: String, 

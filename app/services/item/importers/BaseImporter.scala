@@ -1,11 +1,11 @@
 package services.item.importers
 
 import com.sksamuel.elastic4s.ElasticDsl._
+import es.ES
 import java.util.UUID
 import play.api.Logger
 import scala.concurrent.Future
 import scala.language.postfixOps
-import services.{ ES }
 import services.item._
 import services.item.reference.{ Reference, UnboundReference }
 import services.task.TaskType

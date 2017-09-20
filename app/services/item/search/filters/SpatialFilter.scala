@@ -7,7 +7,7 @@ import org.elasticsearch.common.geo.ShapeRelation
 import org.elasticsearch.common.geo.builders.ShapeBuilder
 import org.elasticsearch.common.unit.DistanceUnit
 import org.elasticsearch.index.query.{ QueryBuilders, GeoShapeQueryBuilder }
-import services.ES
+import es.ES
 
 case class GeoShapeQueryDefinition(builder: GeoShapeQueryBuilder) extends QueryDefinition
 

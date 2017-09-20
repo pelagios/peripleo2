@@ -1,19 +1,18 @@
-package services
+package es
 
 import com.google.inject.AbstractModule
 import com.sksamuel.elastic4s.ElasticDsl._
-import com.sksamuel.elastic4s.{ ElasticClient, ElasticsearchClientUri, QueryDefinition, RichSearchResponse }
+import com.sksamuel.elastic4s.{ ElasticClient, ElasticsearchClientUri }
 import java.io.File
 import javax.inject.{ Inject, Singleton }
 import org.elasticsearch.common.settings.Settings
 import play.api.{ Configuration, Logger }
 import play.api.inject.ApplicationLifecycle
 import scala.io.Source
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.util.{ Try, Success, Failure }
 import scala.concurrent.Await
-import services.user.UserService
 
 /** Binding ES as eager singleton, so we can start & stop properly **/
 class ESModule extends AbstractModule {
@@ -25,7 +24,7 @@ class ESModule extends AbstractModule {
 }
 
 /** Constants **/
-object ES extends ElasticSearchSanitizer {
+object ES extends ESQuerySanitizer {
 
   // Index name
   val PERIPLEO = "peripleo"
@@ -46,7 +45,9 @@ object ES extends ElasticSearchSanitizer {
 
 /** ElasticSearch client + start & stop helpers **/
 @Singleton
-class ES @Inject() (config: Configuration, lifecycle: ApplicationLifecycle) {
+class ES @Inject() (
+    config: Configuration, lifecycle: ApplicationLifecycle
+) extends HasDeleteByQuery {
 
   start()
 
@@ -94,7 +95,7 @@ class ES @Inject() (config: Configuration, lifecycle: ApplicationLifecycle) {
   private def start() = {
     implicit val timeout = 60.seconds
     val response = client.execute { index exists(ES.PERIPLEO) }.await
-    
+
     if (response.isExists()) {
       // Index exists - create missing mappings if needed
       val list = client.admin.indices().prepareGetMappings()
@@ -117,9 +118,9 @@ class ES @Inject() (config: Configuration, lifecycle: ApplicationLifecycle) {
         Logger.info("Create mapping - " + name)
         create.addMapping(name, json)
       }}
-      
+
       create.execute().actionGet()
-    }   
+    }
   }
 
   private def stop() = {
@@ -143,92 +144,5 @@ class ES @Inject() (config: Configuration, lifecycle: ApplicationLifecycle) {
           mappings :+ (number, (name, json))
         }
       }).sortBy(_._1).map(_._2)
-      
-  /** A generic helper for deleting records by query **/
-  private[services] def deleteByQuery(index: String, q: QueryDefinition, parent: Option[String] = None)(implicit ctx: ExecutionContext): Future[Boolean] = {
-    
-    def fetchNextBatch(scrollId: String): Future[RichSearchResponse] =
-      client execute {
-        search scroll scrollId keepAlive "1m"
-      }
-    
-    def deleteOneBatch(ids: Seq[String]): Future[Boolean] =
-      client execute {
-        bulk (
-          parent match {
-            case Some(parentId) =>
-              ids.map { id => delete id id from ES.PERIPLEO / index parent parentId }
-
-            case None =>
-              ids.map { id => delete id id from ES.PERIPLEO / index }
-          }
-        )
-      } map { result =>
-        if (result.hasFailures)
-          Logger.error("Error deleting by query: " + result.failures.map(_.failureMessage).mkString("\n"))
-          
-        !result.hasFailures 
-      }
-    
-    def deleteBatch(response: RichSearchResponse, cursor: Long = 0l): Future[Boolean] = {
-      val ids = response.hits.map(_.getId)
-      val total = response.totalHits
-
-      if (ids.isEmpty)
-        Future.successful(true)
-      else
-        deleteOneBatch(ids).flatMap { success =>
-          val deletedRecords = cursor + ids.size
-          if (deletedRecords < total) {
-            fetchNextBatch(response.scrollId).flatMap(deleteBatch(_, deletedRecords).map(_ && success))
-          } else {
-            Future.successful(success)
-          }
-        }
-    }
-    
-    client execute {
-      search in ES.PERIPLEO / index query q limit 50 scroll "1m"
-    } flatMap {
-      deleteBatch(_)
-    }
-  }
-
-}
-
-/** http://stackoverflow.com/questions/32107601/is-there-an-implementation-of-a-search-term-sanitizer-for-elasticsearch-in-scala **/
-trait ElasticSearchSanitizer {
-
-  import java.util.regex.Pattern
-
-  /** Sanitizes special characters and set operators in elastic search search-terms. */
-  def sanitize(term: String): String = (
-    escapeSpecialCharacters _ andThen
-    escapeSetOperators andThen
-    collapseWhiteSpaces andThen
-    escapeOddQuote
-  )(term)
-
-  private def escapeSpecialCharacters(term: String): String = {
-    val escapedCharacters = Pattern.quote("""\/+-&|!(){}[]^~*?:""")
-    term.replaceAll(s"([$escapedCharacters])", "\\\\$1")
-  }
-
-  private def escapeSetOperators(term: String): String = {
-    val operators = Set("AND", "OR", "NOT")
-    operators.foldLeft(term) { case (accTerm, op) =>
-      val escapedOp = escapeEachCharacter(op)
-      accTerm.replaceAll(s"""\\b($op)\\b""", escapedOp)
-    }
-  }
-
-  private def escapeEachCharacter(op: String): String =
-    op.toCharArray.map(ch => s"""\\\\$ch""").mkString
-
-  private def collapseWhiteSpaces(term: String): String = term.replaceAll("""\s+""", " ")
-
-  private def escapeOddQuote(term: String): String = {
-    if (term.count(_ == '"') % 2 == 1) term.replaceAll("""(.*)"(.*)""", """$1\\"$2""") else term
-  }
 
 }

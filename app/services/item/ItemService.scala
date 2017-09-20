@@ -3,13 +3,14 @@ package services.item
 import com.sksamuel.elastic4s.ElasticDsl._
 import com.sksamuel.elastic4s.{ HitAs, RichSearchHit, RichSearchResponse, QueryDefinition }
 import com.sksamuel.elastic4s.source.Indexable
+import es.ES
 import java.util.UUID
 import javax.inject.{ Inject, Singleton }
 import org.joda.time.DateTime
 import play.api.Logger
 import play.api.libs.json.{ Json, JsSuccess, JsError }
 import scala.concurrent.{ ExecutionContext, Future }
-import services.{ ES, Page }
+import services.{ Page }
 import services.item.reference.{ Reference, ReferenceService, UnboundReference }
 import services.notification.NotificationService
 import services.task.TaskType
@@ -68,7 +69,7 @@ class ItemService @Inject() (
         }
       }
     } map { _.as[(Item, Long)].headOption.map(_._1) }
-    
+
   def findByType(itemType: ItemType, rootOnly: Boolean = true, offset: Int = 0, limit: Int = 20) = {
     val f =
       if (rootOnly)
@@ -80,19 +81,19 @@ class ItemService @Inject() (
           )
         }
       else
-        termQuery("item_type" -> itemType.toString)      
-      
+        termQuery("item_type" -> itemType.toString)
+
     es.client execute {
-      search in ES.PERIPLEO / ES.ITEM query { 
+      search in ES.PERIPLEO / ES.ITEM query {
         constantScoreQuery {
           filter ( f )
         }
       } start offset limit limit
     } map { response =>
       Page(response.tookInMillis, response.totalHits, offset, limit, response.as[(Item, Long)].map(_._1))
-    } 
+    }
   }
-  
+
   def findByParent(parentIdentifier: String, offset: Int = 0, limit: Int = 20) =
     es.client execute {
       search in ES.PERIPLEO / ES.ITEM query {
@@ -101,7 +102,7 @@ class ItemService @Inject() (
         }
       }
     }
-    
+
   def findPartsOf(identifier: String, offset: Int = 0, limit: Int = 20) =
     es.client execute {
       search in ES.PERIPLEO / ES.ITEM query {
@@ -165,7 +166,7 @@ class ItemService @Inject() (
       references <- fReferences
     } yield group(items, references)
   }
-  
+
   def updateItem(item: Item): Future[Boolean] = {
     es.client execute {
       update id item.docId.toString in ES.PERIPLEO / ES.ITEM source item
@@ -178,8 +179,7 @@ class ItemService @Inject() (
 
   def deleteById(docId: UUID): Future[Boolean] = {
     // Delete all references this item has (start operation right now, using 'val')
-    val fDeleteReferences =
-      es.deleteByQuery(ES.REFERENCE, termQuery("parent_id", docId.toString), Some(docId.toString))
+    val fDeleteReferences = es.deleteChildrenByParent(ES.REFERENCE, docId.toString)
 
     // Should start after delete is done (using 'def')
     def fDeleteItem() =
@@ -200,21 +200,27 @@ class ItemService @Inject() (
     }
   }
 
-  def deleteByDataset(dataset: String) = {
+  /** Warning: this can break the conceptual integrity of the index, because
+    * it might remove items that are referenced by other items that remain in the
+    * index. Ideally, we should add a "safe delete" option that will check
+    * whether references exist and then leaves items referenced by others (at
+    * the expense of a huge performance slow-down, though!)
+    */
+  def fastDeleteByDataset(identifier: String) = {
 
-    def deleteReferences(): Future[Boolean] =
-      es.deleteByQuery(ES.REFERENCE, hasParentQuery(ES.ITEM) query {
-        termQuery("is_in_dataset", dataset)
+    def deleteReferences(): Future[Boolean] = 
+      es.deleteChildrenByQuery(ES.REFERENCE, hasParentQuery(ES.ITEM) query {
+        termQuery("is_conflation_of.is_in_dataset" -> identifier)
       })
 
     def deleteObjects(): Future[Boolean] =
-      es.deleteByQuery(ES.ITEM, termQuery("is_in_dataset", dataset))
+      es.deleteByQuery(ES.ITEM, termQuery("is_conflation_of.is_in_dataset" -> identifier))
 
     def deleteDatasets(): Future[Boolean] =
       es.deleteByQuery(ES.ITEM, bool {
         should(
-          termQuery("identifiers", dataset),
-          termQuery("is_part_of", dataset)
+          termQuery("identifiers" -> identifier),
+          termQuery("is_conflation_of.is_part_of" -> identifier)
         )
       })
 
@@ -223,6 +229,47 @@ class ItemService @Inject() (
       s2 <- deleteObjects
       s3 <- deleteDatasets
     } yield s1 && s2 && s3
+
+  }
+
+  def safeDeleteByDataset(identifier: String) = {
+
+    // Refs pointing outwards from items in this dataset - can safely delete
+    def deleteReferences(): Future[Boolean] =
+      es.deleteChildrenByQuery(ES.REFERENCE, hasParentQuery(ES.ITEM) query {
+        termQuery("is_in_dataset", identifier)
+      })
+
+    // The condition we'll use to check if delete is safe: is
+    // this item referenced by others (condition -> false) or not (condition -> true)
+    def isOkToDelete(item: Item): Future[Boolean] =
+      es.client execute {
+        search in ES.PERIPLEO / ES.REFERENCE query {
+          constantScoreQuery {
+            filter ( termQuery("reference_to.doc_id" -> item.docId.toString) )
+          }
+        } start 0 limit 0
+      } map { response =>
+        response.totalHits == 0
+      }
+
+    // def deleteObjectsConditional(): Future[Boolean] = {
+
+    // }
+
+    // Datasets and subsets
+    def deleteDatasets(): Future[Boolean] =
+      es.deleteByQuery(ES.ITEM, bool {
+        should(
+          termQuery("identifiers" -> identifier),
+          termQuery("is_conflation_of.is_part_of" -> identifier)
+        )
+      })
+
+    for {
+      s1 <- deleteReferences
+      s3 <- deleteDatasets
+    } yield s1 && s3
 
   }
 

@@ -4,7 +4,7 @@ import com.sksamuel.elastic4s.ElasticDsl._
 import com.sksamuel.elastic4s.{ HitAs, QueryDefinition, RangeQueryDefinition }
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.language.reflectiveCalls
-import services.ES
+import es.ES
 
 class SearchFilter(args: SearchArgs, placeFilterDefinition: Option[QueryDefinition] = None) {
 	
