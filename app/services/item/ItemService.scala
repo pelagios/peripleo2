@@ -233,41 +233,62 @@ class ItemService @Inject() (
   }
 
   def safeDeleteByDataset(identifier: String) = {
+    
+    play.api.Logger.info("Deleting dataset: " + identifier)
 
     // Refs pointing outwards from items in this dataset - can safely delete
     def deleteReferences(): Future[Boolean] =
       es.deleteChildrenByQuery(ES.REFERENCE, hasParentQuery(ES.ITEM) query {
-        termQuery("is_in_dataset", identifier)
-      })
+        termQuery("reference_to.is_in_dataset", identifier)
+      }) map { success =>
+        play.api.Logger.info("References deleted: " + success)
+        success
+      } recover { case t: Throwable =>
+        t.printStackTrace()
+        false
+      }
 
     // The condition we'll use to check if delete is safe: is
     // this item referenced by others (condition -> false) or not (condition -> true)
-    def isOkToDelete(item: Item): Future[Boolean] =
+    def isOkToDelete(hit: RichSearchHit): Future[Boolean] =
       es.client execute {
         search in ES.PERIPLEO / ES.REFERENCE query {
           constantScoreQuery {
-            filter ( termQuery("reference_to.doc_id" -> item.docId.toString) )
+            filter ( termQuery("reference_to.doc_id" -> hit.id) )
           }
         } start 0 limit 0
       } map { response =>
         response.totalHits == 0
       }
-
-    // def deleteObjectsConditional(): Future[Boolean] = {
-
-    // }
+      
+    def deleteObjects(): Future[Boolean] =
+      es.deleteConditional(ES.ITEM, termQuery("is_conflation_of.is_in_dataset.ids" -> identifier), isOkToDelete)
+        .map { success =>
+          play.api.Logger.info("Items deleted: " + success)
+          success
+        } recover { case t: Throwable =>
+          t.printStackTrace()
+          false
+        }
 
     // Datasets and subsets
     def deleteDatasets(): Future[Boolean] =
       es.deleteByQuery(ES.ITEM, bool {
         should(
-          termQuery("identifiers" -> identifier),
+          termQuery("is_conflation_of.identifiers" -> identifier),
           termQuery("is_conflation_of.is_part_of" -> identifier)
         )
-      })
+      }) map { success =>
+        play.api.Logger.info("Dataset items deleted: " + success)
+        success
+      } recover { case t: Throwable =>
+        t.printStackTrace()
+        false
+      }
 
     for {
       s1 <- deleteReferences
+      s2 <- deleteObjects
       s3 <- deleteDatasets
     } yield s1 && s3
 

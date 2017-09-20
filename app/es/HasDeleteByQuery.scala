@@ -58,7 +58,7 @@ trait HasDeleteByQuery { self: ES =>
     }
   }
   
-  private def conditionalQueryDelete(index: String, q: QueryDefinition, condition: RichSearchHit => Future[Boolean])(implicit ctx: ExecutionContext): Future[Boolean] = {
+  def deleteConditional(index: String, q: QueryDefinition, condition: RichSearchHit => Future[Boolean])(implicit ctx: ExecutionContext): Future[Boolean] = {
     
     def deleteBatch(response: RichSearchResponse, cursor: Long = 0l): Future[Boolean] = {
       val total = response.totalHits
@@ -66,7 +66,14 @@ trait HasDeleteByQuery { self: ES =>
         Future.successful(true)
       } else {
         val verified = Future.sequence(
-          response.hits.toSeq.map { hit => condition(hit).map((hit.id, _)) })
+          response.hits.toSeq.map { hit => 
+            condition(hit).map { toDelete =>
+              if (!toDelete)
+                Logger.warn("Keeping item " + hit.id + " because it is referenced by others")
+              (hit.id, toDelete) 
+            } 
+          }
+        )
         
         verified.flatMap { result =>
           val idsToDelete = result.filter(_._2).map(_._1)
@@ -94,7 +101,7 @@ trait HasDeleteByQuery { self: ES =>
       hits.foldLeft(Future.successful(true)) { case (fSuccess, hit) =>
         fSuccess.flatMap { success =>
           client execute {
-            delete id hit.id from ES.PERIPLEO / index parent hit.field("_parent").value.toString
+            delete id hit.id from ES.PERIPLEO / index parent hit.field("_parent").getValue[String]
           } map { _ => success
           } recover { case t: Throwable => false }
         }

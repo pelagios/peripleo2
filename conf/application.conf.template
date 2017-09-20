@@ -34,7 +34,7 @@ play.modules {
   # If there are any built-in modules that you want to disable, you can list them here.
   #enabled += my.application.Module
 
-  enabled += services.ESModule
+  enabled += es.ESModule
 
   # If there are any built-in modules that you want to disable, you can list them here.
   #disabled += ""

@@ -22,7 +22,7 @@
   <div class="row">
     <div class="card">
       <div class="inner">
-        <table>
+        <table class="dataset-list">
           <thead>
             <tr>
               <th>Dataset</th>
@@ -35,13 +35,13 @@
 
           <tbody>
             @for(d <- datasets.items.map(_.isConflationOf.head)) {
-              <tr>
+              <tr data-id="@d.uri">
                 <td>@d.title</td>
                 <td><a href="@d.homepage">@d.homepage</a></td>
                 <td></td>
                 <td><time class="timeago" datetime="@d.lastSyncedAt">@d.lastSyncedAt</time></td>
                 <td class="actions">
-                  <button class="btn small icon red">&#xf014;</button>
+                  <button class="btn small icon red delete">&#xf014;</button>
                   <button class="btn small icon outline">&#xf093;</button>
                 </td>
               </tr>
@@ -67,6 +67,7 @@
   <script src="@routes.WebJarAssets.at(webjars.locate("require.min.js"))" data-main="@routes.Assets.versioned("javascripts/admin/datasets/annotations.js")"></script>
   @helper.javascriptRouter("jsRoutes")(
     controllers.admin.datasets.routes.javascript.AnnotationsAdminController.importData,
+    controllers.admin.datasets.routes.javascript.AnnotationsAdminController.deleteDataset,
     controllers.api.admin.routes.javascript.TaskAPIController.list
   )
 }

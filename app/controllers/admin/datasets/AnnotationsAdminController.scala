@@ -90,10 +90,9 @@ class AnnotationsAdminController @Inject() (
     
   }
   
-  def deleteDataset(id: String) = AsyncStack(AuthorityKey -> Role.ADMIN) { implicit request =>
-    itemService.safeDeleteByDataset(id).map { _ =>
-      Ok
-    }
+  def deleteDataset(id: String) = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>
+    itemService.safeDeleteByDataset(id)
+    Ok
   }
 
 }
