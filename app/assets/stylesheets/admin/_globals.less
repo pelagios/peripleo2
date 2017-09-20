@@ -31,6 +31,37 @@ h2 {
   font-size:19px;
 }
 
+table {
+  width:100%;
+  border-collapse:collapse;
+
+  th {
+    font-weight:300;
+    text-align:left;
+    padding:10px;
+    font-size:15px;
+    border-top:3px solid @form-grey-border;
+    color:@form-type;
+  }
+
+  td {
+    padding:10px;
+    border-top:1px solid @form-grey-border;
+    font-size:15px;
+    color:@form-type;
+  }
+
+  tr:hover td {
+    background-color:fade(@form-grey-border, 25%);
+  }
+
+  td.actions {
+    text-align:right;
+    border-width:1px 0 0 0;
+  }
+
+}
+
 .icon {
   font-family:FontAwesome;
 }

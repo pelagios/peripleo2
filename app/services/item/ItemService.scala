@@ -90,9 +90,17 @@ class ItemService @Inject() (
       } start offset limit limit
     } map { response =>
       Page(response.tookInMillis, response.totalHits, offset, limit, response.as[(Item, Long)].map(_._1))
-    }
-    
+    } 
   }
+  
+  def findByParent(parentIdentifier: String, offset: Int = 0, limit: Int = 20) =
+    es.client execute {
+      search in ES.PERIPLEO / ES.ITEM query {
+        constantScoreQuery {
+          filter ( termQuery("is_conflation_of.is_part_of.ids" -> parentIdentifier) )
+        }
+      }
+    }
     
   def findPartsOf(identifier: String, offset: Int = 0, limit: Int = 20) =
     es.client execute {

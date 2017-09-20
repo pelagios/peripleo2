@@ -37,6 +37,7 @@ libraryDependencies ++= Seq(
   "org.webjars" % "numeral-js" % "1.5.3-1",
   "org.webjars" % "typeaheadjs" % "0.11.1",
   "org.webjars" % "velocity" % "1.1.0",
+  "org.webjars.bower" % "timeago" % "1.5.3",
   "org.webjars.npm" % "jquery.scrollintoview" % "1.9.4",
   "org.webjars.npm" % "leaflet-iiif" % "1.2.1",
 

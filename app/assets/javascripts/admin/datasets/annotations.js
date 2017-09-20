@@ -17,6 +17,8 @@ require(['admin/hasUploads'], function(Uploads) {
           return false;
         };
 
+    jQuery('.timeago').timeago();
+
     btnRegisterVoID.click(registerVoID);
     Uploads.enable('.new-upload');
   });

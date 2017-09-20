@@ -22,9 +22,32 @@
   <div class="row">
     <div class="card">
       <div class="inner">
-        @for(d <- datasets.items) {
-          <p>@d.title</p>
-        }
+        <table>
+          <thead>
+            <tr>
+              <th>Dataset</th>
+              <th>Homepage</th>
+              <th>Subsets</th>
+              <th>Last synced</th>
+              <th></th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for(d <- datasets.items.map(_.isConflationOf.head)) {
+              <tr>
+                <td>@d.title</td>
+                <td><a href="@d.homepage">@d.homepage</a></td>
+                <td></td>
+                <td><time class="timeago" datetime="@d.lastSyncedAt">@d.lastSyncedAt</time></td>
+                <td class="actions">
+                  <button class="btn small icon red">&#xf014;</button>
+                  <button class="btn small icon outline">&#xf093;</button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
 
         @views.html.pagination(controllers.admin.datasets.routes.AnnotationsAdminController.index().url, datasets)
       </div>
