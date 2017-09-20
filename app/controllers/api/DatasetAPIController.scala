@@ -12,7 +12,7 @@ import services.item.search.filters.TermFilter
 
 @Singleton
 class DatasetAPIController @Inject() (
-  itemService: ItemService,
+  implicit val itemService: ItemService,
   implicit val searchService: SearchService,
   implicit val ctx: ExecutionContext
 ) extends Controller with HasPrettyPrintJSON with HasDatasetStats {
@@ -28,10 +28,11 @@ class DatasetAPIController @Inject() (
  
     f.map { result =>
       
-      implicit val resultWrites: Writes[(Item, Long)] = (
+      implicit val resultWrites: Writes[(Item, Long, Int)] = (
         (JsPath).write[Item] and
-        (JsPath \ "items").write[Long]
-      )(t => (t._1, t._2)) 
+        (JsPath \ "items").write[Long] and
+        (JsPath \ "subsets").write[Int]
+      )(t => (t._1, t._2, t._3)) 
       
       jsonOk(Json.toJson(result))   
     }    

@@ -34,7 +34,7 @@ class ItemAPIController @Inject() (
     // IMO it makes sense to keep the API clean by providing proper HTTP 404 when the item doesn't exist
     // rather than just 0 results
     itemService.findByIdentifier(identifier).flatMap {
-      case Some(item) => itemService.findPartsOf(identifier, offset, limit).map(parts => jsonOk(Json.toJson(parts)))
+      case Some(item) => itemService.findByParent(identifier, offset, limit).map(parts => jsonOk(Json.toJson(parts)))
       case None => Future.successful(NotFound)
     }
   }

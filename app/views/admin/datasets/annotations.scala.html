@@ -1,4 +1,4 @@
-@(datasets: services.Page[(services.item.Item, Long)])(implicit request: RequestHeader, webjars: WebJarAssets)
+@(datasets: services.Page[(services.item.Item, Long, Int)])(implicit request: RequestHeader, webjars: WebJarAssets)
 
 @views.html.admin._layout("Dataset Administration | Annotations ", "annotations", "stylesheets/admin/datasets/index.css") {
   <div class="row">
@@ -41,7 +41,7 @@
                   <td>@d.title</td>
                   <td><a href="@d.homepage" target="_blank">@d.homepage</a></td>
                   <td class="centered number">@t._2</td>
-                  <td></td>
+                  <td class="centered number">@t._3</td>
                   <td><time class="timeago" datetime="@d.lastSyncedAt">@d.lastSyncedAt</time></td>
                   <td class="actions">
                     <button class="btn small icon red delete" title="Delete">&#xf014;</button>

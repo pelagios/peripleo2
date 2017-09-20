@@ -94,20 +94,12 @@ class ItemService @Inject() (
     }
   }
 
+  // TODO how to deal with cases where only want direct children?
   def findByParent(parentIdentifier: String, offset: Int = 0, limit: Int = 20) =
     es.client execute {
       search in ES.PERIPLEO / ES.ITEM query {
         constantScoreQuery {
           filter ( termQuery("is_conflation_of.is_part_of.ids" -> parentIdentifier) )
-        }
-      }
-    }
-
-  def findPartsOf(identifier: String, offset: Int = 0, limit: Int = 20) =
-    es.client execute {
-      search in ES.PERIPLEO / ES.ITEM query {
-        constantScoreQuery {
-          filter ( termQuery("is_conflation_of.is_part_of.ids" -> identifier) )
         }
       } start offset limit limit
     } map { response =>

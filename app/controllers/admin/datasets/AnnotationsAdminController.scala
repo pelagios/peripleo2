@@ -24,10 +24,10 @@ import org.pelagios.api.dataset.Dataset
 @Singleton
 class AnnotationsAdminController @Inject() (
   val config: Configuration,
-  val itemService: ItemService,
   val taskService: TaskService,
   val users: UserService,
   val voidHarvester: VoIDHarvester,
+  implicit val itemService: ItemService,
   implicit val searchService: SearchService,
   implicit val ctx: ExecutionContext,
   implicit val system: ActorSystem,
