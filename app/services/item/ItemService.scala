@@ -257,9 +257,7 @@ class ItemService @Inject() (
             filter ( termQuery("reference_to.doc_id" -> hit.id) )
           }
         } start 0 limit 0
-      } map { response =>
-        response.totalHits == 0
-      }
+      } map { _.totalHits == 0 }
       
     def deleteObjects(): Future[Boolean] =
       es.deleteConditional(ES.ITEM, termQuery("is_conflation_of.is_in_dataset.ids" -> identifier), isOkToDelete)
@@ -270,6 +268,22 @@ class ItemService @Inject() (
           t.printStackTrace()
           false
         }
+        
+    def hasItemsLeft(): Future[Boolean] =
+      // Refresh index first, otherwise we'll still see items that were deleted in the meantime
+      es.refreshIndex().flatMap { success =>
+        if (success) {
+          es.client execute {
+            search in ES.PERIPLEO / ES.ITEM query {
+              constantScoreQuery {
+                filter ( termQuery("is_conflation_of.is_in_dataset.ids" -> identifier) )
+              }
+            }
+          } map { _.totalHits > 0 }
+        } else {
+          Future.successful(false)
+        }
+      }
 
     // Datasets and subsets
     def deleteDatasets(): Future[Boolean] =
@@ -289,8 +303,13 @@ class ItemService @Inject() (
     for {
       s1 <- deleteReferences
       s2 <- deleteObjects
-      s3 <- deleteDatasets
-    } yield s1 && s3
+      
+      // Check if the dataset was removed completely, or whether some 
+      // items remained because they were referenced by others
+      hasItemsLeft <- hasItemsLeft
+      
+      s3 <- if (hasItemsLeft) Future.successful(true) else deleteDatasets
+    } yield s1 && s2
 
   }
 

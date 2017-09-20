@@ -9,7 +9,7 @@ import org.elasticsearch.common.settings.Settings
 import play.api.{ Configuration, Logger }
 import play.api.inject.ApplicationLifecycle
 import scala.io.Source
-import scala.concurrent.Future
+import scala.concurrent.{ ExecutionContext, Future }
 import scala.concurrent.duration._
 import scala.util.{ Try, Success, Failure }
 import scala.concurrent.Await
@@ -91,6 +91,11 @@ class ES @Inject() (
       }
     }
   }
+  
+  def refreshIndex()(implicit ctx: ExecutionContext): Future[Boolean] = 
+    client execute {
+      refresh index ES.PERIPLEO
+    } map { _ => true } recover { case t: Throwable => false }
 
   private def start() = {
     implicit val timeout = 60.seconds
