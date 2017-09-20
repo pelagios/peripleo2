@@ -27,6 +27,7 @@
             <tr>
               <th>Dataset</th>
               <th>Homepage</th>
+              <th>Items</th>
               <th>Subsets</th>
               <th>Last synced</th>
               <th></th>
@@ -37,12 +38,13 @@
             @for(d <- datasets.items.map(_.isConflationOf.head)) {
               <tr data-id="@d.uri">
                 <td>@d.title</td>
-                <td><a href="@d.homepage">@d.homepage</a></td>
+                <td><a href="@d.homepage" target="_blank">@d.homepage</a></td>
+                <td></td>
                 <td></td>
                 <td><time class="timeago" datetime="@d.lastSyncedAt">@d.lastSyncedAt</time></td>
                 <td class="actions">
-                  <button class="btn small icon red delete">&#xf014;</button>
-                  <button class="btn small icon outline">&#xf093;</button>
+                  <button class="btn small icon red delete" title="Delete">&#xf014;</button>
+                  <button class="btn small icon outline" title="Import file">&#xf093;</button>
                 </td>
               </tr>
             }

@@ -40,15 +40,22 @@ table {
     text-align:left;
     padding:10px;
     font-size:15px;
-    border-top:3px solid @form-grey-border;
-    color:@form-type;
+    border-bottom:3px solid @haze-dark;
+    color:@stone-dark;
   }
 
   td {
+    max-width: 15vw;
     padding:10px;
-    border-top:1px solid @form-grey-border;
+    border-bottom:1px solid @haze-dark;
     font-size:15px;
     color:@form-type;
+    overflow:hidden;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+
+    a { color:@stone-dark; }
+
   }
 
   tr:hover td {
@@ -57,7 +64,6 @@ table {
 
   td.actions {
     text-align:right;
-    border-width:1px 0 0 0;
   }
 
 }
