@@ -69,12 +69,18 @@ define([
             randomIdx = Math.floor(Math.random() * depictions.length);
             randomDepiction = depictions[randomIdx];
 
-            if (randomDepiction.iiif_uri)
-              depictionView = new IIIFView(depictionContainer, randomDepiction);
-            else
+            if (randomDepiction.iiif_uri) {
+              if (isPanelVisible)
+                depictionView = new IIIFView(depictionContainer, randomDepiction);
+              else
+                // Slide panel first, then instantiate IIIF pane, otherwise size will be messed up
+                depictionContainer.velocity('slideDown', jQuery.extend({}, SLIDE_OPTS, {
+                  complete: function() { depictionView = new IIIFView(depictionContainer, randomDepiction); }                
+                }));
+            } else {
               depictionView = new ImageView(depictionContainer, randomDepiction);
-
-            if (!isPanelVisible) depictionContainer.velocity('slideDown', SLIDE_OPTS);
+              if (!isPanelVisible) depictionContainer.velocity('slideDown', SLIDE_OPTS);
+            }
           } else if (isPanelVisible) {
             depictionContainer.velocity('slideUp', SLIDE_OPTS);
             depictionView = false;
