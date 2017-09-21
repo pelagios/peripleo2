@@ -15,7 +15,7 @@ import play.api.i18n.{ I18nSupport, MessagesApi }
 import play.api.mvc.MultipartFormData
 import play.api.libs.Files
 import scala.concurrent.{ ExecutionContext, Future }
-import services.item.{ ItemType, PathHierarchy } 
+import services.item._
 import services.item.importers.DatasetImporter
 import services.item.search.SearchService
 import services.task.{ TaskService, TaskType }
@@ -103,9 +103,11 @@ class AnnotationsAdminController @Inject() (
     
   val newDatasetForm = Form(
     mapping(
+      "identifier" -> nonEmptyText,
       "title" -> nonEmptyText,
-      "description" -> text,
-      "homepage" -> nonEmptyText
+      "description" -> optional(text),
+      "homepage" -> nonEmptyText,
+      "license" -> optional(text)
     )(DatasetMeta.apply)(DatasetMeta.unapply)
   ) 
   
@@ -119,11 +121,22 @@ class AnnotationsAdminController @Inject() (
           Future.successful(BadRequest(views.html.admin.datasets.new_dataset(formWithErrors))),
           
         docMeta =>
-          // TODO store
-          Future.successful(Ok)
+          // TODO need to define the dataset type! (Dropdown in UI + appropriate import)
+          upsertDatasetRecord(
+            docMeta.identifier,
+            docMeta.title,
+            docMeta.description.map(d => Seq(Description(d))).getOrElse(Seq.empty[Description]),
+            Seq.empty[Category],
+            docMeta.license,
+            None, // logo URL
+            None) // lastChangedAt 
+          .map { success =>
+            if (success) Redirect(controllers.admin.datasets.routes.AnnotationsAdminController.index())
+            else InternalServerError
+          }
     )
   }
 
 }
 
-case class DatasetMeta(title: String, description: String, homepage: String)
+case class DatasetMeta(identifier: String, title: String, description: Option[String], homepage: String, license: Option[String])

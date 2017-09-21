@@ -96,7 +96,6 @@ class ItemService @Inject() (
     }
   }
 
-  // TODO how to deal with cases where only want direct children?
   def findByIsPartOf(parent: ItemRecord, directChildrenOnly: Boolean = true, offset: Int = 0, limit: Int = 20) = {
     val parentId = parent.uri
     val ancestry = parent.isPartOf.map(_.ids).getOrElse(Seq.empty[String]) :+ parentId

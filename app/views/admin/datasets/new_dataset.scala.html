@@ -5,11 +5,13 @@
     <div class="card">
       <div class="inner">
         @helper.form(action = controllers.admin.datasets.routes.AnnotationsAdminController.storeNewDataset(), args = 'autocomplete -> "off") {
+          @helper.inputText(form("identifier"), args = '_label -> "Identifier", '_help -> "*")
           @helper.inputText(form("title"), args = '_label -> "Title", '_help -> "*")
           @helper.textarea(form("description"), args = '_label -> "Description")
           @helper.inputText(form("homepage"), args = '_label -> "Homepage", '_help -> "*")
+          @helper.inputText(form("license"), args = '_label -> "License")
+          <button type="submit" class="btn">Submit</a>
         }
-        <button type="submit" class="btn">Submit</a>
       </div>
     </div>
   </div>
