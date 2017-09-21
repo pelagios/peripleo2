@@ -105,7 +105,7 @@ class AnnotationsAdminController @Inject() (
   val newDatasetForm = Form(
     mapping(
       "identifier" -> nonEmptyText,
-      "item_type" -> nonEmptyText.transform[ItemType](ItemType.withName(_), _.name),
+      "item_type" -> nonEmptyText.transform[ItemType](ItemType.withName(_), _.toString),
       "title" -> nonEmptyText,
       "description" -> optional(text),
       "homepage" -> nonEmptyText,

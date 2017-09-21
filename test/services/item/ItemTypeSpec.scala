@@ -26,4 +26,31 @@ class ItemTypeSpec extends PlaySpec {
     
   }
   
+  "ItemType" should {
+    
+    "be properly detected from a single-string representation" in {
+      
+      import ItemType._
+      
+      val testSet = Seq(
+        ("DATASET"             -> DATASET),
+        ("AUTHORITY"           -> DATASET.AUTHORITY),
+        ("AUTHORITY_GAZETTEER" -> DATASET.AUTHORITY.GAZETTEER),
+        ("AUTHORITY_PEOPLE"    -> DATASET.AUTHORITY.PEOPLE),
+        ("AUTHORITY_PERIOD"    -> DATASET.AUTHORITY.PERIODS),
+        ("DATASET_ANNOTATIONS" -> DATASET.ANNOTATIONS),
+        ("DATASET_GEODATA"     -> DATASET.GEODATA),
+        ("OBJECT"              -> OBJECT),
+        ("FEATURE"             -> FEATURE),
+        ("PLACE"               -> PLACE),
+        ("PERSON"              -> PERSON),
+        ("PERIOD"              -> PERIOD))
+      
+      testSet.foreach { case (str, expected) =>
+        ItemType.withName(str) mustEqual expected 
+      }
+    }
+    
+  }
+  
 }

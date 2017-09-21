@@ -6,7 +6,7 @@ import play.api.libs.functional.syntax._
 
 sealed trait ItemType {
   
-  val name: String
+  private[item] val name: String
   
   val parent: Option[ItemType]
   
@@ -23,7 +23,7 @@ sealed trait ItemType {
   }
   
   /** Default toString returns the highest-granularity label **/
-  override lazy val toString: String = allAsString.head
+  override lazy val toString: String = allAsString.last
   
 }
 

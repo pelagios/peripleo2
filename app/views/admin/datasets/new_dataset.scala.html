@@ -13,8 +13,8 @@
             <dd>
               <select id="item_type" name="item_type">
                 <option value selected="true">-- Select dataset type --</option>
-                @for(t <-  services.item.ItemType.all) {
-                  <option value="@t.toString">@t.name</option>
+                @for(t <- services.item.ItemType.all) {
+                  <option value="@t">@t</option>
                 }
               </select>
             </dd>
