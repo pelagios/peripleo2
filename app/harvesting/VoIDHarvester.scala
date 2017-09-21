@@ -89,7 +89,7 @@ class VoIDHarvester @Inject() (
   /** Imports the datasets into the index **/
   private def importDatasets(rootDatasets: Iterable[Dataset]): Future[Boolean] = {
     val items = PelagiosVoIDCrosswalk.fromDatasets(rootDatasets.toSeq)
-    new DatasetImporter(itemService, ItemType.DATASET).importDatasets(items)
+    new DatasetImporter(itemService, ItemType.DATASET.ANNOTATIONS).importDatasets(items)
   }
   
   /** Imports annotations from the dumpfiles into the index **/
