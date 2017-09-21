@@ -17,6 +17,10 @@ GET     /admin/datasets/geodata                      controllers.admin.datasets.
 GET     /admin/datasets/csv                          controllers.admin.datasets.CSVAdminController.index
 POST    /admin/datasets/csv                          controllers.admin.datasets.CSVAdminController.importCSV
 
+# HACK
+GET     /admin/datasets/new                          controllers.admin.datasets.AnnotationsAdminController.defineNewDataset
+POST    /admin/datasets/new                          controllers.admin.datasets.AnnotationsAdminController.storeNewDataset
+
 GET     /admin/authorities/gazetteers                controllers.admin.authorities.GazetteerAdminController.index
 POST    /admin/authorities/gazetteers                controllers.admin.authorities.GazetteerAdminController.importGazetteer
 GET     /admin/authorities/people                    controllers.admin.authorities.PeopleAdminController.index

@@ -6,11 +6,15 @@ import controllers.admin.authorities.BaseAuthorityAdminController
 import harvesting.VoIDHarvester
 import harvesting.loaders.DumpLoader
 import harvesting.crosswalks._
+import harvesting.crosswalks.tei.TeiCrosswalk
 import javax.inject.{ Inject, Singleton }
 import play.api.{ Configuration, Logger }
+import play.api.data.Form
+import play.api.data.Forms._
+import play.api.i18n.{ I18nSupport, MessagesApi }
 import play.api.mvc.MultipartFormData
 import play.api.libs.Files
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ ExecutionContext, Future }
 import services.item.{ ItemType, PathHierarchy } 
 import services.item.importers.DatasetImporter
 import services.item.search.SearchService
@@ -18,8 +22,6 @@ import services.task.{ TaskService, TaskType }
 import services.user.{ Role, UserService }
 import services.item.ItemService
 import services.item.importers.ItemImporter
-import harvesting.crosswalks.tei.TeiCrosswalk
-import org.pelagios.api.dataset.Dataset
 
 @Singleton
 class AnnotationsAdminController @Inject() (
@@ -27,24 +29,23 @@ class AnnotationsAdminController @Inject() (
   val taskService: TaskService,
   val users: UserService,
   val voidHarvester: VoIDHarvester,
+  val messagesApi: MessagesApi,
   implicit val itemService: ItemService,
   implicit val searchService: SearchService,
   implicit val ctx: ExecutionContext,
   implicit val system: ActorSystem,
   implicit val webjars: WebJarAssets
-) extends BaseAuthorityAdminController(new DatasetImporter(itemService, ItemType.DATASET.ANNOTATIONS)) with HasDatasetStats {
+) extends BaseAuthorityAdminController(new DatasetImporter(itemService, ItemType.DATASET.ANNOTATIONS)) 
+  with HasDatasetStats 
+  with I18nSupport {
   
   def index = AsyncStack(AuthorityKey -> Role.ADMIN) { implicit request =>
-    
     itemService.findByType(ItemType.DATASET.ANNOTATIONS).flatMap { datasets =>
       addStats(datasets)
-    } map { page =>    
-      Ok(views.html.admin.datasets.annotations(page))
-    }
+    } map { page => Ok(views.html.admin.datasets.annotations(page)) }
   }
   
   def importData = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>
-    
     val voidReq = request.body.asFormUrlEncoded
     val fileReq = request.body.asMultipartFormData
     
@@ -99,5 +100,30 @@ class AnnotationsAdminController @Inject() (
     itemService.safeDeleteByDataset(id)
     Ok
   }
+    
+  val newDatasetForm = Form(
+    mapping(
+      "title" -> nonEmptyText,
+      "description" -> text,
+      "homepage" -> nonEmptyText
+    )(DatasetMeta.apply)(DatasetMeta.unapply)
+  ) 
+  
+  def defineNewDataset = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>
+    Ok(views.html.admin.datasets.new_dataset(newDatasetForm))
+  }
+  
+  def storeNewDataset = AsyncStack(AuthorityKey -> Role.ADMIN) { implicit request =>
+    newDatasetForm.bindFromRequest.fold(
+        formWithErrors =>
+          Future.successful(BadRequest(views.html.admin.datasets.new_dataset(formWithErrors))),
+          
+        docMeta =>
+          // TODO store
+          Future.successful(Ok)
+    )
+  }
 
 }
+
+case class DatasetMeta(title: String, description: String, homepage: String)
