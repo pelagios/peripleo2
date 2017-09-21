@@ -66,9 +66,18 @@ object ItemType {
   
   // This is a bit of a nuisance, but can't find a better way
   private val LOOKUP_TABLE = 
-    all.map(itemType => (itemType.allAsString.toSet -> itemType)).toMap
+    all.flatMap { itemType =>
+      Seq(
+        // A set containing all names in the hierarchy
+        (itemType.allAsString.toSet -> itemType),
+        
+        // plus a set containing only the highest-granularity name
+        (Set(itemType.toString) -> itemType)
+      )
+    }.toMap
   
-  def parse(s: Seq[String]): ItemType = LOOKUP_TABLE.get(s.toSet).get
+  def parse(s: Seq[String]): ItemType =
+    LOOKUP_TABLE.get(s.toSet).get
   
   def withName(s: String): ItemType = parse(Seq(s))
  
