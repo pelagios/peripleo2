@@ -6,6 +6,19 @@
       <div class="inner">
         @helper.form(action = controllers.admin.datasets.routes.AnnotationsAdminController.storeNewDataset(), args = 'autocomplete -> "off") {
           @helper.inputText(form("identifier"), args = '_label -> "Identifier", '_help -> "*")
+          <dl id="item_type_field">
+            <dt>
+              <label for="item_type">Type</label>
+            </dt>
+            <dd>
+              <select id="item_type" name="item_type">
+                <option value selected="true">-- Select dataset type --</option>
+                @for(t <-  services.item.ItemType.all) {
+                  <option value="@t.toString">@t.name</option>
+                }
+              </select>
+            </dd>
+          </dl>
           @helper.inputText(form("title"), args = '_label -> "Title", '_help -> "*")
           @helper.textarea(form("description"), args = '_label -> "Description")
           @helper.inputText(form("homepage"), args = '_label -> "Homepage", '_help -> "*")

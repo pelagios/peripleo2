@@ -22,6 +22,7 @@ import services.task.{ TaskService, TaskType }
 import services.user.{ Role, UserService }
 import services.item.ItemService
 import services.item.importers.ItemImporter
+import org.joda.time.DateTime
 
 @Singleton
 class AnnotationsAdminController @Inject() (
@@ -100,10 +101,11 @@ class AnnotationsAdminController @Inject() (
     itemService.safeDeleteByDataset(id)
     Ok
   }
-    
+
   val newDatasetForm = Form(
     mapping(
       "identifier" -> nonEmptyText,
+      "item_type" -> nonEmptyText.transform[ItemType](ItemType.withName(_), _.name),
       "title" -> nonEmptyText,
       "description" -> optional(text),
       "homepage" -> nonEmptyText,
@@ -120,23 +122,34 @@ class AnnotationsAdminController @Inject() (
         formWithErrors =>
           Future.successful(BadRequest(views.html.admin.datasets.new_dataset(formWithErrors))),
           
-        docMeta =>
-          // TODO need to define the dataset type! (Dropdown in UI + appropriate import)
-          upsertDatasetRecord(
+        docMeta => {
+          val importer = new DatasetImporter(itemService, docMeta.itemType)
+          val record = ItemRecord(
             docMeta.identifier,
+            Seq(docMeta.identifier),
+            DateTime.now,
+            None, // lastChangedAt
             docMeta.title,
-            docMeta.description.map(d => Seq(Description(d))).getOrElse(Seq.empty[Description]),
+            None, None, // isInDataset, isPartOf
             Seq.empty[Category],
+            docMeta.description.map(d => Seq(Description(d))).getOrElse(Seq.empty[Description]),
+            Some(docMeta.homepage),
             docMeta.license,
-            None, // logo URL
-            None) // lastChangedAt 
-          .map { success =>
+            Seq.empty[Language],
+            Seq.empty[Depiction],
+            None, None, None, // geometry, representativePoint, temporalBounds
+            Seq.empty[Name],
+            Seq.empty[String], // closeMatches
+            Seq.empty[String]) // exactMatches
+            
+          importer.importRecord(record).map { success =>
             if (success) Redirect(controllers.admin.datasets.routes.AnnotationsAdminController.index())
             else InternalServerError
           }
+        }
     )
   }
 
 }
 
-case class DatasetMeta(identifier: String, title: String, description: Option[String], homepage: String, license: Option[String])
+case class DatasetMeta(identifier: String, itemType: ItemType, title: String, description: Option[String], homepage: String, license: Option[String])

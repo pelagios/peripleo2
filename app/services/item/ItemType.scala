@@ -51,9 +51,7 @@ object ItemType {
   object PERSON  extends ItemType { val name = "PERSON"  ; val parent = None }
   object PERIOD  extends ItemType { val name = "PERIOD"  ; val parent = None }
   
-  // This is a bit of a nuisance, but can't find a better way
-  private val LOOKUP_TABLE = 
-    Seq(DATASET,
+  def all = Seq(DATASET,
         DATASET.AUTHORITY,
         DATASET.AUTHORITY.GAZETTEER,
         DATASET.AUTHORITY.PEOPLE,
@@ -64,7 +62,11 @@ object ItemType {
         FEATURE,
         PLACE,
         PERSON,
-        PERIOD).map(itemType => (itemType.allAsString.toSet -> itemType)).toMap
+        PERIOD)
+  
+  // This is a bit of a nuisance, but can't find a better way
+  private val LOOKUP_TABLE = 
+    all.map(itemType => (itemType.allAsString.toSet -> itemType)).toMap
   
   def parse(s: Seq[String]): ItemType = LOOKUP_TABLE.get(s.toSet).get
   
