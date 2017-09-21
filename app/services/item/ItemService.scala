@@ -97,22 +97,31 @@ class ItemService @Inject() (
   }
 
   // TODO how to deal with cases where only want direct children?
-  def findByParent(parentIdentifier: String, offset: Int = 0, limit: Int = 20) =
+  def findByIsPartOf(parent: ItemRecord, directChildrenOnly: Boolean = true, offset: Int = 0, limit: Int = 20) = {
+    val parentId = parent.uri
+    val ancestry = parent.isPartOf.map(_.ids).getOrElse(Seq.empty[String]) :+ parentId
+    val query = 
+      if (directChildrenOnly)
+        // Will return children directly below the parent only, but not nested sub-levels
+        bool { must (
+          // Cf. https://www.elastic.co/guide/en/elasticsearch/guide/current/_finding_multiple_exact_values.html#_contains_but_does_not_equal
+          termsQuery("is_conflation_of.is_part_of.ids", ancestry:_*),
+          ScriptQueryDefinition(script("parent_count") params(Map("parents" -> ancestry.size))  scriptType ScriptType.FILE) 
+        )}
+      else 
+        // Will return children at any level and sublevel
+        termQuery("is_conflation_of.is_part_of.ids" -> parentId)
+        
     es.client execute {
       search in ES.PERIPLEO / ES.ITEM query { 
         constantScoreQuery {
-          filter ( bool {
-            must (
-              termQuery("is_conflation_of.is_part_of.ids" -> parentIdentifier),
-              // TODO just for testing - remove '1' and replace with actual required parent count
-              ScriptQueryDefinition(script("parent_count") params(Map("parents" -> 1))  scriptType ScriptType.FILE) 
-            )
-          })
+          filter ( query )
         }
       } start offset limit limit
     } map { response =>
       Page(response.tookInMillis, response.totalHits, offset, limit, response.as[(Item, Long)].map(_._1))
     }
+  }
 
   /** Retrieves connected items.
     *

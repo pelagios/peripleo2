@@ -39,7 +39,7 @@ trait HasDatasetStats {
     
   private def getSubsetCount(datasets: Seq[Item])(implicit ctx: ExecutionContext, itemService: ItemService): Future[Seq[Long]] =
     Future.sequence(
-      datasets.map(d => itemService.findByParent(d.isConflationOf.head.uri, 0, 0).map(_.total))
+      datasets.map(d => itemService.findByIsPartOf(d.isConflationOf.head, true, 0, 0).map(_.total))
     )
   
   def addStats(datasets: Page[Item])(implicit ctx: ExecutionContext, itemService: ItemService, searchService: SearchService): Future[Page[(Item, Long, Int)]] = {
