@@ -102,11 +102,20 @@ class AnnotationsAdminController @Inject() (
     request.body.asMultipartFormData match {
       case Some(form) => form.file("file") match {
         case Some(filepart) =>
-          play.api.Logger.info("Importing into " + datasetId)
+          Logger.info("Importing into " + datasetId)
 
-          // TODO
+          // TODO check if valid file
 
-          Ok
+          // TODO fetch dataset from index
+
+          // TODO Import into dataset, using an ItemImporter (type = OBJECT) + a dump loader
+          //   with Pelagios annotation crosswalk
+
+          // TODO in the future, allow different types of files
+
+          // TODO remove the generic "upload new" button
+
+          Redirect(routes.AnnotationsAdminController.index)
 
         case None =>
           // Request without filepart? Bad request!
