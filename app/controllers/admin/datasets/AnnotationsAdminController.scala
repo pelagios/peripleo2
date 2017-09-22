@@ -64,6 +64,7 @@ class AnnotationsAdminController @Inject() (
       case _ => BadRequest
     }
 
+
     def importFile(form: MultipartFormData[Files.TemporaryFile]) = form.file("file") match {
       case Some(filepart) =>
         if (filepart.filename.contains(".tei.xml")) {
@@ -95,6 +96,26 @@ class AnnotationsAdminController @Inject() (
       case _ => BadRequest
     }
 
+  }
+
+  def importInto(datasetId: String) = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>
+    request.body.asMultipartFormData match {
+      case Some(form) => form.file("file") match {
+        case Some(filepart) =>
+          play.api.Logger.info("Importing into " + datasetId)
+
+          // TODO
+
+          Ok
+
+        case None =>
+          // Request without filepart? Bad request!
+          BadRequest
+      }
+
+      // Request without multipart form data? Bad request!
+      case None => BadRequest
+    }
   }
 
   def deleteDataset(id: String) = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>

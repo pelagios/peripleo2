@@ -7,11 +7,11 @@
         <span class="dataset-count">@datasets.total</span> Annotation Datasets
         <div class="add-data">
           <a href="#" class="btn outline register-void">Register VoID URL</a>
-          <a href="#" class="btn new-upload" data-input="file">Upload New</a>
+          <a href="#" class="btn upload" data-input="upload-new">Upload New</a>
         </div>
 
         @helper.form(action = controllers.admin.datasets.routes.AnnotationsAdminController.importData(), 'enctype -> "multipart/form-data") {
-          <input type="file" id="file" name="file">
+          <input type="file" id="upload-new" name="file">
         }
       </div>
 
@@ -45,7 +45,10 @@
                   <td><time class="timeago" datetime="@d.lastSyncedAt">@d.lastSyncedAt</time></td>
                   <td class="actions">
                     <button class="btn small icon red delete" title="Delete">&#xf014;</button>
-                    <button class="btn small icon outline" title="Import file">&#xf093;</button>
+                    <button class="btn small icon outline upload import-into" data-input="@t._1.docId" title="Import file">&#xf093;</button>
+                    @helper.form(action = controllers.admin.datasets.routes.AnnotationsAdminController.importInto(d.uri), 'enctype -> "multipart/form-data") {
+                      <input type="file" name="file" id="@t._1.docId">
+                    }
                   </td>
                 </tr>
               }

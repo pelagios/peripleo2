@@ -39,7 +39,7 @@ require(['admin/hasUploads'], function(Uploads) {
     datasetList.on('click', '.btn.delete', deleteDataset);
 
 
-    Uploads.enable('.new-upload');
+    Uploads.enable('.upload');
   });
 
 });
