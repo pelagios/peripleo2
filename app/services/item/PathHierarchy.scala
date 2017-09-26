@@ -25,6 +25,9 @@ case class PathHierarchy(path: Seq[(String, String)]) {
   
   lazy val ids: Seq[String] = path.map(_._1)
   
+  def append(id: String, label: String): PathHierarchy =
+    PathHierarchy(path :+ (id, label))
+  
 }
 
 object PathHierarchy {

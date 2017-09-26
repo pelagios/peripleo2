@@ -98,7 +98,7 @@ class AnnotationsAdminController @Inject() (
 
   }
 
-  def importInto(datasetId: String) = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>
+  def importInto(datasetId: String) = AsyncStack(AuthorityKey -> Role.ADMIN) { implicit request =>
     request.body.asMultipartFormData match {
       case Some(form) => form.file("file") match {
         case Some(filepart) =>
@@ -106,24 +106,50 @@ class AnnotationsAdminController @Inject() (
 
           // TODO check if valid file
 
-          // TODO fetch dataset from index
-
-          // TODO Import into dataset, using an ItemImporter (type = OBJECT) + a dump loader
-          //   with Pelagios annotation crosswalk
-
-          // TODO in the future, allow different types of files
-
-          // TODO remove the generic "upload new" button
-
-          Redirect(routes.AnnotationsAdminController.index)
+          itemService.findByIdentifier(datasetId).map {            
+            case Some(dataset) =>
+              // Safe to assume that datasets have exactly one record
+              val record = dataset.isConflationOf.head
+              val pathHierarchy = 
+                record.isPartOf.map(_.append(record.uri, record.title))
+                  .getOrElse(PathHierarchy(record.uri, record.title))
+                  
+              // Not ideal, but for the time being, we enforce a strict mapping
+              // between dataset type and the types of items contained therein
+              val itemType: ItemType = dataset.itemType match {
+                case ItemType.DATASET.AUTHORITY.GAZETTEER => ItemType.PLACE
+                case ItemType.DATASET.AUTHORITY.PEOPLE    => ItemType.PERSON
+                case ItemType.DATASET.AUTHORITY.PERIODS   => ItemType.PERIOD
+                case _                                    => ItemType.OBJECT
+              }
+              
+              // TODO just a hack
+              // TODO in the future: pick crosswalk based on extension and (ideally) file contents
+              // TODO or make it a parameter selected by the user in the admin GUI
+              val crosswalk = PelagiosAnnotationCrosswalk.fromRDF(filepart.filename, pathHierarchy)  
+              val importer = new ItemImporter(itemService, itemType)
+              new DumpLoader(taskService, TaskType("ANNOTATION_IMPORT")).importDump(
+                "Importing into dataset",
+                filepart.ref.file,
+                filepart.filename,
+                crosswalk,
+                importer,
+                loggedIn.username)
+    
+              // TODO remove the generic "upload new" button
+              
+              Redirect(routes.AnnotationsAdminController.index)
+              
+            case None => NotFound
+          }
 
         case None =>
           // Request without filepart? Bad request!
-          BadRequest
+          Future.successful(BadRequest)
       }
 
       // Request without multipart form data? Bad request!
-      case None => BadRequest
+      case None => Future.successful(BadRequest)
     }
   }
 

@@ -6,8 +6,7 @@
       <div class="inner">
         <span class="dataset-count">@datasets.total</span> Annotation Datasets
         <div class="add-data">
-          <a href="#" class="btn outline register-void">Register VoID URL</a>
-          <a href="#" class="btn upload" data-input="upload-new">Upload New</a>
+          <a href="#" class="btn register-void">Register VoID URL</a>
         </div>
 
         @helper.form(action = controllers.admin.datasets.routes.AnnotationsAdminController.importData(), 'enctype -> "multipart/form-data") {
