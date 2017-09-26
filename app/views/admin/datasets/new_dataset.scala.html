@@ -4,7 +4,7 @@
   <div class="row">
     <div class="card">
       <div class="inner">
-        @helper.form(action = controllers.admin.datasets.routes.AnnotationsAdminController.storeNewDataset(), args = 'autocomplete -> "off") {
+        @helper.form(action = controllers.admin.datasets.routes.AnnotationsAdminController.storeNewDataset(), args = 'autocomplete -> "off", 'class -> "crud") {
           @helper.inputText(form("identifier"), args = '_label -> "Identifier", '_help -> "*")
           <dl id="item_type_field">
             <dt>
@@ -23,7 +23,8 @@
           @helper.textarea(form("description"), args = '_label -> "Description")
           @helper.inputText(form("homepage"), args = '_label -> "Homepage", '_help -> "*")
           @helper.inputText(form("license"), args = '_label -> "License")
-          <button type="submit" class="btn">Submit</a>
+          <dt></dt>
+          <dd><button type="submit" class="btn">Submit</a></dd>
         }
       </div>
     </div>
