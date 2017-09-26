@@ -8,11 +8,13 @@ import harvesting.loaders.DumpLoader
 import harvesting.crosswalks._
 import harvesting.crosswalks.tei.TeiCrosswalk
 import javax.inject.{ Inject, Singleton }
+import org.joda.time.DateTime
 import play.api.{ Configuration, Logger }
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.{ I18nSupport, MessagesApi }
 import play.api.mvc.MultipartFormData
+import play.api.mvc.MultipartFormData.FilePart
 import play.api.libs.Files
 import scala.concurrent.{ ExecutionContext, Future }
 import services.item._
@@ -22,7 +24,7 @@ import services.task.{ TaskService, TaskType }
 import services.user.{ Role, UserService }
 import services.item.ItemService
 import services.item.importers.ItemImporter
-import org.joda.time.DateTime
+import services.item.importers.EntityImporter
 
 @Singleton
 class AnnotationsAdminController @Inject() (
@@ -97,6 +99,30 @@ class AnnotationsAdminController @Inject() (
     }
 
   }
+  
+  def importIntoAuthority(f: FilePart[Files.TemporaryFile], itemType: ItemType, inDataset: PathHierarchy, username: String) = {
+    val crosswalk = FeatureCollectionCrosswalk.fromGeoJSON(inDataset)
+    val importer = new EntityImporter(itemService, itemType)
+    new DumpLoader(taskService, TaskType("AUTHORITY_IMPORT")).importDump(
+      "Importing authority data",
+      f.ref.file,
+      f.filename, 
+      crosswalk, 
+      importer, 
+      username)
+  }
+  
+  def importIntoAnnotations(f: FilePart[Files.TemporaryFile], inDataset: PathHierarchy, username: String) = {
+    val crosswalk = PelagiosAnnotationCrosswalk.fromRDF(f.filename, inDataset)  
+    val importer = new ItemImporter(itemService, ItemType.OBJECT)
+    new DumpLoader(taskService, TaskType("ANNOTATION_IMPORT")).importDump(
+      "Importing into dataset",
+      f.ref.file,
+      f.filename,
+      crosswalk,
+      importer,
+      username)
+  }
 
   def importInto(datasetId: String) = AsyncStack(AuthorityKey -> Role.ADMIN) { implicit request =>
     request.body.asMultipartFormData match {
@@ -122,21 +148,11 @@ class AnnotationsAdminController @Inject() (
                 case ItemType.DATASET.AUTHORITY.PERIODS   => ItemType.PERIOD
                 case _                                    => ItemType.OBJECT
               }
-              
-              // TODO just a hack
-              // TODO in the future: pick crosswalk based on extension and (ideally) file contents
-              // TODO or make it a parameter selected by the user in the admin GUI
-              val crosswalk = PelagiosAnnotationCrosswalk.fromRDF(filepart.filename, pathHierarchy)  
-              val importer = new ItemImporter(itemService, itemType)
-              new DumpLoader(taskService, TaskType("ANNOTATION_IMPORT")).importDump(
-                "Importing into dataset",
-                filepart.ref.file,
-                filepart.filename,
-                crosswalk,
-                importer,
-                loggedIn.username)
-    
-              // TODO remove the generic "upload new" button
+             
+              if (itemType == ItemType.OBJECT) 
+                importIntoAnnotations(filepart, pathHierarchy, loggedIn.username)
+              else 
+                importIntoAuthority(filepart, itemType, pathHierarchy, loggedIn.username)
               
               Redirect(routes.AnnotationsAdminController.index)
               
