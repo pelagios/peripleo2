@@ -40,6 +40,7 @@ libraryDependencies ++= Seq(
   "org.webjars.bower" % "timeago" % "1.5.3",
   "org.webjars.npm" % "jquery.scrollintoview" % "1.9.4",
   "org.webjars.npm" % "leaflet-iiif" % "1.2.1",
+  "org.webjars.npm" % "scrollreveal" % "3.3.6",
 
   "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test
 )
