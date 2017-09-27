@@ -29,18 +29,16 @@
           <img class="logo-commons" src="@routes.Assets.versioned("images/logo-commons.png")">
         </a>
       </span>
-
-
-        <div class="nav">
-          <a href="#">About</a>
-          <a href="#">Help</a>
-          <a href="#">FAQ</a>
-        </div>
+      <div class="nav">
+        <a href="#">About</a>
+        <a href="#">Help</a>
+        <a href="#">FAQ</a>
+      </div>
     </div>
 
     <div class="jumbotron">
       <div class="inner">
-        <img src="@routes.Assets.versioned("images/logo-peripleo-white.png")" style="width:250px">
+        <img class="title" src="@routes.Assets.versioned("images/logo-peripleo-white.png")" style="width:250px">
         <div class="buttons">
           <a href="@controllers.routes.ApplicationController.ui()" class="btn outline">Enter</a><br/>
           <!-- a href="">Learn More</a -->
@@ -48,9 +46,9 @@
 
         <p>
           <span class="livestat">128,513 items</span>
-          &middot;
+
           <span class="livestat">12 data sources</span>
-          &middot;
+
           <span class="livestat">15,000 years</span>
         </p>
       </div>
@@ -58,25 +56,19 @@
 
     <div class="section">
       <div class="inner">
-        <h2>The Pelagios Exploration Engine.</h2>
+        <h2>The Pelagios Exploration Engine</h2>
         <p>
-          Peripleo provides access to data published by members of
+          Peripleo is a search engine to
           <a href="">Pelagios Commons</a>, a Digital Humanities initative
           aiming to build better connections between scholars, projects
           and institutions studying places of the past.
-        </p>
-        <p>
-          Our
         </p>
       </div>
     </div>
 
     <div class="section">
       <div class="inner">
-        <h2>How do I use it?</h2>
-        <p>
-          Peripleo is a search engine that provides access to...
-        </p>
+
       </div>
     </div>
 
@@ -89,12 +81,6 @@
         <div class="stats">from 5 data sources</div>
       </div>
     </div>
-
-    <script>
-      (function() {
-        var sr = ScrollReveal();
-        sr.reveal('.stats', { duration: 1000 }, 200);
-      })();
-    </script>
+    <script src="@routes.Assets.versioned("javascripts/landing/anim.js")"></script>
   </body>
 </html>

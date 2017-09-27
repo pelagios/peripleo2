@@ -14,6 +14,13 @@
   font-style:normal;
 }
 
+@font-face {
+  font-family:'Roboto';
+  src:url('/assets/fonts/roboto/Roboto-Light.ttf');
+  font-weight:normal;
+  font-style:normal;
+}
+
 html, body {
   padding:0;
   margin:0;
@@ -68,7 +75,7 @@ html, body {
 .jumbotron {
   text-align:center;
   width:100%;
-  padding:160px 0 80px 0;
+  padding:160px 0 70px 0;
   background-color:#2b3647;
   background-image: url("/assets/images/landing-background.png");
   background-position:center center;
@@ -89,7 +96,22 @@ html, body {
   }
 
   .livestat {
-    padding:0 5px;
+    padding-right:5px;
+    display:inline-block;
+  }
+
+  .livestat::after {
+    content:'\00b7';
+    padding-left:10px;
+    display:inline-block;
+  }
+
+  .livestat:last-child {
+    padding-right:0;
+  }
+
+  .livestat:last-child::after {
+    content:'';
   }
 
   p {
@@ -106,6 +128,16 @@ html, body {
     padding:15px 50px;
     .rounded-corners(4px);
     border-width:2px;
+
+    -moz-transition: all .2s linear;
+    -o-transition: all .2s linear;
+    -webkit-transition: all .2s linear;
+    transition: all .2s linear;
+  }
+
+  .buttons .btn:hover {
+    background-color:#fff;
+    color:#2b3647;
   }
 
   .btn.inverse {
@@ -113,27 +145,33 @@ html, body {
     color:#2b3647;
   }
 
+
 }
 
 .section {
-  color:#2b3647;
+
   text-align:center;
   padding:80px 0;
 
   h2 {
-    font-size:26px;
+    font-size:35px;
+    padding:0 0 20px 0;
     font-weight:normal;
-    font-family:LatoBold;
     margin:0;
-    padding:10px 0;
+    color:#37404f;
   }
 
   p {
-    font-family:Arial, Helvetica, sans-serif;
-    font-size:16px;
-    color:#5f5f5f;
+    padding:10px 0 0 0;
+    font-family:Roboto;// Arial, Helvetica, sans-serif;
+    font-size:18px;
+    color:#555;
     margin:10px auto;
-    max-width:70%;
+    line-height:140%;
+  }
+
+  a {
+    color:#37404f;
   }
 }
 
