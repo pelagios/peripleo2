@@ -1,0 +1,60 @@
+.jumbotron {
+  width:100%;
+  padding:90px 0;
+  background-color:#2b3647;
+  background-image: url("/assets/images/landing-background.png");
+  background-position:center center;
+  background-size:cover;
+  color:#fff;
+
+  .inner img.title {
+    width:250px;
+  }
+
+  .enter {
+
+    .btn {
+      display:inline-block;
+      cursor:pointer;
+      color:#fff;
+      font-size:22px;
+      margin:40px 0;
+      padding:15px 50px;
+      .rounded-corners(4px);
+      border:2px solid #fff;
+      outline:none;
+      text-decoration:none;
+    }
+
+    .btn:hover {
+      background-color:#fff;
+      color:#2b3647;
+    }
+
+  }
+
+  .livestats {
+    font-size:26px;
+
+    span {
+      padding-right:5px;
+      display:inline-block;
+    }
+
+    span::after {
+      content:'\00b7';
+      padding-left:10px;
+      display:inline-block;
+    }
+
+    span:last-child {
+      padding-right:0;
+    }
+
+    span:last-child::after {
+      content:'';
+    }
+
+  }
+
+}

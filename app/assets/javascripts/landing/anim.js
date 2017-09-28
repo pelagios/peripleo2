@@ -9,7 +9,7 @@
     easing:'ease-out'
   });
 
-  sr.reveal('.jumbotron .buttons', {
+  sr.reveal('.jumbotron .enter', {
     origin: 'bottom',
     distance: '40px',
     scale: 1.0,
@@ -17,7 +17,7 @@
     duration:600,
   });
 
-  sr.reveal('.livestat', {
+  sr.reveal('.livestats span', {
     origin:'bottom',
     distance:'20px',
     delay:700,

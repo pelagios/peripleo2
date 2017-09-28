@@ -22,30 +22,27 @@
     <link rel="apple-touch-icon" sizes="144x144" href="@routes.Assets.versioned("images/touch-icon-ipad-144.png")" />
     <script src="@routes.WebJarAssets.at(webjars.locate("scrollreveal.min.js"))"></script>
   </head>
+
   <body>
     <div class="header">
-      <div class="nav">
-        <a href="#">About</a>
-        <a href="#">Help</a>
-        <a href="#">FAQ</a>
-      </div>
+      <a href="#" class="has-transition">About</a>
+      <a href="#" class="has-transition">Help</a>
+      <a href="#" class="has-transition">FAQ</a>
     </div>
 
     <div class="jumbotron">
       <div class="inner">
-        <img class="title" src="@routes.Assets.versioned("images/logo-peripleo-white.png")" style="width:250px">
-        <div class="buttons">
-          <a href="@controllers.routes.ApplicationController.ui()" class="btn outline">Enter</a><br/>
-          <!-- a href="">Learn More</a -->
+        <img class="title" alt="Peripleo" src="@routes.Assets.versioned("images/peripleo-logotype.png")">
+
+        <div class="enter">
+          <a href="@controllers.routes.ApplicationController.ui()" class="btn has-transition">Enter</a>
         </div>
 
-        <p>
-          <span class="livestat">128,513 items</span>
-
-          <span class="livestat">12 data sources</span>
-
-          <span class="livestat">15,000 years</span>
-        </p>
+        <div class="livestats">
+          <span>128,513 items</span>
+          <span>12 data sources</span>
+          <span>15,000 years</span>
+        </div>
       </div>
     </div>
 
@@ -67,15 +64,6 @@
       </div>
     </div>
 
-    <div class="stats-overview">
-      <div class="inner">
-        <div class="stats big">138,128 items</div>
-        <div class="stats small">42,119 places &middot;</div>
-        <div class="stats small">95,982 objects &middot;</div>
-        <div class="stats small">20,000 years</div>
-        <div class="stats">from 5 data sources</div>
-      </div>
-    </div>
     <script src="@routes.Assets.versioned("javascripts/landing/anim.js")"></script>
   </body>
 </html>
