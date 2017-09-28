@@ -19,7 +19,7 @@ class SearchService @Inject() (
   implicit val es: ES,
   implicit val notifications: NotificationService,
   implicit val ctx: ExecutionContext
-) {
+) extends HasTimerangeQuery {
 
   implicit object RichResultItemHitAs extends HitAs[RichResultItem] {
     override def as(hit: RichSearchHit): RichResultItem = {
@@ -81,7 +81,7 @@ class SearchService @Inject() (
     )
 
   /** Common query components used to build item result and time histogram **/
-  private def itemBaseQuery(args: SearchArgs, filter: QueryDefinition) =
+  private[search] def itemBaseQuery(args: SearchArgs, filter: QueryDefinition) =
     search in ES.PERIPLEO / ES.ITEM query {
       bool {
         must (
@@ -114,7 +114,7 @@ class SearchService @Inject() (
     itemBaseQuery(args, filter) limit 0 aggregations Seq(
       aggregation histogram "by_decade"  script { script("by_time") params(Map("interval" -> 10))  scriptType ScriptType.FILE } interval 10,
       aggregation histogram "by_century" script { script("by_time") params(Map("interval" -> 100)) scriptType ScriptType.FILE } interval 100)
-
+  
   def query(args: SearchArgs): Future[RichResultPage] = {
 
     val startTime = System.currentTimeMillis

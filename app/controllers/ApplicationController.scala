@@ -5,6 +5,7 @@ import play.api.mvc.{ Action, Controller }
 import scala.concurrent.ExecutionContext
 import services.item.{ ItemService, ItemType }
 import services.item.search._
+import org.joda.time.Period
 
 @Singleton
 class ApplicationController @Inject() (
@@ -14,20 +15,19 @@ class ApplicationController @Inject() (
   implicit val webjars: WebJarAssets
 ) extends Controller {
 
-  def index() = Action.async { implicit request =>    
-    val fItems =
-      searchService.query(SearchArgs(None, 0, 0, SearchFilters.NO_FILTERS, ResponseSettings.DEFAULT))
-    
+  def index() = Action.async { implicit request =>
+    val fTimerange =
+      searchService.getTimerange(SearchArgs(None, 0, 0, SearchFilters.NO_FILTERS, ResponseSettings.DEFAULT))
     val fDatasets =
       itemService.findByType(ItemType.DATASET, true, 0, 0)
-    
+          
     val f = for {
-      items <- fItems
+      t <- fTimerange
       datasets <- fDatasets
-    } yield (items.total, datasets.total)
+    } yield (t.totalHits, datasets.total, new Period(t.from, t.to))
     
-    f.map { case (itemCount, datasetCount) =>
-      Ok(views.html.landing.index(itemCount, datasetCount))
+    f.map { case (itemCount, datasetCount, timerange) =>
+      Ok(views.html.landing.index(itemCount, datasetCount, timerange.getYears))
     }
   }
 

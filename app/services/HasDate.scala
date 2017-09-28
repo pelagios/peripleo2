@@ -13,13 +13,13 @@ trait HasDate {
       JsPath.read[JsString].map { json =>
         formatter.parseDateTime(json.value)
       },
-      
+
       Writes[DateTime] { dt =>
         Json.toJson(formatter.print(dt))
       }
     )
-    
-  /** Convenience method for external use, outside JSON serialization **/
+
+  /** Convenience methods for external use, outside JSON serialization **/
   def formatDate(dt: DateTime) = formatter.print(dt.withZone(DateTimeZone.UTC))
 
 }

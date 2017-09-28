@@ -1,4 +1,4 @@
-@(itemCount: Long, datasetCount: Long)(implicit request: RequestHeader, webjars: WebJarAssets)
+@(itemCount: Long, datasetCount: Long, years: Int)(implicit request: RequestHeader, webjars: WebJarAssets)
 <!DOCTYPE html>
 <html>
   <head>
@@ -42,7 +42,7 @@
           <div class="livestats">
             <span>@fmt.format(itemCount) items</span>
             <span>@fmt.format(datasetCount) data sources</span>
-            <span>15,000 years</span>
+            <span>@fmt.format(years) years</span>
           </div>
         }
       </div>
