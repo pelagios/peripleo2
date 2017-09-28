@@ -35,13 +35,9 @@ define([
         onSelectIdentifier = function(identifier) {
           searchPanel.setLoading(true);
           searchPanel.clearFooter();
-          resultList.close();
-          map.clear();
-          API.getItem(identifier)
+          return API.getItem(identifier)
             .then(onSelectItem)
-            .done(function() {
-              map.fitBounds();
-            }).fail(function(error) {
+            .fail(function(error) {
               // TODO shouldn't happen unless connection or backend is down
               // TODO show error popup
             });

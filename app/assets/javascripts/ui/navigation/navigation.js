@@ -34,22 +34,29 @@ define([
         /** Happens on 'Back' button, or on page load **/
         onStateChange = function(e) {
           var state = e.state, // The state, as manipulated by the user (or set by the URL)
-              request = e.request; // Promise of the search request triggered by the state change
+              request = e.request, // Promise of the search request triggered by the state change
+
+              restore = function() {
+                if (request) {
+                  // The state change triggered a search requeset - update UI when complete
+                  return request.then(updateAll);
+                } else {
+                  // State change to an 'empty search' - clear UI
+                  resultList.close();
+                  map.clear();
+                }
+              };
 
           searchPanel.setLoading(true);
           searchPanel.setState(state);
           map.setState(state);
 
-          if (state.selected) selectActions.onSelectIdentifier(state.selected);
-
-          if (request) {
-            // The state change triggered a search requeset - update UI when complete
-            request.done(updateAll);
-          } else {
-            // State change to an 'empty search' - clear UI
-            resultList.close();
-            map.clear();
-          }
+          if (state.selection)
+            jQuery.when(restore()).then(function() {
+              selectActions.onSelectIdentifier(state.selection);
+            });
+          else
+            restore();
         },
 
         /**

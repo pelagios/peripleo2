@@ -89,7 +89,6 @@ define([
 
         /** Selects the specified item and scrolls it into view **/
         setSelectedItem = function(item) {
-
           var select = function() {
                 var newSelection = findListElement(item);
 
