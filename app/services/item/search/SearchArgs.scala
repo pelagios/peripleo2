@@ -41,6 +41,8 @@ case class SearchFilters(
   
 )
 
+
+
 case class ResponseSettings(
 
   timeHistogram: Boolean,
@@ -50,6 +52,18 @@ case class ResponseSettings(
   topReferenced: Boolean
     
 )
+
+object SearchFilters {
+  
+  lazy val NO_FILTERS = SearchFilters(None, None, None, None, None, None, None, None, true)
+  
+}
+
+object ResponseSettings {
+  
+  lazy val DEFAULT = ResponseSettings(false, false, false)
+  
+}
   
 object SearchArgs {
   

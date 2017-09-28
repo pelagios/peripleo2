@@ -9,6 +9,7 @@ require.config({
     { name : 'admin/datasets/annotations' },
     { name : 'admin/datasets/csv' },
     { name : 'admin/maintenance/app' },
+    { name : 'landing/anim'},
     { name : 'ui/app' }
   ]
 });

@@ -1,4 +1,4 @@
-@()(implicit request: RequestHeader, webjars: WebJarAssets)
+@(itemCount: Long, datasetCount: Long)(implicit request: RequestHeader, webjars: WebJarAssets)
 <!DOCTYPE html>
 <html>
   <head>
@@ -38,11 +38,13 @@
           <a href="@controllers.routes.ApplicationController.ui()" class="btn has-transition">Enter</a>
         </div>
 
-        <div class="livestats">
-          <span>128,513 items</span>
-          <span>12 data sources</span>
-          <span>15,000 years</span>
-        </div>
+        @defining(java.text.NumberFormat.getNumberInstance(java.util.Locale.UK)) { fmt =>
+          <div class="livestats">
+            <span>@fmt.format(itemCount) items</span>
+            <span>@fmt.format(datasetCount) data sources</span>
+            <span>15,000 years</span>
+          </div>
+        }
       </div>
     </div>
 
@@ -64,6 +66,6 @@
       </div>
     </div>
 
-    <script src="@routes.Assets.versioned("javascripts/landing/anim.js")"></script>
+    <script src="@routes.WebJarAssets.at(webjars.locate("require.min.js"))" data-main="@routes.Assets.versioned("javascripts/landing/anim.js")"></script>
   </body>
 </html>
