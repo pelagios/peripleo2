@@ -150,6 +150,7 @@ define([
 
         close = function() {
           list.empty();
+          currentSelection = false;
         };
 
     element.on('click', 'li', onSelect);

@@ -39,6 +39,13 @@ define([
         onSelectIdentifier = function(identifier, is_state_change) {
           searchPanel.setLoading(true);
           searchPanel.clearFooter();
+
+          // If selection via autosuggest dropdown, clear the map & hide result list
+          if (!is_state_change) {
+            map.clear();
+            resultList.close();
+          }
+
           return API.getItem(identifier)
             .then(function(item) {
               onSelectItem(item, false, is_state_change);
