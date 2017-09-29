@@ -35,7 +35,7 @@ define([], function() {
               topReferenced    : true
             }
           },
-          selected: decodeIfDefined(segments.selected),
+          selection: decodeIfDefined(segments.selected),
           ui: {
             basemap        : segments.basemap,
             filterPaneOpen : segments.filters

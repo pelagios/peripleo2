@@ -16,7 +16,13 @@ define([
         },
 
         onStateBack = function(e) {
-          self.fireEvent('changeState', e.originalEvent.state);
+          // Event happens when
+          // - user clicks back button, in which case state is in the event
+          // - user pastes an URL into the bar, in which case we'll parse
+          var state = (e.originalEvent.state) ?
+                e.originalEvent.state : URLBar.parseHash();
+
+          self.fireEvent('changeState', state);
         };
 
     jQuery(window).bind('popstate', onStateBack);
