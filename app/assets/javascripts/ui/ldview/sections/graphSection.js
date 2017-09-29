@@ -139,7 +139,8 @@ define(['ui/common/itemUtils'], function(ItemUtils) {
 
     nodes.append('circle')
       .attr('r', NODE_RADIUS)
-      .attr('class', function(d) { return (d.is_anonymous) ? 'anonymous' : ''; });
+      .attr('class', function(d) { return (d.is_anonymous) ? 'anonymous' : ''; })
+      .attr('style', function(d) { return (d.color) ? 'fill:' + d.color : ''; });
 
     nodes.append('title')
       .text(function(d) { return d.uri; });
