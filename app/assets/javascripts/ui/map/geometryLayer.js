@@ -50,8 +50,9 @@ define([
           }
         },
 
-        /** Removes all markers **/
+        /** Removes selection and all markers **/
         clear = function() {
+          clearSelection();
           markerIndex = {};
           markers.clearLayers();
           markerScaleFn = function() { return MARKER_SIZE.MIN; };

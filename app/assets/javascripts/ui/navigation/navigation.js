@@ -81,7 +81,11 @@ define([
 
           // If there's a stashed query, it's no longer relevant
           stashedQuery.clear();
+
+          // Clear the selection (but don't update state - will happen later in one go)
+          state.setSelectedItem(false, false);
           selectionPanel.hide();
+
           if (query) search();
           else clear();
         },
