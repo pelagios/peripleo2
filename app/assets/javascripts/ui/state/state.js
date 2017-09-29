@@ -154,12 +154,15 @@ define([
         },
 
         /** Updates the selected item state **/
-        setSelectedItem = function(item) {
+        setSelectedItem = function(item, opt_push_state) {
+          var pState = (opt_push_state === undefined) ? true : opt_push_state; // default true
+
           if (item)
             currentSelection = item.is_conflation_of[0].uri;
           else
             currentSelection = false;
-          pushState();
+
+          if (pState) pushState();
         };
 
     history.on('changeState', setState);

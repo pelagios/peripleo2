@@ -51,9 +51,10 @@ define([
           searchPanel.setState(state);
           map.setState(state);
 
+          // Need to set selection without triggering history recording
           if (state.selection)
             jQuery.when(restore()).then(function() {
-              selectActions.onSelectIdentifier(state.selection);
+              selectActions.onSelectIdentifier(state.selection, true);
             });
           else
             restore();

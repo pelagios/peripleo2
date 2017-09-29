@@ -10,7 +10,6 @@ define([], function() {
 
   /** Shorthand for setting selection across multiple UI components **/
   BaseSelectActions.prototype.setSelected = function(item, args) {
-    this.state.setSelectedItem(item);
     this.resultList.setSelectedItem(item);
     this.selectionPanel.show(item, args);
   };

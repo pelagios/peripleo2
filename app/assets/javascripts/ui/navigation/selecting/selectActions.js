@@ -32,12 +32,17 @@ define([
         placeActions =
           new PlaceActions(map, searchPanel, selectionPanel, resultList, state, stashedQuery),
 
-        onSelectIdentifier = function(identifier) {
+        /**
+         * Select via identifier happens either from the auto-suggest dropdown,
+         * or as a result of a state change (user clicks back button)
+         */
+        onSelectIdentifier = function(identifier, is_state_change) {
           searchPanel.setLoading(true);
           searchPanel.clearFooter();
           return API.getItem(identifier)
-            .then(onSelectItem)
-            .fail(function(error) {
+            .then(function(item) {
+              onSelectItem(item, false, is_state_change);
+            }).fail(function(error) {
               // TODO shouldn't happen unless connection or backend is down
               // TODO show error popup
             });
@@ -77,8 +82,11 @@ define([
             deselect();
         },
 
-        onSelectItem = function(item, opt_via) {
+        onSelectItem = function(item, opt_via, is_state_change) {
           if (item) {
+            // If the selection is from a state pop (back button), don't push this state!
+            state.setSelectedItem(item, !is_state_change);
+
             searchPanel.setLoading(true);
             currentSelection = item;
             switch(ItemUtils.getItemType(item)) {

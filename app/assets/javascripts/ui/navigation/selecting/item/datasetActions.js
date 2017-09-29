@@ -25,7 +25,6 @@ define([
           // Handle this as a transitional request, so we can force a time histgraom
           API.getDatasetInfo(uri).done(function(response) {
             // Update selection
-            state.setSelectedItem(dataset);
             selectionPanel.show(dataset, response);
 
             // Update UI with filtered-by-dataset search response
