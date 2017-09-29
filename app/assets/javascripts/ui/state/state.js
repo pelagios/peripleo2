@@ -48,6 +48,7 @@ define([
               makeReq = state.ui.filterPaneOpen || isSearchDefined();
 
           uiState = state.ui;
+          currentSelection = state.selection;
           self.fireEvent('stateChange', {
             state   : state,
             request : search.setArgs(state.search, makeReq)
