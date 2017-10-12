@@ -48,17 +48,20 @@ case class ItemRecord(
 
 object ItemRecord extends HasDate with HasNullableSeq with HasGeometry {
 
-  /** Utility method to normalize a URI to a standard format
+  /** Utility method to normalize a URI to a standard format.
     *
-    * Removes '#this' suffixes (e.g. used by Pleiades) and, by convention, trailing slashes.
+    * The following changes are applied to URIs:
+    * - remove '#this' suffixes as used by Pleiades
+    * - removes trailing slashes
+    * - changes https:// URIs to http://
     */
   def normalizeURI(uri: String) = {
     val noThis = if (uri.indexOf("#this") > -1) uri.substring(0, uri.indexOf("#this")) else uri
-
-    if (noThis.endsWith("/"))
-      noThis.substring(0, noThis.size - 1)
+    val httpOnly = noThis.replace("https://", "http://")
+    if (httpOnly.endsWith("/"))
+      httpOnly.substring(0, httpOnly.size - 1)
     else
-      noThis
+      httpOnly
   }
 
   /** Utility to create a cloned record, with all URIs normalized **/
