@@ -19,7 +19,7 @@
           "query": {
             "type": "string",
             "fields": {
-               "raw": { "type": "string", "index":"not_analyzed" }
+               "raw": { "type": "string", "index": "not_analyzed" }
             }
           },
           "response": {
@@ -27,6 +27,23 @@
               "total_hits": { "type": "integer" },
               "top_places": { "type": "integer" },
               "top_people": { "type": "integer" }
+            }
+          }
+        }
+      },
+      "selected": {
+        "properties": {
+          "identifier": { "type": "string", "index": "not_analyzed" },
+          "title": {
+            "type": "string",
+            "fields": {
+               "raw": { "type": "string", "analyzer":"lowercase_keyword" }
+            }
+          },
+          "is_in_dataset": {
+            "properties": {
+              "paths": { "type": "string", "index": "not_analyzed" },
+              "ids": { "type": "string", "index": "not_analyzed" }
             }
           }
         }

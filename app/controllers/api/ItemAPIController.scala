@@ -1,6 +1,6 @@
 package controllers.api
 
-import controllers.HasPrettyPrintJSON
+import controllers.{ HasPrettyPrintJSON, HasVisitLogging }
 import javax.inject.{ Inject, Singleton }
 import org.joda.time.DateTime
 import play.api.libs.json.Json
@@ -11,13 +11,15 @@ import scala.concurrent.{ ExecutionContext, Future }
 import services.item.ItemService
 import services.item.reference.Reference
 import services.notification._
+import services.visit.VisitService
 
 @Singleton
 class ItemAPIController @Inject() (
-  itemService: ItemService,
   notificationService: NotificationService,
+  implicit val itemService: ItemService,
+  implicit val visitService: VisitService,
   implicit val ctx: ExecutionContext
-) extends Controller with HasPrettyPrintJSON {
+) extends Controller with HasPrettyPrintJSON with HasVisitLogging {
 
   implicit val snippetWrites: Writes[(Reference, Seq[String])] = (
     (JsPath).write[Reference] and
@@ -54,6 +56,12 @@ class ItemAPIController @Inject() (
     itemService.getTopReferenced(identifier).map { stats =>
       jsonOk(Json.toJson(stats))
     }
+  }
+  
+  /** Reports a client-side selection **/
+  def reportSelection(identifier: String) = Action { implicit request =>
+    logSelection(identifier)
+    Ok
   }
   
   /** Reports a broken link associtated with a specific item **/

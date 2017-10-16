@@ -21,6 +21,10 @@ define([], function() {
       return jsRoutes.controllers.api.ItemAPIController.getTopReferenced(identifier).ajax();
     },
 
+    reportSelection : function(identifier) {
+      return jsRoutes.controllers.api.ItemAPIController.reportSelection(identifier).ajax();
+    },
+
     reportBrokenLink : function(identifier, url) {
       return jsRoutes.controllers.api.ItemAPIController.reportBrokenLink(identifier, url).ajax();
     },

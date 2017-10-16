@@ -94,6 +94,9 @@ define([
             // If the selection is from a state pop (back button), don't push this state!
             state.setSelectedItem(item, !is_state_change);
 
+            // Report selection to analytics engine
+            API.reportSelection(item.is_conflation_of[0].uri);
+
             searchPanel.setLoading(true);
             currentSelection = item;
             switch(ItemUtils.getItemType(item)) {
