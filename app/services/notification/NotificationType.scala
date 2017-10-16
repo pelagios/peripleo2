@@ -7,8 +7,8 @@ import play.api.libs.functional.syntax._
 object NotificationType extends Enumeration {
 
   val SYSTEM_ERROR = Value("SYSTEM_ERROR")
-
-  // For future use
+  
+  val BROKEN_LINK = Value("BROKEN_LINK")
   
   implicit val notificationTypeFormat: Format[NotificationType.Value] =
     Format(

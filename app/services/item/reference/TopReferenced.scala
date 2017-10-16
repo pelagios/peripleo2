@@ -29,7 +29,7 @@ case class UnresolvedTopReferenced private (parsed: Seq[(ItemType, Seq[(UUID, Lo
     Logger.error(failedIds.size + " out of " + triedIds.size)
 
     notifications.insertNotification(Notification(
-      NotificationType.SYSTEM_ERROR, DateTime.now,
+      NotificationType.SYSTEM_ERROR, DateTime.now, None,
       "Failed to resolve " + failedIds.mkString(", ") + " (" + failedIds.size + " out of " + triedIds.size + ")"))
   }
 

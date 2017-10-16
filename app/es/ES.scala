@@ -30,11 +30,12 @@ object ES extends ESQuerySanitizer {
   val PERIPLEO = "peripleo"
 
   // Mapping type names
-  val ITEM      = "item"
-  val REFERENCE = "reference"
-  val TASK      = "task"
-  val USER      = "user"
-  val VISIT     = "visit"
+  val ITEM         = "item"
+  val NOTIFICATION = "notification"
+  val REFERENCE    = "reference"
+  val TASK         = "task"
+  val USER         = "user"
+  val VISIT        = "visit"
 
   // Maximum response size in ES
   val MAX_SIZE           = 10000

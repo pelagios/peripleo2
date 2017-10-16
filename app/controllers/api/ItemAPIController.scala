@@ -2,6 +2,7 @@ package controllers.api
 
 import controllers.HasPrettyPrintJSON
 import javax.inject.{ Inject, Singleton }
+import org.joda.time.DateTime
 import play.api.libs.json.Json
 import play.api.mvc.{ Action, Controller }
 import play.api.libs.json._
@@ -9,10 +10,12 @@ import play.api.libs.functional.syntax._
 import scala.concurrent.{ ExecutionContext, Future }
 import services.item.ItemService
 import services.item.reference.Reference
+import services.notification._
 
 @Singleton
 class ItemAPIController @Inject() (
   itemService: ItemService,
+  notificationService: NotificationService,
   implicit val ctx: ExecutionContext
 ) extends Controller with HasPrettyPrintJSON {
 
@@ -54,9 +57,16 @@ class ItemAPIController @Inject() (
   }
   
   /** Reports a broken link associtated with a specific item **/
-  def reportBrokenLink(identifier: String, brokenLink: String) = Action.async { implicit request => 
-    // TODO record event
-    Future.successful(Ok)
+  def reportBrokenLink(identifier: String, brokenLink: String) = Action { implicit request => 
+    val notification = 
+      Notification(
+        NotificationType.BROKEN_LINK,
+        DateTime.now,
+        Some(identifier),
+        brokenLink)
+        
+    notificationService.insertNotification(notification)
+    Ok
   }
 
 }
