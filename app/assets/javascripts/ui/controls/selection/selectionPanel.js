@@ -75,7 +75,7 @@ define([
               else
                 // Slide panel first, then instantiate IIIF pane, otherwise size will be messed up
                 depictionContainer.velocity('slideDown', jQuery.extend({}, SLIDE_OPTS, {
-                  complete: function() { depictionView = new IIIFView(depictionContainer, randomDepiction); }                
+                  complete: function() { depictionView = new IIIFView(depictionContainer, randomDepiction); }
                 }));
             } else {
               depictionView = new ImageView(depictionContainer, randomDepiction);

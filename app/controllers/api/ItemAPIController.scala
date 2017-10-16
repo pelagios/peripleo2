@@ -52,5 +52,11 @@ class ItemAPIController @Inject() (
       jsonOk(Json.toJson(stats))
     }
   }
+  
+  /** Reports a broken link associtated with a specific item **/
+  def reportBrokenLink(identifier: String, brokenLink: String) = Action.async { implicit request => 
+    // TODO record event
+    Future.successful(Ok)
+  }
 
 }

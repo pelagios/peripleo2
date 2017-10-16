@@ -60,6 +60,7 @@ GET     /api/items/:id/parts                         controllers.api.ItemAPICont
 GET     /api/items/:id/references                    controllers.api.ItemAPIController.getReferences(id: String, to: Option[String], query: Option[String], offset: Int ?= 0, limit: Int ?= 20)
 GET     /api/items/:id/top_referenced                controllers.api.ItemAPIController.getTopReferenced(id: String)
 GET     /api/items/:id                               controllers.api.ItemAPIController.getItem(id: String)
+POST    /api/items/:id/broken                        controllers.api.ItemAPIController.reportBrokenLink(id: String, url: String)
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Restricted JSON API

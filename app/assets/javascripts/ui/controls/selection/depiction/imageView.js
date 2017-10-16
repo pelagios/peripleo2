@@ -1,4 +1,7 @@
-define(['ui/common/formatting'], function(Formatting) {
+define([
+  'ui/api',
+  'ui/common/formatting'
+], function(API, Formatting) {
 
   var ImageView = function(containerEl, depiction) {
 
@@ -27,10 +30,8 @@ define(['ui/common/formatting'], function(Formatting) {
     preloadImage(depiction.url).done(function(img) {
       containerEl.css('background-image', 'url(' + img.src + ')');
     }).fail(function(url) {
-      console.log('Image failed: ' + url);
-
-      // TODO notify server-side API
-
+      console.log('Image failed loading: ' + url);
+      API.reportBrokenLink(depiction.source, url);
     });
 
     attributionEl.html(Formatting.formatClickableURL(depiction.source));
