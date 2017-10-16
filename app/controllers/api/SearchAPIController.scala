@@ -17,10 +17,11 @@ class SearchAPIController @Inject() (
 ) extends Controller with HasPrettyPrintJSON with HasVisitLogging {
   
   def search() = Action.async { implicit request =>
-    logRequest()
-    
     val args = SearchArgs.fromQueryString(request.queryString)
-    searchService.query(args).map(results => jsonOk(Json.toJson(results)))
+    searchService.query(args).map { results => 
+      logSearchResponse(args, results)
+      jsonOk(Json.toJson(results))
+    }
   }
   
   def suggest(q: String) = Action.async { implicit request =>

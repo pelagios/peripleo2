@@ -4,12 +4,14 @@ import eu.bitwalker.useragentutils.UserAgent
 import org.joda.time.DateTime
 import play.api.mvc.RequestHeader
 import play.api.http.HeaderNames
-import scala.concurrent.Future
+import scala.concurrent.{ ExecutionContext, Future }
 import services.visit._
+import services.item.search.{ SearchArgs, RichResultPage }
+import services.item.ItemType
 
 trait HasVisitLogging {
     
-  protected def logRequest() (implicit request: RequestHeader, visitService: VisitService): Future[Unit] = {
+  protected def logVisit(took: Option[Long], search: Option[Visit.Search]) (implicit request: RequestHeader, visitService: VisitService): Future[Unit] = {
     val userAgentHeader = request.headers.get(HeaderNames.USER_AGENT)
     val userAgent = userAgentHeader.map(ua => UserAgent.parseUserAgentString(ua))
     val os = userAgent.map(_.getOperatingSystem)
@@ -18,18 +20,29 @@ trait HasVisitLogging {
       request.uri,
       request.headers.get(HeaderNames.REFERER),
       DateTime.now(),
-      Client(
+      Visit.Client(
         request.remoteAddress,
         userAgentHeader.getOrElse("UNKNOWN"),
         userAgent.map(_.getBrowser.getGroup.getName).getOrElse("UNKNOWN"),
         os.map(_.getName).getOrElse("UNKNOWN"),
         os.map(_.getDeviceType.getName).getOrElse("UNKNOWN")  
-      ))
-    
+      ),
+      took, search)
+
     if (HasVisitLogging.isBot(visit))
       Future.successful(())
     else
       visitService.insertVisit(visit)    
+  }
+  
+  protected def logSearchResponse(args: SearchArgs, response: RichResultPage)(implicit request: RequestHeader, visitService: VisitService, ctx: ExecutionContext) = {
+    Future {   
+      def top(t: ItemType) = response.topReferenced.map(_.count(t)).getOrElse(0)
+      Visit.Search(args.query, Visit.Response(
+          response.total, top(ItemType.PLACE), top(ItemType.PERSON)))         
+    } flatMap { search =>
+      logVisit(Some(response.took), Some(search))
+    }
   }
   
 }

@@ -14,7 +14,11 @@ import services.item.{ Item, ItemService, ItemType }
 import services.notification._
 import services.HasNullableSeq
 
-case class TopReferenced private (resolved: Seq[(ItemType, Seq[(Item, Long, Seq[(Relation.Value, Long)])])])
+case class TopReferenced private (resolved: Seq[(ItemType, Seq[(Item, Long, Seq[(Relation.Value, Long)])])]) {
+  
+  def count(itemType: ItemType) = resolved.find(_._1 == itemType).map(_._2.size).getOrElse(0)
+  
+}
 
 case class UnresolvedTopReferenced private (parsed: Seq[(ItemType, Seq[(UUID, Long, Seq[(Relation.Value, Long)])])]) {
 
