@@ -1,6 +1,5 @@
 package services.visit
 
-import java.util.UUID
 import org.joda.time.DateTime
 import play.api.libs.json._
 import play.api.libs.json.Reads._

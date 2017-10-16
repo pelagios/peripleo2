@@ -2,14 +2,14 @@ package controllers
 
 import eu.bitwalker.useragentutils.UserAgent
 import org.joda.time.DateTime
-import play.api.mvc.{ AnyContent, RequestHeader }
+import play.api.mvc.RequestHeader
 import play.api.http.HeaderNames
 import scala.concurrent.Future
 import services.visit._
 
 trait HasVisitLogging {
     
-  private def log()(implicit request: RequestHeader, visitService: VisitService): Future[Unit] = {
+  protected def logRequest() (implicit request: RequestHeader, visitService: VisitService): Future[Unit] = {
     val userAgentHeader = request.headers.get(HeaderNames.USER_AGENT)
     val userAgent = userAgentHeader.map(ua => UserAgent.parseUserAgentString(ua))
     val os = userAgent.map(_.getOperatingSystem)
