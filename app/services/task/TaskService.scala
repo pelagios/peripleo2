@@ -13,7 +13,6 @@ import play.api.libs.json.Json
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.language.postfixOps
 import services.{ HasDate, Page }
-import com.sksamuel.elastic4s.FilteredQueryDefinition
 
 @Singleton
 class TaskService @Inject() (val es: ES, implicit val ctx: ExecutionContext) extends HasDate {

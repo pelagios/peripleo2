@@ -12,7 +12,6 @@
       "password_hash": { "type": "string", "index": "not_analyzed" },
       "salt": { "type": "string", "index": "not_analyzed" },
       "access_level" : {
-        "type": "nested",
         "properties": {
           "role": { "type": "string", "index": "not_analyzed" },
           "affiliation": { "type": "string", "index": "not_analyzed" }

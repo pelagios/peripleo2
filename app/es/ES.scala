@@ -32,8 +32,9 @@ object ES extends ESQuerySanitizer {
   // Mapping type names
   val ITEM      = "item"
   val REFERENCE = "reference"
-  val USER      = "user"
   val TASK      = "task"
+  val USER      = "user"
+  val VISIT     = "visit"
 
   // Maximum response size in ES
   val MAX_SIZE           = 10000

@@ -22,6 +22,7 @@ libraryDependencies ++= Seq(
   "com.sksamuel.elastic4s" %% "elastic4s-streams" % "2.4.0",
   "com.vividsolutions" % "jts" % "1.13",
   "jp.t2v" %% "play2-auth" % "0.14.1",
+  "eu.bitwalker" % "UserAgentUtils" % "1.20",
   "org.geotools" % "gt-geojson" % "14.3",
   "org.webjars" %% "webjars-play" % "2.5.0",
 
