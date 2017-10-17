@@ -23,7 +23,7 @@ p {
   padding:20px 0;
 }
 
-ol, .error {
+ol, div.step {
   text-align:center;
   width:540px;
   margin:0 auto;
@@ -31,15 +31,30 @@ ol, .error {
 
 div.step.error {
   border:1px solid @error-msg-border;
-  color:@error-msg-type;
   background-color:@error-msg-bg;
-  margin:0 auto;
+  color:@error-msg-type;
+}
+
+div.step.warning {
+  border:1px solid @warning-msg-border;
+  background-color:@warning-msg-bg;
+  color:@warning-msg-type;
+}
+
+div.step.success {
+  border:1px solid @success-msg-border;
+  background-color:@success-msg-bg;
+  color:@success-msg-type;
 }
 
 ol {
   list-style-type:none;
   margin:0 auto;
   padding:0;
+}
+
+li.step {
+  counter-increment:item;
 }
 
 .step {
@@ -50,7 +65,6 @@ ol {
   padding:15px 40px;
   .rounded-corners(3px);
   .box-shadow(0, 4px, 30px, 0, rgba(0, 0, 0, 0.15));
-  counter-increment:item;
   text-align:left;
 
   .btn {
