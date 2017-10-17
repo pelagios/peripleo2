@@ -1,0 +1,20 @@
+@()(implicit request: RequestHeader, webjars: WebJarAssets)
+<html xmlns:xlink="http://www.w3.org/1999/xlink">
+  <head>
+    <title>Peripleo | Data Validator</title>
+    <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/validator/index.css")"/>
+  </head>
+  <body>
+    <h1>Peripleo Data Validator</h1>
+    <p>I want to validate a...</p>
+    <div class="choice">
+      <a href="@controllers.validator.routes.ValidatorController.gazetteer" class="btn">
+        Gazetteer Data File
+      </a>
+
+      <a href="@controllers.validator.routes.ValidatorController.annotations" class="btn">
+        Pelagios Annotation File
+      </a>
+    </div>
+  </body>
+</html>

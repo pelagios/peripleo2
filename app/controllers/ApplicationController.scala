@@ -15,7 +15,7 @@ class ApplicationController @Inject() (
   implicit val webjars: WebJarAssets
 ) extends Controller {
 
-  def index() = Action.async { implicit request =>
+  def index = Action.async { implicit request =>
     val fTimerange =
       searchService.getTimerange(SearchArgs(None, 0, 0, SearchFilters.NO_FILTERS, ResponseSettings.DEFAULT))
     val fDatasets =
@@ -31,7 +31,7 @@ class ApplicationController @Inject() (
     }
   }
 
-  def ui() = Action { implicit request =>
+  def ui = Action { implicit request =>
     Ok(views.html.ui.index())
   }
   

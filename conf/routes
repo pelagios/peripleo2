@@ -41,6 +41,16 @@ GET     /admin/authorities                           controllers.admin.AdminCont
 GET     /admin                                       controllers.admin.AdminController.index
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Data Validator
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+GET     /validator                                   controllers.validator.ValidatorController.index
+GET     /validator/gazetteer                         controllers.validator.ValidatorController.gazetteer
+POST    /validator/gazetteer                         controllers.validator.ValidatorController.validateGazetteer
+GET     /validator/annotations                       controllers.validator.ValidatorController.annotations
+POST    /validator/annotations                       controllers.validator.ValidatorController.validateAnnotations
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Login & Logout
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
