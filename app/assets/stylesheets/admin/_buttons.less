@@ -1,20 +1,9 @@
+@import "../common/_buttons";
+
 /** Default blue button **/
 .btn {
-  box-sizing:border-box;
-  cursor:pointer;
-  margin:0 2px;
-  padding:10px 40px;
-  font-family:PTSansNarrow;
-  font-size:17px;
-  .rounded-corners(2px);
-  display:inline-block;
-  color:#fff;
   background-color:@stone;
   border:1px solid darken(@stone, 4%);
-  outline:none;
-  text-shadow:0 -1px 0 rgba(0,0,0,0.1);
-  text-decoration:none;
-  white-space:nowrap;
 }
 
 .btn:hover {
@@ -26,76 +15,12 @@
   // background-color:@shore-disabled;
 }
 
-.btn.small {
-  padding:4px 20px;
-  font-size:15px;
-  .rounded-corners(2px);
-}
-
-.btn.tiny {
-  padding:0 7px;
-  font-size:14px;
-  line-height:21px;
-  text-shadow:none;
-}
-
 /** Outline button **/
 .btn.outline {
   border-color:@stone;
   color:@stone;
-  background-color:transparent;
-  text-shadow:none;
 }
 
 .btn.outline:hover {
   // background-color:@blueish-white-hi;
-}
-
-.nostyle {
-  outline:none;
-  background:none;
-  border:none;
-  cursor:pointer;
-}
-
-.btn.icon {
-  font-size:14px;
-}
-
-/** Red 'Error'-style button **/
-.btn.red {
-  border-color:@error-msg-type;
-  background-color:@error-msg-type;
-}
-
-.btn.red:hover {
-  background-color:darken(@error-msg-type, 5%);
-}
-
-.btn.red.disabled,
-.btn.red:disabled,
-.btn.red.disabled:hover,
-.btn.red:disabled:hover {
-  border-color:lighten(@error-msg-type, 25%);
-  background-color:lighten(@error-msg-type, 25%);
-}
-
-/** Orange 'Warning'-style button **/
-.btn.orange {
-  border-color:darken(@orange-type, 7%);
-  background-color:darken(@orange-type, 7%);
-  text-shadow:0 -1px 0 rgba(0,0,0,0.12);
-}
-
-.btn.orange:hover {
-  background-color:@orange-type;
-  border-color:@orange-type;
-}
-
-.btn.orange.disabled,
-.btn.orange:disabled,
-.btn.orange.disabled:hover,
-.btn.orange:disabled:hover {
-  border-color:lighten(@orange-type, 18%);
-  background-color:lighten(@orange-type, 18%);
 }
