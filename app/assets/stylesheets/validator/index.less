@@ -23,20 +23,30 @@ p {
   padding:20px 0;
 }
 
-ol {
+ol, .error {
   text-align:center;
   width:540px;
   margin:0 auto;
 }
 
-ol {
-  list-style-type:none;
+div.step.error {
+  border:1px solid @error-msg-border;
+  color:@error-msg-type;
+  background-color:@error-msg-bg;
+  margin:0 auto;
 }
 
-li.step {
+ol {
+  list-style-type:none;
+  margin:0 auto;
+  padding:0;
+}
+
+.step {
+  box-sizing:border-box;
   position:relative;
   background-color:#fff;
-  margin:20px 0;
+  margin:20px auto;
   padding:15px 40px;
   .rounded-corners(3px);
   .box-shadow(0, 4px, 30px, 0, rgba(0, 0, 0, 0.15));
