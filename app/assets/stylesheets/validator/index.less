@@ -2,12 +2,15 @@
 @import "../common/_fonts.less";
 
 html, body {
-  padding:30px 0;
+  padding:20px 0;
   margin:0;
   font-family:Roboto;
   font-size:17px;
   text-align:center;
   font-weight:300;
+  background-color:@haze;
+  counter-reset:item;
+  color:@standard-type;
 }
 
 h1 {
@@ -20,8 +23,97 @@ p {
   padding:20px 0;
 }
 
+ol {
+  text-align:center;
+  width:540px;
+  margin:0 auto;
+}
+
+ol {
+  list-style-type:none;
+}
+
+li.step {
+  position:relative;
+  background-color:#fff;
+  margin:20px 0;
+  padding:15px 40px;
+  .rounded-corners(3px);
+  .box-shadow(0, 4px, 30px, 0, rgba(0, 0, 0, 0.15));
+  counter-increment:item;
+  text-align:left;
+
+  .btn {
+    text-align:center;
+  }
+
+  h2 {
+    padding:0 0 10px 0;
+    margin:0;
+    font-family:Roboto;
+    font-weight:normal;
+    font-size:17px;
+    color:@ocean;
+  }
+
+  a.btn, a.btn:hover {
+    color:#fff;
+  }
+
+  a {
+    color:@ocean;
+  }
+
+  a:hover {
+    color:darken(@ocean, 10%);
+  }
+
+  div {
+    margin:15px 0;
+  }
+
+  p.hint {
+    margin:0;
+    padding:10px 0 15px 0;
+    font-size:14px;
+    font-family:Arial, Helvetica, sans-serif;
+    line-height:145%;
+  }
+
+}
+
+li.step::before {
+  position:absolute;
+  top:11px;
+  left:12px;
+  color:@ocean;
+  font-size:22px;
+  content:counter(item);
+  font-weight:normal;
+  font-family:Roboto;
+}
+
 .btn.huge {
   width:260px;
   padding:30px 0;
-  margin:0 10px;
+}
+
+input[type='radio'] {
+  display:none;
+}
+
+input[type='radio'] + label {
+  display:inline-block;
+  width:155px;
+  margin:0 10px 0 0;
+}
+
+input[type=file] {
+  display:none;
+}
+
+input[type='submit'].btn {
+  font-size:17px;
+  font-family:Roboto;
+  font-weight:300;
 }

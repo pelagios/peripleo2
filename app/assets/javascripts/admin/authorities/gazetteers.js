@@ -4,9 +4,9 @@ require.config({
 });
 
 require([
-  'admin/hasUploads',
-  'admin/taskProgressList'
-], function(Uploads, TaskProgressList) {
+  'admin/taskProgressList',
+  'common/hasUploads'
+], function(TaskProgressList, Uploads) {
 
   var POLL_INTERVAL_MS = 1000;
 

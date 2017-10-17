@@ -10,6 +10,7 @@ require.config({
     { name : 'admin/datasets/csv' },
     { name : 'admin/maintenance/app' },
     { name : 'landing/anim'},
-    { name : 'ui/app' }
+    { name : 'ui/app' },
+    { name : 'validator/gazetteer' }
   ]
 });

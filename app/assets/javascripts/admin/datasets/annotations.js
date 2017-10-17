@@ -3,7 +3,7 @@ require.config({
   fileExclusionRegExp: /^lib$/
 });
 
-require(['admin/hasUploads'], function(Uploads) {
+require(['common/hasUploads'], function(Uploads) {
 
   jQuery(document).ready(function() {
     var btnRegisterVoID = jQuery('.register-void'),
@@ -37,7 +37,6 @@ require(['admin/hasUploads'], function(Uploads) {
 
     btnRegisterVoID.click(registerVoID);
     datasetList.on('click', '.btn.delete', deleteDataset);
-
 
     Uploads.enable('.upload');
   });

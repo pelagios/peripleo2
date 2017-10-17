@@ -4,7 +4,7 @@ require.config({
 });
 
 require([
-  'admin/hasUploads'
+  'common/hasUploads'
 ], function(Uploads) {
 
   jQuery(document).ready(function() {
