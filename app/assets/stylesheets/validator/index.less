@@ -62,7 +62,7 @@ li.step {
   position:relative;
   background-color:#fff;
   margin:20px auto;
-  padding:15px 40px;
+  padding:17px 60px;
   .rounded-corners(3px);
   .box-shadow(0, 4px, 30px, 0, rgba(0, 0, 0, 0.15));
   text-align:left;
@@ -110,11 +110,17 @@ li.step::before {
   position:absolute;
   top:11px;
   left:12px;
-  color:@ocean;
+  width:30px;
+  height:30px;
+  color:#fff;
+  background-color:@ocean;
   font-size:22px;
   content:counter(item);
   font-weight:normal;
   font-family:Roboto;
+  text-align:center;
+  line-height:30px;
+  .rounded-corners(100%);
 }
 
 .btn.huge {

@@ -62,11 +62,11 @@ class ValidatorController @Inject() (
                 Future.successful(BadRequest)
             }
           } else {
-            Future.successful(Redirect(routes.ValidatorController.gazetteer).flashing("error" -> "Please attach a data file."))
+            Future.successful(Redirect(routes.ValidatorController.gazetteer).flashing("error" -> "Please attach a data file!"))
           }
 
         case None =>
-          Future.successful(Redirect(routes.ValidatorController.gazetteer).flashing("error" -> "Please select a data format."))
+          Future.successful(Redirect(routes.ValidatorController.gazetteer).flashing("error" -> "Please select a data format!"))
       }      
     }.getOrElse {
       // Can never happen, unless someone submits an off-form/hacked request
