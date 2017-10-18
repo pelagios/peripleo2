@@ -11,7 +11,6 @@ require(['common/hasUploads'], function(Uploads) {
 
         onSelectFormat = function(e) {
           var selectedLabel = jQuery('#' + this.id + ' + label');
-
           radioLabels.addClass('outline');
           selectedLabel.removeClass('outline');
         };

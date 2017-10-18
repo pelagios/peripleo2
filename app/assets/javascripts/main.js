@@ -11,6 +11,6 @@ require.config({
     { name : 'admin/maintenance/app' },
     { name : 'landing/anim'},
     { name : 'ui/app' },
-    { name : 'validator/gazetteer' }
+    { name : 'validator/app' }
   ]
 });
