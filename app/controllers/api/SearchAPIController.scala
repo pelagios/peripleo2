@@ -19,7 +19,7 @@ class SearchAPIController @Inject() (
   def search() = Action.async { implicit request =>
     val args = SearchArgs.fromQueryString(request.queryString)
     searchService.query(args).map { results => 
-      logSearchResponse(args, results)
+      logSearch(args, results)
       jsonOk(Json.toJson(results))
     }
   }

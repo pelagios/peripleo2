@@ -14,7 +14,7 @@ case class Visit(
   client       : Client,
   responseTime : Option[Long],
   search       : Option[SearchInfo],
-  selected     : Option[SelectionInfo]
+  selection    : Option[SelectionInfo]
 )
 
 object Visit extends HasDate {

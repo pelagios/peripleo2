@@ -7,56 +7,71 @@ import play.api.mvc.RequestHeader
 import play.api.http.HeaderNames
 import scala.concurrent.{ ExecutionContext, Future }
 import services.visit._
+import services.visit.info._
 import services.item.search.{ SearchArgs, RichResultPage }
 import services.item.{ ItemType, ItemService }
 
 trait HasVisitLogging {
-    
-  protected def logVisit(took: Option[Long], search: Option[Visit.Search], selected: Option[Visit.Selected]) (implicit request: RequestHeader, visitService: VisitService): Future[Unit] = {
+  
+  private def baseVisit(request: RequestHeader, visitType: VisitType.Value) = {
     val userAgentHeader = request.headers.get(HeaderNames.USER_AGENT)
     val userAgent = userAgentHeader.map(ua => UserAgent.parseUserAgentString(ua))
     val os = userAgent.map(_.getOperatingSystem)
     
-    val visit = Visit(
+    Visit(
       request.uri,
       request.headers.get(HeaderNames.REFERER),
-      DateTime.now(),
-      Visit.Client(
+      DateTime.now,
+      visitType,
+      Client(
         request.remoteAddress,
         userAgentHeader.getOrElse("UNKNOWN"),
         userAgent.map(_.getBrowser.getGroup.getName).getOrElse("UNKNOWN"),
         os.map(_.getName).getOrElse("UNKNOWN"),
         os.map(_.getDeviceType.getName).getOrElse("UNKNOWN")  
       ),
-      took, search, selected)
-
-    if (HasVisitLogging.isBot(visit))
-      Future.successful(())
-    else
-      visitService.insertVisit(visit)    
+      None, None, None)
   }
   
-  protected def logSearchResponse(args: SearchArgs, response: RichResultPage)(implicit request: RequestHeader, visitService: VisitService, ctx: ExecutionContext) =
-    Future {   
+  private def log(v: Visit)(implicit visitService: VisitService) = 
+    if (HasVisitLogging.isBot(v)) Future.successful(())
+    else visitService.insertVisit(v)
+  
+  protected def logSearch(args: SearchArgs, response: RichResultPage)(implicit request: RequestHeader, visitService: VisitService, ctx: ExecutionContext) = 
+    Future {
       def top(t: ItemType) = response.topReferenced.map(_.count(t)).getOrElse(0)
-      Visit.Search(args.query, Visit.Response(
-          response.total, top(ItemType.PLACE), top(ItemType.PERSON)))         
-    } flatMap { search =>
-      logVisit(Some(response.took), Some(search), None)
+      
+      val search = SearchInfo(
+        args.query,
+        SearchInfo.Returned(
+          response.total,
+          top(ItemType.PLACE),
+          top(ItemType.PERSON),
+          top(ItemType.PERIOD)
+        ))
+      
+      val v = baseVisit(request, VisitType.SEARCH)
+      v.copy(
+        responseTime = Some(response.took),
+        search = Some(search))
+    } flatMap { 
+      log(_) 
     }
   
-  protected def logSelection(identifier: String)(implicit request: RequestHeader, itemService: ItemService, visitService: VisitService, ctx: ExecutionContext) = 
-    itemService.findByIdentifier(identifier).map {
+  protected def logSelection(identifier: String)(implicit request: RequestHeader, itemService: ItemService, visitService: VisitService, ctx: ExecutionContext) =
+    itemService.findByIdentifier(identifier).flatMap {
       case Some(item) =>
-        // First record
-        val r = item.isConflationOf.head
-        val selected = Visit.Selected(r.uri, item.title, r.isInDataset.get)
-        logVisit(None, None, Some(selected))
+        val firstRecord = item.isConflationOf.head
+        val selection = SelectionInfo(identifier, item.title, firstRecord.isInDataset.get)
+        val v = baseVisit(request, VisitType.SELECTION)
+          .copy(selection = Some(selection))
+        log(v)
         
       case None =>
-        Logger.warn(s"Selection event for a non-existing item: ${identifier}")
+        Logger.warn(s"Selection pingback for a non-existing item: ${identifier}")
+        Future.successful(())
     }
-  
+
 }
 
 object HasVisitLogging {
