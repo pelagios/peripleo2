@@ -4,6 +4,7 @@
       "url": { "type": "string", "index": "not_analyzed" },
       "referer": { "type": "string", "index": "not_analyzed" },
       "visited_at": { "type": "date", "format": "yyyy-MM-dd'T'HH:mm:ssZ" },
+      "visit_type": { "type": "string", "index": "not_analyzed" },
       "client": {
         "properties": {
           "ip": { "type": "string", "index": "not_analyzed" },
@@ -13,7 +14,7 @@
           "device_type": { "type": "string", "index": "not_analyzed" }
         }
       },
-      "took_ms": { "type": "integer" },
+      "response_time": { "type": "integer" },
       "search": {
         "properties": {
           "query": {
@@ -22,16 +23,17 @@
                "raw": { "type": "string", "index": "not_analyzed" }
             }
           },
-          "response": {
+          "returned": {
             "properties" : {
               "total_hits": { "type": "integer" },
               "top_places": { "type": "integer" },
-              "top_people": { "type": "integer" }
+              "top_people": { "type": "integer" },
+              "top_periods": { "type": "integer" }
             }
           }
         }
       },
-      "selected": {
+      "selection": {
         "properties": {
           "identifier": { "type": "string", "index": "not_analyzed" },
           "title": {
