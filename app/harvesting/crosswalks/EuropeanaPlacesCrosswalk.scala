@@ -35,6 +35,7 @@ object EuropeanaPlacesCrosswalk extends BaseGeoJSONCrosswalk {
       europeana.representativePoint,
       None, // temporalBounds
       europeana.names,
+      None,
       europeana.closeMatches,
       Seq.empty[String]  // exactMatches
     )

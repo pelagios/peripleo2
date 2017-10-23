@@ -211,6 +211,7 @@ class AnnotationsAdminController @Inject() (
             Seq.empty[Depiction],
             None, None, None, // geometry, representativePoint, temporalBounds
             Seq.empty[Name],
+            None,
             Seq.empty[String], // closeMatches
             Seq.empty[String]) // exactMatches
 

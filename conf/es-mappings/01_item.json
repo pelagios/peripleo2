@@ -93,7 +93,8 @@
           },
           "close_matches": { "type": "string", "index": "not_analyzed" },
           "exact_matches": { "type": "string", "index": "not_analyzed" }
-        }
+        },
+        "harvest_url": { "type": "string", "index": "not_analyzed" }
       },
       "suggest" : { "type" : "completion",
                     "preserve_separators": false,

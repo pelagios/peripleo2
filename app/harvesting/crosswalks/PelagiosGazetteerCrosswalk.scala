@@ -41,6 +41,7 @@ object PelagiosGazetteerCrosswalk {
         place.location.map(_.pointLocation),
         place.temporalCoverage.map(convertPeriodOfTime(_)),
         place.names.map(l => Name(l.chars, l.lang.flatMap(Language.safeParse))),
+        None,
         place.closeMatches.map(ItemRecord.normalizeURI),
         place.exactMatches.map(ItemRecord.normalizeURI))
     

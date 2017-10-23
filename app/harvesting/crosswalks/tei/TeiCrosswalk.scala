@@ -30,6 +30,7 @@ object TeiCrosswalk {
       None, None, // geometry, representativePoint
       None, // temporalBounds
       Seq.empty[Name],
+      None,
       Seq.empty[String], Seq.empty[String])
   }
   

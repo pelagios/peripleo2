@@ -174,6 +174,7 @@ class ItemSpec extends PlaySpec with TestHelpers {
         Some(point.getCoordinate),
         Some(TemporalBounds.fromYears(-500, -250)),
         Seq.empty[Name],
+        None,
         Seq.empty[String], // closeMatches
         Seq.empty[String]  // exactMatches
       ))

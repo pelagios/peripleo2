@@ -66,6 +66,7 @@ object CSVCrosswalk {
         None,
         Some(TemporalBounds.fromTimestamp(formatter.parseDateTime(timestamp))),
         Seq.empty[Name],
+        None,
         Seq.empty[String], Seq.empty[String])
         
       val reference = UnboundReference(

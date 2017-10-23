@@ -25,6 +25,7 @@ case class ItemRecord(
   representativePoint : Option[Coordinate],
   temporalBounds      : Option[TemporalBounds],
   names               : Seq[Name],
+  harvestUrl          : Option[String],
   closeMatches        : Seq[String],
   exactMatches        : Seq[String]
 ) {
@@ -98,6 +99,7 @@ object ItemRecord extends HasDate with HasNullableSeq with HasGeometry {
     (JsPath \ "temporal_bounds").formatNullable[TemporalBounds] and
     (JsPath \ "names").formatNullable[Seq[Name]]
       .inmap[Seq[Name]](fromOptSeq[Name], toOptSeq[Name]) and
+    (JsPath \ "harvest_url").formatNullable[String] and
     (JsPath \ "close_matches").formatNullable[Seq[String]]
       .inmap[Seq[String]](fromOptSeq[String], toOptSeq[String]) and
     (JsPath \ "exact_matches").formatNullable[Seq[String]]

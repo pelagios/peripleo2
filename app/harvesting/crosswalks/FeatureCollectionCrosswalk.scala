@@ -35,6 +35,7 @@ object FeatureCollectionCrosswalk {
            f.geometry.map(_.getCentroid.getCoordinate),
            None, // Temporal bounds TODO support when
            f.names,
+           None,
            f.links.map(_.closeMatches).getOrElse(Seq.empty[String]),
            f.links.map(_.exactMatches).getOrElse(Seq.empty[String])
          ))

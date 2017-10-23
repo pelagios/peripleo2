@@ -43,6 +43,7 @@ object PeriodoCrosswalk {
       None, None, // geometry, representativePoint
       p.temporalBounds,
       Seq.empty[Name],
+      None,
       Seq.empty[String], Seq.empty[String])
   }
 

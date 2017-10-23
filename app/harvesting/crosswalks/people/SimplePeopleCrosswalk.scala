@@ -27,6 +27,7 @@ object SimplePeopleCrosswalk {
       None, None, // geometry, representativePoint
       record.temporalBounds,
       record.names,
+      None,
       record.closeMatches,
       Seq.empty[String])
   
