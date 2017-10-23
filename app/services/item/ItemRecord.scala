@@ -25,7 +25,7 @@ case class ItemRecord(
   representativePoint : Option[Coordinate],
   temporalBounds      : Option[TemporalBounds],
   names               : Seq[Name],
-  harvestUrl          : Option[String],
+  harvestVia          : Option[String],
   closeMatches        : Seq[String],
   exactMatches        : Seq[String]
 ) {

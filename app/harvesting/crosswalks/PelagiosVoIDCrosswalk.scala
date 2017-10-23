@@ -19,7 +19,7 @@ object PelagiosVoIDCrosswalk extends PelagiosCrosswalk {
     if (rootset.subsets.isEmpty) Seq(rootset)
     else rootset +: rootset.subsets.flatMap(flattenHierarchy)
 
-  def convertDataset(rootset: Dataset): Seq[ItemRecord] =
+  def convertDataset(rootset: Dataset, voidURL: String): Seq[ItemRecord] =
     flattenHierarchy(rootset).map { d =>
       val parentHierarchy =  {
         val parents = findParents(d).reverse
@@ -50,12 +50,7 @@ object PelagiosVoIDCrosswalk extends PelagiosCrosswalk {
         Seq.empty[String]) // exactMatches
     }
 
-
-  def fromRDF(filename: String): InputStream => Seq[ItemRecord] =
-    { stream: InputStream =>
-      Scalagios.readVoID(stream, filename).flatMap(convertDataset).toSeq }
-
-  def fromDatasets(rootDatasets: Seq[Dataset]): Seq[ItemRecord] =
-    rootDatasets.flatMap(convertDataset)
+  def fromDatasets(rootDatasets: Seq[Dataset], voidURL: String): Seq[ItemRecord] =
+    rootDatasets.flatMap(convertDataset(_, voidURL))
 
 }

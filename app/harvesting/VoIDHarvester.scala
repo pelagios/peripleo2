@@ -87,8 +87,8 @@ class VoIDHarvester @Inject() (
   }
 
   /** Imports the datasets into the index **/
-  private def importDatasets(rootDatasets: Iterable[Dataset]): Future[Boolean] = {
-    val items = PelagiosVoIDCrosswalk.fromDatasets(rootDatasets.toSeq)
+  private def importDatasets(rootDatasets: Iterable[Dataset], voidURL: String): Future[Boolean] = {
+    val items = PelagiosVoIDCrosswalk.fromDatasets(rootDatasets.toSeq, voidURL)
     new DatasetImporter(itemService, ItemType.DATASET.ANNOTATIONS).importDatasets(items)
   }
   
@@ -125,7 +125,7 @@ class VoIDHarvester @Inject() (
     // can aggregate sub-task progress later
     for { 
       (rootDatasets, dumpfiles) <- downloadFiles(voidURL)
-      success1 <- importDatasets(rootDatasets)
+      success1 <- importDatasets(rootDatasets, voidURL)
       success2 <- importAnnotationDumps(dumpfiles, username)      
     } yield (success1 && success2)
   }
