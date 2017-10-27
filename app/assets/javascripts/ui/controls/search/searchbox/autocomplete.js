@@ -5,7 +5,11 @@ define([
 
   var Autocomplete = function(form, input) {
 
-    var self = this;
+    var self = this,
+
+        clear = function() {
+          input.typeahead('val','');
+        };
 
     // Typeahead setup
     input.typeahead({
@@ -55,6 +59,8 @@ define([
     input.on('typeahead:select', function(e, data) {
       self.fireEvent('selectOption', data);
     });
+
+    this.clear = clear;
 
     HasEvents.apply(this);
   };

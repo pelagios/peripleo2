@@ -47,15 +47,17 @@ define([], function() {
         }
       };
 
-  var Crumb = function(parentEl, filter, value) {
+  var Indicator = function(parentEl, filter, value) {
 
     var element = jQuery(
-          '<li class="' + getCSSClass(filter, value) + '" title="' + getTooltip(filter, value) + '">' +
-            '<span class="icon">' + getIcon(filter, value) + '</span>' +
-            '<span class="label"><span class="label-inner">' +
-              value.label.replace('\u0007', '<span class="separator"></span>') +
-            '</span></span>' +
-          '</li>').appendTo(parentEl),
+                   '<li class="open">' +
+                     '<span class="icon">' + getIcon(filter, value) + '</span>' +
+                     '<span class="label">' +
+                       '<span class="label-inner">' +
+                         value.label.replace('\u0007', '<span class="separator"></span>') +
+                       '</span>' +
+                     '</span>' +
+                   '</li>').appendTo(parentEl),
 
         label = element.find('.label'),
 
@@ -65,7 +67,7 @@ define([], function() {
           */
         width,
 
-        /** Returns true if this crumb corresponds to the specified filter/value combination **/
+        /** Returns true if this indicator corresponds to the specified filter/value combination **/
         matches = function(f, v) {
           return f === filter && v.identifier === value.identifier;
         },
@@ -76,11 +78,11 @@ define([], function() {
         },
 
         /**
-         * A helper to test whether this Crumb is attached to the given
-         * LI jQuery element. Used by filterCrumb.js to determine the appropriate
-         * crumb after a user clicked on an LI. Not the nicest solution... but
+         * A helper to test whether this indicator is attached to the given
+         * LI jQuery element. Used by indicatorRow.js to determine the appropriate
+         * indicator after a user clicked on an LI. Not the nicest solution... but
          * don't really know a way with less cross-dependency.
-         * (Alternative would be to attach the crumb to the LI via .data(), but introduces
+         * (Alternative would be to attach the indicator to the LI via .data(), but introduces
          * the same cross-dependency.)
          */
         isAttachedTo = function(li) {
@@ -91,16 +93,33 @@ define([], function() {
           return label.width() === 0;
         },
 
-        collapse = function() {
+        collapse = function(opt_progress) {
           if (!isCollapsed()) {
             if (!width) width = label.outerWidth() + 1;
-            label.animate({ 'width' : 0 }, COLLAPSE_DURATION);
+            label.velocity({
+              width: 0
+            }, {
+              duration: COLLAPSE_DURATION,
+              progress: opt_progress,
+              complete: function() {
+                element.removeClass('open');
+                element.addClass('closed');
+              }
+            });
           }
         },
 
-        expand = function() {
+        expand = function(opt_progress) {
           if (isCollapsed())
-            label.animate({ 'width': width }, COLLAPSE_DURATION);
+            element.addClass('open');
+            element.removeClass('closed');
+
+            label.velocity({
+              width: width
+            }, {
+              duration: COLLAPSE_DURATION,
+              progress: opt_progress
+            });
         };
 
     this.element = element;
@@ -112,6 +131,6 @@ define([], function() {
     this.hasType = hasType;
   };
 
-  return Crumb;
+  return Indicator;
 
 });

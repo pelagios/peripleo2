@@ -111,7 +111,7 @@ define([
               asFilterSetting = { referencing: [ identifier ]};
 
           searchPanel.setLoading(true);
-          searchPanel.updateFilterCrumbs({ filter: 'referencing', values: [{
+          searchPanel.updateFilterIndicators({ filter: 'referencing', values: [{
             identifier: identifier,
             label: item.title,
             type: itemType
@@ -142,6 +142,14 @@ define([
 
         onNextPage = function() {
           state.loadNextPage().done(resultList.appendNextPage);
+        },
+
+        onClearAll = function() {
+          stashedQuery.clear();
+          state.clearSearch({ makeRequest: false });
+          resultList.close();
+          selectionPanel.hide();
+          map.clear();
         };
 
     // Implemented directly in navigation.js
@@ -158,7 +166,7 @@ define([
     this.onCloseFilterPane = filterActions.onCloseFilterPane;
     this.onFilterByViewport = filterActions.onFilterByViewport;
     this.onSetFilter = filterActions.onSetFilter;
-    this.onRemoveAllFilters = filterActions.onRemoveAllFilters;
+    this.onClearAll = onClearAll;
 
     // Split out into selectActions.js (and sub-components) for better code readability
     this.onSelectItem = selectActions.onSelectItem;

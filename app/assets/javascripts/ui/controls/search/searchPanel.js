@@ -1,9 +1,8 @@
 define([
   'ui/common/hasEvents',
-  'ui/controls/search/filtercrumbs/filterCrumbs',
   'ui/controls/search/filterpane/filterPane',
   'ui/controls/search/searchbox/searchBox'
-], function(HasEvents, FilterCrumbs, FilterPane, SearchBox) {
+], function(HasEvents, FilterPane, SearchBox) {
 
   var SearchPanel = function(parentEl) {
 
@@ -14,9 +13,6 @@ define([
         /** The query input field and associated autocomplete drop-down **/
         searchBox = new SearchBox(element),
 
-        /** The 'filter crumbs' bar in between the search box and the panel footer **/
-        filterCrumbs = new FilterCrumbs(element),
-
         /** The collapsible filterpanel and footer **/
         filterPane = new FilterPane(element),
 
@@ -24,7 +20,7 @@ define([
         setLoading = function(loading) {
           searchBox.setLoading(loading);
         },
-        
+
         /** Clears the footer result count **/
         clearFooter = function() {
           filterPane.clearFooter();
@@ -35,18 +31,33 @@ define([
           filterPane.setFilterByViewport(filter);
         },
 
-        /** Updates the filterCrumbs bar **/
-        updateFilterCrumbs = function(filterSetting) {
-          filterCrumbs.update(filterSetting);
+        /** Updates the filter indicators in the search bar **/
+        updateFilterIndicators = function(filterSetting) {
+          searchBox.updateIndicators(filterSetting);
         },
 
-        removeFilterCrumbs = function(filterType, opt_identifier) {
-          filterCrumbs.remove(filterType, opt_identifier);
+        /** Removes a group or a specific filter indicator from the search bar **/
+        removeFilterIndicators = function(filterType, opt_identifier) {
+          searchBox.removeIndicators(filterType, opt_identifier);
         },
 
         /** Updates all components with a new search response **/
         setSearchResponse = function(searchResponse) {
           filterPane.setSearchResponse(searchResponse);
+        },
+
+        onClearAll = function() {
+          clearFooter();
+          self.fireEvent('clearAll');
+        },
+
+        onTimerangeChange = function(interval) {
+          if (interval.from || interval.to)
+            searchBox.showTimefilterIndicator(interval);
+          else
+            searchBox.hideTimefilterIndicator();
+
+          self.fireEvent('timerangeChange', interval);
         },
 
         /**
@@ -66,19 +77,18 @@ define([
     // Forward events from child components up the hierarchy
     searchBox.on('change', this.forwardEvent('queryChange'));
     searchBox.on('selectSuggestOption', this.forwardEvent('selectSuggestOption'));
-
-    filterCrumbs.on('removeAll', this.forwardEvent('removeAllFilters'));
+    searchBox.on('clearAll', onClearAll);
 
     filterPane.on('open', this.forwardEvent('open'));
     filterPane.on('close', this.forwardEvent('close'));
     filterPane.on('setFilter', this.forwardEvent('setFilter'));
-    filterPane.on('timerangeChange', this.forwardEvent('timerangeChange'));
+    filterPane.on('timerangeChange', onTimerangeChange);
 
     this.setLoading = setLoading;
     this.clearFooter = clearFooter;
     this.setFilterByViewport = setFilterByViewport;
-    this.updateFilterCrumbs = updateFilterCrumbs;
-    this.removeFilterCrumbs = removeFilterCrumbs;
+    this.updateFilterIndicators = updateFilterIndicators;
+    this.removeFilterIndicators = removeFilterIndicators;
     this.setSearchResponse = setSearchResponse;
     this.setState = setState;
 

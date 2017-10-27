@@ -150,6 +150,7 @@ define([
 
         close = function() {
           list.empty();
+          waitSpinner.hide();
           currentSelection = false;
         };
 

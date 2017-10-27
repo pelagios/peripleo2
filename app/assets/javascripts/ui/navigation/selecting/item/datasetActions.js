@@ -14,7 +14,7 @@ define([
           stashedQuery.set(state.getQueryPhrase());
 
           // Update filter crumbs
-          searchPanel.updateFilterCrumbs({ filter: 'datasets', values: [{
+          searchPanel.updateFilterIndicators({ filter: 'datasets', values: [{
             identifier: uri,
             label: dataset.title
           }]});
@@ -48,7 +48,7 @@ define([
           }
 
           // Remove the dataset filter and restore search state
-          searchPanel.removeFilterCrumbs('datasets');
+          searchPanel.removeFilterIndicators('datasets');
           state.updateFilters({ datasets: false }).done(function(response) {
             searchPanel.setSearchResponse(response);
             resultList.setSearchResponse(response);

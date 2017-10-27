@@ -1,4 +1,5 @@
 @import "_autocomplete.less";
+@import "_indicators.less";
 
 #searchbox {
   position:relative;
@@ -28,7 +29,7 @@
     .rounded-corners-bottom(0);
   }
 
-  .icon {
+  .icon.state {
     position:absolute;
     top:11px;
     right:14px;
@@ -37,14 +38,14 @@
     cursor:pointer;
   }
 
-  .icon.search::after {
+  .icon.state.search::after {
     content:'\f002';
     font-family:FontAwesome;
     font-size:15px;
     color:lighten(@light-grey-type, 5%);
   }
 
-  .icon.clear::after {
+  .icon.state.clear::after {
     position:relative;
     left:12px;
     content:'\e680';
@@ -54,11 +55,11 @@
     color:@light-grey-type;
   }
 
-  .icon.clear:hover::after {
+  .icon.state.clear:hover::after {
     color:@light-grey-type-hover;
   }
 
-  .icon.loading {
+  .icon.state.loading {
     top:8px;
     right:8px;
   	width:17px;

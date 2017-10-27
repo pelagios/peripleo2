@@ -26,8 +26,7 @@ define([], function() {
           asFilterSetting[f.filter] = f.values.map(function(v) { return v.identifier; });
 
           searchPanel.setLoading(true);
-          searchPanel.updateFilterCrumbs(f);
-          selectionPanel.hide();
+          searchPanel.updateFilterIndicators(f);
 
           state.updateFilters(asFilterSetting).done(function(results) {
             var hasPlaceFilter = (f.filter === 'referencing') && f.values.find(function(v) {
@@ -49,17 +48,6 @@ define([], function() {
           });
         },
 
-        onRemoveAllFilters = function() {
-          searchPanel.setLoading(true);
-
-          if (stashedQuery.isSet()) {
-            state.setQueryPhrase(stashedQuery.get(), NOOP);
-            stashedQuery.clear();
-          }
-
-          state.clearFilters().done(updateAll);
-        },
-
         onFilterByViewport = function(filter) {
           searchPanel.setFilterByViewport(filter);
           state.setFilterByViewport(filter).done(updateAll);
@@ -68,7 +56,6 @@ define([], function() {
     this.onOpenFilterPane = onOpenFilterPane;
     this.onCloseFilterPane = onCloseFilterPane;
     this.onSetFilter = onSetFilter;
-    this.onRemoveAllFilters = onRemoveAllFilters;
     this.onFilterByViewport = onFilterByViewport;
   };
 

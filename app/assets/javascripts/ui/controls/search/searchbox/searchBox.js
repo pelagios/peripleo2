@@ -1,7 +1,8 @@
 define([
   'ui/common/hasEvents',
-  'ui/controls/search/searchbox/autocomplete'
-], function(HasEvents, Autocomplete) {
+  'ui/controls/search/searchbox/autocomplete',
+  'ui/controls/search/searchbox/indicators/indicatorRow'
+], function(HasEvents, Autocomplete, IndicatorRow) {
 
   var SPINNER_STOP_DELAY = 300;
 
@@ -11,22 +12,24 @@ define([
 
         element = jQuery(
            '<div id="searchbox">' +
-           '  <form>' +
-           '    <input type="text" name="q" autocomplete="off">' +
-           '    <span class="icon search"></span>' +
-           '  </form>' +
+             '<form>' +
+               '<input type="text" name="q" autocomplete="off">' +
+               '<span class="icon state search"></span>' +
+             '</form>' +
            '</div>').appendTo(parentEl),
 
          searchBoxForm = element.find('form'),
          searchBoxInput = searchBoxForm.find('input'),
-         searchBoxIcon = searchBoxForm.find('.icon'),
+         searchBoxIcon = searchBoxForm.find('.icon.state'),
+
+         indicatorRow = new IndicatorRow(searchBoxForm, searchBoxInput),
 
          autocomplete = new Autocomplete(searchBoxForm, searchBoxInput),
 
          /**
           * We introduce a little delay for stopping the load spinner, in order
           * to avoid jittery on/off behavior when many search requests happen
-          * in fast succession, when dragging the time slider. This var
+          * in fast succession, e.g. when dragging the time slider. This var
           * keeps track of the timeout function
           */
          stopSpinner = false,
@@ -38,18 +41,30 @@ define([
                clearTimeout(stopSpinner);
                stopSpinner = false;
              }
-             searchBoxIcon.attr('class', 'icon loading');
+             searchBoxIcon.attr('class', 'icon state loading');
            } else if (!loading && !stopSpinner) {
-             stopSpinner = setTimeout(function() {
-               searchBoxIcon.attr('class', 'icon search');
-             }, SPINNER_STOP_DELAY);
+             stopSpinner = setTimeout(refreshIconState, SPINNER_STOP_DELAY);
            }
+         },
+
+         refreshIconState = function() {
+           var noQuery = searchBoxInput.val().trim() === '';
+           if (indicatorRow.isEmpty() && noQuery)
+             searchBoxIcon.attr('class', 'icon state search');
+           else
+             searchBoxIcon.attr('class', 'icon state clear');
          },
 
          /** Only click on the spyglass icon triggers a search, not on the load spinner **/
          onIconClicked = function() {
-           if (searchBoxIcon.hasClass('search'))
+           if (searchBoxIcon.hasClass('search')) {
              onSubmit();
+           } else if (searchBoxIcon.hasClass('clear')) {
+             indicatorRow.clear();
+             autocomplete.clear(); // Also clears the query
+             refreshIconState();
+             self.fireEvent('clearAll');
+           }
          },
 
          /** Minimal cleanup when search is triggered **/
@@ -78,8 +93,18 @@ define([
 
          /** Sets the query string WITHOUT FIRING A CHANGE EVENT **/
          setQuery = function(query) {
-           if (query) searchBoxInput.val(query);
-           else searchBoxInput.val('');
+           if (query)
+             searchBoxInput.val(query);
+           else
+             searchBoxInput.val('');
+         },
+
+         updateIndicators = function(filterSetting) {
+           indicatorRow.update(filterSetting);
+         },
+
+         removeIndicators = function(filterType, opt_identifier) {
+           indicatorRow.remove(filterType, opt_identifier);
          };
 
     searchBoxForm.submit(onSubmit);
@@ -89,6 +114,10 @@ define([
 
     this.setLoading = setLoading;
     this.setQuery = setQuery;
+    this.updateIndicators = updateIndicators;
+    this.removeIndicators = removeIndicators;
+    this.showTimefilterIndicator = indicatorRow.showTimefilterIndicator;
+    this.hideTimefilterIndicator = indicatorRow.hideTimefilterIndicator;
 
     HasEvents.apply(this);
   };

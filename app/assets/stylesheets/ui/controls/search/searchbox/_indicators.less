@@ -1,0 +1,50 @@
+ul.filter-indicators {
+  position:absolute;
+  top:1px;
+  left:4px;
+  display:inline-block;
+  margin:0;
+  padding:0;
+  list-style-type:none;
+  z-index:2;
+
+  li {
+    display:inline-block;
+    margin:6px 2px 5px 1px;
+    .rounded-corners(3px);
+    cursor:pointer;
+    background-color:@ocean;
+    .rounded-corners(3px);
+    .box-shadow(0, 1px, 1px, 0, rgba(0,0,0,0.25));
+    .noselect();
+    color:#fff;
+    line-height:24px;
+
+    * {
+      display:inline-block;
+      vertical-align:middle;
+    }
+
+    .icon {
+      position:relative;
+      text-align:center;
+      width:24px;
+      height:24px;
+      font-size:14px;
+    }
+
+    .label {
+      height:24px;
+      overflow:hidden;
+
+      .label-inner {
+        padding:0 10px 0 0;
+        text-decoration:none;
+        font-size:12px;
+      }
+
+    }
+
+  }
+
+}

@@ -41,9 +41,9 @@ require([
     searchPanel.on('open', navigation.onOpenFilterPane);
     searchPanel.on('close', navigation.onCloseFilterPane);
     searchPanel.on('queryChange', navigation.onQueryPhraseChanged);
+    searchPanel.on('clearAll', navigation.onClearAll);
     searchPanel.on('selectSuggestOption', navigation.onSelectIdentifier);
     searchPanel.on('setFilter', navigation.onSetFilter);
-    searchPanel.on('removeAllFilters', navigation.onRemoveAllFilters);
     searchPanel.on('timerangeChange', navigation.onTimerangeChange);
 
     selectionPanel.on('select', navigation.onSelectIdentifier);
