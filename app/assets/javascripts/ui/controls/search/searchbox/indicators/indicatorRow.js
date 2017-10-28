@@ -19,6 +19,9 @@ define([
     var element = jQuery(
           '<ul class="filter-indicators"></ul>').prependTo(searchForm),
 
+        timefilterIndicator = jQuery(
+          '<li class="closed"><span class="icon">&#xf017;</span></li>').hide().appendTo(element),
+
         initialInputPadding = parseInt(searchInput.css('padding-left')),
 
         indicators = [],
@@ -90,11 +93,13 @@ define([
         },
 
         showTimefilterIndicator = function(interval) {
-          console.log('time filter');
+          timefilterIndicator.show();
+          refreshInputPadding();
         },
 
         hideTimefilterIndicator = function() {
-          console.log('clear timefilter');
+          timefilterIndicator.hide();
+          refreshInputPadding();
         },
 
         /** Clears all filter indicators **/
