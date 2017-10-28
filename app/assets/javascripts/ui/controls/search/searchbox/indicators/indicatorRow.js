@@ -20,7 +20,7 @@ define([
           '<ul class="filter-indicators"></ul>').prependTo(searchForm),
 
         timefilterIndicator = jQuery(
-          '<li class="closed"><span class="icon">&#xf017;</span></li>').hide().appendTo(element),
+          '<li class="closed timerange"><span class="icon">&#xf017;</span></li>').hide().appendTo(element),
 
         initialInputPadding = parseInt(searchInput.css('padding-left')),
 
@@ -104,8 +104,7 @@ define([
 
         /** Clears all filter indicators **/
         clear = function() {
-          element.empty();
-          hideTimefilterIndicator();
+          element.find('li').not('.timerange').remove();
           indicators = [];
           refreshInputPadding();
         },
