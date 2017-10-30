@@ -34,18 +34,31 @@ object TeiCrosswalk {
       Seq.empty[String], Seq.empty[String])
   }
   
-  private def parseBody(identifier: String, xml: Elem): Seq[UnboundReference] = {
+  private def parseBody(identifier: String, baseURI: Option[String], xml: Elem): Seq[UnboundReference] = {
     
-    // Returns the ref attribute of the node, if any
-    def getRef(node: Node) = 
-      node.attribute("ref").flatMap(_.headOption).map(_.text) 
-    
+    // Returns a string attribute from the node, if it exists
+    def getAttribute(attr: String, node: Node) = 
+      node.attribute(attr).flatMap(_.headOption).map(_.text) 
+      
+    def toAnnotationLink(n: Option[String]) = { 
+      val m = for {
+        id <- n
+        base <- baseURI
+      } yield if (base.contains("recogito")) {
+        Some(base + "?annotation=" + id)
+      } else {
+        None
+      }
+      
+      m.flatten
+    }
+          
     // Builds an UnboundReferences from a ref URI and text context
-    def toReference(uri: String, quote: ReferenceQuote) = UnboundReference(
+    def toReference(uri: String, homepage: Option[String], quote: ReferenceQuote) = UnboundReference(
         identifier,
         ItemRecord.normalizeURI(uri),
         None, // relation
-        None, // homepage
+        homepage,
         Some(quote),        
         None // Depiction
       )
@@ -89,7 +102,7 @@ object TeiCrosswalk {
         (Some(current), refs)
       } else {
         // We know that this is an entity node - append prev and next iff they are text
-        getRef(current) match { 
+        getAttribute("ref", current) match { 
           
           case Some(entityURI) =>
             // The text before this entity
@@ -108,9 +121,10 @@ object TeiCrosswalk {
             val context = Seq(prefix, Some(chars), suffix).flatten.mkString("")
             val offset = prefix.map(_.size).getOrElse(0)
             
+            val homepage = toAnnotationLink(getAttribute("n", current))
             val quote = ReferenceQuote(chars, Some(context), Some(offset))
             
-            (Some(current), refs :+ toReference(entityURI, quote))
+            (Some(current), refs :+ toReference(entityURI, homepage, quote))
             
           // This is an entity node, but without a "ref" attribute - skip
           case None =>
@@ -126,18 +140,16 @@ object TeiCrosswalk {
     if (flattened.size > 1) {
       val lastPair = flattened.takeRight(2)
       val (prefix, current) = (lastPair(0), lastPair(1))
-      val maybeRef = getRef(current)
+      val maybeRef = getAttribute("ref", current)      
+      val maybeHomepage = toAnnotationLink(getAttribute("n", current))
       
       if (current.isInstanceOf[Text] || maybeRef.isEmpty) {
         // Last node is a text node, or an entity node without a ref - nothing to do
         references
       } else if (prefix.isInstanceOf[Text]) {
         // Last node is an entity with a ref attribute, and prefix is text
-        
-        // TODO need to include chars and offset as well! 
-        // Some(ReferenceQuote("", Some(context), None)),
         val quote = ReferenceQuote(current.text, Some(prefix.text + current.text), Some(prefix.text.size))
-        references :+ toReference(maybeRef.get, quote)
+        references :+ toReference(maybeRef.get, maybeHomepage, quote)
       } else {
         // Last node is an entity with a ref, prefix is also an entity
         references
@@ -150,7 +162,7 @@ object TeiCrosswalk {
   private[tei] def parseTEIXML(identifier: String, dataset: PathHierarchy, stream: InputStream): (ItemRecord, Seq[UnboundReference]) = {
     val teiXml = XML.load(stream)        
     val record = parseHeader(identifier, dataset, teiXml)    
-    val references = parseBody(identifier, teiXml)
+    val references = parseBody(identifier, record.homepage, teiXml)
     (record, references)    
   }
   
