@@ -37,12 +37,19 @@ define([
           return b.description.length - a.description.length;
         }),
 
+        longestPleiadesDescription = sortedByLength.find(function(d) {
+          return d.uri.indexOf('pleiades.stoa.org') > -1;
+        }),
+
         englishOnly = sortedByLength.filter(function(d) {
           return d.language === 'EN';
         }),
 
-        topRanked = (englishOnly.length > 0) ? englishOnly[0] :
-          (sortedByLength.length > 0) ? sortedByLength[0] : false;
+        // Top priority goes to longest Pleiades description, then longest English, then
+        // longest any language
+        topRanked = (longestPleiadesDescription) ? longestPleiadesDescription :
+          (englishOnly.length > 0) ? englishOnly[0] :
+            (sortedByLength.length > 0) ? sortedByLength[0] : false;
 
     if (topRanked)
       element.html(topRanked.description +
