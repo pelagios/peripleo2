@@ -113,7 +113,12 @@ class AnnotationsAdminController @Inject() (
   }
   
   def importIntoAnnotations(f: FilePart[Files.TemporaryFile], inDataset: PathHierarchy, username: String) = {
-    val crosswalk = PelagiosAnnotationCrosswalk.fromRDF(f.filename, inDataset)  
+    val crosswalk = 
+      if (f.filename.endsWith(".tei.xml"))
+        TeiCrosswalk.fromSingleFile(f.filename, inDataset)
+      else
+        PelagiosAnnotationCrosswalk.fromRDF(f.filename, inDataset)
+        
     val importer = new ItemImporter(itemService, ItemType.OBJECT)
     new DumpLoader(taskService, TaskType("ANNOTATION_IMPORT")).importDump(
       "Importing into dataset",

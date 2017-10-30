@@ -45,7 +45,7 @@ object TeiCrosswalk {
         id <- n
         base <- baseURI
       } yield if (base.contains("recogito")) {
-        Some(base + "?annotation=" + id)
+        Some(base + "/edit?annotation=" + id)
       } else {
         None
       }
