@@ -77,14 +77,10 @@ define([
           return promise;
         },
 
-        /** Completely clears the search, removing all filters and clearing the query **/
+        /** Completely clears the search, removing filters, query and selection **/
         clearSearch = function(options) {
+          currentSelection = false;
           return changeSearch(search.clear, options);
-        },
-
-        /** Clears the search filters - does not affect the time interval! **/
-        clearFilters = function(options) {
-          return changeSearch(search.clearFilters, options);
         },
 
         /** Changes the search query phrase, leaving all other settings unchanged **/
@@ -171,7 +167,6 @@ define([
     this.init = init;
     this.getUIState = getUIState;
     this.clearSearch = clearSearch;
-    this.clearFilters = clearFilters;
     this.setQueryPhrase = setQueryPhrase;
     this.getQueryPhrase = search.getQuery;
     this.getFilters = search.getFilters;

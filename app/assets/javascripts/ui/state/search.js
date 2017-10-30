@@ -163,12 +163,6 @@ define([], function() {
           if (makeReq) return loadFirstPage();
         },
 
-        /** Clears the filters, optionally triggering a new request **/
-        clearFilters = function(makeReq) {
-          searchArgs.filters = {};
-          if (makeReq) return loadFirstPage();
-        },
-
         /** Updates the filters, optionally triggering a new request **/
         updateFilters = function(diff, makeReq) {
           jQuery.extend(searchArgs.filters, diff);
@@ -220,7 +214,6 @@ define([], function() {
     this.setArgs = setArgs;
     this.getArgs = getArgs;
     this.clear = clear;
-    this.clearFilters = clearFilters;
     this.updateFilters = updateFilters;
     this.setTimerange = setTimerange;
     this.setQuery = setQuery;
