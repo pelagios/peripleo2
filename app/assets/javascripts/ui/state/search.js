@@ -192,9 +192,14 @@ define([], function() {
           if (makeReq) return loadFirstPage();
         },
 
-        /** Returns the current search query **/
+        /** Returns (a clone of) the current search query **/
         getQuery = function() {
-          return searchArgs.query;
+          return jQuery.extend({}, searchArgs.query);
+        },
+
+        /** Returns (a clone of) the current filters **/
+        getFilters = function()  {
+          return jQuery.extend({}, searchArgs.filters);
         },
 
         /** Sets termAggregations and time histogram setting, optionally triggering a new request **/
@@ -220,6 +225,7 @@ define([], function() {
     this.setTimerange = setTimerange;
     this.setQuery = setQuery;
     this.getQuery = getQuery;
+    this.getFilters = getFilters;
     this.setAggregationsEnabled = setAggregationsEnabled;
     this.setViewport = setViewport;
     this.loadNextPage = loadNextPage;

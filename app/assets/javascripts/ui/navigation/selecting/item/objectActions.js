@@ -16,14 +16,15 @@ define([
          */
         fetchResultsAtReferenced = function(uri, opt_prev) {
               // So we can chain results
-          var previous = opt_prev || [],
+          var previousResultsAt = opt_prev || [],
+              stashedReference = state.getFilters().referencing,
               filter = { referencing : [ uri ] };
 
           return state.updateFilters(filter, { pushState: false })
             .then(function(results) {
-              state.updateFilters({ referencing: false }, self.NOOP);
-              previous.push({ 'identifier' : uri, 'resultCount' : results.total });
-              return previous;
+              state.updateFilters({ referencing: stashedReference }, self.NOOP);
+              previousResultsAt.push({ 'identifier' : uri, 'resultCount' : results.total });
+              return previousResultsAt;
             });
         },
 

@@ -36,10 +36,52 @@ define([
           var state = e.state, // The state, as manipulated by the user (or set by the URL)
               request = e.request, // Promise of the search request triggered by the state change
 
+              /**
+               * Helper function to 'resolve' the URIs of referenced entities from a search
+               * response, and build the corresponding filterSetting objects.
+               * Because the filter is linked to the search response, we can safely
+               * assume that the entities will be listed in the top_referenced section.
+               * This saves us a (list of) resolution requests against the API!
+               */
+              resolveReferences = function(uris, top_referenced) {
+                var entityTypes = Object.keys(top_referenced),
+                    topRefs = [];
+
+                entityTypes.forEach(function(key) {
+                  topRefs = topRefs.concat(top_referenced[key]);
+                });
+
+                return uris.map(function(uri) {
+                  return topRefs.find(function(item) {
+                    var identifiers = ItemUtils.getURIs(item);
+                    return identifiers.indexOf(uri) > -1;
+                  });
+                }).map(function(item) {
+                  return {
+                    filter: 'referencing',
+                    values:[{
+                      identifier: item.is_conflation_of[0].uri,
+                      label: item.title,
+                      type: item.item_type[0]
+                    }]
+                  };
+                });
+              },
+
               restore = function() {
                 if (request) {
                   // The state change triggered a search requeset - update UI when complete
-                  return request.then(updateAll);
+                  return request.then(function(response) {
+                    // If there are 'referencing' filters, resolve them from the response
+                    if (state.search.filters.referencing && response.top_referenced) {
+                      var filterSettings =
+                        resolveReferences(state.search.filters.referencing, response.top_referenced);
+
+                      filterSettings.forEach(searchPanel.updateFilterIndicators);
+                    }
+
+                    updateAll(response);
+                  });
                 } else {
                   // State change to an 'empty search' - clear UI
                   resultList.close();

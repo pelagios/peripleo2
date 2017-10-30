@@ -174,6 +174,7 @@ define([
     this.clearFilters = clearFilters;
     this.setQueryPhrase = setQueryPhrase;
     this.getQueryPhrase = search.getQuery;
+    this.getFilters = search.getFilters;
     this.updateFilters = updateFilters;
     this.setTimerange = setTimerange;
     this.setFilterPaneOpen = setFilterPaneOpen;

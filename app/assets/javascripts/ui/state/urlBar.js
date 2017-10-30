@@ -6,10 +6,18 @@ define([], function() {
     parseHash : function() {
       var hash = window.location.hash,
           keysVals = (hash.indexOf('#') === 0) ? hash.substring(1).split('&') : false,
-          segments = {},
+          segments = {}, filters = {},
 
           decodeIfDefined = function(arg) {
             return (arg) ? decodeURIComponent(arg) : undefined;
+          },
+
+          addFilterIfDefined = function(key, decode_arg) {
+            var value = segments[key], decoded;
+            if (value) {
+              decoded = (decode_arg) ? decodeURIComponent(value) : value;
+              filters[key] = decoded.split(',');
+            }
           };
 
       if (keysVals) {
@@ -21,10 +29,12 @@ define([], function() {
           segments[key] = value;
         });
 
+        addFilterIfDefined('referencing', true);
+
         return {
           search: {
             query : segments.q,
-            filters : {}, // TODO
+            filters : filters,
             timerange : {
               from : segments.from,
               to   : segments.to
@@ -54,7 +64,7 @@ define([], function() {
           };
 
       setIfDefined(state.search.query, 'q');
-      // TODO filters
+      setIfDefined(state.search.filters.referencing, 'referencing');
       setIfDefined(state.search.timerange.from, 'from');
       setIfDefined(state.search.timerange.to, 'to');
       setIfDefined(state.selection, 'selected');
