@@ -19,7 +19,7 @@ class DatasetAPIController @Inject() (
   
   def list(offset: Int, limit: Int, rootOnly: Boolean) = Action.async { implicit request =>
     
-    val fListDatasets = itemService.findByType(ItemType.DATASET, true, offset, limit)
+    val fListDatasets = itemService.findByType(ItemType.DATASET, rootOnly, offset, limit)
     
     val f = for {
       datasets <- fListDatasets
