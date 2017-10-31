@@ -48,7 +48,6 @@ define([], function() {
       };
 
   var Indicator = function(parentEl, filter, value) {
-
     var element = jQuery(
                    '<li class="open">' +
                      '<span class="icon">' + getIcon(filter, value) + '</span>' +
@@ -73,8 +72,13 @@ define([], function() {
         },
 
         /** Returns true if this crumb has the specified filter type **/
-        hasType = function(t) {
+        hasFilterType = function(t) {
           return t === filter;
+        },
+
+        /** Returns true if this crumb has the specified filter type **/
+        hasEntityType = function(t) {
+          return t === value.type;
         },
 
         /**
@@ -120,6 +124,10 @@ define([], function() {
               duration: COLLAPSE_DURATION,
               progress: opt_progress
             });
+        },
+
+        destroy = function() {
+          element.remove();
         };
 
     this.element = element;
@@ -128,7 +136,9 @@ define([], function() {
     this.isAttachedTo = isAttachedTo;
     this.isCollapsed = isCollapsed;
     this.matches = matches;
-    this.hasType = hasType;
+    this.hasFilterType = hasFilterType;
+    this.hasEntityType = hasEntityType;
+    this.destroy = destroy;
   };
 
   return Indicator;

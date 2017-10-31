@@ -26,10 +26,25 @@ define([
 
         indicators = [],
 
+        /** Returns the indicator with the given filtertype and value **/
         findIndicator = function(filter, value) {
           return indicators.find(function(i) {
             return i.matches(filter, value);
           });
+        },
+
+        /** Returns the indicators with the given filtertype and, optionally, entity type **/
+        findByFilterType = function(filter, opt_entity_type) {
+          var matchesType = indicators.filter(function(i) {
+                return i.hasFilterType(filter);
+              });
+
+          if (opt_entity_type)
+            return matchesType.filter(function(i) {
+              return i.hasEntityType(opt_entity_type);
+            });
+          else
+            return matchesType;
         },
 
         refreshInputPadding = function() {
@@ -55,7 +70,27 @@ define([
 
               toExpand = [], toCollapse = [],  toAdd = [],
 
+              /** Finds the indicators that are now redundant and need to be removed **/
+              toRemove = (function() {
+                var toRemove = [];
+
+                filterSetting.values.forEach(function(v) {
+                  var matches = findByFilterType(filter, v.type);
+                  toRemove = toRemove.concat(matches);
+                });
+
+                return toRemove;
+              })(),
+
               show = function() {
+                toRemove.forEach(function(i) {
+                  var idx = indicators.indexOf(i);
+                  if (idx > -1) {
+                    indicators.splice(idx, 1);
+                    i.destroy();
+                  }
+                });
+
                 toExpand.forEach(function(i) { i.expand(refreshInputPadding); });
                 toCollapse.forEach(function(i) { i.collapse(refreshInputPadding); });
                 refreshInputPadding();
@@ -63,12 +98,13 @@ define([
 
           filterSetting.values.forEach(function(value) {
             var existingIndicator = findIndicator(filter, value);
-            if (existingIndicator)
+            if (existingIndicator) {
               // The indicator for this filter exists already - expand
               toExpand.push(existingIndicator);
-            else
+            } else {
               // Add a new indicator
               toAdd.push(new Indicator(element, filter, value));
+            }
           });
 
           // Compute toCollapse, update indicator array and render
@@ -80,7 +116,7 @@ define([
         /** Removes one specific filter (or all of a specific type) **/
         remove = function(filterType, opt_identifier) {
           var toRemove = indicators.find(function(i) {
-                return i.hasType(filterType);
+                return i.hasFilterType(filterType);
               });
 
           if (toRemove) {
