@@ -186,9 +186,9 @@ define([], function() {
           if (makeReq) return loadFirstPage();
         },
 
-        /** Returns (a clone of) the current search query **/
+        /** Returns the current search query **/
         getQuery = function() {
-          return jQuery.extend({}, searchArgs.query);
+          return searchArgs.query;
         },
 
         /** Returns (a clone of) the current filters **/

@@ -88,7 +88,10 @@ define([
                   });
 
                   if (reference.homepage)
-                    element.append(Formatting.formatClickableURL(reference.homepage));
+                    element.append(
+                      '<span class="source-link">From: ' +
+                        Formatting.formatClickableURL(reference.homepage) +
+                      '</span>');
 
                   element.appendTo(snippetsInner);
                 }
