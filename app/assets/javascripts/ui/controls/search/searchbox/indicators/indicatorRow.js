@@ -120,11 +120,9 @@ define([
               });
 
           if (toRemove) {
-            // Remove crumb from array
             indicators.splice(indicators.indexOf(toRemove), 1);
-
-            // Remove LI element from list
             toRemove.element.remove();
+            refreshInputPadding();
           }
         },
 
