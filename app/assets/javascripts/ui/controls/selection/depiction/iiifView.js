@@ -4,6 +4,9 @@ define(['ui/common/formatting'], function(Formatting) {
 
     var attributionEl = containerEl.find('.attribution'),
 
+        btnFullscreen = jQuery(
+          '<div class="iiif-fullscreen icon">&#xf065;</div>').appendTo(containerEl),
+
         iiifPane = L.map(containerEl[0], {
           center: [0, 0],
           crs: L.CRS.Simple,
@@ -14,6 +17,10 @@ define(['ui/common/formatting'], function(Formatting) {
         iiifLayer =
           L.tileLayer.iiif(depiction.iiif_uri, { attribution: false, fitBounds: true }).addTo(iiifPane),
 
+        toggleFullscreen = function() {
+          iiifPane.toggleFullscreen();
+        },
+
         destroy = function() {
           try {
             iiifPane.remove();
@@ -22,6 +29,8 @@ define(['ui/common/formatting'], function(Formatting) {
           }
           containerEl.empty();
         };
+
+    btnFullscreen.click(toggleFullscreen);
 
     attributionEl.html(Formatting.formatClickableURL(depiction.source));
     containerEl.prepend('<img class="iiif-logo" src="/assets/images/iiif-logo.png">');
