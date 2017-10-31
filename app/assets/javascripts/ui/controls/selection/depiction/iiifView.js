@@ -18,7 +18,7 @@ define(['ui/common/formatting'], function(Formatting) {
           try {
             iiifPane.remove();
           } catch (e) {
-            // This can fail if the user destroys too early (i.e. before the IIIF has loaded)  
+            // This can fail if the user destroys too early (i.e. before the IIIF has loaded)
           }
           containerEl.empty();
         };
