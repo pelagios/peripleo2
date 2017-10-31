@@ -18,9 +18,8 @@ class DatasetAPIController @Inject() (
 ) extends Controller with HasPrettyPrintJSON with HasDatasetStats {
   
   def list(offset: Int, limit: Int, rootOnly: Boolean) = Action.async { implicit request =>
-    
     val fListDatasets = itemService.findByType(ItemType.DATASET, rootOnly, offset, limit)
-    
+        
     val f = for {
       datasets <- fListDatasets
       withStats <- addStats(datasets)  
