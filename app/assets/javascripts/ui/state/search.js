@@ -163,9 +163,24 @@ define([], function() {
           if (makeReq) return loadFirstPage();
         },
 
-        /** Updates the filters, optionally triggering a new request **/
+        /**
+         * Updates the filters, optionally triggering a new request
+         *
+         * Note: diffs may contain objects like { key: undefined }. In this case,
+         * we want to remove the filer with name 'key'. However, jQuery's extend method
+         * is designed to ignore undefined values. Therefore we replace undefineds with
+         * false in order to make it work.
+         */
         updateFilters = function(diff, makeReq) {
-          jQuery.extend(searchArgs.filters, diff);
+          // See explanation above
+          var normalizedDiff = jQuery.map(diff, function(val, key) {
+            if (val === undefined)
+              return false;
+            else
+              return val;
+          });
+
+          jQuery.extend(searchArgs.filters, normalizedDiff);
           if (makeReq) return loadFirstPage();
         },
 
