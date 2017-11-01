@@ -5,7 +5,7 @@ import java.util.UUID
 import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
-import services.{ HasGeometry, HasNullableSeq, HasNullableBoolean }
+import services.{ Aggregation, HasGeometry, HasNullableSeq, HasNullableBoolean }
 import services.item.{ Item, ItemType, ItemRecord, TemporalBounds }
 import services.item.reference.TopReferenced
 

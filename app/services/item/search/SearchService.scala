@@ -2,14 +2,14 @@ package services.item.search
 
 import com.sksamuel.elastic4s._
 import com.sksamuel.elastic4s.ElasticDsl._
+import es.ES
 import javax.inject.{ Inject, Singleton }
 import org.elasticsearch.script.ScriptService.ScriptType
 import org.elasticsearch.search.aggregations.bucket.terms.Terms
 import play.api.libs.json.Json
 import scala.concurrent.{ Future, ExecutionContext }
 import scala.language.reflectiveCalls
-import services.{ Page }
-import es.ES
+import services.{ Aggregation, Page }
 import services.item.{ Item, ItemService }
 import services.item.reference.TopReferenced
 import services.notification.NotificationService

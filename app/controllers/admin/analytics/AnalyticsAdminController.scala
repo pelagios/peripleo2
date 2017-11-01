@@ -17,8 +17,8 @@ class AnalyticsAdminController @Inject() (
 ) extends BaseAuthController with AuthElement {
 
   def index = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>
-    visits.countTotalSince(TimeInterval.LAST_24HRS)
-    visits.countTotalSince(TimeInterval.LAST_7DAYS)
+    visits.getStatsSince(TimeInterval.LAST_24HRS)
+    visits.getStatsSince(TimeInterval.LAST_7DAYS)
     Ok(views.html.admin.analytics.index())
   }
 

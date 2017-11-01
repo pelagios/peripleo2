@@ -3,11 +3,13 @@ package services.visit
 import com.sksamuel.elastic4s.{ HitAs, RichSearchHit }
 import com.sksamuel.elastic4s.ElasticDsl._
 import com.sksamuel.elastic4s.source.Indexable
+import es.ES
 import javax.inject.{ Inject, Singleton }
 import play.api.Logger
 import play.api.libs.json.Json
 import scala.concurrent.{ Future, ExecutionContext }
-import es.ES
+import services.Aggregation
+import org.joda.time.DateTime
 
 @Singleton
 class VisitService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
@@ -27,7 +29,7 @@ class VisitService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
     } map { _ => 
     } recover { case t: Throwable =>
       Logger.error("Error logging visit event")
-      val foo = t.printStackTrace
+      t.printStackTrace
     }
     
   def countTotal(): Future[Long] =
@@ -35,13 +37,21 @@ class VisitService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
       search in ES.PERIPLEO / ES.VISIT limit 0
     } map { _.totalHits }
     
-  def countTotalSince(since: TimeInterval) = {
+  def getStatsSince(since: TimeInterval) = {
     
     import TimeInterval._
     
+    val now = DateTime.now()
+ 
     val expression = since match {
-      case LAST_24HRS => "now-24h"
-      case LAST_7DAYS => "now-7d"
+      case TODAY => 
+        "now-" + now.secondOfDay() + "s"
+        
+      case LAST_24HRS =>
+        "now-24h"
+      
+      case LAST_7DAYS =>
+        "now-7d"
     }
     
     es.client execute {
@@ -55,9 +65,10 @@ class VisitService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
         aggregation terms "top_searches" field "search.query.raw" size 10 
       )
     } map { response =>
-      
-      play.api.Logger.info(response.toString)
-      
+      val topItems =    Aggregation.parseTerms(response.aggregations.get("top_items")).buckets
+      val topDatasets = Aggregation.parseTerms(response.aggregations.get("top_datasets")).buckets
+      val topSearches = Aggregation.parseTerms(response.aggregations.get("top_searches")).buckets
+      VisitStats(response.totalHits, topItems, topDatasets, topSearches)
     }
     
   }

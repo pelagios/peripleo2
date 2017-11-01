@@ -1,4 +1,4 @@
-package services.item.search
+package services
 
 import org.elasticsearch.search.aggregations.bucket.terms.Terms
 import play.api.libs.json._
@@ -13,23 +13,23 @@ object Aggregation {
 
   implicit val bucketWrites =
     Writes[Tuple2[String, Long]](t => Json.obj(t._1 -> t._2))
-  
+
   implicit val aggregationWrites: Writes[Aggregation] = (
     (JsPath \ "name").write[String] and
     (JsPath \ "buckets").write[Seq[(String, Long)]]
   )(unlift(Aggregation.unapply))
-  
+
   def parseTerms(terms: Terms) = {
     val name = terms.getName
     val buckets = terms.getBuckets.asScala.toSeq.map(bucket =>
       (bucket.getKey.toString, bucket.getDocCount))
     Aggregation(name, buckets)
   }
-  
+
   def parseHistogram(histogram: InternalHistogram[InternalHistogram.Bucket], name: String) = {
     val buckets = histogram.getBuckets.asScala.toSeq.map(bucket =>
       (bucket.getKey.toString, bucket.getDocCount))
     Aggregation(name, buckets)
   }
-  
+
 }
