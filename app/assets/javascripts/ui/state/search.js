@@ -173,14 +173,13 @@ define([], function() {
          */
         updateFilters = function(diff, makeReq) {
           // See explanation above
-          var normalizedDiff = jQuery.map(diff, function(val, key) {
-            if (val === undefined)
-              return false;
-            else
-              return val;
+          Object.keys(diff).forEach(function(key) {
+            var value = diff[key];
+            if (value === undefined)
+              diff[key] = false;
           });
 
-          jQuery.extend(searchArgs.filters, normalizedDiff);
+          jQuery.extend(searchArgs.filters, diff);
           if (makeReq) return loadFirstPage();
         },
 
