@@ -52,6 +52,9 @@ class VisitService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
       
       case LAST_7DAYS =>
         "now-7d"
+        
+      case LAST_30DAYS =>
+        "now-30d"
     }
     
     es.client execute {
@@ -79,10 +82,11 @@ sealed trait TimeInterval
 
 object TimeInterval {
   
-  case object TODAY      extends TimeInterval
-  case object LAST_24HRS extends TimeInterval
-  case object LAST_7DAYS extends TimeInterval
-  case object THIS_WEEK  extends TimeInterval
-  case object THIS_MONTH extends TimeInterval
+  case object TODAY       extends TimeInterval
+  case object LAST_24HRS  extends TimeInterval
+  case object LAST_7DAYS  extends TimeInterval
+  case object LAST_30DAYS extends TimeInterval
+  case object THIS_WEEK   extends TimeInterval
+  case object THIS_MONTH  extends TimeInterval
   
 }
