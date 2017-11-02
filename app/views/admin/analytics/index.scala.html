@@ -8,24 +8,26 @@
   <div class="row">
     <div class="card">
       <ul class="tab-header">
-        <li class="tab active" data-tab-body="tab-1">24 Hours</li>
-        <li class="tab" data-tab-body="tab-2">7 Days</li>
-        <li class="tab" data-tab-body="tab-3">30 Days</li>
+        <li class="tab active" data-content="tab-1">24 Hours</li>
+        <li class="tab" data-content="tab-2">7 Days</li>
+        <li class="tab" data-content="tab-3">30 Days</li>
       </ul>
 
       <div class="tab-body inner">
-        <div class="tab-content tab-1">
+        <div class="tab-content" id="tab-1">
           @last24Hrs.total
         </div>
 
-        <div class="tab-content tab-2">
+        <div class="tab-content" id="tab-2">
           @last7Days.total
         </div>
 
-        <div class="tab-content tab-3">
+        <div class="tab-content" id="tab-3">
           @last30Days.total
         </div>
       </div>
     </div>
   </div>
+
+  <script src="@routes.WebJarAssets.at(webjars.locate("require.min.js"))" data-main="@routes.Assets.versioned("javascripts/admin/analytics/app.js")"></script>
 }

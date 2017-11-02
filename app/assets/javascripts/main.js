@@ -3,6 +3,7 @@ require.config({
   fileExclusionRegExp : /^lib$/,
   paths: { d3: '../../../web-modules/main/webjars/' },
   modules : [
+    { name : 'admin/analytics/app' },
     { name : 'admin/authorities/gazetteers' },
     { name : 'admin/authorities/people' },
     { name : 'admin/authorities/periods' },
