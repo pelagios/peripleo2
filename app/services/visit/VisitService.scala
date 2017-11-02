@@ -63,8 +63,8 @@ class VisitService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
           filter ( rangeQuery("visited_at") from expression )
         }
       } size 0 aggregations (
-        aggregation terms "top_items"    field "selection.identifier" size 10,
-        aggregation terms "top_datasets" field "selection.is_in_dataset.ids" size 10,
+        aggregation terms "top_items"    field "selection.title_identifier" size 10,
+        aggregation terms "top_datasets" field "selection.is_in_dataset.paths" size 10,
         aggregation terms "top_searches" field "search.query.raw" size 10 
       )
     } map { response =>

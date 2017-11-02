@@ -47,7 +47,8 @@
               "paths": { "type": "string", "index": "not_analyzed" },
               "ids": { "type": "string", "index": "not_analyzed" }
             }
-          }
+          },
+          "title_identifier": { "type": "string", "index": "not_analyzed" }
         }
       }
     }

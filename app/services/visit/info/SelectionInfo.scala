@@ -9,10 +9,24 @@ case class SelectionInfo(identifier: String, title: String, isInDataset: PathHie
 /** Selection information for Visits of type SELECTION **/
 object SelectionInfo {
   
-  implicit val selectionInfoFormat: Format[SelectionInfo] = (
-    (JsPath \ "identifier").format[String] and
-    (JsPath \ "title").format[String] and
-    (JsPath \ "is_in_dataset").format[PathHierarchy]
-  )(SelectionInfo.apply, unlift(SelectionInfo.unapply)) 
+  // Beep character to separate title and identifier
+  val SEPARATOR = 0x0007.toChar
+    
+  implicit val selectionInfoReads: Reads[SelectionInfo] = (
+    (JsPath \ "identifier").read[String] and
+    (JsPath \ "title").read[String] and
+    (JsPath \ "is_in_dataset").read[PathHierarchy] 
+  )(SelectionInfo.apply _) 
+  
+  implicit val selectionInfoWrites: Writes[SelectionInfo] = (
+    (JsPath \ "identifier").write[String] and
+    (JsPath \ "title").write[String] and
+    (JsPath \ "is_in_dataset").write[PathHierarchy] and
+    (JsPath \ "title_identifier").write[String] // This is used only for more convenient aggregation
+  )(s => (
+    s.identifier,
+    s.title,
+    s.isInDataset,
+    s.title + SEPARATOR + s.identifier))
   
 }

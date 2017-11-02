@@ -15,15 +15,26 @@
 
       <div class="tab-body inner">
         <div class="tab-content" id="tab-1">
-          @last24Hrs.total
+          <p>
+            Total Visits: @last24Hrs.total
+          </p>
         </div>
 
         <div class="tab-content" id="tab-2">
-          @last7Days.total
+          <p>
+            Total Visits: @last7Days.total
+          </p>
         </div>
 
         <div class="tab-content" id="tab-3">
-          @last30Days.total
+          <p>
+            Total Visits: @last30Days.total
+          </p>
+          <ol>
+            @for((item, count) <- last30Days.topItems) {
+              <li>@item: @count</li>
+            }
+          </ol>
         </div>
       </div>
     </div>
