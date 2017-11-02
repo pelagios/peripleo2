@@ -5,5 +5,27 @@
 )(implicit request: RequestHeader, webjars: WebJarAssets)
 
 @views.html.admin._layout("Analytics", "analytics", "stylesheets/admin/analytics/index.css") {
+  <div class="row">
+    <div class="card">
+      <ul class="tab-header">
+        <li class="tab active" data-tab-body="tab-1">24 Hours</li>
+        <li class="tab" data-tab-body="tab-2">7 Days</li>
+        <li class="tab" data-tab-body="tab-3">30 Days</li>
+      </ul>
 
+      <div class="tab-body inner">
+        <div class="tab-content tab-1">
+          @last24Hrs.total
+        </div>
+
+        <div class="tab-content tab-2">
+          @last7Days.total
+        </div>
+
+        <div class="tab-content tab-3">
+          @last30Days.total
+        </div>
+      </div>
+    </div>
+  </div>
 }

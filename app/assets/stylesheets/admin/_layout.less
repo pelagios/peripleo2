@@ -130,7 +130,7 @@ input[type=file] {
   margin:0 auto;
   position:relative;
   .rounded-corners(2px);
-  
+
   .bar {
     height:100%;
     background-color:@orange;
@@ -138,6 +138,44 @@ input[type=file] {
 
   .bar.rounded {
     .rounded-corners(2px);
+  }
+
+}
+
+.tab-header {
+  list-style-type:none;
+  padding:0;
+  margin:0;
+  display:flex;
+  border-bottom:1px solid @haze-dark;
+
+  .tab {
+    display:inline-block;
+    flex:1;
+    text-align:center;
+    border-bottom:5px solid transparent;
+    padding:20px 10px;
+    cursor:pointer;
+  }
+
+  .tab:hover {
+    border-color:fade(@ocean, 50%);
+  }
+
+  .tab.active, .tab.active:hover {
+    border-color:@ocean;
+  }
+
+}
+
+.tab-body {
+
+  .tab-content {
+    display:none;
+  }
+
+  .tab-content:first-child {
+    display:block;
   }
 
 }
