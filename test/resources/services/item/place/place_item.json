@@ -49,11 +49,11 @@
       "representative_point": [ 14.02358, 48.31058 ],
       "temporal_bounds": { "from": -30, "to": 640 },
       "names": [{ "name": "Ad Mauros/Marinianio, Eferding" }],
-      "close_matches": [
-        "http://sws.geonames.org/2780394",
-        "http://www.wikidata.org/entity/Q2739862",
-        "http://de.wikipedia.org/wiki/Kastell_Eferding",
-        "http://www.cambridge.org/us/talbert/talbertdatabase/TPPlace1513.html"
+      "links": [
+        { "uri": "http://sws.geonames.org/2780394", "link_type": "closeMatch" },
+        { "uri": "http://www.wikidata.org/entity/Q2739862", "link_type": "closeMatch" },
+        { "uri": "http://de.wikipedia.org/wiki/Kastell_Eferding", "link_type": "closeMatch" },
+        { "uri": "http://www.cambridge.org/us/talbert/talbertdatabase/TPPlace1513.html", "link_type": "closeMatch" }
       ]
     },{
       "uri": "http://www.trismegistos.org/place/35191",

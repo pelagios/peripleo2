@@ -41,7 +41,7 @@ class ItemSpec extends PlaySpec with TestHelpers {
       objectItem.itemType mustBe ItemType.OBJECT
       objectItem.title mustBe "Silver 4 drachm (tetradrachm), Cnossus, 200 BC - 67 BC. 1991.60.36"
       objectItem.isConflationOf.size mustBe 1
-
+      
       val record = objectItem.isConflationOf(0)
       record.lastSyncedAt mustBe toDateTime("2017-02-03T11:18:21Z")
       record.lastChangedAt mustBe Some(toDateTime("2016-10-01T12:00:00Z"))
@@ -53,16 +53,16 @@ class ItemSpec extends PlaySpec with TestHelpers {
         ("ecbd9773-b60f-4dc1-bd86-f2cceb6548a1" -> "ANS Coins"),
         ("d6fdd35c-08b6-495b-ad4e-3f9256d30665" -> "Greek Collection")
       )))
-      record.temporalBounds mustBe Some(TemporalBounds(toDateTime("-200-01-01T00:00:00Z"), toDateTime("67-01-01T00:00:00Z")))
+      record.temporalBounds mustBe Some(TemporalBounds(toDateTime("-200-01-01T00:00:00Z"), toDateTime("67-01-01T00:00:00Z")))  
       record.depictions mustBe Seq(
         Depiction("http://numismatics.org/collectionimages/19501999/1991/1991.60.36.obv.width350.jpg",
           Some("http://numismatics.org/collectionimages/19501999/1991/1991.60.36.obv.width175.jpg"),
-          Some("Obverse: Head of Apollo laureate"),
-          None, None, None),
+          None,
+          Some("Obverse: Head of Apollo laureate")),
         Depiction("http://numismatics.org/collectionimages/19501999/1991/1991.60.36.rev.width350.jpg",
           Some("http://numismatics.org/collectionimages/19501999/1991/1991.60.36.obv.width175.jpg"),
-          Some("Reverse: Circular Labyrinth"),
-          None, None, None)
+          None,
+          Some("Reverse: Circular Labyrinth"))          
       )
     }
 
@@ -177,12 +177,13 @@ class ItemSpec extends PlaySpec with TestHelpers {
         Seq.empty[Link],
         None
       ))
-
-      val serialized = Json.prettyPrint(Json.toJson(source))
-
+      
+      val serialized = Json.prettyPrint(Json.toJson(source))      
       val parsed = Json.fromJson[Item](Json.parse(serialized))
-      parsed.isSuccess mustBe true
-      parsed.get mustBe source
+      parsed.isSuccess mustBe true 
+      
+      // Serialization will add a pre-computed box 
+      parsed.get.copy(storedBBox = None) mustBe source
     }
 
   }
