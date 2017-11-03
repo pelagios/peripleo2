@@ -6,7 +6,7 @@ import org.scalatestplus.play._
 import play.api.libs.json.Json
 import play.api.test._
 import play.api.test.Helpers._
-import services.item.ItemType
+import services.item.{ ItemType, PathHierarchy }
 
 class ReferenceSpec extends PlaySpec with TestHelpers {
   
@@ -36,7 +36,7 @@ class ReferenceSpec extends PlaySpec with TestHelpers {
 
       val source = Reference(
         "http://www.example.com/objects/0001",
-        ReferenceTo(UUID.randomUUID, "http://pleiades.stoa.org/places/118543", ItemType.PLACE, None),
+        ReferenceTo(UUID.randomUUID, "http://pleiades.stoa.org/places/118543", ItemType.PLACE, Seq.empty[PathHierarchy], None),
         Some(Relation.ATTESTATION),
         None, // homepage
         None, // quote

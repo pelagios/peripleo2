@@ -1,7 +1,7 @@
 package services.item.reference
 
 import java.util.UUID
-import services.item.{ ItemType, ItemRecord }
+import services.item.{ Item, ItemRecord }
 import com.vividsolutions.jts.geom.Envelope
 
 /** A helper to handle references during ingest, where there's no known reference UUID yet **/
@@ -18,7 +18,7 @@ case class UnboundReference(
     parentUri = ItemRecord.normalizeURI(parentUri),
     uri = ItemRecord.normalizeURI(uri))
 
-  def toReference(docId: UUID, itemType: ItemType, bbox: Option[Envelope]) =
-    Reference(parentUri, ReferenceTo(docId, uri, itemType, bbox), relation, homepage, quote, depiction)
+  def toReference(item: Item) =
+    Reference(parentUri, ReferenceTo(item.docId, uri, item.itemType, item.isConflationOf.flatMap(_.isPartOf), item.bbox), relation, homepage, quote, depiction)
 
 }
