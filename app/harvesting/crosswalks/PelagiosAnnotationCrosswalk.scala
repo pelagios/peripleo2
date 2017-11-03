@@ -69,10 +69,9 @@ object PelagiosAnnotationCrosswalk extends PelagiosCrosswalk {
       None, // TODO representative point
       thing.temporal.map(convertPeriodOfTime),
       Seq.empty[Name],
-      None,
-      Seq.empty[String], // closeMatches
-      Seq.empty[String]) // exactMatches
-
+      Seq.empty[Link],
+      None)
+      
     (record, references)
   }
 

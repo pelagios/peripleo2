@@ -3,7 +3,6 @@ package services.item
 import com.vividsolutions.jts.geom.{ Coordinate, Geometry }
 import org.joda.time.DateTime
 import play.api.libs.json._
-import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
 import services.{ HasDate, HasGeometry, HasNullableSeq }
 
@@ -25,12 +24,17 @@ case class ItemRecord(
   representativePoint : Option[Coordinate],
   temporalBounds      : Option[TemporalBounds],
   names               : Seq[Name],
-  harvestVia          : Option[String],
-  closeMatches        : Seq[String],
-  exactMatches        : Seq[String]
+  links               : Seq[Link],
+  harvestVia          : Option[String]
 ) {
 
-  lazy val allMatches = closeMatches ++ exactMatches
+  // For convenience: all close and exact match URIs
+  lazy val directMatches = 
+    links.filter(l => l.linkType == LinkType.CLOSE_MATCH || l.linkType == LinkType.EXACT_MATCH)
+      .map(_.uri)
+      
+  def getLinks(t: LinkType.Value) =
+    links.filter(_.linkType == t)
 
   /** Returns true if there is a connection between the two records.
     *
@@ -40,15 +44,15 @@ case class ItemRecord(
     * - both records share at least one close/exactMatch URI
     */
   def isConnectedWith(other: ItemRecord): Boolean = {
-    val thisIdentifiers = (identifiers ++ allMatches).toSet
-    val otherIdentifiers = (other.identifiers ++ other.allMatches).toSet
+    val thisIdentifiers = (identifiers ++ directMatches).toSet
+    val otherIdentifiers = (other.identifiers ++ other.directMatches).toSet
     thisIdentifiers.intersect(otherIdentifiers).size > 0
   }
 
 }
 
 object ItemRecord extends HasDate with HasNullableSeq with HasGeometry {
-
+  
   /** Utility method to normalize a URI to a standard format.
     *
     * The following changes are applied to URIs:
@@ -72,8 +76,7 @@ object ItemRecord extends HasDate with HasNullableSeq with HasGeometry {
       identifiers = i.identifiers.map(normalizeURI),
       isInDataset = i.isInDataset.map(_.normalize),
       isPartOf = i.isPartOf.map(_.normalize),
-      closeMatches = i.closeMatches.map(normalizeURI),
-      exactMatches = i.exactMatches.map(normalizeURI)
+      links = i.links.map(_.normalize)
     )
 
   implicit val itemRecordFormat: Format[ItemRecord] = (
@@ -99,11 +102,9 @@ object ItemRecord extends HasDate with HasNullableSeq with HasGeometry {
     (JsPath \ "temporal_bounds").formatNullable[TemporalBounds] and
     (JsPath \ "names").formatNullable[Seq[Name]]
       .inmap[Seq[Name]](fromOptSeq[Name], toOptSeq[Name]) and
-    (JsPath \ "harvest_url").formatNullable[String] and
-    (JsPath \ "close_matches").formatNullable[Seq[String]]
-      .inmap[Seq[String]](fromOptSeq[String], toOptSeq[String]) and
-    (JsPath \ "exact_matches").formatNullable[Seq[String]]
-      .inmap[Seq[String]](fromOptSeq[String], toOptSeq[String])
+    (JsPath \ "links").formatNullable[Seq[Link]]
+      .inmap[Seq[Link]](fromOptSeq[Link], toOptSeq[Link]) and
+    (JsPath \ "harvest_url").formatNullable[String]
   )(ItemRecord.apply, unlift(ItemRecord.unapply))
 
 }

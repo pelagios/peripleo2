@@ -30,8 +30,8 @@ object TeiCrosswalk {
       None, None, // geometry, representativePoint
       None, // temporalBounds
       Seq.empty[Name],
-      None,
-      Seq.empty[String], Seq.empty[String])
+      Seq.empty[Link],
+      None)
   }
   
   private def parseBody(identifier: String, baseURI: Option[String], xml: Elem): Seq[UnboundReference] = {

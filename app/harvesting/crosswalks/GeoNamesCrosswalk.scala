@@ -29,10 +29,8 @@ object GeoNamesCrosswalk extends BaseGeoJSONCrosswalk {
       geonames.representativePoint,
       None, // temporalBounds
       geonames.names,
-      None,
-      Seq.empty[String], // closeMatches
-      Seq.empty[String]  // exactMatches
-    )
+      Seq.empty[Link],
+      None)
   })
 
 }

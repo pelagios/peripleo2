@@ -216,9 +216,8 @@ class AnnotationsAdminController @Inject() (
             Seq.empty[Depiction],
             None, None, None, // geometry, representativePoint, temporalBounds
             Seq.empty[Name],
-            None,
-            Seq.empty[String], // closeMatches
-            Seq.empty[String]) // exactMatches
+            Seq.empty[Link],
+            None)
 
           importer.importRecord(record).map { success =>
             if (success) Redirect(controllers.admin.datasets.routes.AnnotationsAdminController.index())

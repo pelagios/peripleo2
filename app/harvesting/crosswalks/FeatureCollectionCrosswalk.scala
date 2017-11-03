@@ -35,9 +35,8 @@ object FeatureCollectionCrosswalk {
            f.geometry.map(_.getCentroid.getCoordinate),
            None, // Temporal bounds TODO support when
            f.names,
-           None,
-           f.links.map(_.closeMatches).getOrElse(Seq.empty[String]),
-           f.links.map(_.exactMatches).getOrElse(Seq.empty[String])
+           f.links.map(_.asLinks).getOrElse(Seq.empty[Link]),
+           None
          ))
        } catch { case t: Throwable =>
          t.printStackTrace()
@@ -55,21 +54,27 @@ object FeatureCollectionCrosswalk {
   
 }
 
-case class Links(exactMatches: Seq[String], closeMatches: Seq[String])
+case class GeoJSONLinks(exactMatches: Seq[String], closeMatches: Seq[String]) {
+  
+  lazy val asLinks = 
+    exactMatches.map(uri => Link(uri, LinkType.EXACT_MATCH)) ++
+    closeMatches.map(uri => Link(uri, LinkType.CLOSE_MATCH))
+  
+}
 
 case class GazetteerFeature(
   uri      : String,
   title    : String, 
   geometry : Option[Geometry],
   names    : Seq[Name],
-  links    : Option[Links])
+  links    : Option[GeoJSONLinks])
   
-object Links extends HasNullableSeq {
+object GeoJSONLinks extends HasNullableSeq {
   
-  implicit val linkReads: Reads[Links] = (
+  implicit val linkReads: Reads[GeoJSONLinks] = (
     (JsPath \ "exact_matches").readNullable[Seq[String]].map(fromOptSeq[String]) and
     (JsPath \ "close_matches").readNullable[Seq[String]].map(fromOptSeq[String])
-  )(Links.apply _)
+  )(GeoJSONLinks.apply _)
   
 }
 
@@ -80,7 +85,7 @@ object GazetteerFeature extends HasGeometry with HasNullableSeq {
     (JsPath \ "title").read[String] and
     (JsPath \ "geometry").readNullable[Geometry] and
     (JsPath \ "names").readNullable[Seq[Name]].map(fromOptSeq[Name]) and
-    (JsPath \ "links").readNullable[Links]
+    (JsPath \ "links").readNullable[GeoJSONLinks]
   )(GazetteerFeature.apply _)
 }
 

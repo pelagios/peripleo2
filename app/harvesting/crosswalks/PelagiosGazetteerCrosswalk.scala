@@ -41,9 +41,8 @@ object PelagiosGazetteerCrosswalk {
         place.location.map(_.pointLocation),
         place.temporalCoverage.map(convertPeriodOfTime(_)),
         place.names.map(l => Name(l.chars, l.lang.flatMap(Language.safeParse))),
-        None,
-        place.closeMatches.map(ItemRecord.normalizeURI),
-        place.exactMatches.map(ItemRecord.normalizeURI))
+        place.closeMatches.map(Link(_, LinkType.CLOSE_MATCH)) ++ place.exactMatches.map(Link(_, LinkType.EXACT_MATCH)), 
+        None)
     
     // Return crosswalk function
     { stream: InputStream =>

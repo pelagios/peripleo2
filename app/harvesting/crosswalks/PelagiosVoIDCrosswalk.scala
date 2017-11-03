@@ -45,9 +45,8 @@ object PelagiosVoIDCrosswalk extends PelagiosCrosswalk {
         None, // TODO representative point
         None, // temporal_bounds
         Seq.empty[Name],
-        None, // TODO add VoID file URL
-        Seq.empty[String], // closeMatches
-        Seq.empty[String]) // exactMatches
+        Seq.empty[Link],
+        Some(voidURL))
     }
 
   def fromDatasets(rootDatasets: Seq[Dataset], voidURL: String): Seq[ItemRecord] =

@@ -81,9 +81,9 @@ object Item extends HasGeometry {
     // a measure. In addition, we'll boost the score if the matches contain
     // a Wikidata or Wikipedia reference.
     records.sortBy { record =>
-      val score = record.allMatches.size + record.names.size
-      val boostWikidata = record.allMatches.contains("www.wikidata.org")
-      val boostWikipedia = record.allMatches.contains("wikipedia.org")
+      val score = record.directMatches.size + record.names.size
+      val boostWikidata = record.directMatches.contains("www.wikidata.org")
+      val boostWikipedia = record.directMatches.contains("wikipedia.org")
       
       val boost = 
         if (boostWikidata && boostWikipedia) 1.44

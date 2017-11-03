@@ -134,7 +134,7 @@ class ItemSpec extends PlaySpec with TestHelpers {
        val dare = placeItem.isConflationOf(1)
        dare.uri mustBe "http://dare.ht.lu.se/places/10778"
        dare.isInDataset mustBe Some(PathHierarchy("http://dare.ht.lu.se", "DARE"))
-       dare.closeMatches must contain ("http://www.wikidata.org/entity/Q2739862")
+       dare.links must contain (Link("http://www.wikidata.org/entity/Q2739862", LinkType.CLOSE_MATCH))
 
        val trismegistos = placeItem.isConflationOf(2)
        trismegistos.uri mustBe "http://www.trismegistos.org/place/35191"
@@ -174,9 +174,8 @@ class ItemSpec extends PlaySpec with TestHelpers {
         Some(point.getCoordinate),
         Some(TemporalBounds.fromYears(-500, -250)),
         Seq.empty[Name],
-        None,
-        Seq.empty[String], // closeMatches
-        Seq.empty[String]  // exactMatches
+        Seq.empty[Link],
+        None
       ))
 
       val serialized = Json.prettyPrint(Json.toJson(source))

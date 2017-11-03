@@ -42,9 +42,8 @@ object PleiadesCrosswalk extends BaseGeoJSONCrosswalk {
       pleiades.representativePoint,
       computeTemporalBounds(pleiades.names), // TODO temporalBounds
       names,
-      None,
-      Seq.empty[String], // TODO closeMatches
-      Seq.empty[String]  // TODO exactMatches
+      Seq.empty[Link],
+      None
     )
   })
 

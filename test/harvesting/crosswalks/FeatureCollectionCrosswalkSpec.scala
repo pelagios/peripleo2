@@ -4,7 +4,7 @@ import org.scalatestplus.play._
 import play.api.test._
 import play.api.test.Helpers._
 import java.io.FileInputStream
-import services.item.PathHierarchy
+import services.item.{ LinkType, PathHierarchy }
 
 class FeatureCollectionCrosswalkSpec extends PlaySpec {
   
@@ -23,9 +23,9 @@ class FeatureCollectionCrosswalkSpec extends PlaySpec {
       
       val sample = records.find(_.uri == "http://www.cyprusgazetteer.org/146853/551")
       sample.isDefined mustBe true
-      sample.get.exactMatches.size mustBe 0
-      sample.get.closeMatches.size mustBe 1
-      sample.get.closeMatches.head mustBe "http://sws.geonames.org/146853"
+      sample.get.getLinks(LinkType.EXACT_MATCH).size mustBe 0
+      sample.get.getLinks(LinkType.CLOSE_MATCH).size mustBe 1
+      sample.get.getLinks(LinkType.CLOSE_MATCH).head.uri mustBe "http://sws.geonames.org/146853"
       
       play.api.Logger.info("got " + records.size + " records")
     }

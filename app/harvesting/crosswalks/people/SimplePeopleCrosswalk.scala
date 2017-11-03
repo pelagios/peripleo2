@@ -27,9 +27,8 @@ object SimplePeopleCrosswalk {
       None, None, // geometry, representativePoint
       record.temporalBounds,
       record.names,
-      None,
-      record.closeMatches,
-      Seq.empty[String])
+      record.closeMatches.map(uri => Link(uri, LinkType.CLOSE_MATCH)),
+      None)
   
   def fromJson(dataset: PathHierarchy)(record: String): Option[ItemRecord] = {
     Json.fromJson[SimplePeopleRecord](Json.parse(record)) match {

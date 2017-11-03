@@ -91,9 +91,13 @@
               "is_romanized": { "type": "boolean" }
             }
           },
-          "harvest_via": { "type": "string", "index": "not_analyzed" },
-          "close_matches": { "type": "string", "index": "not_analyzed" },
-          "exact_matches": { "type": "string", "index": "not_analyzed" }
+          "links": {
+            "properties": {
+              "uri":  { "type": "string", "index": "not_analyzed" },
+              "link_type": { "type": "string", "index": "not_analyzed" }
+            }
+          },
+          "harvest_via": { "type": "string", "index": "not_analyzed" }
         }
       },
       "suggest" : { "type" : "completion",

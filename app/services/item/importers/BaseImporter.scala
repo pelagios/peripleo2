@@ -116,7 +116,7 @@ abstract class BaseImporter(itemService: ItemService) {
   /** Fetches all items from the index that will be affected from adding this record **/
   private def getAffectedItems(normalizedRecord: ItemRecord): Future[Seq[ItemWithReferences]] = {
     // We need to query for this record's identifiers as well as all close/exactMatchURIs
-    val identifiers = normalizedRecord.identifiers ++ normalizedRecord.allMatches
+    val identifiers = normalizedRecord.identifiers ++ normalizedRecord.directMatches
 
     // Protective measure - we don't really expect this to happen
     if (identifiers.size > MAX_URIS_IN_QUERY)
