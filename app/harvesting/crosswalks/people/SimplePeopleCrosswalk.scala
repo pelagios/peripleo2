@@ -23,7 +23,7 @@ object SimplePeopleCrosswalk {
       record.descriptions,
       None, None, // homepage, license
       Seq.empty[Language],
-      record.depiction.map(uri => Seq(Depiction(uri))).getOrElse(Seq.empty[Depiction]),
+      record.depiction.map(uri => Seq(Depiction(uri, DepictionType.IMAGE))).getOrElse(Seq.empty[Depiction]),
       None, None, // geometry, representativePoint
       record.temporalBounds,
       record.names,

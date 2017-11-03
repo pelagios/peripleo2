@@ -32,7 +32,7 @@ abstract class BaseAuthorityAdminController(
       None, // homepage
       license,
       Seq.empty[Language],
-      logoUrl.map(url => Seq(Depiction(url))).getOrElse(Seq.empty[Depiction]),
+      logoUrl.map(url => Seq(Depiction(url, DepictionType.IMAGE))).getOrElse(Seq.empty[Depiction]),
       None, None, None, // geometry, representativePoint, temporalBounds
       Seq.empty[Name],
       Seq.empty[Link],

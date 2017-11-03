@@ -54,14 +54,17 @@ class ItemSpec extends PlaySpec with TestHelpers {
         ("d6fdd35c-08b6-495b-ad4e-3f9256d30665" -> "Greek Collection")
       )))
       record.temporalBounds mustBe Some(TemporalBounds(toDateTime("-200-01-01T00:00:00Z"), toDateTime("67-01-01T00:00:00Z")))  
+      
+      play.api.Logger.info("foo")
+      
       record.depictions mustBe Seq(
         Depiction("http://numismatics.org/collectionimages/19501999/1991/1991.60.36.obv.width350.jpg",
+          DepictionType.IMAGE,
           Some("http://numismatics.org/collectionimages/19501999/1991/1991.60.36.obv.width175.jpg"),
-          None,
           Some("Obverse: Head of Apollo laureate")),
         Depiction("http://numismatics.org/collectionimages/19501999/1991/1991.60.36.rev.width350.jpg",
+          DepictionType.IMAGE,
           Some("http://numismatics.org/collectionimages/19501999/1991/1991.60.36.obv.width175.jpg"),
-          None,
           Some("Reverse: Circular Labyrinth"))          
       )
     }
@@ -167,8 +170,8 @@ class ItemSpec extends PlaySpec with TestHelpers {
         None, // license
         Seq.empty[Language],
         Seq(
-          Depiction("http://www.example.com/images/001.jpg", None, Some("Fig. 1"), None, None, None),
-          Depiction("http://www.example.com/images/002.jpg", None, Some("Fig. 2"), None, None, None)
+          Depiction("http://www.example.com/images/001.jpg", DepictionType.IMAGE, None, Some("Fig. 1")),
+          Depiction("http://www.example.com/images/002.jpg", DepictionType.IMAGE, None, Some("Fig. 2"))
         ),
         Some(point),
         Some(point.getCoordinate),

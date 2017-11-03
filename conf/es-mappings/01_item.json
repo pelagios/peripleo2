@@ -62,8 +62,8 @@
           "depictions": {
             "properties": {
               "url": { "type": "string", "index": "not_analyzed" },
+              "depiction_type": { "type": "string", "index": "not_analyzed" },
               "thumbnail": { "type": "string", "index": "no" },
-              "iiif_uri": { "type": "string", "index": "no" },
               "caption": { "type": "string" },
               "creator": { "type": "string" },
               "created_at": { "type": "date", "format": "yyyy-MM-dd" },

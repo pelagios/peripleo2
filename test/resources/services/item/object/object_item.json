@@ -40,11 +40,13 @@
     "homepage": "http://numismatics.org/collection/1991.60.36",
     "depictions": [{
       "url": "http://numismatics.org/collectionimages/19501999/1991/1991.60.36.obv.width350.jpg",
+      "depiction_type": "IMAGE",
       "thumbnail": "http://numismatics.org/collectionimages/19501999/1991/1991.60.36.obv.width175.jpg",
       "caption": "Obverse: Head of Apollo laureate"
     }, {
       "url": "http://numismatics.org/collectionimages/19501999/1991/1991.60.36.rev.width350.jpg",
       "thumbnail": "http://numismatics.org/collectionimages/19501999/1991/1991.60.36.obv.width175.jpg",
+      "depiction_type": "IMAGE",
       "caption": "Reverse: Circular Labyrinth"
     }],
     "geometry": {
