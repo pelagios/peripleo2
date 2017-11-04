@@ -15,11 +15,11 @@
               "ids": { "type": "string", "index": "not_analyzed" }
             }
           },
-          "bbox": { "type": "geo_shape", "tree": "quadtree", "precision": "100m" }
+          "bbox": { "type": "geo_shape", "tree": "quadtree", "distance_error_pct": 0.001 }
         }
       },
       "relation": { "type": "string", "index": "not_analyzed" },
-      "homepage": { "type": "string", "index": "no" },
+      "homepage": { "type": "string", "index": "not_analyzed" },
       "quote" : {
         "properties": {
           "chars": { "type": "string" },
