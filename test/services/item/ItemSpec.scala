@@ -181,7 +181,7 @@ class ItemSpec extends PlaySpec with TestHelpers {
         None
       ))
       
-      val serialized = Json.prettyPrint(Json.toJson(source))      
+      val serialized = Json.prettyPrint(Json.toJson(source))    
       val parsed = Json.fromJson[Item](Json.parse(serialized))
       parsed.isSuccess mustBe true 
       

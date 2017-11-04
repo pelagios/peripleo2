@@ -12,7 +12,7 @@
       },
       "representative_geometry": { "enabled": false },
       "representative_point": { "type": "geo_point" },
-      "bbox": { "type": "geo_shape", "tree": "quadtree", "precision": "100m" },
+      "bbox": { "type": "geo_shape", "tree": "quadtree", "distance_error_pct": 0.001 },
       "temporal_bounds": {
         "properties": {
           "from": { "type": "date", "format": "yyyy-MM-dd" },
