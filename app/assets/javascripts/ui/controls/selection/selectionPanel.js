@@ -69,7 +69,7 @@ define([
             randomIdx = Math.floor(Math.random() * depictions.length);
             randomDepiction = depictions[randomIdx];
 
-            if (randomDepiction.iiif_uri) {
+            if (randomDepiction.depiction_type == 'IIIF') {
               if (isPanelVisible)
                 depictionView = new IIIFView(depictionContainer, randomDepiction);
               else

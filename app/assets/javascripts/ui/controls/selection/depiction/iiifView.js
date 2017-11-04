@@ -1,7 +1,7 @@
 define(['ui/common/formatting'], function(Formatting) {
 
   var IIIFView = function(containerEl, depiction) {
-
+    
     var attributionEl = containerEl.find('.attribution'),
 
         btnFullscreen = jQuery(
@@ -15,7 +15,7 @@ define(['ui/common/formatting'], function(Formatting) {
         }),
 
         iiifLayer =
-          L.tileLayer.iiif(depiction.iiif_uri, { attribution: false, fitBounds: true }).addTo(iiifPane),
+          L.tileLayer.iiif(depiction.url, { attribution: false, fitBounds: true }).addTo(iiifPane),
 
         toggleFullscreen = function() {
           iiifPane.toggleFullscreen();
