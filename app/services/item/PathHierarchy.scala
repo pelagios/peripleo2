@@ -23,6 +23,11 @@ case class PathHierarchy(path: Seq[(String, String)]) {
         .map(t => t._1 + PathHierarchy.INNER_SEPARATOR + t._2)
         .mkString(PathHierarchy.OUTER_SEPARATOR) }
   
+  private lazy val root = {
+    val r = path.head
+    r._1 + PathHierarchy.INNER_SEPARATOR + r._2
+  }
+  
   lazy val ids: Seq[String] = path.map(_._1)
   
   def append(id: String, label: String): PathHierarchy =
@@ -58,8 +63,13 @@ object PathHierarchy {
     (JsPath \ "paths").read[Seq[String]].map(serialized => PathHierarchy.parse(serialized))
   
   implicit val pathHierarchyWrites: Writes[PathHierarchy] = (
+    (JsPath \ "root").write[String] and
     (JsPath \ "paths").write[Seq[String]] and
     (JsPath \ "ids").write[Seq[String]]
-  )(p => (p.paths, p.ids))
+  )(p => (
+      p.root,
+      p.paths, 
+      p.ids
+  ))
 
 }

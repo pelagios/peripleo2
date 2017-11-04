@@ -34,12 +34,14 @@
           },
           "is_in_dataset": {
             "properties": {
+              "root": { "type": "string", "index": "not_analyzed" },
               "paths": { "type": "string", "index": "not_analyzed" },
               "ids": { "type": "string", "index": "not_analyzed" }
             }
           },
           "is_part_of": {
             "properties": {
+              "root": { "type": "string", "index": "not_analyzed" },
               "paths": { "type": "string", "index": "not_analyzed" },
               "ids": { "type": "string", "index": "not_analyzed" }
             }
