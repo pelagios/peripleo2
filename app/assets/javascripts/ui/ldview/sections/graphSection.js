@@ -22,8 +22,21 @@ define(['ui/common/itemUtils'], function(ItemUtils) {
 
             /** All links, derived from SKOS close-/exactMatches **/
         var links = item.is_conflation_of.reduce(function(links, record) {
-              var closeMatches = record.close_matches || [],
-                  exactMatches = record.exact_matches || [],
+
+              var getURIs = function(type) {
+                    var links = record.links || [];
+                        toReturn = [];
+
+                    links.forEach(function(l) {
+                      if (l.link_type === type)
+                        toReturn.push(l.uri);
+                    });
+
+                    return toReturn;
+                  },
+
+                  closeMatches = getURIs('closeMatch'),
+                  exactMatches = getURIs('exactMatch'),
 
                   toLinks = function(uris, link) {
                     return uris.map(function(uri) {

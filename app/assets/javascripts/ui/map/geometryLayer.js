@@ -4,11 +4,21 @@ define([
   'ui/map/selectableMarker'
 ], function(HasEvents, ItemUtils, SelectableMarker) {
 
-  var MARKER_SIZE  = { MIN : 4, MAX: 11 };
+  var MARKER_SIZE  = { MIN : 4, MAX: 11 },
+
+      POLYGON_STYLE = {
+        color       : '#a64a40',
+        opacity     : 1,
+        fillColor   : '#ff0000',
+        fillOpacity : 0.08,
+        weight      : 0.7
+      };
 
   var GeometryLayer = function(map) {
 
     var self = this,
+
+        // polygons = L.featureGroup().addTo(map),
 
         markers = L.featureGroup().addTo(map),
 
@@ -53,6 +63,9 @@ define([
         /** Removes selection and all markers **/
         clear = function() {
           clearSelection();
+
+          // polygons.clearLayers();
+
           markerIndex = {};
           markers.clearLayers();
           markerScaleFn = function() { return MARKER_SIZE.MIN; };
@@ -88,9 +101,20 @@ define([
 
         /** Creates a marker for the given place **/
         createMarker = function(place) {
+          // Use complex (poly, multipoly, linestring) geometry if available
+          // var poly_geom =
+          //     (place.representative_geometry && place.representative_geometry.type !== 'Point') ?
+          //        place.representative_geometry : false,
+
           var pt   = (place.representative_point) ? place.representative_point : false;
 
-          if (pt) {
+          if (poly_geom) {
+
+            // TODO
+            marker = L.geoJson(poly_geom, POLYGON_STYLE).addTo(polygons);
+            return marker;
+
+          } else if (pt) {
             var uris = ItemUtils.getURIs(place),
                 latlng = [ pt[1], pt[0] ],
 
@@ -142,6 +166,7 @@ define([
           clear();
           computeMarkerScaleFn(placesWithCounts);
           placesWithCounts.forEach(createMarker);
+          markers.bringToFront();
         },
 
         highlightItems = function(items) {
