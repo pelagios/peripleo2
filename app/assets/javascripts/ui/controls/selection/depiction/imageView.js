@@ -28,9 +28,8 @@ define([
         };
 
     preloadImage(depiction.url).done(function(img) {
-      containerEl.css('background-image', 'url(' + img.src + ')');
+      containerEl.css('background-image', 'url("' + img.src + '")');
     }).fail(function(url) {
-      console.log('Image failed loading: ' + url);
       API.reportBrokenLink(depiction.source, url);
     });
 
