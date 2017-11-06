@@ -1,8 +1,12 @@
 define(['ui/common/formatting'], function(Formatting) {
 
+  var IS_TOUCH = 'ontouchstart' in window || navigator.MaxTouchPoints > 0;
+
   var IIIFView = function(containerEl, depiction) {
-    
-    var attributionEl = containerEl.find('.attribution'),
+
+    var parentEl = containerEl.parent(),
+
+        attributionEl = containerEl.find('.attribution'),
 
         btnFullscreen = jQuery(
           '<div class="iiif-fullscreen icon">&#xf065;</div>').appendTo(containerEl),
@@ -17,8 +21,22 @@ define(['ui/common/formatting'], function(Formatting) {
         iiifLayer =
           L.tileLayer.iiif(depiction.url, { attribution: false, fitBounds: true }).addTo(iiifPane),
 
+        /**
+         * Tablets don't have 'F11' fullscreen. We need to fall back to a standard
+         * fullscreen-sized DIV. In order to achieve this, however, we need to detach the
+         * the DIV from the original parent and attach it directly to the body element.
+         */
         toggleFullscreen = function() {
-          iiifPane.toggleFullscreen();
+          if (IS_TOUCH) {
+            if (iiifPane.isFullscreen())
+              parentEl.prepend(containerEl);
+            else
+              jQuery(document.body).append(containerEl);
+          } else {
+            iiifPane.toggleFullscreen();
+          }
+
+          iiifPane.toggleFullscreen({ pseudoFullscreen: true });
         },
 
         destroy = function() {

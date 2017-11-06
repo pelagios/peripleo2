@@ -1,0 +1,82 @@
+.depiction {
+  min-height:60px;
+  height:25%;
+  max-height:240px;
+  background-color:@blueish-white;
+  background-size:cover;
+  background-position:50% 20%;
+  cursor:pointer;
+  .rounded-corners-top(2px);
+  border-bottom:1px solid @light-grey-border;
+  position:relative;
+
+  .attribution {
+    display:block;
+    position:absolute;
+    left:12px;
+    bottom:8px;
+    z-index:9999; // So that we're above the IIIF pane
+
+    a {
+      color:#fff;
+      text-shadow:1px 1px 1px rgba(0, 0, 0, 0.7);
+      text-decoration:none;
+    }
+
+  }
+
+}
+
+.iiif-logo {
+  z-index:9999;
+  position:absolute;
+  top:5px;
+  left:8px;
+  width:38px;
+  opacity:0.75;
+}
+
+.iiif-fullscreen.icon {
+  position:absolute;
+  display:block;
+  bottom:8px;
+  right:8px;
+  z-index:9999;
+  border:2px solid #fff;
+  background-color:rgba(0, 0, 0, 0.3);
+  color:#fff;
+  width:20px;
+  height:20px;
+  .rounded-corners(2px);
+  text-align:center;
+  line-height:20px;
+  font-size:14px;
+}
+
+.iiif-fullscreen.icon:hover {
+  background-color:rgba(0, 0, 0, 0.5);
+  .box-shadow(0, 0, 5px, 0, rgba(0, 0, 0, 0.35));
+}
+
+.leaflet-control-attribution {
+  display:none;
+}
+
+.leaflet-fullscreen-on {
+  width:100%;
+  height:100%;
+  max-height:none;
+}
+
+.depiction.leaflet-container {
+  background-color:@blueish-white;
+}
+
+.depiction.leaflet-pseudo-fullscreen.leaflet-fullscreen-on {
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  z-index:2;
+}
