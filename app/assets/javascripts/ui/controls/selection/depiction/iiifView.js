@@ -32,11 +32,11 @@ define(['ui/common/formatting'], function(Formatting) {
               parentEl.prepend(containerEl);
             else
               jQuery(document.body).append(containerEl);
+
+            iiifPane.toggleFullscreen({ pseudoFullscreen: true });
           } else {
             iiifPane.toggleFullscreen();
           }
-
-          iiifPane.toggleFullscreen({ pseudoFullscreen: true });
         },
 
         destroy = function() {
