@@ -48,7 +48,7 @@
               "ids": { "type": "string", "index": "not_analyzed" }
             }
           },
-          "title_identifier": { "type": "string", "index": "not_analyzed" }
+          "identifier_title": { "type": "string", "index": "not_analyzed" }
         }
       }
     }

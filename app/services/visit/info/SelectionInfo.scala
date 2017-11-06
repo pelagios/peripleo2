@@ -22,11 +22,11 @@ object SelectionInfo {
     (JsPath \ "identifier").write[String] and
     (JsPath \ "title").write[String] and
     (JsPath \ "is_in_dataset").write[PathHierarchy] and
-    (JsPath \ "title_identifier").write[String] // This is used only for more convenient aggregation
+    (JsPath \ "identifier_title").write[String] // This is used only for more convenient aggregation
   )(s => (
     s.identifier,
     s.title,
     s.isInDataset,
-    s.title + SEPARATOR + s.identifier))
+    s.identifier + SEPARATOR + s.title))
   
 }

@@ -4,6 +4,39 @@
   last30Days: services.visit.VisitStats
 )(implicit request: RequestHeader, webjars: WebJarAssets)
 
+@stats(s: services.visit.VisitStats) = {
+  <p>
+    <h2>Total Visits: @s.total</h2>
+  </p>
+
+  <h2>Top Items</h2>
+  <ol>
+    @for((item, count) <- s.topItems) {
+      <li>
+        <a href="@controllers.routes.ApplicationController.ui.absoluteURL()#selected=@item.identifier">@item.title</a>: @count
+      </li>
+    }
+  </ol>
+
+  <h2>Top Datasets</h2>
+  <ol>
+    @for((d, count) <- s.topDatasets) {
+      <li>
+        <a href="@controllers.routes.ApplicationController.ui.absoluteURL()#selected=@d.identifier">@d.title</a>: @count
+      </li>
+    }
+  </ol>
+
+  <h2>Top Searches</h2>
+  <ol>
+    @for((search, count) <- s.topSearches) {
+      <li>
+        @search: @count
+      </li>
+    }
+  </ol>
+}
+
 @views.html.admin._layout("Analytics", "analytics", "stylesheets/admin/analytics/index.css") {
   <div class="row">
     <div class="card">
@@ -15,26 +48,15 @@
 
       <div class="tab-body inner">
         <div class="tab-content" id="tab-1">
-          <p>
-            Total Visits: @last24Hrs.total
-          </p>
+          @stats(last24Hrs)
         </div>
 
         <div class="tab-content" id="tab-2">
-          <p>
-            Total Visits: @last7Days.total
-          </p>
+          @stats(last7Days)
         </div>
 
         <div class="tab-content" id="tab-3">
-          <p>
-            Total Visits: @last30Days.total
-          </p>
-          <ol>
-            @for((item, count) <- last30Days.topItems) {
-              <li>@item: @count</li>
-            }
-          </ol>
+          @stats(last30Days)
         </div>
       </div>
     </div>

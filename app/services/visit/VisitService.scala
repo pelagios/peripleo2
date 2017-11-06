@@ -44,6 +44,7 @@ class VisitService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
     val now = DateTime.now()
  
     val expression = since match {
+      
       case TODAY => 
         "now-" + now.secondOfDay() + "s"
         
@@ -55,6 +56,7 @@ class VisitService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
         
       case LAST_30DAYS =>
         "now-30d"
+        
     }
     
     es.client execute {
@@ -68,9 +70,12 @@ class VisitService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
         aggregation terms "top_searches" field "search.query.raw" size 10 
       )
     } map { response =>
-      val topItems =    Aggregation.parseTerms(response.aggregations.get("top_items")).buckets
+      val topItems = Aggregation.parseTerms(response.aggregations.get("top_items")).buckets
+        .map { case (str, count) => (VisitStats.TopSelected(str), count) }
       val topDatasets = Aggregation.parseTerms(response.aggregations.get("top_datasets")).buckets
+        .map { case (str, count) => (VisitStats.TopSelected(str), count) }
       val topSearches = Aggregation.parseTerms(response.aggregations.get("top_searches")).buckets
+      
       VisitStats(response.totalHits, topItems, topDatasets, topSearches)
     }
     
@@ -86,7 +91,5 @@ object TimeInterval {
   case object LAST_24HRS  extends TimeInterval
   case object LAST_7DAYS  extends TimeInterval
   case object LAST_30DAYS extends TimeInterval
-  case object THIS_WEEK   extends TimeInterval
-  case object THIS_MONTH  extends TimeInterval
   
 }
