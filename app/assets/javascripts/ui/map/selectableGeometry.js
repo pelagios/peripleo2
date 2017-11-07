@@ -24,17 +24,13 @@ define([], function() {
 
         visible = true,
 
-        stashedMapBounds = false,
-
         select = function() {
           selected = true;
-          stashedMapBounds = map.getBounds();
           map.fitBounds(self.getBounds(), FIT_OPTIONS);
         },
 
         deselect = function() {
           selected = false;
-          map.fitBounds(stashedMapBounds);
         },
 
         isSelected = function() {
@@ -42,8 +38,10 @@ define([], function() {
         },
 
         show = function() {
-          if (!visible)
+          if (!visible) {
             self.addTo(map);
+            featureGroup.bringToBack();
+          }
 
           visible = true;
         },

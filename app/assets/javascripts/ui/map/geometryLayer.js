@@ -186,15 +186,27 @@ define([
               indexLookupResult = itemsWithGeometry.map(function(i) {
                 var marker = markerIndex[i.is_conflation_of[0].identifiers[0]];
                 return { item: i, marker: marker };
+              }),
+
+              // Highlight all items as required, don't re-highlight those that are selected already
+              highlighted = indexLookupResult.map(function(r) {
+                var marker = r.marker || createMarker(r.item);
+                if (!marker.isSelected()) {
+                  marker.select();
+                  currentSelection.push(marker);
+                }
+                return marker;
               });
 
-          // TODO don't re-select markers that are already selected
-          clearSelection();
-
-          indexLookupResult.forEach(function(t) {
-            var marker = t.marker || createMarker(t.item);
-            marker.select();
-            currentSelection.push(marker);
+          // Deselect all currently selected items that are not highlighted in this method call
+          currentSelection = currentSelection.filter(function(marker) {
+            var keepHighlighted = items.indexOf(marker.place) > -1;
+            if (keepHighlighted) {
+              return true;
+            } else {
+              marker.deselect();
+              return false;
+            }
           });
         },
 
