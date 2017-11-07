@@ -11,7 +11,7 @@ define([
 
     var self = this,
 
-        polygons = L.featureGroup().addTo(map),
+        shapes = L.featureGroup().addTo(map),
 
         markers = L.featureGroup().addTo(map),
 
@@ -56,9 +56,7 @@ define([
         /** Removes selection and all markers **/
         clear = function() {
           clearSelection();
-
-          polygons.clearLayers();
-
+          shapes.clearLayers();
           markerIndex = {};
           markers.clearLayers();
           markerScaleFn = function() { return MARKER_SIZE.MIN; };
@@ -74,10 +72,23 @@ define([
 
         /** Returns the bounds of the layer **/
         getBounds = function() {
-          
-          // TODO include polygon bounds
+          var markerBounds = markers.getBounds(),
+              markerBoundsValid = markerBounds.isValid(),
+              shapeBounds = shapes.getBounds(),
+              shapeBoundsValid = shapeBounds.isValid(),
+              mergedBounds;
 
-          return markers.getBounds();
+          if (markerBoundsValid && shapeBoundsValid) {
+            markerBounds.extend(shapeBounds);
+            return markerBounds;
+          } else if (markerBoundsValid) {
+            return markerBounds;
+          } else if (shapeBoundsValid) {
+            return shapeBounds;
+          } else {
+            // Doesn't matter as long as we return invalid bounds
+            return markerBounds;
+          }
         },
 
         /** On marker click, fire select event **/
@@ -108,7 +119,7 @@ define([
 
               marker = (function() {
                 if (poly_geom) {
-                  return new SelectableGeometry(poly_geom, map).addTo(polygons);
+                  return new SelectableGeometry(poly_geom, map).addTo(shapes);
                 } else if (pt) {
                   // Place might be there as a direct result, or as a place referenced by a result
                   var refCount = (place.referenced_count) ? place.referenced_count.total : 1,
