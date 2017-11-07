@@ -196,11 +196,13 @@ define([
                   currentSelection.push(marker);
                 }
                 return marker;
-              });
+              }),
+
+              idsToSelect = items.map(function(item) { return item.doc_id; });
 
           // Deselect all currently selected items that are not highlighted in this method call
           currentSelection = currentSelection.filter(function(marker) {
-            var keepHighlighted = items.indexOf(marker.place) > -1;
+            var keepHighlighted = idsToSelect.indexOf(marker.place.doc_id) > -1;
             if (keepHighlighted) {
               return true;
             } else {
