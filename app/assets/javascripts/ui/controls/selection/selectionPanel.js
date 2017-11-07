@@ -42,7 +42,8 @@ define([
         depictionView = false,
 
         empty = function() {
-          if (depictionView) depictionView.destroy();
+          if (depictionView)
+            depictionView.destroy();
           card.empty();
           currentSelection = false;
         },
@@ -130,7 +131,11 @@ define([
         },
 
         hide = function() {
-          if (element.is(':visible')) element.velocity('slideUp', SLIDE_OPTS);
+          var opts = jQuery.extend({}, SLIDE_OPTS, {
+                complete: function() { depictionContainer.hide(); }
+              });
+
+          if (element.is(':visible')) element.velocity('slideUp', opts);
         },
 
         /** User clicked a navigation link to select a different item **/
