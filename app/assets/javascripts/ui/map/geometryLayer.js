@@ -74,6 +74,9 @@ define([
 
         /** Returns the bounds of the layer **/
         getBounds = function() {
+          
+          // TODO include polygon bounds
+
           return markers.getBounds();
         },
 
@@ -105,7 +108,7 @@ define([
 
               marker = (function() {
                 if (poly_geom) {
-                  return new SelectableGeometry(poly_geom).addTo(polygons);
+                  return new SelectableGeometry(poly_geom, map).addTo(polygons);
                 } else if (pt) {
                   // Place might be there as a direct result, or as a place referenced by a result
                   var refCount = (place.referenced_count) ? place.referenced_count.total : 1,

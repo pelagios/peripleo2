@@ -8,18 +8,20 @@ define([], function() {
         weight      : 0.7
       };
 
-  var SelectableGeometry = function(geojson) {
+  var SelectableGeometry = function(geojson, map) {
 
-    var select = function() {
+    var selected = false,
 
+        select = function() {
+          selected = true;
         },
 
         deselect = function() {
-
+          selected = false;
         },
 
         isSelected = function() {
-
+          return selected;
         };
 
     this.select = select;
