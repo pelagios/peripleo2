@@ -1,11 +1,14 @@
 define([
   'ui/common/hasEvents',
   'ui/common/itemUtils',
+  'ui/map/geomUtils',
   'ui/map/selectableGeometry',
   'ui/map/selectableMarker'
-], function(HasEvents, ItemUtils, SelectableGeometry, SelectableMarker) {
+], function(HasEvents, ItemUtils, GeomUtils, SelectableGeometry, SelectableMarker) {
 
-  var MARKER_SIZE  = { MIN : 4, MAX: 11 };
+  var MARKER_SIZE  = { MIN : 4, MAX: 11 },
+
+      OCCLUSION_THRESHOLD = 0.95;
 
   var GeometryLayer = function(map) {
 
@@ -119,7 +122,7 @@ define([
 
               marker = (function() {
                 if (poly_geom) {
-                  return new SelectableGeometry(poly_geom, map).addTo(shapes);
+                  return new SelectableGeometry(poly_geom, shapes).addTo(shapes);
                 } else if (pt) {
                   // Place might be there as a direct result, or as a place referenced by a result
                   var refCount = (place.referenced_count) ? place.referenced_count.total : 1,
@@ -193,7 +196,28 @@ define([
             marker.select();
             currentSelection.push(marker);
           });
+        },
+
+        /** Hides shapes that cover the entire viewport **/
+        hideOccludingShapes = function() {
+          var visibleShapes = GeomUtils.getVisibleShapes(map, shapes),
+              mapBounds = map.getBounds(),
+              mapSize = GeomUtils.getSize(mapBounds);
+
+          // Compute degree of overlap
+          visibleShapes.forEach(function(shape) {
+            var bounds = shape.getBounds(),
+                intersection = GeomUtils.intersectBounds(mapBounds, bounds),
+                overlap = GeomUtils.getSize(intersection) / mapSize;
+
+            if (overlap > OCCLUSION_THRESHOLD)
+              shape.hide();
+            else
+              shape.show();
+          });
         };
+
+    map.on('moveend', hideOccludingShapes);
 
     this.getBounds = getBounds;
     this.clear = clear;
