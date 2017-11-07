@@ -26,7 +26,7 @@ object FeatureCollectionCrosswalk {
            Some(dataset),
            None, // isPartOf
            Seq.empty[Category], // TODO get from properties > feature types?
-           Seq.empty[Description],
+           f.descriptions,
            None, // homepage
            None, // license
            Seq.empty[Language],
@@ -63,11 +63,12 @@ case class GeoJSONLinks(exactMatches: Seq[String], closeMatches: Seq[String]) {
 }
 
 case class GazetteerFeature(
-  uri      : String,
-  title    : String, 
-  geometry : Option[Geometry],
-  names    : Seq[Name],
-  links    : Option[GeoJSONLinks])
+  uri          : String,
+  title        : String, 
+  geometry     : Option[Geometry],
+  names        : Seq[Name],
+  descriptions : Seq[Description],
+  links        : Option[GeoJSONLinks])
   
 object GeoJSONLinks extends HasNullableSeq {
   
@@ -85,6 +86,7 @@ object GazetteerFeature extends HasGeometry with HasNullableSeq {
     (JsPath \ "title").read[String] and
     (JsPath \ "geometry").readNullable[Geometry] and
     (JsPath \ "names").readNullable[Seq[Name]].map(fromOptSeq[Name]) and
+    (JsPath \ "descriptions").readNullable[Seq[Description]].map(fromOptSeq[Description]) and
     (JsPath \ "links").readNullable[GeoJSONLinks]
   )(GazetteerFeature.apply _)
 }

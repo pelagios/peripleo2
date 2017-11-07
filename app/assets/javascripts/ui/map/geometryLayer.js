@@ -1,24 +1,17 @@
 define([
   'ui/common/hasEvents',
   'ui/common/itemUtils',
+  'ui/map/selectableGeometry',
   'ui/map/selectableMarker'
-], function(HasEvents, ItemUtils, SelectableMarker) {
+], function(HasEvents, ItemUtils, SelectableGeometry, SelectableMarker) {
 
-  var MARKER_SIZE  = { MIN : 4, MAX: 11 },
-
-      POLYGON_STYLE = {
-        color       : '#a64a40',
-        opacity     : 1,
-        fillColor   : '#ff0000',
-        fillOpacity : 0.08,
-        weight      : 0.7
-      };
+  var MARKER_SIZE  = { MIN : 4, MAX: 11 };
 
   var GeometryLayer = function(map) {
 
     var self = this,
 
-        // polygons = L.featureGroup().addTo(map),
+        polygons = L.featureGroup().addTo(map),
 
         markers = L.featureGroup().addTo(map),
 
@@ -64,7 +57,7 @@ define([
         clear = function() {
           clearSelection();
 
-          // polygons.clearLayers();
+          polygons.clearLayers();
 
           markerIndex = {};
           markers.clearLayers();
@@ -102,27 +95,27 @@ define([
         /** Creates a marker for the given place **/
         createMarker = function(place) {
           // Use complex (poly, multipoly, linestring) geometry if available
-          // var poly_geom =
-          //     (place.representative_geometry && place.representative_geometry.type !== 'Point') ?
-          //        place.representative_geometry : false,
+          var poly_geom =
+                (place.representative_geometry && place.representative_geometry.type !== 'Point') ?
+                  place.representative_geometry : false,
 
-          var pt   = (place.representative_point) ? place.representative_point : false;
+              pt   = (place.representative_point) ? place.representative_point : false,
 
-          if (poly_geom) {
+              uris = ItemUtils.getURIs(place),
 
-            // TODO
-            marker = L.geoJson(poly_geom, POLYGON_STYLE).addTo(polygons);
-            return marker;
+              marker = (function() {
+                if (poly_geom) {
+                  return new SelectableGeometry(poly_geom).addTo(polygons);
+                } else if (pt) {
+                  // Place might be there as a direct result, or as a place referenced by a result
+                  var refCount = (place.referenced_count) ? place.referenced_count.total : 1,
+                      size = markerScaleFn(refCount);
 
-          } else if (pt) {
-            var uris = ItemUtils.getURIs(place),
-                latlng = [ pt[1], pt[0] ],
+                  return new SelectableMarker([ pt[1], pt[0] ], size).addTo(markers);
+                }
+              })();
 
-                // Place might be there as a direct result, or as a place referenced by a result
-                refCount = (place.referenced_count) ? place.referenced_count.total : 1,
-                size = markerScaleFn(refCount),
-                marker = new SelectableMarker(latlng, size).addTo(markers);
-
+          if (marker) {
             marker.on('click', onMarkerClicked);
             marker.place = place;
 

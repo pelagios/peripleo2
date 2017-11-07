@@ -10,6 +10,7 @@ define(function() {
         { shortcode: 'opencontext', initial: 'O', color: '#8c6d31', url_patterns: [ 'http://opencontext.org/subjects/' ] },
         { shortcode: 'hgc',         initial: 'C', color: '#17becf', url_patterns: [ 'http://www.cyprusgazetteer.org/' ] },
         { shortcode: 'hgl',         initial: 'L', color: '#bcbd22', url_patterns: [ 'http://www.slsgazetteer.org/' ] },
+        { shortcode: 'defc',        initial: 'D', color: '#7f7f7f', url_patterns: [ 'http://defc.acdh.oeaw.ac.at/publicrecords/site/detail/' ] },
         { shortcode: 'europeana',   initial: 'e', color: '#1676aa', url_patterns: [ 'http://data.europeana.eu/place/base/' ] },
 
         // People
