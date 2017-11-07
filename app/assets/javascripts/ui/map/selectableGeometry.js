@@ -10,14 +10,28 @@ define([], function() {
 
   var SelectableGeometry = function(geojson, map) {
 
-    var selected = false,
+    var self = this,
+
+        selected = false,
+
+        stashedMapBounds = false,
 
         select = function() {
           selected = true;
+          stashedMapBounds = map.getBounds();
+          map.fitBounds(self.getBounds(), {
+            paddingTopLeft: [440, 20],
+            paddingBottomRight: [20, 20],
+            animate: true
+          });
         },
 
         deselect = function() {
+          if (stashedMapBounds)
+            map.fitBounds(stashedMapBounds);
+
           selected = false;
+          stashedMapBounds = false;
         },
 
         isSelected = function() {
