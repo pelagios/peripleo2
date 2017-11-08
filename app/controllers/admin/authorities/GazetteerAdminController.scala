@@ -74,7 +74,7 @@ class GazetteerAdminController @Inject() (
                 formData.filename + " (GeoNames GeoJSON)",
                 formData.ref.file,
                 formData.filename,
-                GeoNamesCrosswalk.fromJson,
+                GeoNamesCrosswalk.fromJson(PathHierarchy(name, name)),
                 importer,
                 loggedIn.username)
             } else if (formData.filename.toLowerCase.contains("europeana")) {

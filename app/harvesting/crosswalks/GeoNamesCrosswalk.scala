@@ -10,14 +10,14 @@ import services.item._
 
 object GeoNamesCrosswalk extends BaseGeoJSONCrosswalk {
 
-  def fromJson(record: String): Option[ItemRecord] = super.fromJson[GeoNamesRecord](record, { geonames =>
+  def fromJson(dataset: PathHierarchy)(record: String): Option[ItemRecord] = super.fromJson[GeoNamesRecord](record, { geonames =>
     ItemRecord(
       ItemRecord.normalizeURI(geonames.uri),
       Seq(ItemRecord.normalizeURI(geonames.uri)),
       DateTime.now(),
       None, // lastChangedAt
       geonames.title,
-      Some(PathHierarchy("GeoNames", "GeoNames")),
+      Some(dataset),
       None, // isPartOf
       Seq.empty[Category],
       geonames.description.map(d => Seq(new Description(d))).getOrElse(Seq.empty[Description]),
