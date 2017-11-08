@@ -1,7 +1,8 @@
 @(
-  last24Hrs:  services.visit.VisitStats,
-  last7Days:  services.visit.VisitStats,
-  last30Days: services.visit.VisitStats
+  profile    : services.profiling.CollectionProfile,
+  last24Hrs  : services.visit.VisitStats,
+  last7Days  : services.visit.VisitStats,
+  last30Days : services.visit.VisitStats
 )(implicit request: RequestHeader, webjars: WebJarAssets)
 
 @stats(s: services.visit.VisitStats) = {
@@ -38,6 +39,14 @@
 }
 
 @views.html.admin._layout("Analytics", "analytics", "stylesheets/admin/analytics/index.css") {
+  <div class="row">
+    <div class="card">
+      <div class="inner">
+        Images with IIIF: @profile.itemsWithIIIF
+      </div>
+    </div>
+  </div>
+
   <div class="row">
     <div class="card">
       <ul class="tab-header">
