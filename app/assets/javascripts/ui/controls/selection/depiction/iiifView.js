@@ -11,15 +11,31 @@ define(['ui/common/formatting'], function(Formatting) {
         btnFullscreen = jQuery(
           '<div class="iiif-fullscreen icon">&#xf065;</div>').appendTo(containerEl),
 
-        iiifPane = L.map(containerEl[0], {
-          center: [0, 0],
-          crs: L.CRS.Simple,
-          zoom: 0,
-          zoomControl: false
-        }),
+        iiifPane, iiifLayer,
 
-        iiifLayer =
-          L.tileLayer.iiif(depiction.url, { attribution: false, fitBounds: true }).addTo(iiifPane),
+        init = function() {
+          try {
+            var m = L.map(containerEl[0], {
+                  center: [0, 0],
+                  crs: L.CRS.Simple,
+                  zoom: 0,
+                  zoomControl: false
+                });
+
+            iiifPane = m;
+            iiifLayer =
+              L.tileLayer.iiif(depiction.url, { attribution: false, fitBounds: true })
+               .addTo(iiifPane);
+          } catch (e1) {
+            console.log('Error initializing IIIF pane - removing leftover reference');
+
+            try {
+              iiifPane.remove();
+            } catch (e2) {
+              console.log('Removing leftover reference failed');
+            }
+          }
+        },
 
         /**
          * Tablets don't have 'F11' fullscreen. We need to fall back to a standard
@@ -44,6 +60,7 @@ define(['ui/common/formatting'], function(Formatting) {
             iiifPane.remove();
           } catch (e) {
             // This can fail if the user destroys too early (i.e. before the IIIF has loaded)
+            console.log('Warn: could not clear IIIF pane');
           }
           containerEl.empty();
         };
@@ -52,6 +69,8 @@ define(['ui/common/formatting'], function(Formatting) {
 
     attributionEl.html(Formatting.formatClickableURL(depiction.source));
     containerEl.prepend('<img class="iiif-logo" src="/assets/images/iiif-logo.png">');
+
+    init();
 
     this.destroy = destroy;
   };
