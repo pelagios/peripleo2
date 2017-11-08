@@ -3,13 +3,42 @@
   <head>
     <title>@item.title | Peripleo</title>
     <link rel="stylesheet" href="@routes.WebJarAssets.at(webjars.locate("leaflet.css"))"/>
+    <script src="@routes.WebJarAssets.at(webjars.locate("1.12.0/jquery.min.js"))"></script>
     <script src="@routes.WebJarAssets.at(webjars.locate("leaflet.js"))"></script>
     <script src="@routes.WebJarAssets.at(webjars.locate("leaflet-iiif.js"))"></script>
     <script src="@routes.Assets.versioned("vendor/Leaflet.fullscreen.min.js")"></script>
-    <script src="@routes.WebJarAssets.at(webjars.locate("1.12.0/jquery.min.js"))"></script>
+    <script src="@routes.WebJarAssets.at(webjars.locate("numeral.min.js"))"></script>
+    <script src="@routes.WebJarAssets.at(webjars.locate("require.min.js"))" data-main="@routes.Assets.versioned("javascripts/embed/embed.js")"></script>
   </head>
   <body>
-    <div id="peripleo-item-embed"></div>
-    <script src="@routes.WebJarAssets.at(webjars.locate("require.min.js"))" data-main="@routes.Assets.versioned("javascripts/embed/embed.js")"></script>
+    <div id="peripleo-embed">
+      <div class="depiction"><span class="attribution"></span></div>
+      <div class="dogear"></div>
+      <div class="card">
+        <div class="item-info">
+          <p class="item-is-in"></p>
+          <h3 class="item-title">@item.title</h3>
+          @homepage(item)
+          <p class="item-temporal-bounds"></p>
+          @description(item)
+        </div>
+      </div>
+    </div>
   </body>
 </html>
+
+@homepage(item: services.item.Item) = {
+  @defining(item.isConflationOf.flatMap(_.homepage)) { urls =>
+    @if(!urls.isEmpty) {
+      <p class="item-homepage"><a href="@urls.head" target="_blank">@urls.head</a></p>
+    }
+  }
+}
+
+@description(item: services.item.Item) = {
+  @defining(item.isConflationOf.flatMap(_.descriptions)) { descriptions =>
+    @if(!descriptions.isEmpty) {
+      <p class="item-description">@descriptions.head.description</p>
+    }
+  }
+}

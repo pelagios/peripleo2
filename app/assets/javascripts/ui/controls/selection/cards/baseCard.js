@@ -54,6 +54,8 @@ define([
     if (topRanked)
       element.html(topRanked.description +
         ' <span class="source">' + Formatting.formatClickableURL(topRanked.uri) + '</span>');
+    else
+      element.hide();
   };
 
   BaseCard.prototype.renderIdentifiers = function(element, uris) {

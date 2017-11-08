@@ -3,11 +3,9 @@ require.config({
   fileExclusionRegExp: /^lib$/
 });
 
-require([], function() {
+require([], function(SelectionPanel) {
 
   jQuery(document).ready(function() {
-
-    // TODO
 
   });
 
