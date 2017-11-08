@@ -12,6 +12,8 @@ define(function() {
         { shortcode: 'hgl',         initial: 'L', color: '#bcbd22', url_patterns: [ 'http://www.slsgazetteer.org/' ] },
         { shortcode: 'defc',        initial: 'D', color: '#7f7f7f', url_patterns: [ 'http://defc.acdh.oeaw.ac.at/publicrecords/site/detail/' ] },
         { shortcode: 'europeana',   initial: 'e', color: '#1676aa', url_patterns: [ 'http://data.europeana.eu/place/base/' ] },
+        { shortcode: 'nomisma',     initial: 'N', color: '#ff7f0e', url_patterns: [ 'http://nomisma.org/id/' ] },
+        { shortcode: 'chgis',       initial: 'C', color: '#9467bd', url_patterns: [ 'http://maps.cga.harvard.edu/tgaz/placename/hvd_' ] },
 
         // People
         { shortcode: 'europeana',   initial: 'e', color: '#1676aa', url_patterns: [ 'http://data.europeana.eu/agent/base/' ] }
