@@ -43,14 +43,18 @@ define([], function() {
      * - datasets       = {identifier}
      */
     getDatasetInfo : function(identifier) {
-      var url = '/api/search?facets=true&top_referenced=true&time_histogram=true&datasets=' + identifier,
+      var url =
+        '/api/search?facets=true&top_referenced=true&time_histogram=true&datasets=' +
+        encodeURIComponent(identifier),
 
           /**
            * Reproduces the follow-up functionality that's also included in the
            * main search.js component.
            */
           fetchMore = function(response, n) {
-            var nextPageURL = '/api/search?limit=' + n + '&datasets=' + identifier;
+            var nextPageURL = '/api/search?limit=' + n + '&datasets=' +
+              encodeURIComponent(identifier);
+              
             return jQuery.getJSON(nextPageURL).then(function(nextPage) {
               response.items = response.items.concat(nextPage.items);
               return response;
