@@ -30,6 +30,13 @@ class ApplicationController @Inject() (
       Ok(views.html.landing.index(itemCount, datasetCount, timerange.getYears))
     }
   }
+  
+  def embed(identifier: String) = Action.async { implicit request =>
+    itemService.findByIdentifier(identifier).map {
+      case Some(item) => Ok(views.html.embed.index(item))
+      case None => NotFound
+    }
+  }
 
   def ui = Action { implicit request =>
     Ok(views.html.ui.index())

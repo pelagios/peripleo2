@@ -83,5 +83,6 @@ GET     /api/admin/tasks                             controllers.api.admin.TaskA
 # Public views
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+GET     /embed/:id                                   controllers.ApplicationController.embed(id: String)
 GET     /ui                                          controllers.ApplicationController.ui
 GET     /                                            controllers.ApplicationController.index
