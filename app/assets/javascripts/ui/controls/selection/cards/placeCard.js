@@ -29,8 +29,8 @@ define([
         title       = element.find('.item-title'),
         identifiers = element.find('.item-identifiers ul'),
         names       = element.find('.item-names'),
-        description = element.find('.item-description'),
         tempBounds  = element.find('.item-temporal-bounds'),
+        description = element.find('.item-description'),
 
         refRel =
           jQuery('<div class="place references"><span class="icon">&#xf0c1;</span></div>').appendTo(parentEl),

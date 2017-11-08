@@ -14,12 +14,14 @@ define([
             '<h3 class="item-title"></h3>' +
             '<p class="item-homepage"></p>' +
             '<p class="item-temporal-bounds"></p>' +
+            '<p class="item-description"></p>' +
           '</div>').appendTo(parentEl),
 
         inDataset  = element.find('.item-is-in'),
         title      = element.find('.item-title'),
         homepage   = element.find('.item-homepage'),
         tempBounds = element.find('.item-temporal-bounds'),
+        description = element.find('.item-description'),
 
         snippetsContainer = jQuery(
           '<div class="snippets-outer"><div class="snippets-inner"></div></div>').hide().appendTo(parentEl),
@@ -38,6 +40,7 @@ define([
           self.fill(title, titleHtml);
           self.fillIfExists(homepage, record.homepage);
           self.fillTemporalBounds(tempBounds, item.temporal_bounds);
+          self.fillDescription(description, item);
         },
 
         renderSnippets = function() {
