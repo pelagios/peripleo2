@@ -12,14 +12,13 @@
     <script src="@routes.WebJarAssets.at(webjars.locate("require.min.js"))" data-main="@routes.Assets.versioned("javascripts/embed/embed.js")"></script>
   </head>
   <body>
-    <div id="current-selection">
-      <div class="depiction"><span class="attribution"></span></div>
-      <div class="dogear"></div>
+    <div id="embed">
+      <!-- div class="depiction"><span class="attribution"></span></div -->
+      <div class="dogear @item.itemType"></div>
       <div class="card">
         <div class="item-info">
-          <p class="item-is-in"></p>
-          <h3 class="item-title">@item.title</h3>
-          @homepage(item)
+          @inDataset(item)
+          @title(item)
           <p class="item-temporal-bounds"></p>
           @description(item)
         </div>
@@ -28,9 +27,20 @@
   </body>
 </html>
 
-@homepage(item: services.item.Item) = {
+@inDataset(item: services.item.Item) = {
+  @defining(item.isConflationOf.flatMap(_.isInDataset)) { paths =>
+    @if(!paths.isEmpty) {
+      <p class="item-is-in">@for((id, title) <- paths.head.path) {
+        <span><a>@title</a></span>
+      }</p>
+    }
+  }
+}
+
+@title(item: services.item.Item) = {
   @defining(item.isConflationOf.flatMap(_.homepage)) { urls =>
     @if(!urls.isEmpty) {
+      <h3 class="item-title"><a href="@urls.head">@item.title</a></h3>
       <p class="item-homepage"><a href="@urls.head" target="_blank">@urls.head</a></p>
     }
   }

@@ -15,8 +15,8 @@ case class PathHierarchy(path: Seq[(String, String)]) {
         id 
 
       (normalizedId, label)
-    })      
-  
+    })  
+    
   private lazy val paths: Seq[String] = 
     path.zipWithIndex.map { case (_, idx) =>
       path.take(idx + 1)
