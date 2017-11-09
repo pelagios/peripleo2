@@ -13,43 +13,62 @@
   </head>
   <body>
     <div id="embed">
-      <!-- div class="depiction"><span class="attribution"></span></div -->
+      @renderDepiction(item)
       <div class="dogear @item.itemType"></div>
       <div class="card">
         <div class="item-info">
-          @inDataset(item)
-          @title(item)
+          @renderDataset(item)
+          @renderTitle(item)
           <p class="item-temporal-bounds"></p>
-          @description(item)
+          @renderDescription(item)
         </div>
       </div>
     </div>
   </body>
 </html>
 
-@inDataset(item: services.item.Item) = {
-  @defining(item.isConflationOf.flatMap(_.isInDataset)) { paths =>
-    @if(!paths.isEmpty) {
-      <p class="item-is-in">@for((id, title) <- paths.head.path) {
-        <span><a>@title</a></span>
-      }</p>
+@homepage(item: services.item.Item) = @{
+  item.isConflationOf.flatMap(_.homepage).headOption }
+
+@firstDataset(item: services.item.Item) = @{
+  item.isConflationOf.flatMap(_.isInDataset).headOption }
+
+@firstDescription(item: services.item.Item) = @{
+  item.isConflationOf.flatMap(_.descriptions).headOption }
+
+@renderDepiction(item: services.item.Item) = {
+  @defining(scala.util.Random.shuffle(item.isConflationOf.flatMap(_.depictions))) { depictions =>
+    @if(!depictions.isEmpty) {
+      @defining(depictions.head) { d =>
+        @if(d.depictionType == services.item.DepictionType.IMAGE) {
+          <div class="depiction" style="background-image:url('@d.url')"></div>
+        } @if(d.depictionType == services.item.DepictionType.IIIF) {
+          <div class="depiction iiif" data-url="@d.url" data-source="@homepage(item)">
+            <span class="attribution"></span>
+          </div>
+        }
+      }
     }
   }
 }
 
-@title(item: services.item.Item) = {
-  @defining(item.isConflationOf.flatMap(_.homepage)) { urls =>
-    @if(!urls.isEmpty) {
-      <h3 class="item-title"><a href="@urls.head">@item.title</a></h3>
-      <p class="item-homepage"><a href="@urls.head" target="_blank">@urls.head</a></p>
-    }
+@renderDataset(item: services.item.Item) = {
+  @firstDataset(item).map { inDataset =>
+    <p class="item-is-in">@for((id, title) <- inDataset.path) {
+      <span><a>@title</a></span>
+    }</p>
   }
 }
 
-@description(item: services.item.Item) = {
-  @defining(item.isConflationOf.flatMap(_.descriptions)) { descriptions =>
-    @if(!descriptions.isEmpty) {
-      <p class="item-description">@descriptions.head.description</p>
-    }
+@renderTitle(item: services.item.Item) = {
+  @homepage(item).map { url =>
+    <h3 class="item-title"><a href="@url">@item.title</a></h3>
+    <p class="item-homepage"><a href="@url" target="_blank">@url</a></p>
+  }
+}
+
+@renderDescription(item: services.item.Item) = {
+  @firstDescription(item).map { d =>
+    <p class="item-description">@d.description</p>
   }
 }
