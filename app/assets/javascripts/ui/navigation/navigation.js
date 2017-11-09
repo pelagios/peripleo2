@@ -161,7 +161,7 @@ define([
           selectionPanel.hide();
 
           // Clear the query phrase - but remember for later
-          stashedQuery = state.getQueryPhrase();
+          stashedQuery.set(state.getQueryPhrase());
           state.setQueryPhrase(false, NOOP);
           state.updateFilters(asFilterSetting).done(function(response) {
             searchPanel.setLoading(false);
