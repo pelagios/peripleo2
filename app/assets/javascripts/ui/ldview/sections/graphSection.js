@@ -72,6 +72,45 @@ define(['ui/common/itemUtils'], function(ItemUtils) {
         return { nodes: nodes, links: links };
       };
 
+  var Legend = function(d3, svgEl) {
+
+    // https://stackoverflow.com/questions/35516083/how-to-make-a-dashed-line-legend-with-d3-js
+    var svg = d3.select(svgEl[0]).append('g'),
+
+        legend = svg.selectAll('.legend')
+          .data(['exactMatch', 'closeMatch'])
+        .enter().append('g')
+          .attr('class', 'legend')
+          .attr('transform', function(d, i) { return 'translate(0,' + (15 + i * 25) + ')'; });
+
+      legend.append('line')//making a line for legend
+          .attr('x1', 20)
+          .attr('x2', 60)
+          .attr('y1', 10)
+          .attr('y2', 10)
+          .attr('marker-end', 'url(#arrow)')
+          .attr('class', function(c) { return c; });
+
+      svg.append('svg:defs').selectAll('marker')
+        .data(['arrow'])
+        .enter().append('marker')
+          .attr('id', String)
+          .attr('viewBox', '0 -5 10 10')
+          .attr('refX', 0)
+          .attr('refY', 0)
+          .attr('markerWidth', 5)
+          .attr('markerHeight', 6)
+          .attr('orient', 'auto')
+          .append('path')
+            .attr('d', 'M0,-5L10,0L0,5');
+
+      legend.append('text')
+          .attr('x', 80)
+          .attr('y', 0)
+          .attr('dy', '14px')
+          .text(function(d) { return 'skos:' + d; });
+  };
+
   // Mostly http://bl.ocks.org/mbostock/4062045
   var GraphSection = function(d3, svgEl, item) {
 
@@ -174,6 +213,8 @@ define(['ui/common/itemUtils'], function(ItemUtils) {
 
     simulation.nodes(graph.nodes).on('tick', ticked);
     simulation.force('link').links(graph.links);
+
+    new Legend(d3, svgEl);
 
     this.stop = stop;
   };
