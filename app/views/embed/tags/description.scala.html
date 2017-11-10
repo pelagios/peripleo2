@@ -1,0 +1,7 @@
+@(item: services.item.Item)
+
+@firstDescription(item: services.item.Item) = @{ item.isConflationOf.flatMap(_.descriptions).headOption }
+
+@firstDescription(item).map { d =>
+  <p class="item-description">@d.description</p>
+}

@@ -1,0 +1,9 @@
+@(item: services.item.Item)
+
+@firstDataset(item: services.item.Item) = @{ item.isConflationOf.flatMap(_.isInDataset).headOption }
+
+@firstDataset(item).map { inDataset =>
+  <p class="item-is-in">@for((id, title) <- inDataset.path) {
+    <span><a>@title</a></span>
+  }</p>
+}

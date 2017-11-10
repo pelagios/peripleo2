@@ -1,0 +1,18 @@
+@(item: services.item.Item)
+
+@formatYear(date: org.joda.time.DateTime) = @{
+  if (date.getEra == 0)
+    Math.abs(date.getYear) + " BC"
+  else
+    date.getYear
+}
+
+@item.temporalBounds.map { temp =>
+  <p class="item-temporal-bounds">
+    @if(temp.from == temp.to) {
+      @formatYear(temp.from)
+    } else {
+      @formatYear(temp.from) - @formatYear(temp.to)
+    }
+  </p>
+}
