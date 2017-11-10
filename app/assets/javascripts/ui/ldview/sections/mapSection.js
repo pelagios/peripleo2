@@ -42,6 +42,11 @@ define([
           item.is_conflation_of.forEach(function(record) {
             if (record.representative_point) createMarker(record);
           });
+
+          self.fit(markers.getBounds(), {
+            padding: [20, 20],
+            animate: false
+          });
         };
 
     MapBase.apply(this, [ containerDiv ]);

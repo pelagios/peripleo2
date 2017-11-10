@@ -32,7 +32,7 @@ define([
 
         baseLayerSwitcher = new BaseLayerSwitcher(),
 
-        onChangeBasemap = function(name) {          
+        onChangeBasemap = function(name) {
           var layer = LAYERS[name];
           if (layer && layer !== currentBaseLayer) {
             map.addLayer(layer);
@@ -46,10 +46,22 @@ define([
 
         selectBasemap = function() {
           baseLayerSwitcher.open();
+        },
+
+        fit = function(bounds, padding) {
+          if (bounds.isValid()) {
+            var isPoint = bounds.getSouthWest().equals(bounds.getNorthEast());
+
+            if (isPoint)
+              map.panTo(bounds.getSouthWest());
+            else
+              map.fitBounds(bounds, padding);
+          }
         };
 
     baseLayerSwitcher.on('changeBasemap', onChangeBasemap);
 
+    this.fit = fit;
     this.selectBasemap = selectBasemap;
     this.map = map;
 

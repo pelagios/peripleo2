@@ -31,19 +31,16 @@ define([
 
         fitBounds = function() {
           var bounds = geometryLayer.getBounds(),
-              isPoint;
 
-          if (bounds.isValid()) {
-            isAutoFit = true;
-            isPoint = bounds.getSouthWest().equals(bounds.getNorthEast());
-            if (isPoint)
-              self.map.panTo(bounds.getSouthWest());
-            else
-              self.map.fitBounds(bounds, {
+              opts = {
                 paddingTopLeft: [440, 20],
                 paddingBottomRight: [20, 20],
                 animate: true
-              });
+              };
+
+          if (bounds.isValid()) {
+            isAutoFit = true;
+            self.fit(bounds, opts);
           }
         },
 
