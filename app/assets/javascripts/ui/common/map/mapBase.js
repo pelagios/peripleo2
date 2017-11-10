@@ -32,7 +32,7 @@ define([
 
         baseLayerSwitcher = new BaseLayerSwitcher(),
 
-        onChangeBasemap = function(name) {
+        onChangeBasemap = function(name) {          
           var layer = LAYERS[name];
           if (layer && layer !== currentBaseLayer) {
             map.addLayer(layer);
