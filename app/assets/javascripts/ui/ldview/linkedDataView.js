@@ -33,7 +33,7 @@ define([
 
           require(['d3'], function(d3) {
             graph = new Graph(d3, element.find('.ldview-body svg'), item);
-            map = new Map(element.find('.ldview-body .map-section'), item);
+            map = new Map(element.find('.ldview-body .map-section')[0], item);
           });
         };
 

@@ -1,6 +1,6 @@
 define([
   'ui/common/hasEvents',
-  'ui/map/baselayers'
+  'ui/common/map/baselayers'
 ], function(HasEvents, BaseLayers) {
 
   var BaseLayerSwitcher = function() {
