@@ -9,8 +9,7 @@ case class PathHierarchy(path: Seq[(String, String)]) {
   lazy val normalize =    
     PathHierarchy(path.map { case (id, label) =>
       val normalizedId = if (id.startsWith("http"))
-        // In case the ID is a URI, remove trailing slashes (Peripleo-wide convention)
-        if (id.endsWith("/")) id.substring(0, id.size - 1) else id
+        ItemRecord.normalizeURI(id)
       else
         id 
 
