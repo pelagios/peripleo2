@@ -2,13 +2,15 @@
 
 @defining(
   scala.util.Random.shuffle(
-    item.isConflationOf.flatMap { r => r.depictions.map((_, r.homepage)) }
+    item.isConflationOf.flatMap { r => r.depictions.map((_, r.homepage, r.uri)) }
   )
 ) { depictions =>
   @if(!depictions.isEmpty) {
     @defining(depictions.head) { d =>
       @if(d._1.depictionType == services.item.DepictionType.IMAGE) {
-        <div class="depiction" style="background-image:url('@d._1.url')"></div>
+        <div class="depiction" style="background-image:url('@d._1.url')">
+          <span class="attribution">@views.html.embed.tags.url(d._3)</span>
+        </div>
       } @if(d._1.depictionType == services.item.DepictionType.IIIF) {
         <div class="depiction iiif" data-url="@d._1.url" data-source="@d._2">
           <span class="attribution"></span>
