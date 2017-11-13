@@ -1,7 +1,15 @@
 @(item: services.item.Item)
 
-@firstDescription(item: services.item.Item) = @{ item.isConflationOf.flatMap(_.descriptions).headOption }
+@firstDescription(item: services.item.Item) = @{
+  item.isConflationOf.flatMap { record => record.descriptions.map((_, record.uri)) }.headOption
+}
 
 @firstDescription(item).map { d =>
-  <p class="item-description">@d.description</p>
+  <p class="item-description">@d._1.description
+    @if(d._2.startsWith("http")) {
+      <span class="source">@views.html.embed.tags.url(d._2)</span>
+    } else {
+      <span class="source">d._2</span>
+    }
+  </p>
 }

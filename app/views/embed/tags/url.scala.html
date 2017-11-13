@@ -1,0 +1,4 @@
+@(url: String)
+@defining(new java.net.URL(url).getHost()) { host =>
+  <a href="@url" target="_blank">@host</a>
+}
