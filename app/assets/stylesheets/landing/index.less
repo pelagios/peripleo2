@@ -1,4 +1,5 @@
 @import "../common/_fonts.less";
+@import "../common/_mixins.less";
 @import "sections/_header.less";
 @import "sections/_jumbotron.less";
 
@@ -44,19 +45,20 @@ html, body {
 .inner {
   position:relative;
   margin:0 auto;
-  width:880px;
+  width:900px;
 }
 
 .phonetic {
+  font-style:normal;
   font-family:"Times New Roman", Times, serif;
 }
 
 .section {
-  padding:80px 0;
+  padding:40px 0;
 
   h2 {
-    font-size:26px;
-    padding:0;
+    font-size:20px;
+    padding:0 0 20px 0;
     margin:0;
     font-weight:normal;
     font-family:Roboto;
@@ -74,5 +76,18 @@ html, body {
   }
 
   a { color:@heading-color; }
+
+}
+
+.section.top-item {
+
+  iframe {
+    width:420px;
+    height:220px;
+    outline:none;
+    border:none;
+    .rounded-corners(3px);
+    .box-shadow(0, 0, 8px, 0, rgba(0,0,0,0.25));
+  }
 
 }

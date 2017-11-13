@@ -1,4 +1,9 @@
-@(itemCount: Long, datasetCount: Long, years: Int)(implicit request: RequestHeader, webjars: WebJarAssets)
+@(
+  itemCount: Long,
+  datasetCount: Long,
+  years: Int,
+  topItemId: Option[String]
+)(implicit request: RequestHeader, webjars: WebJarAssets)
 <!DOCTYPE html>
 <html>
   <head>
@@ -50,27 +55,31 @@
 
     <div class="section">
       <div class="inner">
-        <h2>The Pelagios Exploration Engine</h2>
         <p>
-          Peripleo <em class="phonetic">[periˈpleo]</em>, ancient Greek for &ldquo;to sail (or swim)
-          around&rdquo; in the sense of exploration or discovery, is a search engine to
-          <a href="http://commons.pelagios.org" target="_blank">Pelagios Commons</a>, a Digital
-          Humanities initative aiming to build better connections between scholars, projects
-          and institutions studying places of the past.
+          Peripleo <em class="phonetic">[periˈpleo]</em> &mdash; ancient Greek for &ldquo;to sail
+          (or swim) around&rdquo; in the sense of exploration or discovery &mdash; is a search
+          engine to <a href="http://commons.pelagios.org" target="_blank">Pelagios Commons</a>,
+          a Digital Humanities initative aiming to build better connections between scholars,
+          projects and institutions studying places of the past.
         </p>
         <p>
-          Peripleo provides an interface to explore data about places, people, objects,
+          Peripleo provides an interface to explore data about past places, people, objects,
           time periods, and navigate the connections between them.
         </p>
       </div>
     </div>
 
-    <div class="section">
-      <!--div class="inner">
-        <iframe allowFullScreen="true" width="420" height="280" style="border:1px solid #e5e5e5; outline: none;" src="http://localhost:9000/embed/http%3A%2F%2Fgams.uni-graz.at%2Fcontext%3Aarch%2FPELAGIOS%23o%3Aarch.2443">
-        </iframe>
-      </div-->
-    </div>
+    @topItemId.map { identifier =>
+      <div class="section top-item">
+        <div class="inner">
+          <h2>This Week's Top Item</h2>
+          <iframe
+            allowFullScreen="true"
+            src="@controllers.routes.ApplicationController.embed(identifier)">
+          </iframe>
+        </div>
+      </div>
+    }
 
     <script src="@routes.WebJarAssets.at(webjars.locate("require.min.js"))" data-main="@routes.Assets.versioned("javascripts/landing/anim.js")"></script>
   </body>
