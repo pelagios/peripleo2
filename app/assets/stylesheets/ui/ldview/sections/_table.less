@@ -1,3 +1,64 @@
 .ldview .table-section {
+  overflow-y:scroll;
+  color:@dark-grey-type;
+
+  .ldview-table-header {
+    padding:10px;
+    border-bottom:1px solid @light-grey-border;
+
+    h3, p {
+      padding:2px 0 2px 0;
+      margin:0;
+    }
+
+    h3 {
+      font-weight:normal;
+      font-size:17px;
+    }
+
+    p {
+      font-size:14px;
+      color:@light-grey-type;
+    }
+
+  }
+
+  ul.ldview-table-body {
+    list-style-type:none;
+    margin:0;
+    padding:0;
+
+    li {
+      position:relative;
+      padding:10px 10px 10px 30px;
+      border-bottom:1px solid @light-grey-border;
+
+      h4, h5, p {
+        margin:0;
+        padding:2px 0;
+        font-weight:normal;
+        font-size:14px;
+      }
+
+      a { color:@ocean; }
+
+      .toggle {
+        position:absolute;
+        top:12px;
+        left:10px;
+        display:block;
+        width:15px;
+        height:15px;
+        .rounded-corners(50%);
+        font-size:14px;
+        color:#fff;
+        background-color:@light-grey-type;
+        text-align:center;
+        cursor:pointer;
+      }
+
+    }
+
+  }
 
 }

@@ -1,7 +1,8 @@
 define([
   'ui/ldview/sections/graphSection',
-  'ui/ldview/sections/mapSection'
-], function(Graph, Map) {
+  'ui/ldview/sections/mapSection',
+  'ui/ldview/sections/tableSection'
+], function(Graph, Map, Table) {
 
   var LinkedDataView = function(item) {
 
@@ -34,6 +35,7 @@ define([
           require(['d3'], function(d3) {
             graph = new Graph(d3, element.find('.ldview-body svg'), item);
             map = new Map(element.find('.ldview-body .map-section')[0], item);
+            table = new Table(element.find('.ldview-body .table-section'), item);
           });
         };
 
