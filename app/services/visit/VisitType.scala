@@ -5,6 +5,7 @@ import play.api.libs.functional.syntax._
 
 object VisitType extends Enumeration {
   
+  val EMBED      = Value("EMBED")
   val PAGE_VIEW  = Value("PAGE_VIEW")
   val SEARCH     = Value("SEARCH")
   val SELECTION  = Value("SELECTION")

@@ -9,11 +9,11 @@ import scala.concurrent.{ ExecutionContext, Future }
 import services.visit._
 import services.visit.info._
 import services.item.search.{ SearchArgs, RichResultPage }
-import services.item.{ ItemType, ItemService }
+import services.item.{ Item, ItemType, ItemService }
 
 trait HasVisitLogging {
-  
-  private def baseVisit(request: RequestHeader, visitType: VisitType.Value) = {
+    
+  private def baseVisit(request: RequestHeader, visitType: VisitType.Value): Visit = {
     val userAgentHeader = request.headers.get(HeaderNames.USER_AGENT)
     val userAgent = userAgentHeader.map(ua => UserAgent.parseUserAgentString(ua))
     val os = userAgent.map(_.getOperatingSystem)
@@ -70,7 +70,15 @@ trait HasVisitLogging {
       case None =>
         Logger.warn(s"Selection pingback for a non-existing item: ${identifier}")
         Future.successful(())
-    }
+  }
+  
+  protected def logEmbed(item: Item)(implicit request: RequestHeader, itemService: ItemService, visitService: VisitService, ctx: ExecutionContext) = {
+    val firstRecord = item.isConflationOf.head
+    val info = SelectionInfo(firstRecord.uri, item.title, firstRecord.isInDataset.get)
+    val v = baseVisit(request, VisitType.EMBED)
+      .copy(selection = Some(info))
+    log(v)
+  }
 
 }
 

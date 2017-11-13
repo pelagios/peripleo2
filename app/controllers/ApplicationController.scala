@@ -10,12 +10,12 @@ import org.joda.time.Period
 
 @Singleton
 class ApplicationController @Inject() (
-  val itemService: ItemService,
   val searchService: SearchService,
-  val visitService: VisitService,
+  implicit val itemService: ItemService,
+  implicit val visitService: VisitService,
   implicit val ctx: ExecutionContext,
   implicit val webjars: WebJarAssets
-) extends Controller {
+) extends Controller with HasVisitLogging {
 
   def index = Action.async { implicit request =>
     val fTimerange =
@@ -38,7 +38,10 @@ class ApplicationController @Inject() (
   
   def embed(identifier: String) = Action.async { implicit request =>
     itemService.findByIdentifier(identifier).map {
-      case Some(item) => Ok(views.html.embed.index(item))
+      case Some(item) =>
+        logEmbed(item)
+        Ok(views.html.embed.index(item))
+        
       case None => NotFound
     }
   }
