@@ -28,6 +28,11 @@ define([
                 '<h5>Names</h5>' +
                 '<p></p>' +
               '</div>' +
+
+              '<div class="prop links">' +
+                '<h5>Links</h5>' +
+                '<ul></ul>' +
+              '</div>' +
             '</div>' +
           '</li>',
 
@@ -39,6 +44,7 @@ define([
                   var li = jQuery(recordTemplate),
                       descriptionsEl = li.find('.descriptions ul'),
                       namesEl        = li.find('.names p'),
+                      linksEl        = li.find('.links ul'),
 
                       parsed = ItemUtils.parseEntityURI(record.uri);
 
@@ -61,6 +67,15 @@ define([
                     }).join(', '));
                   else
                     namesEl.hide();
+
+                  if (record.links)
+                    record.links.forEach(function(l) {
+                      linksEl.append(
+                        '<li class="link">' +
+                          l.link_type +
+                          ' <a href="' + l.uri + '" target="_blank">' + l.uri + '</a>' +
+                        '</li>');
+                    });
 
                   li.find('.body').hide();
                   recordList.append(li);
