@@ -13,17 +13,18 @@
   </head>
   <body>
     <div id="embed">
-      @views.html.embed.tags.depiction(item)
+      <div class="top">
+        @views.html.embed.tags.depiction(item)
+        @views.html.embed.tags.map(item)
+      </div>
       <div class="dogear @item.itemType"></div>
-      <div class="card">
-        <div class="item-info">
-          @if(item.itemType == services.item.ItemType.OBJECT) {
-            @views.html.embed.tags.datasetPath(item)
-          }
-          @views.html.embed.tags.title(item)
-          @views.html.embed.tags.temporalbounds(item)
-          @views.html.embed.tags.description(item)
-        </div>
+      <div class="item-info">
+        @if(item.itemType == services.item.ItemType.OBJECT) {
+          @views.html.embed.tags.datasetPath(item)
+        }
+        @views.html.embed.tags.title(item)
+        @views.html.embed.tags.temporalbounds(item)
+        @views.html.embed.tags.description(item)
       </div>
     </div>
   </body>
