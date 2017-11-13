@@ -19,35 +19,62 @@ define([
               '<h4></h4><p class="identifier"></p>' +
             '</div>' +
             '<div class="body">' +
-              '<p class="prop descriptions">' +
+              '<div class="prop descriptions">' +
                 '<h5>Descriptions</h5>' +
                 '<ul></ul>' +
-              '</p>' +
+              '</div>' +
 
-              '<p class="prop names">' +
+              '<div class="prop names">' +
                 '<h5>Names</h5>' +
-                '<ul></ul>' +
-              '</p>' +
+                '<p></p>' +
+              '</div>' +
             '</div>' +
           '</li>',
 
         recordList = element.find('ul');
 
         init = function() {
-          item.is_conflation_of.forEach(function(record) {
-            var li = jQuery(recordTemplate),
-                parsed = ItemUtils.parseEntityURI(record.uri);
+          var initList = function() {
+                item.is_conflation_of.forEach(function(record) {
+                  var li = jQuery(recordTemplate),
+                      descriptionsEl = li.find('.descriptions ul'),
+                      namesEl        = li.find('.names p'),
 
-            li.find('h4').append(record.title);
-            li.find('.identifier').append(
-              '<a href="' + record.uri + '" target="_blank">' + record.uri + '</a>');
+                      parsed = ItemUtils.parseEntityURI(record.uri);
 
-            if (parsed.color)
-              li.find('.toggle').css('backgroundColor', parsed.color);
+                  li.find('h4').append(record.title);
+                  li.find('.identifier').append(
+                    '<a href="' + record.uri + '" target="_blank">' + record.uri + '</a>');
 
-            li.find('.body').hide();
-            recordList.append(li);
-          });
+                  if (parsed.color)
+                    li.find('.toggle').css('backgroundColor', parsed.color);
+
+                  if (record.descriptions)
+                    record.descriptions.forEach(function(d) {
+                      descriptionsEl.append('<li>' + d.description + '</li>');
+                    });
+
+                  // Just lump all names into a comma-separated list
+                  if (record.names)
+                    namesEl.append(record.names.map(function(n) {
+                      return n.name;
+                    }).join(', '));
+                  else
+                    namesEl.hide();
+
+                  li.find('.body').hide();
+                  recordList.append(li);
+                });
+              },
+
+              onToggle = function(e) {
+                var li = jQuery(e.target).closest('li');
+                li.find('.body').slideToggle(100);
+              };
+
+          initList();
+
+          recordList.on('click', '.toggle', onToggle);
         };
 
     init();
