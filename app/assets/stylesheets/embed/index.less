@@ -26,7 +26,14 @@
     display:flex;
 
     .depiction {
-      flex:3;
+      flex:2;
+      min-height:inherit;
+      height:auto;
+      max-height:none;
+      .rounded-corners(0);
+      border-style:solid;
+      border-color:fade(@light-grey-border, 90%);
+      border-width:0 1px 0 0;
     }
 
     .map {
