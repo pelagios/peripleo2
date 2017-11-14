@@ -18,7 +18,7 @@ require([], function() {
                 window.history.pushState({ path: pageUrl }, '', pageUrl);
               },
 
-              itemURI = input.val(),
+              itemURI = input.val().replace('https://', 'http://'),
               url = jsRoutes.controllers.ApplicationController.embed(itemURI).absoluteURL();
 
           embedURI.html(url);

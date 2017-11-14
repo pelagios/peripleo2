@@ -8,33 +8,35 @@
     <script src="@routes.WebJarAssets.at(webjars.locate("require.min.js"))" data-main="@routes.Assets.versioned("javascripts/help/embed.js")"></script>
   </head>
   <body>
-    <div class="inner">
-      <form class="create-embed">
-        <label>Paste Place or Object URI:
-        <input type="text">
-        <button class="btn" type="submit">Create embed code</button>
-      </form>
+    @defining(request.getQueryString("url").getOrElse("http://pleiades.stoa.org/places/344448")) { itemURI =>
+      <div class="inner">
+        <form class="create-embed">
+          <label>Paste Place or Object URI:
+          <input type="text">
+          <button class="btn" type="submit">Create embed code</button>
+        </form>
 
-      <div class="code-container">
-        <code><!--
+        <div class="code-container">
+          <code><!--
 -->&lt;iframe
   allowfullscreen=&quot;true&quot;
   width=&quot;420&quot;
   height=&quot;280&quot;
-  src=&quot;<span class="uri">http://peripleo.no5.at/embed/http%3A%2F%2Fpleiades.stoa.org%2Fplaces%2F344448</span>&quot;&gt;
+  src=&quot;<span class="uri">@controllers.routes.ApplicationController.embed(itemURI).absoluteURL</span>&quot;&gt;
 &lt;/iframe&gt;<!--
-     --></code>
+       --></code>
+        </div>
       </div>
-    </div>
 
-    <div class="inner preview">
-      <div class="preview-container">
-        <iframe
-          allowfullscreen="true"
-          src="http://peripleo.no5.at/embed/http%3A%2F%2Fpleiades.stoa.org%2Fplaces%2F344448">
-        </iframe>
+      <div class="inner preview">
+        <div class="preview-container">
+          <iframe
+            allowfullscreen="true"
+            src="@controllers.routes.ApplicationController.embed(itemURI).absoluteURL">
+          </iframe>
+        </div>
       </div>
-    </div>
+    }
 
     @helper.javascriptRouter("jsRoutes")(
       controllers.routes.javascript.ApplicationController.embed
