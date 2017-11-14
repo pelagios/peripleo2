@@ -80,7 +80,13 @@ POST    /api/items/:id/broken                        controllers.api.ItemAPICont
 GET     /api/admin/tasks                             controllers.api.admin.TaskAPIController.list(type: Option[String], offset: Int ?= 0, limit: Int ?= 20)
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Public views
+# Help section
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+GET     /help/embed                                  controllers.help.HelpController.embed
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Other public views
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 GET     /embed/:id                                   controllers.ApplicationController.embed(id: String)

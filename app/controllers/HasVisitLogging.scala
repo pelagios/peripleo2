@@ -79,6 +79,11 @@ trait HasVisitLogging {
       .copy(selection = Some(info))
     log(v)
   }
+  
+  protected def logPageView()(implicit request: RequestHeader, visitService: VisitService) = {
+    val v = baseVisit(request, VisitType.PAGE_VIEW)
+    log(v)
+  }
 
 }
 

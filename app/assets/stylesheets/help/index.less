@@ -1,0 +1,68 @@
+@import "../common/_buttons.less";
+@import "../common/_colors.less";
+@import "../common/_fonts.less";
+@import "../common/_forms.less";
+@import "../common/_mixins.less";
+
+html, body {
+  padding:0;
+  margin:0;
+  font-family:Roboto;
+  background-color:#fff;
+  color:@standard-type;
+}
+
+.inner {
+  position:relative;
+  margin:0 auto;
+  width:900px;
+}
+
+form.create-embed {
+  padding:20px;
+
+  input {
+    padding-left:5px;
+    height:35px;
+    width:380px;
+  }
+
+}
+
+.code-container {
+  background-color:@haze;
+  padding:4px 10px;
+  border:1px solid @form-grey-border;
+  .rounded-corners(4px);
+  margin-top:20px;
+
+  code {
+    font-family:"Courier New", Courier, monospace;
+    white-space:pre;
+    font-size:12px;
+    line-height:130%;
+  }
+
+}
+
+.inner.preview {
+  padding-top:20px;
+
+  .preview-container {
+    position:relative;
+    width:420px;
+    height:300px;
+    .rounded-corners(3px);
+    overflow:hidden;
+    .box-shadow(0, 0, 8px, 0, rgba(0,0,0,0.25));
+    margin:0 auto;
+
+    iframe {
+      border:none;
+      width:100%;
+      height:100%;
+    }
+
+  }
+
+}

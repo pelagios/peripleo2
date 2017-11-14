@@ -1,0 +1,43 @@
+@()(implicit request: RequestHeader, webjars: WebJarAssets)
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Peripleo Help | Using the embed widget</title>
+    <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/help/index.css")"/>
+    <script src="@routes.WebJarAssets.at(webjars.locate("1.12.0/jquery.min.js"))"></script>
+    <script src="@routes.WebJarAssets.at(webjars.locate("require.min.js"))" data-main="@routes.Assets.versioned("javascripts/help/embed.js")"></script>
+  </head>
+  <body>
+    <div class="inner">
+      <form class="create-embed">
+        <label>Paste Place or Object URI:
+        <input type="text">
+        <button class="btn" type="submit">Create embed code</button>
+      </form>
+
+      <div class="code-container">
+        <code><!--
+-->&lt;iframe
+  allowfullscreen=&quot;true&quot;
+  width=&quot;420&quot;
+  height=&quot;280&quot;
+  src=&quot;<span class="uri">http://peripleo.no5.at/embed/http%3A%2F%2Fpleiades.stoa.org%2Fplaces%2F344448</span>&quot;&gt;
+&lt;/iframe&gt;<!--
+     --></code>
+      </div>
+    </div>
+
+    <div class="inner preview">
+      <div class="preview-container">
+        <iframe
+          allowfullscreen="true"
+          src="http://peripleo.no5.at/embed/http%3A%2F%2Fpleiades.stoa.org%2Fplaces%2F344448">
+        </iframe>
+      </div>
+    </div>
+
+    @helper.javascriptRouter("jsRoutes")(
+      controllers.routes.javascript.ApplicationController.embed
+    )
+  </body>
+</html>
