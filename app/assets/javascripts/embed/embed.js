@@ -64,9 +64,9 @@ require([
 
             if (parsed.shortcode) {
               li.css('backgroundColor', parsed.color);
-              li.html('<a href="' + uri + '">' + parsed.shortcode + ':' + parsed.id + '</a>');
+              li.html('<a href="' + uri + '" target="_blank">' + parsed.shortcode + ':' + parsed.id + '</a>');
             } else {
-              li.html('<a href="' + uri + '">' + uri + '<a>');
+              li.html('<a href="' + uri + '" target="_blank">' + uri + '<a>');
             }
           });
         };
