@@ -26,6 +26,9 @@
         }
         @views.html.embed.tags.title(item)
         @views.html.embed.tags.temporalbounds(item)
+        @if(item.itemType == services.item.ItemType.PLACE) {
+          @views.html.embed.tags.idlist(item)
+        }
         @views.html.embed.tags.description(item)
       </div>
       <div class="footer">

@@ -1,0 +1,8 @@
+@(item: services.item.Item)
+<div class="item-identifiers">
+  <ul>
+  @for(uri <- item.isConflationOf.take(3).map(_.uri)) {
+    <li data-uri="@uri"></li>
+  }
+  </ul>
+</div>

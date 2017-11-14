@@ -5,13 +5,16 @@ require.config({
 
 require([
   'ui/common/map/baselayers',
+  'ui/common/itemUtils',
   'ui/controls/selection/depiction/iiifView',
   'ui/map/selectableMarker'
-], function(BaseLayers, IIIFView, Marker) {
+], function(BaseLayers, ItemUtils, IIIFView, Marker) {
 
   jQuery(document).ready(function() {
-    var hasIIIF = jQuery('.iiif').length > 0,
-        hasMap = jQuery('.map').length > 0,
+
+    var hasIIIF    = jQuery('.iiif').length > 0,
+        hasMap     = jQuery('.map').length > 0,
+        hasItemIDs = jQuery('.item-identifiers').length > 0,
 
         initIIIF = function() {
           var container = jQuery('.iiif'),
@@ -50,11 +53,27 @@ require([
 
           marker.select();
           map.on('click', onMapClicked);
+        },
+
+        initItemIDs = function() {
+          var list = jQuery('.item-identifiers li');
+          jQuery.each(list, function(idx, el) {
+            var li = jQuery(el),
+                uri = li.data('uri'),
+                parsed = ItemUtils.parseEntityURI(uri);
+
+            if (parsed.shortcode) {
+              li.css('backgroundColor', parsed.color);
+              li.html('<a href="' + uri + '">' + parsed.shortcode + ':' + parsed.id + '</a>');
+            } else {
+              li.html('<a href="' + uri + '">' + uri + '<a>');
+            }
+          });
         };
 
     if (hasIIIF) initIIIF();
     if (hasMap) initMap();
-
+    if (hasItemIDs) initItemIDs();
   });
 
 });
