@@ -32,7 +32,7 @@
       max-height:none;
       .rounded-corners(0);
       border-style:solid;
-      border-color:rgba(255, 255, 255, 0.85);
+      border-color:#fff;
       border-width:0 1px 0 0;
 
       .attribution {
@@ -57,6 +57,31 @@
   }
 
   .item-info {
+
+  }
+
+  .footer {
+    border-top:1px solid @light-grey-border;
+    background-color:@blueish-white;
+    padding:4px 6px;
+    color:@light-grey-type;
+    font-size:12px;
+    line-height:19px;
+
+    img {
+      width:20px;
+      height:20px;
+      vertical-align:bottom;
+    }
+
+    a {
+      color:lighten(@light-grey-type, 4%);
+      text-decoration:none;
+    }
+
+    a:hover {
+      text-decoration:underline;
+    }
 
   }
 
