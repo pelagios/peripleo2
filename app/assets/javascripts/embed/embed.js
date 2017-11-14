@@ -22,6 +22,7 @@ require([
 
         initMap = function() {
           var containerDiv = jQuery('.map'),
+              identifier = containerDiv.data('id'),
               lat = parseFloat(containerDiv.data('lat')),
               lng = parseFloat(containerDiv.data('lng')),
               baseMap = BaseLayers.getLayer('AWMC'),
@@ -34,14 +35,21 @@ require([
 
               map = L.map(containerDiv[0], {
                 center: [ lat, lng ],
-                zoom: 4,
+                zoom: 3,
                 zoomControl: false,
                 layers: [ tileLayer ]
               }),
 
+              onMapClicked = function() {
+                var url = jsRoutes.controllers.ApplicationController.ui().absoluteURL() +
+                          '#selected=' + encodeURIComponent(identifier);
+                window.open(url, '_blank');
+              },
+
               marker = new Marker([lat, lng], 4).addTo(map);
 
           marker.select();
+          map.on('click', onMapClicked);
         };
 
     if (hasIIIF) initIIIF();

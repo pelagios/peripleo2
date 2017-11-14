@@ -10,6 +10,9 @@
     <script src="@routes.Assets.versioned("vendor/Leaflet.fullscreen.min.js")"></script>
     <script src="@routes.WebJarAssets.at(webjars.locate("numeral.min.js"))"></script>
     <script src="@routes.WebJarAssets.at(webjars.locate("require.min.js"))" data-main="@routes.Assets.versioned("javascripts/embed/embed.js")"></script>
+    @helper.javascriptRouter("jsRoutes")(
+      controllers.routes.javascript.ApplicationController.ui
+    )
   </head>
   <body>
     <div id="embed">
@@ -17,7 +20,6 @@
         @views.html.embed.tags.depiction(item)
         @views.html.embed.tags.map(item)
       </div>
-      <div class="dogear @item.itemType"></div>
       <div class="item-info">
         @if(item.itemType == services.item.ItemType.OBJECT) {
           @views.html.embed.tags.datasetPath(item)

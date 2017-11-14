@@ -1,5 +1,8 @@
 @(item: services.item.Item)
 
 @if(item.representativePoint.isDefined) {
-  <div class="map" data-lat="@item.representativePoint.get.y" data-lng="@item.representativePoint.get.x"></div>
+  <div class="map"
+    data-id="@item.isConflationOf.head.uri"
+    data-lat="@item.representativePoint.get.y"
+    data-lng="@item.representativePoint.get.x"></div>
 }
