@@ -1,8 +1,19 @@
-@(item: services.item.Item)
+@(item: services.item.Item,
+  referenced: Option[services.item.reference.TopReferenced])
 
-@if(item.representativePoint.isDefined) {
+@map(pt: com.vividsolutions.jts.geom.Coordinate) = {
   <div class="map"
     data-id="@item.isConflationOf.head.uri"
-    data-lat="@item.representativePoint.get.y"
-    data-lng="@item.representativePoint.get.x"></div>
+    data-lat="@pt.y"
+    data-lng="@pt.x"></div>
 }
+
+@if(item.representativePoint.isDefined) {
+  @map(item.representativePoint.get)
+} else { @if(referenced.isDefined) {
+  @defining(referenced.get.topN(services.item.ItemType.PLACE).headOption.map(_._1)) { topPlace =>
+    @if(topPlace.isDefined && topPlace.get.representativePoint.isDefined) {
+      @map(topPlace.get.representativePoint.get)
+    }
+  }
+}}

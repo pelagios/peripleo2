@@ -1,11 +1,11 @@
 package controllers
 
-import javax.inject.{Inject, Singleton}
-import play.api.mvc.{Action, Controller}
-import scala.concurrent.ExecutionContext
-import services.item.{ItemService, ItemType}
+import javax.inject.{Inject,Singleton}
+import play.api.mvc.{Action,Controller}
+import scala.concurrent.{Future,ExecutionContext}
+import services.item.{ItemService,ItemType}
 import services.item.search._
-import services.visit.{VisitService, TimeInterval} 
+import services.visit.{VisitService,TimeInterval} 
 import org.joda.time.Period
 
 @Singleton
@@ -37,12 +37,23 @@ class ApplicationController @Inject() (
   }
   
   def embed(identifier: String) = Action.async { implicit request =>
-    itemService.findByIdentifier(identifier).map {
+    itemService.findByIdentifier(identifier).flatMap {
       case Some(item) =>
         logEmbed(item)
-        Ok(views.html.embed.index(item))
         
-      case None => NotFound
+        item.representativePoint match {
+          case Some(geom) =>
+            // This item comes with its own geometry
+            Future.successful(Ok(views.html.embed.index(item, None)))
+            
+          case None =>
+            // No geometry? Fetch top N places referenced by this item instead
+            itemService.getTopReferenced(item.identifiers.head).map { t =>
+              Ok(views.html.embed.index(item, Some(t)))
+            }
+        }
+        
+      case None => Future.successful(NotFound)
     }
   }
 

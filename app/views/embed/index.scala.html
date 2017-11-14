@@ -1,4 +1,7 @@
-@(item: services.item.Item)(implicit request: RequestHeader, webjars: WebJarAssets)
+@(
+  item: services.item.Item,
+  referenced: Option[services.item.reference.TopReferenced]
+)(implicit request: RequestHeader, webjars: WebJarAssets)
 <html xmlns:xlink="http://www.w3.org/1999/xlink">
   <head>
     <title>@item.title | Peripleo</title>
@@ -18,7 +21,7 @@
     <div id="embed">
       <div class="top">
         @views.html.embed.tags.depiction(item)
-        @views.html.embed.tags.map(item)
+        @views.html.embed.tags.map(item, referenced)
       </div>
       <div class="item-info">
         @if(item.itemType == services.item.ItemType.OBJECT) {

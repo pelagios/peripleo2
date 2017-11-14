@@ -16,6 +16,8 @@ import services.HasNullableSeq
 
 case class TopReferenced private (resolved: Seq[(ItemType, Seq[(Item, Long, Seq[(Relation.Value, Long)])])]) {
   
+  def topN(itemType: ItemType) = resolved.find(_._1 == itemType).map(_._2.map(t => (t._1, t._2))).getOrElse(Seq.empty[(Item, Long)])
+  
   def count(itemType: ItemType) = resolved.find(_._1 == itemType).map(_._2.size).getOrElse(0)
   
 }
