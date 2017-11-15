@@ -1,10 +1,16 @@
 @(item: services.item.Item)
 
-@homepage(item: services.item.Item) = @{ item.isConflationOf.flatMap(_.homepage).headOption }
+@homepage(item: services.item.Item) = @{
+  item.isConflationOf.flatMap(_.homepage).headOption
+}
+
+@peripleoLink = {
+  @controllers.routes.ApplicationController.ui()#selected=@item.isConflationOf.head.uri
+}
 
 @homepage(item).map { url =>
-  <h3 class="item-title"><a href="@url">@item.title</a></h3>
+  <h3 class="item-title"><a href="@peripleoLink" target="_blank">@item.title</a></h3>
   <p class="item-homepage"><a href="@url" target="_blank">@url</a></p>
 }.getOrElse {
-  <h3 class="item-title">@item.title</h3>
+  <h3 class="item-title"><a href="@peripleoLink" target="_blank">@item.title</a></h3>
 }
