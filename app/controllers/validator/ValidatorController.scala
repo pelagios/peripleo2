@@ -70,7 +70,9 @@ class ValidatorController @Inject() (
     }.getOrElse {
       // No filepart? Can never happen, unless someone submits an off-form/hacked request
       Future.successful(BadRequest)
-    }    
+    }.recover { case t: Throwable =>
+      Redirect(routes.ValidatorController.gazetteer).flashing("error" -> t.getMessage)
+    }
   }
 
   def annotations = Action { implicit request =>
