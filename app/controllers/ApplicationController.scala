@@ -17,7 +17,7 @@ class ApplicationController @Inject() (
   implicit val webjars: WebJarAssets
 ) extends Controller with HasVisitLogging {
 
-  def index = Action.async { implicit request =>
+  def landing = Action.async { implicit request =>
     val fTimerange =
       searchService.getTimerange(SearchArgs(None, 0, 0, SearchFilters.NO_FILTERS, ResponseSettings.DEFAULT))
     val fDatasets =

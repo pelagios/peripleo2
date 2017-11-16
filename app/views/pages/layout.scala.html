@@ -1,0 +1,17 @@
+@(title: String, cssPath: String)(content: Html)(implicit webjars: WebJarAssets)
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Peripleo | @title</title>
+    <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/" + cssPath + "")"/>
+  </head>
+  <body>
+    <div class="header">
+
+    </div>
+
+    <div class="content">
+      @content
+    </div>
+  </body>
+</html>

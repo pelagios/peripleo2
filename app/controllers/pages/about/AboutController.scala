@@ -1,4 +1,4 @@
-package controllers.help
+package controllers.pages.about
 
 import controllers.{HasVisitLogging, WebJarAssets}
 import javax.inject.{Inject, Singleton}
@@ -6,14 +6,14 @@ import play.api.mvc.{Action, Controller}
 import services.visit.VisitService
 
 @Singleton
-class HelpController @Inject()(
+class AboutController @Inject()(
   implicit val visitService: VisitService,
   implicit val webjars: WebJarAssets
 ) extends Controller with HasVisitLogging {
   
-  def embed = Action { implicit request =>
+  def index = Action { implicit request =>
     logPageView()
-    Ok(views.html.help.embed())
+    Ok(views.html.pages.about.index())
   }
   
 }
