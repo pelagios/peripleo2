@@ -29,20 +29,23 @@
     var doc = jQuery(document),
         header = jQuery('.header'),
         jumbotronHeight = jQuery('.jumbotron').outerHeight(),
+        h = jumbotronHeight - header.outerHeight(),
 
-        // TODO should ideally be pulled from the CSS/page, but we'll leave it hardwired for now
-        r = 42, g = 57, b = 90;
+        // TODO should ideally be pulled from original on the page, but we'll leave it hardwired for now
+        r = 42, g = 57, b = 90,
 
-    doc.scroll(function() {
-      var scrollTop = doc.scrollTop(),
-          opacity = 1 - Math.max(0, (jumbotronHeight - scrollTop)) / jumbotronHeight,
-          color = 'rgba(' + r + ',' + g + ',' + b + ',' + opacity + ')';
+        setOpacity = function() {
+          var scrollTop = doc.scrollTop(),
+              opacity = 1 - Math.max(0, (h - scrollTop)) / h,
+              color = 'rgba(' + r + ',' + g + ',' + b + ',' + opacity + ')';
 
-      console.log(color);
-      header.css('backgroundColor', color);
+          header.css('backgroundColor', color);
+        };
 
-      // header.css('backgroundColor', 'rgba(' + r + ',' + g + ',' + b + ',' + opacity + ');');
-    });
+    doc.scroll(setOpacity);
+
+    // Set on page load
+    if (doc.scrollTop() > 0) setOpacity();
   });
 
 })();
