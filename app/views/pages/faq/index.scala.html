@@ -1,16 +1,5 @@
 @()(implicit request: RequestHeader, webjars: WebJarAssets)
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Peripleo | FAQ</title>
-    <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/pages/faq/index.css")"/>
-  </head>
-  <body>
-    <div class="header">
 
-    </div>
+@views.html.pages.layout("FAQ", "pages/faq/index.css") {
 
-    <div class="content">
-    </div>
-  </body>
-</html>
+}
