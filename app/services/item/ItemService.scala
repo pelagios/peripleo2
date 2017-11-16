@@ -2,18 +2,18 @@ package services.item
 
 import com.sksamuel.elastic4s._
 import com.sksamuel.elastic4s.ElasticDsl._
-import com.sksamuel.elastic4s.{ HitAs, RichSearchHit, RichSearchResponse, QueryDefinition }
+import com.sksamuel.elastic4s.{HitAs, RichSearchHit, RichSearchResponse, QueryDefinition}
 import com.sksamuel.elastic4s.source.Indexable
 import es.ES
 import java.util.UUID
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 import org.joda.time.DateTime
 import org.elasticsearch.script.ScriptService.ScriptType
 import play.api.Logger
-import play.api.libs.json.{ Json, JsSuccess, JsError }
-import scala.concurrent.{ ExecutionContext, Future }
-import services.{ Page }
-import services.item.reference.{ Reference, ReferenceService, UnboundReference }
+import play.api.libs.json.{Json, JsSuccess, JsError}
+import scala.concurrent.{ExecutionContext, Future}
+import services.{Sort, Page}
+import services.item.reference.{Reference, ReferenceService, UnboundReference}
 import services.notification.NotificationService
 import services.task.TaskType
 
@@ -72,7 +72,13 @@ class ItemService @Inject() (
       }
     } map { _.as[(Item, Long)].headOption.map(_._1) }
 
-  def findByType(itemType: ItemType, rootOnly: Boolean = true, offset: Int = 0, limit: Int = 20) = {
+  def findByType(
+    itemType : ItemType,
+    rootOnly : Boolean = true,
+    offset   : Int = 0,
+    limit    : Int = 20,
+    sort     : Option[Sort.Value] = None
+  ) = {
     val f =
       if (rootOnly)
         bool {
@@ -84,13 +90,22 @@ class ItemService @Inject() (
         }
       else
         termQuery("item_type" -> itemType.toString)
+        
+    val query = 
+      sort match {
+        case Some(sorting) =>
+          search in ES.PERIPLEO / ES.ITEM query {
+            constantScoreQuery { filter ( f ) }
+          } start offset limit limit sort ( sorting )
+          
+        case None =>
+          search in ES.PERIPLEO / ES.ITEM query {
+            constantScoreQuery { filter ( f ) }
+          } start offset limit limit
+        }
 
     es.client execute {
-      search in ES.PERIPLEO / ES.ITEM query {
-        constantScoreQuery {
-          filter ( f )
-        }
-      } start offset limit limit
+      query
     } map { response =>
       Page(response.tookInMillis, response.totalHits, offset, limit, response.as[(Item, Long)].map(_._1))
     }

@@ -3,6 +3,9 @@
 @import "_header.less";
 
 @nightsky:#2a395a;
+@standard-type:#3f3f3f;
+@lightgrey-type:#9f9f9f;
+@lightgrey-type-hover:darken(@lightgrey-type, 18%);
 
 @font-face {
   font-family:'Lato';
@@ -19,6 +22,18 @@
 }
 
 html, body {
+  font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size:17px;
+  line-height:150%;
+  color:@standard-type;
+
+  a {
+    color:@lightgrey-type;
+  }
+
+  a:hover {
+    color:@lightgrey-type-hover;
+  }
 
 }
 
@@ -60,6 +75,25 @@ html, body {
     font-family:Lato;
     font-weight:normal;
     font-size:48px;
+  }
+
+}
+
+.content {
+  padding-top:220px;
+
+  .inner {
+    position:relative;
+    margin:0 auto;
+    width:756px;
+  }
+
+  h2 {
+    padding:40px 0 5px 0;
+    margin:0;
+    color:@lightgrey-type-hover;
+    font-family:Lato;
+    font-size:29px;
   }
 
 }

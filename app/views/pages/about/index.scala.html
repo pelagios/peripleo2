@@ -1,5 +1,38 @@
-@()(implicit request: RequestHeader, webjars: WebJarAssets)
+@(datasets: services.Page[services.item.Item])(implicit request: RequestHeader, webjars: WebJarAssets)
 
 @views.html.pages.layout("About", "pages/about/index.css") {
-    
+  <div class="section">
+    <div class="inner">
+      <p>
+        Peripleo is an initiative by <a href="http://commmons.pelagios.org">Pelagios Commons</a>,
+        developed under the leadership of the <a href="http://www.ait.ac.at/en/">Austrian Institute
+        of Technology</a>, <a href="http://www.exeter.ac.uk/">Exeter University</a>,
+        <a href="http://www.open.ac.uk/">The Open University</a>, the
+        <a href="http://www.sas.ac.uk/">University of London School of Advanced Study</a> and the
+        <a href="http://www.hiig.de/en/">Alexander von Humboldt Institute for Internet and
+        Society</a>.
+      </p>
+
+      <h2>Partners &amp; Data Sources</h2>
+      <p>
+        Below is an alphabetical list of all partners who are currently publishing their
+        data to Peripleo.
+      </p>
+
+      <ul class="datasets">
+        @defining(controllers.routes.ApplicationController.ui()) { base =>
+          @for(d <- datasets.items) {
+            @defining(d.isConflationOf.head) { record =>
+              <li>
+                <span class="title">
+                  <a href="@base#selected=@record.uri">@d.title</a>
+                </span>
+                @record.descriptions.headOption.map(_.description)
+              </li>
+            }
+          }
+        }
+      </ul>
+    </div>
+  </div>
 }
