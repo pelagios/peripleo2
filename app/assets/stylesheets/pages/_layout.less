@@ -1,3 +1,4 @@
+@import "../common/_fonts.less";
 @import "../common/_mixins.less";
 @import "_header.less";
 
@@ -10,12 +11,36 @@
   font-style:normal;
 }
 
+@font-face {
+  font-family:'Lato';
+  src:url('/assets/fonts/lato/Lato-Regular.ttf');
+  font-weight:bold;
+  font-style:normal;
+}
+
 html, body {
 
 }
 
 .header {
   background-color:@nightsky;
+
+  a.home {
+    position:absolute;
+    top:5px;
+    right:10px;
+    display:inline-block;
+    width:38px;
+    height:38px;
+    padding:0;
+    text-align:center;
+    line-height:35px;
+    font-family:Stroke7;
+    .rounded-corners(50%);
+    font-size:28px;
+    font-weight:normal;
+  }
+
 }
 
 .page-title {
