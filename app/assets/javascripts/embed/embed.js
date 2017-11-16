@@ -12,9 +12,24 @@ require([
 
   jQuery(document).ready(function() {
 
-    var hasIIIF    = jQuery('.iiif').length > 0,
+    var containerDiv = jQuery('.map'),
+
+        hasIIIF    = jQuery('.iiif').length > 0,
         hasMap     = jQuery('.map').length > 0,
         hasItemIDs = jQuery('.item-identifiers').length > 0,
+
+        identifier = containerDiv.data('id'),
+
+        targetURL = jsRoutes.controllers.ApplicationController.ui().absoluteURL() +
+          '#selected=' + encodeURIComponent(identifier),
+
+        isOverflown = (function() {
+          var desc = jQuery('.item-description');
+          if (desc.length === 0)
+            return false;
+          else
+            return desc[0].scrollHeight > desc[0].clientHeight;
+        })(),
 
         initIIIF = function() {
           var container = jQuery('.iiif'),
@@ -24,9 +39,7 @@ require([
         },
 
         initMap = function() {
-          var containerDiv = jQuery('.map'),
-              identifier = containerDiv.data('id'),
-              lat = parseFloat(containerDiv.data('lat')),
+          var lat = parseFloat(containerDiv.data('lat')),
               lng = parseFloat(containerDiv.data('lng')),
               baseMap = BaseLayers.getLayer('AWMC'),
 
@@ -43,16 +56,10 @@ require([
                 layers: [ tileLayer ]
               }),
 
-              onMapClicked = function() {
-                var url = jsRoutes.controllers.ApplicationController.ui().absoluteURL() +
-                          '#selected=' + encodeURIComponent(identifier);
-                window.open(url, '_blank');
-              },
-
               marker = new Marker([lat, lng], 4).addTo(map);
 
           marker.select();
-          map.on('click', onMapClicked);
+          map.on('click', function() { window.open(targetURL, '_blank'); });
         },
 
         initItemIDs = function() {
@@ -69,11 +76,20 @@ require([
               li.html('<a href="' + uri + '" target="_blank">' + uri + '<a>');
             }
           });
+        },
+
+        addOverflowHint = function() {
+          var description = jQuery('.item-description');
+          jQuery(
+            '<div class="overflow-hint">' +
+              '<a href="' + targetURL + '" target="_blank">More...</a>' +
+            '</div>').appendTo(description);
         };
 
     if (hasIIIF) initIIIF();
     if (hasMap) initMap();
     if (hasItemIDs) initItemIDs();
+    if (isOverflown) addOverflowHint();
   });
 
 });

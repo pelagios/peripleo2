@@ -63,7 +63,23 @@
   .item-info {
     padding-bottom:0;
 
-    .item-description { padding-top: 0; }
+    .item-description {
+      position:relative;
+      padding-top:0;
+      max-height:72px;
+    }
+
+    .overflow-hint {
+      position:absolute;
+      left:0;
+      bottom:0;
+      width:100%;
+      padding:50px 0 10px 0;
+      background:linear-gradient(transparent, #fff 55px, #fff);
+
+      a { color:@ocean; }
+
+    }
 
   }
 
