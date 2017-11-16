@@ -22,6 +22,27 @@
           delay    : 700,
           scale    : 1.0}, 150);
       };
-      
+
   runAnimations();
+
+  jQuery(document).ready(function() {
+    var doc = jQuery(document),
+        header = jQuery('.header'),
+        jumbotronHeight = jQuery('.jumbotron').outerHeight(),
+
+        // TODO should ideally be pulled from the CSS/page, but we'll leave it hardwired for now
+        r = 42, g = 57, b = 90;
+
+    doc.scroll(function() {
+      var scrollTop = doc.scrollTop(),
+          opacity = 1 - Math.max(0, (jumbotronHeight - scrollTop)) / jumbotronHeight,
+          color = 'rgba(' + r + ',' + g + ',' + b + ',' + opacity + ')';
+
+      console.log(color);
+      header.css('backgroundColor', color);
+
+      // header.css('backgroundColor', 'rgba(' + r + ',' + g + ',' + b + ',' + opacity + ');');
+    });
+  });
+
 })();

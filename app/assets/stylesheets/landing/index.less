@@ -2,9 +2,11 @@
 @import "../common/_mixins.less";
 @import "sections/_header.less";
 @import "sections/_jumbotron.less";
+@import "sections/_footer.less";
 
-@font-color:#555;
-@heading-color:#25375f;
+@nightsky      : #2a395a;
+@standard-type : #7e7e7e;
+@light-blue    : #7391b0;
 
 @font-face {
   font-family:'Lato';
@@ -20,19 +22,26 @@
   font-style:normal;
 }
 
+@font-face {
+  font-family:'PTSansNarrow';
+  src:url('/assets/fonts/pt_sans_narrow/PT_Sans-Narrow-Web-Regular.ttf');
+  font-weight:normal;
+  font-style:normal;
+}
+
 .rounded-corners(@radius) {
-  -webkit-border-radius: @radius;
-  -khtml-border-radius: @radius;
-  -moz-border-radius: @radius;
-  border-radius: @radius;
+  -webkit-border-radius:@radius;
+   -khtml-border-radius:@radius;
+     -moz-border-radius:@radius;
+          border-radius:@radius;
 }
 
 html, body {
   padding:0;
   margin:0;
-  font-family:Lato;
   background-color:#fff;
   text-align:center;
+  font-family:PTSansNarrow;
 }
 
 .has-transition {
@@ -45,7 +54,7 @@ html, body {
 .inner {
   position:relative;
   margin:0 auto;
-  width:900px;
+  width:860px;
 }
 
 .phonetic {
@@ -54,28 +63,26 @@ html, body {
 }
 
 .section {
-  padding:40px 0;
+  padding:50px 0;
 
   h2 {
-    font-size:20px;
+    font-size:24px;
     padding:0 0 20px 0;
     margin:0;
     font-weight:normal;
-    font-family:Roboto;
-    color:@heading-color;
+    color:@nightsky;
   }
 
   p {
     padding:10px 0 0 0;
-    font-family:Roboto;
-    font-size:17px;
-    color:@font-color;
+    font-size:19px;
+    color:@standard-type;
     margin:10px auto;
     line-height:150%;
     width:90%;
   }
 
-  a { color:@heading-color; }
+  a { color:@nightsky; }
 
 }
 
