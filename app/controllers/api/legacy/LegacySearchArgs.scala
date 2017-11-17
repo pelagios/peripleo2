@@ -5,15 +5,40 @@ import services.item.search.{ResponseSettings, SearchArgs, SearchArgsParser, Sea
 
 object LegacySearchArgs extends SearchArgsParser {
   
+  private val TYPE_CORRESPONDENCE = Map(
+    "place"   -> "PLACE",
+    "dataset" -> "DATASET",
+    "item"    -> "OBJECT")
+  
+  /** Builds term filters according to the new API.
+    *
+    * Optionally takes a Map[String, String] that is used
+    * to 'translate' the term filter values, so that we can 
+    * translate between legacy terms (e.g. item --> OBJECT)   
+    */
+  def buildIncludesTermFilter(key: String, q: Map[String, Seq[String]], translation: Option[Map[String, String]]) = { 
+    val includes = getArg(key, q)
+    includes match {        
+      case Some(in) =>
+        translation match {
+          case Some(table) =>
+            val translated = split(in).map(v => table.get(v).getOrElse(v))
+            Some(TermFilter(translated, TermFilter.ONLY))   
+           
+          case None => 
+            Some(TermFilter(split(in), TermFilter.ONLY))
+        }
+        
+        
+      case _ => None
+    }
+  }
+  
   def fromQueryString(q: Map[String, Seq[String]]) = {
-    // val termFilter = buildTermFilter("types", "ex_types", q).map(
-    
-    
-    
     val filters = SearchFilters(
-      buildTermFilter("types", "ex_types", q),
+      buildIncludesTermFilter("types", q, Some(TYPE_CORRESPONDENCE)),
       None, // categories
-      buildTermFilter("datasets", "ex_datasets", q),
+      buildIncludesTermFilter("datasets", q, None),
       None, // langs
       getArg("places", q).map(uris => ReferencedItemFilter(split(uris), TermFilter.ONLY)),
       buildDateRangeFilter(q),
