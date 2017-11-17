@@ -37,7 +37,9 @@ case class LegacyItem(
   datasetPath    : Seq[LegacyPathSegment],
   depictions     : Seq[String],
   temporalBounds : Option[LegacyTemporalBounds],
-  geobounds      : Option[LegacyGeoBounds])
+  geobounds      : Option[LegacyGeoBounds],
+  names          : Seq[String],
+  matches        : Seq[String])
   
 object LegacyItem extends HasNullableSeq {
   
@@ -52,6 +54,12 @@ object LegacyItem extends HasNullableSeq {
   
   def fromItem(r: RichResultItem) = {
     val firstRecord = r.item.isConflationOf.head
+    
+    val matches = {
+      r.item.isConflationOf.flatMap(_.identifiers) ++
+      r.item.isConflationOf.flatMap(_.links.map(_.uri))
+    }.distinct diff Seq(firstRecord.uri)
+    
     LegacyItem(
       firstRecord.uri,
       r.item.title,
@@ -60,7 +68,9 @@ object LegacyItem extends HasNullableSeq {
       firstRecord.isInDataset.map(h => LegacyDatasetPath.fromHierarchy(h)).getOrElse(Seq()),
       r.item.isConflationOf.flatMap(_.depictions.map(_.url)),
       r.item.temporalBounds.map(LegacyTemporalBounds.fromBounds(_)),
-      r.item.bbox.map(LegacyGeoBounds.fromEnvelope(_)))
+      r.item.bbox.map(LegacyGeoBounds.fromEnvelope(_)),
+      r.item.isConflationOf.flatMap(_.names.map(_.name)).distinct,
+      matches)
   }
   
   implicit val legacyItemWrites: Writes[LegacyItem] = (
@@ -72,7 +82,11 @@ object LegacyItem extends HasNullableSeq {
     (JsPath \ "depictions").writeNullable[Seq[String]]
       .contramap[Seq[String]](toOptSeq) and
     (JsPath \ "temporal_bounds").writeNullable[LegacyTemporalBounds] and
-    (JsPath \ "geo_bounds").writeNullable[LegacyGeoBounds]
+    (JsPath \ "geo_bounds").writeNullable[LegacyGeoBounds] and
+    (JsPath \ "names").writeNullable[Seq[String]]
+      .contramap[Seq[String]](toOptSeq) and
+    (JsPath \ "matches").writeNullable[Seq[String]]
+      .contramap[Seq[String]](toOptSeq)
   )(unlift(LegacyItem.unapply))
   
 }
