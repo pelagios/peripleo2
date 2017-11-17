@@ -6,17 +6,20 @@
     <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/" + cssPath + "")"/>
   </head>
   <body>
-    <div class="header">
-      <a href="@controllers.pages.about.routes.AboutController.index" class="has-transition">About</a>
-      <a href="@controllers.pages.help.routes.HelpController.index" class="has-transition">Help</a>
-      <a href="@controllers.pages.faq.routes.FAQController.index" class="has-transition">FAQ</a>
+    <div class="top">
+      <div class="header">
+        <a href="@controllers.pages.about.routes.AboutController.index" class="has-transition">About</a>
+        <a href="@controllers.pages.help.routes.HelpController.index" class="has-transition">Help</a>
+        <a href="@controllers.pages.faq.routes.FAQController.index" class="has-transition">FAQ</a>
 
-      <a href="@controllers.routes.ApplicationController.landing" class="has-transition home">
-        &#xe648;
-      </a>
-    </div>
-    <div class="page-title">
-      <h1>@title</h1>
+        <a href="@controllers.routes.ApplicationController.landing" class="has-transition home">
+          &#xe648;
+        </a>
+      </div>
+      
+      <div class="page-title">
+        <h1>@title</h1>
+      </div>
     </div>
 
     <div class="content">

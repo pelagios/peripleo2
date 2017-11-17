@@ -30,10 +30,12 @@
   </head>
 
   <body>
-    <div class="header">
-      <a href="@controllers.pages.about.routes.AboutController.index" class="has-transition">About</a>
-      <a href="@controllers.pages.help.routes.HelpController.index" class="has-transition">Help</a>
-      <a href="@controllers.pages.faq.routes.FAQController.index" class="has-transition">FAQ</a>
+    <div class="top">
+      <div class="header">
+        <a href="@controllers.pages.about.routes.AboutController.index" class="has-transition">About</a>
+        <a href="@controllers.pages.help.routes.HelpController.index" class="has-transition">Help</a>
+        <a href="@controllers.pages.faq.routes.FAQController.index" class="has-transition">FAQ</a>
+      </div>
     </div>
 
     <div class="jumbotron">
@@ -83,7 +85,7 @@
             <iframe
               allowFullScreen="true"
               src="@controllers.routes.ApplicationController.embed(identifier)">
-            </iframe>     
+            </iframe>
           </div>
         </div>
       </div>
