@@ -40,7 +40,6 @@ class LegacyAPIController @Inject() (
       case Some(item) =>
         val fReferenceCount = itemService.countReferences(id)
         val fPlaceCount = itemService.countReferencesToType(id, ItemType.PLACE)
-        
         val f = for {
           refCount <- fReferenceCount
           placeCount <- fPlaceCount
@@ -53,7 +52,19 @@ class LegacyAPIController @Inject() (
       case None =>
         Future.successful(NotFound)
     }
-
   }
+  
+  def getPlace(id: String) = Action.async { implicit request =>
+    itemService.findByIdentifier(id).flatMap {
+      case Some(item) =>
+        // TODO
+        Future.successful(Ok)
+        
+      case None =>
+        Future.successful(NotFound)
+    }
+  }
+  
+  
 
 }
