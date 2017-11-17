@@ -74,6 +74,12 @@ POST    /api/items/:id/pingback                      controllers.api.ItemAPICont
 POST    /api/items/:id/broken                        controllers.api.ItemAPIController.reportBrokenLink(id: String, url: String)
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Legacy (Peripleo v.1) API
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+GET     /peripleo/search                             controllers.api.legacy.LegacyAPIController.search
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Restricted JSON API
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

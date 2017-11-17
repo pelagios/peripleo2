@@ -1,13 +1,13 @@
 package controllers.api
 
-import controllers.{ HasPrettyPrintJSON, HasVisitLogging }
-import javax.inject.{ Inject, Singleton }
+import controllers.{HasPrettyPrintJSON, HasVisitLogging}
+import javax.inject.{Inject, Singleton}
 import org.joda.time.DateTime
 import play.api.libs.json.Json
-import play.api.mvc.{ Action, Controller }
+import play.api.mvc.{Action, Controller}
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 import services.item.ItemService
 import services.item.reference.Reference
 import services.notification._

@@ -41,8 +41,6 @@ case class SearchFilters(
   
 )
 
-
-
 case class ResponseSettings(
 
   timeHistogram: Boolean,
@@ -64,23 +62,23 @@ object ResponseSettings {
   lazy val DEFAULT = ResponseSettings(false, false, false)
   
 }
+
+trait SearchArgsParser {
   
-object SearchArgs {
-  
-  private val dateFormatter = new DateTimeFormatterBuilder().append(null, Array(
+  protected val dateFormatter = new DateTimeFormatterBuilder().append(null, Array(
     DateTimeFormat.forPattern("yyyy-MM-dd").getParser,
     DateTimeFormat.forPattern("yyyy-MM").getParser,
     DateTimeFormat.forPattern("yyyy").getParser
   )).toFormatter()
   
-  private def getArg(key: String, queryString: Map[String, Seq[String]]): Option[String] = 
+  protected def getArg(key: String, queryString: Map[String, Seq[String]]): Option[String] = 
     queryString
       .filter(_._1.equalsIgnoreCase(key))
       .headOption.flatMap(_._2.headOption)
       
-  private def split(str: String) = str.split(",").map(_.trim).toSeq
+  protected def split(str: String) = str.split(",").map(_.trim).toSeq
       
-  private def buildTermFilter(includeKey: String, excludeKey: String, queryString: Map[String, Seq[String]]): Option[TermFilter] = {
+  protected def buildTermFilter(includeKey: String, excludeKey: String, queryString: Map[String, Seq[String]]): Option[TermFilter] = {
     val includes = getArg(includeKey, queryString)
     val excludes = getArg(excludeKey, queryString)
     
@@ -99,7 +97,7 @@ object SearchArgs {
     }
   }
   
-  private def buildDateRangeFilter(queryString: Map[String, Seq[String]]): Option[DateRangeFilter] = {
+  protected def buildDateRangeFilter(queryString: Map[String, Seq[String]]): Option[DateRangeFilter] = {
     val from = getArg("from", queryString).map(date => dateFormatter.parseDateTime(date))
     val to = getArg("to", queryString).map(date => dateFormatter.parseDateTime(date))
     val filterMode = getArg("date_filter", queryString)
@@ -115,7 +113,7 @@ object SearchArgs {
       None
   }
   
-  private def buildSpatialFilter(q: Map[String, Seq[String]]): Option[SpatialFilter] = {
+  protected def buildSpatialFilter(q: Map[String, Seq[String]]): Option[SpatialFilter] = {
     val bbox = getArg("bbox", q).map(BoundingBox.fromString(_))
     val center = (getArg("lon", q), getArg("lat", q)) match {
       case (Some(lon), Some(lat)) => Some(new Coordinate(lon.toDouble, lat.toDouble))   
@@ -129,7 +127,11 @@ object SearchArgs {
     else
       None
   }
+
+}
   
+object SearchArgs extends SearchArgsParser {
+    
   def fromQueryString(q: Map[String, Seq[String]]) = {
     val filters = SearchFilters(
       buildTermFilter("types", "ex_types", q),
