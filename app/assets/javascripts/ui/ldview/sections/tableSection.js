@@ -89,7 +89,7 @@ define([
 
           initList();
 
-          recordList.on('click', '.toggle', onToggle);
+          recordList.on('click', '.head', onToggle);
         };
 
     init();
