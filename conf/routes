@@ -85,10 +85,12 @@ GET     /api/admin/tasks                             controllers.api.admin.TaskA
 
 GET     /about                                       controllers.pages.about.AboutController.index
 
-GET     /faq                                         controllers.pages.faq.FAQController.index
+GET     /apidocs                                     controllers.pages.apidocs.APIDocsController.index
 
 GET     /help/embed                                  controllers.pages.help.HelpController.embed
 GET     /help                                        controllers.pages.help.HelpController.index
+
+GET     /partners                                    controllers.pages.partners.PartnersController.index
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Other public views
