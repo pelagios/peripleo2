@@ -178,7 +178,7 @@ class ItemSpec extends PlaySpec with TestHelpers {
         Some(TemporalBounds.fromYears(-500, -250)),
         Seq.empty[Name],
         Seq.empty[Link],
-        None
+        None, None // publisher, harvestVia
       ))
       
       val serialized = Json.prettyPrint(Json.toJson(source))    

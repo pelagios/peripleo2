@@ -184,6 +184,7 @@ class AnnotationsAdminController @Inject() (
       "identifier" -> nonEmptyText,
       "item_type" -> nonEmptyText.transform[ItemType](ItemType.withName(_), _.toString),
       "title" -> nonEmptyText,
+      "publisher" -> optional(text),
       "description" -> optional(text),
       "homepage" -> nonEmptyText,
       "license" -> optional(text)
@@ -217,6 +218,7 @@ class AnnotationsAdminController @Inject() (
             None, None, None, // geometry, representativePoint, temporalBounds
             Seq.empty[Name],
             Seq.empty[Link],
+            docMeta.publisher,
             None)
 
           importer.importRecord(record).map { success =>
@@ -229,4 +231,11 @@ class AnnotationsAdminController @Inject() (
 
 }
 
-case class DatasetMeta(identifier: String, itemType: ItemType, title: String, description: Option[String], homepage: String, license: Option[String])
+case class DatasetMeta(
+  identifier  : String,
+  itemType    : ItemType,
+  title       : String,
+  publisher   : Option[String],
+  description : Option[String],
+  homepage    : String,
+  license     : Option[String])

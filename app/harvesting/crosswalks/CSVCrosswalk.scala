@@ -67,7 +67,7 @@ object CSVCrosswalk {
         Some(TemporalBounds.fromTimestamp(formatter.parseDateTime(timestamp))),
         Seq.empty[Name],
         Seq.empty[Link],
-        None)
+        None, None)
         
       val reference = UnboundReference(
         uri,

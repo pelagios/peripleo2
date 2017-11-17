@@ -46,6 +46,7 @@ object PelagiosVoIDCrosswalk extends PelagiosCrosswalk {
         None, // temporal_bounds
         Seq.empty[Name],
         Seq.empty[Link],
+        rootset.publisher,
         Some(voidURL))
     }
 

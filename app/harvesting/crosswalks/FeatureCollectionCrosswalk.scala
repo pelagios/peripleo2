@@ -36,7 +36,7 @@ object FeatureCollectionCrosswalk {
            None, // Temporal bounds TODO support when
            f.names,
            f.links.map(_.asLinks).getOrElse(Seq.empty[Link]),
-           None
+           None, None
          ))
        } catch { case t: Throwable =>
          t.printStackTrace()

@@ -75,7 +75,7 @@ object PelagiosAnnotationCrosswalk extends PelagiosCrosswalk {
       thing.temporal.map(convertPeriodOfTime),
       Seq.empty[Name],
       Seq.empty[Link],
-      None)
+      None, None)
       
     (record, references)
   }

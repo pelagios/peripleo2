@@ -44,7 +44,7 @@ object PeriodoCrosswalk {
       p.temporalBounds,
       Seq.empty[Name],
       Seq.empty[Link],
-      None)
+      None, None)
   }
 
   def fromJSON(filename: String, dataset: PathHierarchy): InputStream => Seq[ItemRecord] = { stream =>

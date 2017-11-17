@@ -99,6 +99,7 @@
               "link_type": { "type": "string", "index": "not_analyzed" }
             }
           },
+          "publisher": { "type": "string" },
           "harvest_via": { "type": "string", "index": "not_analyzed" }
         }
       },

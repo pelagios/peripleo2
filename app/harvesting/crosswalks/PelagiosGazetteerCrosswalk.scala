@@ -42,7 +42,7 @@ object PelagiosGazetteerCrosswalk {
         place.temporalCoverage.map(convertPeriodOfTime(_)),
         place.names.map(l => Name(l.chars, l.lang.flatMap(Language.safeParse))),
         place.closeMatches.map(Link(_, LinkType.CLOSE_MATCH)) ++ place.exactMatches.map(Link(_, LinkType.EXACT_MATCH)), 
-        None)
+        None, None)
     
     // Return crosswalk function
     { stream: InputStream =>

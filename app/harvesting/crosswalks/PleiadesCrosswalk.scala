@@ -43,7 +43,7 @@ object PleiadesCrosswalk extends BaseGeoJSONCrosswalk {
       computeTemporalBounds(pleiades.names), // TODO temporalBounds
       names,
       Seq.empty[Link],
-      None
+      None, None
     )
   })
 

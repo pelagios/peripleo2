@@ -36,7 +36,7 @@ object EuropeanaPlacesCrosswalk extends BaseGeoJSONCrosswalk {
       None, // temporalBounds
       europeana.names,
       europeana.closeMatches.map(uri => Link(uri, LinkType.CLOSE_MATCH)),
-      None)
+      None, None)
   })
 
 }

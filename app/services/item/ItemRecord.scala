@@ -25,6 +25,7 @@ case class ItemRecord(
   temporalBounds      : Option[TemporalBounds],
   names               : Seq[Name],
   links               : Seq[Link],
+  publisher           : Option[String],
   harvestVia          : Option[String]
 ) {
 
@@ -104,6 +105,7 @@ object ItemRecord extends HasDate with HasNullableSeq with HasGeometry {
       .inmap[Seq[Name]](fromOptSeq[Name], toOptSeq[Name]) and
     (JsPath \ "links").formatNullable[Seq[Link]]
       .inmap[Seq[Link]](fromOptSeq[Link], toOptSeq[Link]) and
+    (JsPath \ "publisher").formatNullable[String] and
     (JsPath \ "harvest_url").formatNullable[String]
   )(ItemRecord.apply, unlift(ItemRecord.unapply))
 

@@ -36,7 +36,7 @@ abstract class BaseAuthorityAdminController(
       None, None, None, // geometry, representativePoint, temporalBounds
       Seq.empty[Name],
       Seq.empty[Link],
-      None)
+      None, None)
       
     importer.importRecord(record)
   }

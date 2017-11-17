@@ -30,7 +30,7 @@ object GeoNamesCrosswalk extends BaseGeoJSONCrosswalk {
       None, // temporalBounds
       geonames.names,
       Seq.empty[Link],
-      None)
+      None, None)
   })
 
 }
