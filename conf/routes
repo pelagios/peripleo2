@@ -78,6 +78,7 @@ POST    /api/items/:id/broken                        controllers.api.ItemAPICont
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 GET     /peripleo/search                             controllers.api.legacy.LegacyAPIController.search
+GET     /peripleo/items/:id                          controllers.api.legacy.LegacyAPIController.getItem(id: String)
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Restricted JSON API

@@ -1,14 +1,14 @@
 package controllers.api.legacy
 
-import controllers.api.legacy.response.LegacyItem
+import controllers.api.legacy.response._
 import controllers.{HasPrettyPrintJSON, HasVisitLogging}
 import javax.inject.{Inject, Singleton}
 import play.api.mvc.{Action, AnyContent, Controller, Request}
 import play.api.libs.json.{Json, JsValue}
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 import services.Page
-import services.item.ItemService
+import services.item.{ItemService, ItemType}
 import services.item.search.SearchService
 import services.visit.VisitService
 
@@ -29,12 +29,31 @@ class LegacyAPIController @Inject() (
     val args = LegacySearchArgs.fromQueryString(request.queryString)
     searchService.query(args).map { r => 
       logSearch(args, r)      
-      
       val legacyFormat = 
-        Page(r.took, r.total, r.offset, r.limit, r.items.map(LegacyItem.fromItem(_)))
-        
+        Page(r.took, r.total, r.offset, r.limit, r.items.map(LegacySearchResult.fromItem(_)))
       jsonOk(Json.toJson(legacyFormat))
     }
+  }
+  
+  def getItem(id: String) = Action.async { implicit request =>
+    itemService.findByIdentifier(id).flatMap {
+      case Some(item) =>
+        val fReferenceCount = itemService.countReferences(id)
+        val fPlaceCount = itemService.countReferencesToType(id, ItemType.PLACE)
+        
+        val f = for {
+          refCount <- fReferenceCount
+          placeCount <- fPlaceCount
+        } yield (refCount._1, placeCount._2)
+        
+        f.map { case (references, places) =>
+          jsonOk(Json.toJson(LegacyItem.fromItem(item, references, places)))
+        }
+            
+      case None =>
+        Future.successful(NotFound)
+    }
+
   }
 
 }

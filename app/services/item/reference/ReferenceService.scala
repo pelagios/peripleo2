@@ -6,12 +6,14 @@ import com.sksamuel.elastic4s.source.Indexable
 import es.ES
 import java.util.UUID
 import org.elasticsearch.search.aggregations.bucket.terms.Terms
+import org.elasticsearch.search.aggregations.metrics.cardinality.InternalCardinality
 import play.api.Logger
 import play.api.libs.json.Json
 import scala.concurrent.Future
 import scala.util.Try
 import services.{ Page }
 import services.item.{ Item, ItemService }
+import services.item.ItemType
 
 trait ReferenceService { self: ItemService =>
 
@@ -197,6 +199,48 @@ trait ReferenceService { self: ItemService =>
     }
 
   }
+  
+  /** 
+   *  For parent item, this method returns 
+   *  
+   *  i) the total number of references
+   *  ii) the number of unique referenced items
+   */
+  def countReferences(parentUri: String): Future[(Long, Int)] =
+    es.client execute {
+      search in ES.PERIPLEO / ES.REFERENCE query {
+        constantScoreQuery {
+          filter ( termQuery("parent_uri" -> parentUri) )
+        }
+      } aggs (
+        aggregation cardinality "distinct" field "reference_to.doc_id"
+      ) size 0
+    } map { response =>
+      val c = response.aggregations.get("distinct").asInstanceOf[InternalCardinality]
+      (response.totalHits, c.getValue.toInt)
+    }
+    
+  /** Like above, but restricted to a specific destination item type  **/
+  def countReferencesToType(parentUri: String, itemType: ItemType): Future[(Long, Int)] =
+    es.client execute {
+      search in ES.PERIPLEO / ES.REFERENCE query {
+        constantScoreQuery {
+          filter ( 
+            bool {
+              must (
+                termQuery("parent_uri" -> parentUri),
+                termQuery("reference_to.item_type" -> itemType.toString)
+              )
+            }
+          )
+        }
+      } aggs (
+        aggregation cardinality "distinct" field "reference_to.doc_id"
+      ) size 0
+    } map { response =>
+      val c = response.aggregations.get("distinct").asInstanceOf[InternalCardinality]
+      (response.totalHits, c.getValue.toInt)
+    }
 
   def getTopReferenced(identifier: String): Future[TopReferenced] = {
 
