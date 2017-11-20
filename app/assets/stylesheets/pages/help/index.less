@@ -2,6 +2,7 @@
 @import "../../common/_colors.less";
 @import "../../common/_fonts.less";
 @import "../../common/_forms.less";
+@import "../_sidebar.less";
 @import "../_layout.less";
 
 html, body {
@@ -12,10 +13,11 @@ html, body {
   color:@standard-type;
 }
 
-.inner {
+.content .inner {
   position:relative;
-  margin:0 auto;
-  width:900px;
+  margin-left:200px;
+  width:auto;
+  max-width:800px;
 }
 
 form.create-embed {
