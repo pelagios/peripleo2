@@ -25,6 +25,11 @@ img {
   border:1px solid @form-grey-border;
 }
 
+img.float {
+  margin:5px 0 5px 10px;
+  float:right;
+}
+
 form.create-embed {
   padding:20px;
 
@@ -38,23 +43,36 @@ form.create-embed {
 
 .char {
   font-family:"Courier New", Courier, monospace;
-  font-size:12px;
   display:inline-block;
+  font-size:14px;
   min-width:23px;
   box-sizing:border-box;
   padding:0 5px;
   height:23px;
-  line-height:27px;
+  line-height:23px;
   text-align:center;
   background-color:lighten(@form-grey-border, 5%);
   border:1px solid @form-grey-border;
   .rounded-corners(2px);
 }
 
+.icon {
+  font-family:FontAwesome;
+  font-size:14px;
+  color:@light-grey-type;
+}
+
+.note {
+  padding: 2px 15px;
+  margin-top: 20px;
+  color: #868686;
+  border-left: 4px solid #d6d7d9;
+}
+
 .symbology {
   list-style-type:none;
   margin:0;
-  padding:0;
+  padding:0 0 0 10px;
 
   li {
     margin:5px 0;
@@ -67,7 +85,7 @@ form.create-embed {
     color:#fff;
     .rounded-corners(50%);
     text-align:center;
-    font-size:14px;
+    margin-right:7px;
   }
 
   span.icon.place {
