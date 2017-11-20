@@ -21,7 +21,7 @@
         <li>Search for places, objects and other types of data</li>
         <li>Narrow down your search through filters</li>
         <li>See summary information about a specific dataset</li>
-        <li>Follow up and filter by connections between items</li>
+        <li>Navigate and search connected items</li>
         <li>Use our (experimental) fulltext search feature</li>
         <li>Interpret Peripleo's Linked Data View</li>
       </ul>
@@ -52,7 +52,7 @@
         <span class="char">&#xf0c9;</span> button.
       </p>
 
-      <h2>Searching</h2>
+      <h2>Using Search</h2>
       <p>
         Use the <strong>search box</strong> in the upper left corner to search by keyword. Peripleo
         will provide suggestions for search terms and specific records matching your query.
@@ -88,7 +88,7 @@
         <li><span class="icon dataset">&#xf187;</span> Records that describe a complete dataset</li>
       </ul>
 
-      <h2>Using the Filter Panel</h2>
+      <h2>The Filter Panel</h2>
       <p>
         After running a search, you can narrow down your results by using filters. Click
         the downward arrow at the bottom of the search box. This will
@@ -143,7 +143,7 @@
 
       <h3>To filter by map viewport</h3>
       <p>
-        <img class="float" src="@routes.Assets.versioned("images/tutorial/bboxfilter.png")">
+        <img class="float right" src="@routes.Assets.versioned("images/tutorial/bboxfilter.png")">
         Click the filter icon located at the top right corner of the screen, right above
         the map zoom buttons. This will toggle the viewport filter. If active, your
         search is restricted to only those results that intersect the map area you are
@@ -177,19 +177,34 @@
         enter a new query to find specific data inside this dataset.
       </p>
 
-      <h2>Local Search</h2>
+      <h2>Linked Data &amp; Navigating Connections</h2>
       <p>
+        Underneath the hood, Peripleo is based on <a href="">Linked Data</a>,
+        a way of connecting online resources that have some element in common.
+        That common element could be <strong>Place</strong>, for example. Objects in
+        Peripleo have an explicit connection if they are linked to the same
+        place, through some relation. E.g. because the place is the object's findspot;
+        or because the place is inscribed on the object.
+      </p>
+      <p>
+
       </p>
 
-      <h2>Searching Geo-Tagged Literature</h2>
-      <p>
-        Coming soon...
-      </p>
+      <!-- img class="no-border" src="@routes.Assets.versioned("images/tutorial/rome.jpg")" -->
 
-      <h2>The Linked Data View</h2>
+
+      <h2>Congratulations!</h2>
       <p>
-        Coming soon...
+        You have successfully made your way through the introductory tutorial, and
+        have learned how to use Peripleo's most important features.
       </p>
+      <p>
+        Future tutorials will introduce more advanced topics:
+      </p>
+      <ul>
+        <li><a href="">Exploring geo-tagged literature</a></li>
+        <li><a href="">Using the Linked Data View</a></li>
+      </ul>
 
       <!-- img src="@routes.Assets.versioned("images/tutorial/gui-overview.jpg")" -->
 
