@@ -37,7 +37,7 @@ class SuggestService @Inject() (val es: ES, implicit val ctx: ExecutionContext) 
         phraseSuggestion("from_titles") field("title") text(query) gramSize 3 size 3,
         phraseSuggestion("from_descriptions") field("is_conflation_of.descriptions.description") text(query)  gramSize 3 size 3,
         phraseSuggestion("from_context") field("quote.context") text(query)  gramSize 3 size 3,
-        fuzzyCompletionSuggestion("entities").fuzzyPrefixLength(3) field("suggest") text(query) size 4
+        fuzzyCompletionSuggestion("entities").fuzzyPrefixLength(3) field("suggest") text(query) size 5
       ) size 0
     } map { response =>
       val phrases =
@@ -48,8 +48,10 @@ class SuggestService @Inject() (val es: ES, implicit val ctx: ExecutionContext) 
         ).flatten
          .flatMap(suggestion => suggestion.options)
          .sortBy(- _.score)
-         .take(3)
          .map(option => Suggestion(option.text))
+         .distinct
+         .take(3)
+
 
       // Completion response carry payload - need to go through Java API to get that      
       val entities = response.getSuggest.getSuggestion("entities").asInstanceOf[CompletionSuggestion]

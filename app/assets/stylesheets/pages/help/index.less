@@ -1,7 +1,7 @@
 @import "../../common/_buttons.less";
-@import "../../common/_colors.less";
 @import "../../common/_fonts.less";
 @import "../../common/_forms.less";
+@import "../../ui/_colors.less";
 @import "../_sidebar.less";
 @import "../_layout.less";
 
@@ -17,7 +17,12 @@ html, body {
   position:relative;
   margin-left:200px;
   width:auto;
-  max-width:800px;
+  max-width:720px;
+}
+
+img {
+  margin:10px 0;
+  border:1px solid @form-grey-border;
 }
 
 form.create-embed {
@@ -27,6 +32,62 @@ form.create-embed {
     padding-left:5px;
     height:35px;
     width:380px;
+  }
+
+}
+
+.char {
+  font-family:"Courier New", Courier, monospace;
+  font-size:12px;
+  display:inline-block;
+  min-width:23px;
+  box-sizing:border-box;
+  padding:0 5px;
+  height:23px;
+  line-height:27px;
+  text-align:center;
+  background-color:lighten(@form-grey-border, 5%);
+  border:1px solid @form-grey-border;
+  .rounded-corners(2px);
+}
+
+.symbology {
+  list-style-type:none;
+  margin:0;
+  padding:0;
+
+  li {
+    margin:5px 0;
+  }
+
+  span.icon {
+    display:inline-block;
+    width:24px;
+    height:24px;
+    color:#fff;
+    .rounded-corners(50%);
+    text-align:center;
+    font-size:14px;
+  }
+
+  span.icon.place {
+    background-color:@type-place;
+  }
+
+  span.icon.object {
+    background-color:@type-object;
+  }
+
+  span.icon.period {
+    background-color:@type-period;
+  }
+
+  span.icon.person {
+    background-color:@type-person;
+  }
+
+  span.icon.dataset {
+    background-color:@type-dataset;
   }
 
 }

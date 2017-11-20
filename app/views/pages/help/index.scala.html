@@ -17,35 +17,69 @@
         <strong>You will learn how to:</strong>
       </p>
       <ul>
-        <li>Search for places and objects</li>
+        <li>Search for places, objects and other types of data</li>
+        <li>See summary information about a specific dataset</li>
         <li>Control the map</li>
         <li>Filter results by time, space and data source</li>
-        <li>Explore data linked to a particular place</li>
+        <li>Follow up and filter by connections between items</li>
         <li>Use our (experimental) fulltext search feature</li>
-        <li>Read Peripleo's Linked Data View</li>
+        <li>Interpret Peripleo's Linked Data View</li>
       </ul>
 
       <h2>What is Peripleo?</h2>
       <p>
-        Peripleo is a map-based search engine to data published by partners of
+        Peripleo is a map-based search engine to data published and maintained by partners of
         <a href="http://commons.pelagios.org" target="_blank">Pelagios Commons</a>, a Digital
         Humanities initiative aiming to foster better linkages between online resources
         documenting the past.
       </p>
       <p>
-        Peripleo is not a reposity - all data you can find here remains hosted at our partners
-        own sites. It merely provides a unified index to search and explore across all these
-        datasets.
-      </p>
-      <p>
-        Data in Peripleo is pretty diverse. Right now, most of our partners publish
+        Data indexed in Peripleo is pretty diverse. Right now, most of our partners publish
         information about ancient <strong>places</strong> and phyiscal <strong>objects</strong>
         connected to them, such as archaeological finds. But Pelagios Commons is growing, and we
         are beginning to include data about <strong>people</strong>, <strong>time periods</strong>,
-        and even fulltexts of geo-tagged literature, and transcribed scans of historic maps.
+        and even fulltexts of geo-tagged literature, or transcribed scans of historic maps.
+        The full list of datasets currently indexed is
+        <a href="@controllers.pages.about.routes.AboutController.index">here</a>.
       </p>
 
-      <h2>Searching Peripleo</h2>
+      <h2>Searching</h2>
+      <p>
+        Use the <strong>search box</strong> in the upper left corner to search by keyword. Peripleo
+        will provide suggestions for search terms and specific records matching your query.
+        Run the query by hitting enter or selecting a query suggestion; or pick one of the suggested
+        results directly, by selecting it from the list.
+      </p>
+
+      <img src="@routes.Assets.versioned("images/tutorial/autocomplete.png")">
+
+      <h3>Search Syntax</h3>
+      <p>
+        Peripleo supports <strong>prefix</strong> as well as <strong>fuzzy</strong> search: append
+        <span class="char">*</span> to find everything that starts with the given search term; or
+        append <span class="char">~</span> to include approximate matches (i.e. those that differ
+        by a few characters).
+      </p>
+
+      <p>Use <strong>AND</strong> or <strong>OR</strong> uppercase
+        keywords to construct boolean queries, or quote your search with
+        <span class="char">&quot;</span> to force exact phrase matches.
+      </p>
+
+      <h3>Colour Coding</h3>
+      <p>
+        Throughout the interface, search results are coded based on their item type, using colour
+        and symbol:
+      </p>
+      <ul class="symbology">
+        <li><span class="icon place">&#xf041;</span> Places</li>
+        <li><span class="icon object">&#xf219;</span> Objects</li>
+        <li><span class="icon period">&#xf017;</span> Time periods</li>
+        <li><span class="icon person">&#xf007;</span> People</li>
+        <li><span class="icon dataset">&#xf187;</span> Records that describe a complete dataset</li>
+      </ul>
+
+      <h2>Dataset Overview</h2>
       <p>
       </p>
 
@@ -68,6 +102,9 @@
       <h2>The Linked Data View</h2>
       <p>
       </p>
+
+      <!-- img src="@routes.Assets.versioned("images/tutorial/gui-overview.jpg")" -->
+
     </div>
   </div>
 }
