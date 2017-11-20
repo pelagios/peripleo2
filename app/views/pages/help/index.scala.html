@@ -17,8 +17,8 @@
         <strong>You will learn how to:</strong>
       </p>
       <ul>
-        <li>Search for places, objects and other types of data</li>
         <li>Control the map</li>
+        <li>Search for places, objects and other types of data</li>
         <li>Narrow down your search through filters</li>
         <li>See summary information about a specific dataset</li>
         <li>Follow up and filter by connections between items</li>
@@ -41,6 +41,15 @@
         and even fulltexts of geo-tagged literature, or transcribed scans of historic maps.
         The full list of datasets currently indexed is
         <a href="@controllers.pages.about.routes.AboutController.index">here</a>.
+      </p>
+
+      <h2>Controlling the Map</h2>
+      <p>
+        Move the map by dragging and releasing it. Zoom using your mousewheel or the
+        <span class="char">+</span> <span class="char">-</span> buttons in the upper
+        right corner. On touch devices you can also use a &quot;pinch&quot; gesture.
+        You can switch between different base layers using the
+        <span class="char">&#xf0c9;</span> button.
       </p>
 
       <h2>Searching</h2>
@@ -79,26 +88,19 @@
         <li><span class="icon dataset">&#xf187;</span> Records that describe a complete dataset</li>
       </ul>
 
-      <h2>Controlling the Map</h2>
-      <p>
-        Move the map by dragging and releasing it. Zoom using your mousewheel or the
-        <span class="char">+</span> <span class="char">-</span> buttons in the upper
-        right corner. On touch devices you can also use a &quot;pinch&quot; gesture.
-        You can switch between different base layers using the
-        <span class="char">&#xf0c9;</span> button.
-      </p>
-
       <h2>Using the Filter Panel</h2>
-
       <p>
         After running a search, you can narrow down your results by using filters. Click
         the downward arrow at the bottom of the search box. This will
-        unfold the <strong>filter panel</strong>. The most prominent element
-        of the filter panel is the <strong>time histogram</strong>.
-        It shows how your search results are distributed over time.
+        unfold the <strong>filter panel</strong>.
       </p>
 
       <img src="@routes.Assets.versioned("images/tutorial/filterpanel.gif")">
+
+      <p>
+        The most prominent element of the filter panel is the <strong>time histogram</strong>.
+        It shows how your search results are distributed over time.
+      </p>
 
       <h3>To filter by time</h3>
       <p>
@@ -150,18 +152,29 @@
 
       <h2>Dataset Overview</h2>
       <p>
-        When selecting a dataset <span class="icon">&#xf187;</span> result, Peripleo will
-        automatically switch into a filtered &quot;match-all&quot; search. That is, it returns all
-        results contained within this dataset, while displaying dataset summary information in the
-        selection box.
+        Instead of through place or object, you can also start your journey through
+        Peripleo from a specific data source. Data sources appear in search results just
+        like any other type of item. However, behavior is just slightly different when you
+        select one.
       </p>
 
       <img src="@routes.Assets.versioned("images/tutorial/dataset-overview.jpg")">
 
       <p>
+        When you select a dataset (either from the result list, or from the list of autocomplete
+        options) the selection box will show some general overview information: title, description,
+        sub- or supersets this dataset might have, etc. At the same time, Peripleo
+        automatically switches to a filtered search. That means it will:
       </p>
-
-
+      <ul>
+        <li>list all results contained within this dataset</li>
+        <li>show their geographical footprint on the map</li>
+        <li>display their temporal profile in the time histogram</li>
+      </ul>
+      <p>
+        As usual, the search box will show an indicator for the filtered search; and you can
+        use all other available filter options to narrow down your search further.
+      </p>
 
       <h2>Local Search</h2>
       <p>
