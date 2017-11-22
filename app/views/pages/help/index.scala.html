@@ -1,40 +1,46 @@
 @()(implicit request: RequestHeader, webjars: WebJarAssets)
 
-@views.html.pages.layout("Help", "pages/help/index.css") {
+@views.html.pages.layout("Introductory Tutorial", "pages/help/index.css") {
   <div class="sidebar">
-    <ul>
-      <li><a href="">Help topic 1...</a></li>
-      <li><a href="">Help topic 2...</a></li>
-      <li><a href="">Help topic 3...</a></li>
-      <li><a href="">Help topic 4...</a></li>
+    <ul class="help-topics">
+      <li>
+        <a href="">Introductory Tutorial</a>
+        <ul class="sub-topics">
+          <li><a href="#">What is Peripleo?</a></li>
+          <li><a href="#">User Interface Overview</a></li>
+          <li><a href="#">Using Search</a></li>
+          <li><a href="#">The Filter Panel</a></li>
+          <li><a href="#">Datasets at a Glance</a></li>
+          <li><a href="#">Connected Items</a></li>
+        </ul>
+      </li>
+      <li><a href="">Entity-Aware Fulltext Search</a></li>
+      <li><a href="">The Linked Data View</a></li>
     </ul>
   </div>
 
   <div class="section">
     <div class="inner">
       <p>
-        This quick tutorial will give you an overview of Peripleo's most important features.
+        This tutorial will give you an overview of Peripleo's most important features.
         <strong>You will learn how to:</strong>
       </p>
       <ul>
-        <li>Control the map</li>
         <li>Search for places, objects and other types of data</li>
-        <li>Narrow down your search through filters</li>
+        <li>Narrow down your search using filters</li>
         <li>See summary information about a specific dataset</li>
         <li>Navigate and search connected items</li>
-        <li>Use our (experimental) fulltext search feature</li>
-        <li>Interpret Peripleo's Linked Data View</li>
       </ul>
 
       <h2>What is Peripleo?</h2>
       <p>
-        Peripleo is a map-based search engine to data published and maintained by partners of
+        Peripleo is a search engine to data published and maintained by partners of
         <a href="http://commons.pelagios.org" target="_blank">Pelagios Commons</a>, a Digital
         Humanities initiative aiming to foster better linkages between online resources
         documenting the past.
       </p>
       <p>
-        Data indexed in Peripleo is quite diverse. Right now, most of our partners publish
+        The data you can find in Peripleo is quite diverse. Right now, most of our partners publish
         information about ancient <strong>places</strong> and phyiscal <strong>objects</strong>
         connected to them, such as archaeological finds. But Pelagios Commons is growing, and we
         are beginning to include data about <strong>people</strong>, <strong>time periods</strong>,
@@ -43,14 +49,8 @@
         <a href="@controllers.pages.about.routes.AboutController.index">here</a>.
       </p>
 
-      <h2>Controlling the Map</h2>
-      <p>
-        Move the map by dragging and releasing it. Zoom using your mousewheel or the
-        <span class="char">+</span> <span class="char">-</span> buttons in the upper
-        right corner. On touch devices you can also use a &quot;pinch&quot; gesture.
-        You can switch between different base layers using the
-        <span class="char">&#xf0c9;</span> button.
-      </p>
+      <h2>User Interface Overview</h2>
+      <img src="@routes.Assets.versioned("images/tutorial/gui-overview.jpg")">
 
       <h2>Using Search</h2>
       <p>
@@ -87,6 +87,15 @@
         <li><span class="icon person">&#xf007;</span> People</li>
         <li><span class="icon dataset">&#xf187;</span> Records that describe a complete dataset</li>
       </ul>
+
+      <h3>Controlling the Map</h3>
+      <p>
+        Move the map by dragging and releasing it. Zoom using your mousewheel or the
+        <span class="char">+</span> <span class="char">-</span> buttons in the upper
+        right corner. On touch devices you can also use a &quot;pinch&quot; gesture.
+        You can switch between different base layers using the
+        <span class="char">&#xf0c9;</span> button.
+      </p>
 
       <h2>The Filter Panel</h2>
       <p>
@@ -150,7 +159,7 @@
         currently viewing.
       </p>
 
-      <h2>Dataset Overview</h2>
+      <h2>Datasets at a Glance</h2>
       <p>
         Instead of through place or object, you can also start your Peripleo journey
         from a specific data source. Data sources appear in search results just
@@ -177,24 +186,18 @@
         enter a new query to find specific data inside this dataset.
       </p>
 
-      <h2>Linked Data &amp; Navigating Connections</h2>
+      <h2>Navigating Connections</h2>
       <p>
-        Underneath the hood, Peripleo is based on <a href="">Linked Data</a>,
-        a way of connecting online resources that have some element in common.
-        That common element could be <strong>Place</strong>, for example. Objects in
-        Peripleo have an explicit connection if they are linked to the same
-        place, through some relation. E.g. because the place is the object's findspot;
-        or because the place is inscribed on the object.
+        One aspect about Peripleo which you may find unfamiliar at first is that a dot on the map
+        does not necessarily equal one search results. Instead, a dot may correspond to many
+        results, connected to the same place. The size of the dot will give you a hint in this
+        case. Vice versa, a single search result might appear as many dots on the map. E.g. think
+        of an archaeological artefact, which might be linked to a findspot as well as a place of
+        production; or a work of literature which might refer to hundreds of places in the text.
       </p>
       <p>
-        A single object can have connections to many places. Vice versa, each place will
-        be connected to many objects. Furthermore, connections are not limited to just
-        places and objects: as mentioned above, we are beginning to index data about
-        people and time periods as well.
-      </p>
-      <p>
-        Peripleo enables you to follow along these connection paths, and search within them.
-        [...]
+        Peripleo enables you to explore and navigate along these connections in various ways, and
+        search within them. When you select a search result [...]
       </p>
 
       <!-- img class="no-border" src="@routes.Assets.versioned("images/tutorial/rome.jpg")" -->
@@ -202,19 +205,14 @@
 
       <h2>Congratulations!</h2>
       <p>
-        You have successfully made your way through the introductory tutorial, and
-        have learned how to use Peripleo's most important features.
-      </p>
-      <p>
-        Future tutorials will introduce more advanced topics:
+        You have successfully made your way through the introductory tutorial. You now know how to
+        use Peripleo's most important features. Do also check out our advanced tutorials on
+        Peripleo's extended features:
       </p>
       <ul>
-        <li><a href="">Exploring geo-tagged literature</a></li>
+        <li><a href="">Using Entity-Aware Fulltext Search to explore geo-tagged literature</a></li>
         <li><a href="">Using the Linked Data View</a></li>
       </ul>
-
-      <!-- img src="@routes.Assets.versioned("images/tutorial/gui-overview.jpg")" -->
-
     </div>
   </div>
 }
