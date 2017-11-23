@@ -28,21 +28,21 @@
       <ul>
         <li>Search for places, objects and other types of data</li>
         <li>Narrow down your search using filters</li>
-        <li>See summary information about a specific dataset</li>
-        <li>Navigate and search connected items</li>
+        <li>See summary information about a whole dataset</li>
+        <li>Search connected items, e.g. objects at a specific place</li>
       </ul>
 
       <h2>What is Peripleo?</h2>
       <p>
-        Peripleo is a search engine to data published and maintained by partners of
+        Peripleo is a search engine to data maintained by partners of
         <a href="http://commons.pelagios.org" target="_blank">Pelagios Commons</a>, a Digital
         Humanities initiative aiming to foster better linkages between online resources
         documenting the past.
       </p>
       <p>
         The data you can find in Peripleo is quite diverse. Right now, most of our partners publish
-        information about ancient <strong>places</strong> and phyiscal <strong>objects</strong>
-        connected to them, such as archaeological finds. But Pelagios Commons is growing, and we
+        information about <strong>ancient places</strong> and <strong>phyiscal objects</strong>
+        such as archaeological finds. But Pelagios Commons is growing, and we
         are beginning to include data about <strong>people</strong>, <strong>time periods</strong>,
         and even fulltexts of geo-tagged literature, or transcribed scans of historic maps.
         The full list of datasets currently indexed is
@@ -50,14 +50,44 @@
       </p>
 
       <h2>User Interface Overview</h2>
-      <img src="@routes.Assets.versioned("images/tutorial/gui-overview.jpg")">
+      <p>
+        The image below shows Peripleo's main user interface components. Use the
+        <strong>search box</strong> <span class="marker">1</span> to type your query. The search
+        box includes a row of <strong>indicators</strong> <span class="marker">2</span> for
+        currently active filters. You can apply filters through the <strong>filter
+        panel</strong> <span class="marker">3</span> below.
+        Select an item from the <strong>result list</strong> <span class="marker">4</span> to
+        see <strong>detail information</strong> <span class="marker">5</span> and, if available, a
+        <strong>preview image</strong> <span class="marker">6</span>.
+        The buttons in the top right corner of the screen are the <strong>map controls</strong>
+        <span class="marker">7</span>.
+      </p>
 
+      <p class="note">
+        Some items have high-resolution zoomable images. You can see this from the
+        <a href="http://iiif.io/" target="_blank">IIIF</a> logo in the corner. Use the
+        button in the lower left corner to switch to a full screen view.
+      </p>
+
+      <div class="gui-overview">
+        <img src="@routes.Assets.versioned("images/tutorial/gui-overview.jpg")">
+        <ul class="markers">
+          <li class="marker m1" data-title="Search box">1</li>
+          <li class="marker m2" data-title="Filter indicators">2</li>
+          <li class="marker m3" data-title="Filter panel">3</li>
+          <li class="marker m4" data-title="Result list">4</li>
+          <li class="marker m5" data-title="Item details">5</li>
+          <li class="marker m6" data-title="Preview image">6</li>
+          <li class="marker m7" data-title="Map controls">7</li>
+        </ul>
+      </div>
       <h2>Using Search</h2>
       <p>
         Use the <strong>search box</strong> in the upper left corner to search by keyword. Peripleo
         will provide suggestions for search terms and specific records matching your query.
         Run the query by hitting enter or selecting a query suggestion; or pick one of the suggested
-        results directly, by selecting it from the list.
+        results directly, by selecting it from the list. Use the <span class="char">X</span> icon
+        to clear the search.
       </p>
 
       <img src="@routes.Assets.versioned("images/tutorial/autocomplete.png")">
