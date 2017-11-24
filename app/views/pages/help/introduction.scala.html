@@ -2,7 +2,7 @@
 
 @views.html.pages.layout(
   "Introductory Tutorial",
-  "An introduction to Peripleo's most important features. Learn how to search, filter and navigate Peripleo's networked information space",
+  "An introduction to Peripleo's most important features. Learn how to search, filter and navigate Peripleo's networked information space.",
   "pages/help/index.css"
 ) {
   <div class="sidebar">
@@ -188,7 +188,7 @@
         Click the bar. The panel shifts to reveal detail numbers for how
         many of your search results fall into which item type category. Click one of them.
         This narrows down your search to the results of only this type. Again, an indicator
-        in the search box to remind you of the active item type filter.
+        in the search box reminds you of the active item type filter.
       </p>
 
       <h3>To filter by map viewport</h3>
@@ -202,36 +202,38 @@
 
       <h2 id="datasets-at-a-glance">Datasets at a Glance</h2>
       <p>
-        Instead of starting your journey through Peripleo by searching for a place or object, you
-        can search for a specific data source. Data sources appear in search results just
-        like any other type of item. However, behavior is just slightly different when you
-        select one.
+        Instead of starting your journey through Peripleo from a place or object, you
+        can also start from a specific dataset. Let's try the
+        <a href="@controllers.routes.ApplicationController.ui()#selected=http%3A%2F%2Fgams.uni-graz.at">University
+        of Graz Collections</a> for example.
       </p>
 
       <img src="@routes.Assets.versioned("images/tutorial/dataset-overview.jpg")">
 
       <p>
-        When you select a dataset (either from the result list, or from the list of autocomplete
-        options) the selection box will show some general overview information: title, description,
-        sub- or supersets this dataset might have, etc. At the same time, Peripleo
-        automatically switches to a filtered search. That means it will:
+        Datasets appear in search results just like any other type of item.
+        However, behavior is slightly different when you select one.
+        Selecting a dataset (either from the result list, or from the list of autocomplete
+        options) will automatically switch to a filtered search. That means Peripleo will:
       </p>
+
       <ul>
         <li>list all results contained within this dataset</li>
         <li>show their geographical footprint on the map</li>
         <li>display their temporal profile in the time histogram</li>
       </ul>
       <p>
-        As usual, the search box shows an indicator to remind you of the active data source filter.
+        As usual, the search box shows an indicator to remind you of the data source filter.
         You can use all other available filter types to narrow down your search further, or
         enter a new query to find specific data inside this data source.
       </p>
 
       <h2 id="navigating-connections">Navigating Connected Information</h2>
       <p>
-        Peripleo works a bit different from other map-based search interfaces you may have used
-        before. The key difference is that <strong>data in Peripleo is networked</strong>.
-        That means items are internally connected through links.
+        Once you become more familiar with it, you will notice that Peripleo works slightly different
+        than other map-based search interfaces you may have used before. The key difference is
+        that <strong>data in Peripleo is networked</strong>. That means items are internally
+        connected through links.
       </p>
 
       <p>
