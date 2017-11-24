@@ -1,6 +1,10 @@
 @(datasets: services.Page[services.item.Item])(implicit request: RequestHeader, webjars: WebJarAssets)
 
-@views.html.pages.layout("About", "pages/about/index.css") {
+@views.html.pages.layout(
+  "About",
+  "About Peripleo",
+  "pages/about/index.css"
+) {
   <div class="section">
     <div class="inner">
       <p>

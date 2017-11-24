@@ -1,6 +1,10 @@
 @()(implicit request: RequestHeader, webjars: WebJarAssets)
 
-@views.html.pages.layout("Introductory Tutorial", "pages/help/index.css") {
+@views.html.pages.layout(
+  "Introductory Tutorial",
+  "An introduction to Peripleo's most important features. Learn how to search, filter and navigate Peripleo's networked information space",
+  "pages/help/index.css"
+) {
   <div class="sidebar">
     <ul class="help-topics">
       <li>
@@ -240,18 +244,31 @@
       <img class="no-border" src="@routes.Assets.versioned("images/tutorial/links-place.png")">
 
       <p>
-        Peripleo will show, at the bottom of the detail information window, whenever there area
-        links to follow. [...]
+        Whenever there are links to follow, Peripleo tells you at the bottom of the detail
+        information window. For example, select a place, and you can see how many items are
+        connected to it. Click the link to enter a filtered search that shows just these
+        items. As usual, you can narrow down the search further with other filter options.
+      </p>
+
+      <p>
+        In a similar way, selecting an object will tell you what the top places are that the item
+        is linked to, along with information about how much else data is available there, given
+        your current search query and filter setting.
+      </p>
+
+      <p class="note">
+        <strong>Note:</strong> when following along these network paths, remember that you can
+        use your browser back button to return to previous stops along your journey.
       </p>
 
       <h2>Congratulations!</h2>
       <p>
-        You have successfully made your way through the introductory tutorial. You now know how to
-        use Peripleo's most important features. Do also check out our advanced tutorials on
+        You have successfully made your way through the introductory tutorial, and know how to
+        use the most important features. Do also check out our advanced tutorials on
         Peripleo's extended features:
       </p>
       <ul>
-        <li><a href="">Using Entity-Aware Fulltext Search to explore geo-tagged literature</a></li>
+        <li><a href="">Using the Entity-Aware Fulltext Search to explore geo-tagged literature</a></li>
         <li><a href="">Using the Linked Data View</a></li>
       </ul>
     </div>
