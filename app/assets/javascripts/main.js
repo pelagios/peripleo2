@@ -11,7 +11,8 @@ require.config({
     { name : 'admin/datasets/csv' },
     { name : 'admin/maintenance/app' },
     { name : 'embed/embed' },
-    { name : 'help/embed' },
+    { name : 'pages/help/tutorial' },
+    { name : 'pages/help/embed' },
     { name : 'landing/anim'},
     { name : 'ui/app' },
     { name : 'validator/app' }
