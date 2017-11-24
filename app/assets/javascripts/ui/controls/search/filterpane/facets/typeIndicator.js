@@ -39,21 +39,35 @@ define([
               }),
 
               updateBar = function() {
-                var totalCount = relevantBuckets.reduce(function(acc, b) {
+                var minW = 1.5, // Make sure even small buckets remain visible, 1.5% minimum
+
+                    totalCount = relevantBuckets.reduce(function(acc, b) {
                       return acc + b.count;
-                    }, 0);
+                    }, 0),
 
-                    addSegment = function(b) {
-                      var minW = 1.5, // Make sure even small buckets remain visible
-                          maxW = 100 - (relevantBuckets.length - 1) * minW,
-                          w = 100 * b.count / totalCount,
-                          normalized = Math.min(Math.max(w, minW), maxW);
+                    // Note that the sum of all segment widths may be > 100% at this point!
+                    segments = relevantBuckets.map(function(b) {
+                      var w = 100 * b.count / totalCount,
+                          width = Math.max(w, minW);
 
-                      bar.append('<span class="segment ' + b.path[0].id + '" style="width:' + normalized + '%"></span>');
+                      return { id: b.path[0].id, width: width };
+                    }),
+
+                    totalWidth = segments.reduce(function(acc, s) {
+                      return acc + s.width;
+                    }, 0),
+
+                    segmentsNormalized = (totalWidth === 100) ? segments :
+                      segments.map(function(s) {
+                        return { id: s.id, width: s.width * 100 / totalWidth };
+                      }),
+
+                    addSegment = function(s) {
+                      bar.append('<span class="segment ' + s.id + '" style="width:' + s.width + '%"></span>');
                     };
 
                 bar.empty();
-                relevantBuckets.forEach(addSegment);
+                segmentsNormalized.forEach(addSegment);
               },
 
               updateCounts = function() {
