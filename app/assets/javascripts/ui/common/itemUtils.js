@@ -15,6 +15,7 @@ define(function() {
         { shortcode: 'nomisma',     initial: 'N', color: '#ff7f0e', url_patterns: [ 'http://nomisma.org/id/' ] },
         { shortcode: 'chgis',       initial: 'C', color: '#9467bd', url_patterns: [ 'http://maps.cga.harvard.edu/tgaz/placename/hvd_' ] },
         { shortcode: 'b',           initial: 'B', color: '#843c39', url_patterns: [ 'http://betamasaheft.eu/places/' ] },
+        { shortcode: 'tt',          initial: 'T', color: '#e7ba52', url_patterns: [ 'http://topostext.org/place.php?id=' ] },
 
         // People
         { shortcode: 'europeana',   initial: 'e', color: '#1676aa', url_patterns: [ 'http://data.europeana.eu/agent/base/' ] }
