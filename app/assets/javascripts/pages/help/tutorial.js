@@ -20,13 +20,18 @@ require([], function() {
 
         animateAnchorNav = function(containerEl) {
           containerEl.on('click', 'a', function(e) {
-           e.preventDefault();
+            var ul = jQuery(e.target).closest('ul'),
+                isSubmenu = ul.hasClass('sub-topics');
+                
+            if (isSubmenu) {
+              e.preventDefault();
 
-           jQuery('html, body').animate({
-             scrollTop: jQuery(jQuery.attr(this, 'href')).offset().top
-           }, 500);
+              jQuery('html, body').animate({
+                scrollTop: jQuery(jQuery.attr(this, 'href')).offset().top
+              }, 500);
 
-           return false;
+              return false;
+            } // Otherwise, just follow the link
           });
         };
 

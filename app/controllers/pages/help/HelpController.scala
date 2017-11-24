@@ -12,10 +12,24 @@ class HelpController @Inject()(
 ) extends Controller with HasVisitLogging {
   
   def index = Action { implicit request =>
-    logPageView()
-    Ok(views.html.pages.help.index())
+    Redirect(routes.HelpController.introduction)
   }
   
+  def introduction = Action { implicit request =>
+    logPageView()
+    Ok(views.html.pages.help.introduction())
+  }
+
+  def linkedDataView = Action { implicit request =>
+    logPageView()
+    Ok(views.html.pages.help.linkedDataView())
+  }
+
+  def fulltextSearch = Action { implicit request =>
+    logPageView()
+    Ok(views.html.pages.help.fulltextSearch())
+  }
+    
   def embed = Action { implicit request =>
     logPageView()
     Ok(views.html.pages.help.embed())

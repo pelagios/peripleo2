@@ -1,0 +1,33 @@
+@()(implicit request: RequestHeader, webjars: WebJarAssets)
+
+@views.html.pages.layout(
+  "Linked Data View",
+  "Coming soon...",
+  "pages/help/index.css"
+) {
+  <div class="sidebar">
+    <div class="inner">
+      <ul class="help-topics">
+        <li>
+          <a href="@controllers.pages.help.routes.HelpController.introduction">Introductory Tutorial</a>
+          <ul class="sub-topics">
+            <li><a href="#what-is-peripleo">What is Peripleo?</a></li>
+            <li><a href="#ui-overview">User Interface Overview</a></li>
+            <li><a href="#using-search">Using Search</a></li>
+            <li><a href="#filter-panel">The Filter Panel</a></li>
+            <li><a href="#datasets-at-a-glance">Datasets at a Glance</a></li>
+            <li><a href="#navigating-connections">Connected Items</a></li>
+          </ul>
+        </li>
+        <li><a href="@controllers.pages.help.routes.HelpController.fulltextSearch">Fulltext Search</a></li>
+        <li><a href="@controllers.pages.help.routes.HelpController.linkedDataView">The Linked Data View</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="inner">
+      <p>Coming Soon...</p>
+    </div>
+  </div>
+}
