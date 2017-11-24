@@ -10,7 +10,7 @@
 html, body {
   padding:0 0 60px 0;
   margin:0;
-  font-family:Roboto;
+  font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;
   background-color:#fff;
   color:@standard-type;
 }
@@ -163,36 +163,41 @@ form.create-embed {
     margin:5px 0;
   }
 
-  span.icon {
-    display:inline-block;
-    width:24px;
-    height:24px;
-    color:#fff;
-    .rounded-corners(50%);
-    text-align:center;
+  .symbol {
     margin-right:7px;
   }
 
-  span.icon.place {
-    background-color:@type-place;
-  }
+}
 
-  span.icon.object {
-    background-color:@type-object;
-  }
+.symbol {
+  font-family:FontAwesome;
+  font-size:14px;
+  display:inline-block;
+  width:24px;
+  height:24px;
+  color:#fff;
+  .rounded-corners(50%);
+  text-align:center;
+}
 
-  span.icon.period {
-    background-color:@type-period;
-  }
+.symbol.place {
+  background-color:@type-place;
+}
 
-  span.icon.person {
-    background-color:@type-person;
-  }
+.symbol.object {
+  background-color:@type-object;
+}
 
-  span.icon.dataset {
-    background-color:@type-dataset;
-  }
+.symbol.period {
+  background-color:@type-period;
+}
 
+.symbol.person {
+  background-color:@type-person;
+}
+
+.symbol.dataset {
+  background-color:@type-dataset;
 }
 
 .code-container {

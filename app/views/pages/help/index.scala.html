@@ -32,7 +32,7 @@
         <li>Search connected items, e.g. objects at a specific place</li>
       </ul>
 
-      <h2>What is Peripleo?</h2>
+      <h2 id="what-is-peripleo">What is Peripleo?</h2>
       <p>
         Peripleo is a search engine to data maintained by partners of
         <a href="http://commons.pelagios.org" target="_blank">Pelagios Commons</a>, a Digital
@@ -41,15 +41,15 @@
       </p>
       <p>
         The data you can find in Peripleo is quite diverse. Right now, most of our partners publish
-        information about <strong>ancient places</strong> and <strong>phyiscal objects</strong>
+        information about <strong>ancient places</strong> and <strong>phyiscal objects</strong>,
         such as archaeological finds. But Pelagios Commons is growing, and we
         are beginning to include data about <strong>people</strong>, <strong>time periods</strong>,
-        and even fulltexts of geo-tagged literature, or transcribed scans of historic maps.
-        The full list of datasets currently indexed is
+        and even geo-tagged literature, or data transcribed from historic maps. The full list of
+        datasets currently indexed is
         <a href="@controllers.pages.about.routes.AboutController.index">here</a>.
       </p>
 
-      <h2>User Interface Overview</h2>
+      <h2 id="ui-overview">User Interface Overview</h2>
       <p>
         The image below shows Peripleo's main user interface components. Use the
         <strong>search box</strong> <span class="marker">1</span> to type your query. The search
@@ -64,8 +64,8 @@
       </p>
 
       <p class="note">
-        <strong>Note:</strong> some items include high-resolution zoomable preview images. If there is a
-        <a href="http://iiif.io/" target="_blank">IIIF</a> logo in the corner, you can
+        <strong>Note:</strong> some items include zoomable high-resolution preview images. If there
+        is a <a href="http://iiif.io/" target="_blank">IIIF</a> logo in the corner, you can
         zoom into the image using your mousewheel or, on touch devices, a pinch gesture.
         Use the button in the lower left corner to switch to a full screen view.
       </p>
@@ -82,13 +82,14 @@
           <li class="marker m7" data-title="Map controls">7</li>
         </ul>
       </div>
-      <h2>Using Search</h2>
+
+      <h2 id="using-search">Using Search</h2>
       <p>
         Use the <strong>search box</strong> in the upper left corner to search by keyword. Peripleo
         will provide suggestions for search terms and specific records matching your query.
         Run the query by hitting enter or selecting a query suggestion; or pick one of the suggested
         results directly, by selecting it from the list. Use the <span class="char">X</span> icon
-        to clear the search.
+        to clear your current search.
       </p>
 
       <img src="@routes.Assets.versioned("images/tutorial/autocomplete.png")">
@@ -98,10 +99,7 @@
         Peripleo supports <strong>prefix</strong> as well as <strong>fuzzy</strong> search: append
         <span class="char">*</span> to find everything that starts with the given search term; or
         append <span class="char">~</span> to include approximate matches (i.e. those that differ
-        by a few characters).
-      </p>
-
-      <p>Use <strong>AND</strong> or <strong>OR</strong> uppercase
+        by a few characters). Use <strong>AND</strong> or <strong>OR</strong> uppercase
         keywords to construct boolean queries, or quote your search with
         <span class="char">&quot;</span> to force exact phrase matches.
       </p>
@@ -112,11 +110,11 @@
         and symbol:
       </p>
       <ul class="symbology">
-        <li><span class="icon place">&#xf041;</span> Places</li>
-        <li><span class="icon object">&#xf219;</span> Objects</li>
-        <li><span class="icon period">&#xf017;</span> Time periods</li>
-        <li><span class="icon person">&#xf007;</span> People</li>
-        <li><span class="icon dataset">&#xf187;</span> Records that describe a complete dataset</li>
+        <li><span class="symbol place">&#xf041;</span> Places</li>
+        <li><span class="symbol object">&#xf219;</span> Objects</li>
+        <li><span class="symbol period">&#xf017;</span> Time periods</li>
+        <li><span class="symbol person">&#xf007;</span> People</li>
+        <li><span class="symbol dataset">&#xf187;</span> Records that describe a complete dataset</li>
       </ul>
 
       <h3>Controlling the Map</h3>
@@ -128,26 +126,29 @@
         <span class="char">&#xf0c9;</span> button.
       </p>
 
-      <h2>The Filter Panel</h2>
+      <h2 id="filter-panel">The Filter Panel</h2>
       <p>
         After running a search, you can narrow down your results by using filters. Click
         the downward arrow at the bottom of the search box. This will
-        unfold the <strong>filter panel</strong>.
+        unfold the <strong>filter panel</strong>. The most prominent part of the filter
+        panel is the <strong>time histogram</strong>. It shows how your search results are
+        distributed over time.
       </p>
 
       <img src="@routes.Assets.versioned("images/tutorial/filterpanel.gif")">
 
-      <p>
-        The most prominent element of the filter panel is the <strong>time histogram</strong>.
-        It shows how your search results are distributed over time.
-      </p>
-
       <h3>To filter by time</h3>
       <p>
-        Grab and drag the handles on the time histogram to define a temporal filter. A
+        Grab and drag the handles on the time histogram to define a time filter. A
         clock icon <span class="char icon">&#xf017;</span> in the search box indicates
-        that a time filter is now set. (It's easy to forget once you have closed the
+        that the filter is now active. (Otherwise, it's easy to forget once you have closed the
         filter panel again!)
+      </p>
+
+      <p class="note">
+        <strong>Note:</strong> unfortunately, not all records in Peripleo are dated. Only those
+        that are will surface in the time histogram. Setting a time filter will exclude all undated
+        records.
       </p>
 
       <h3>To filter by data source</h3>
@@ -159,26 +160,29 @@
       <p class="note">
         <strong>Note:</strong> we will be introducing additional facet filters over time, which
         will work exactly the same way. For the time being, however, the data source facet is
-        the only one that's functional. Bear with us!
+        the only one that is functional.
       </p>
 
       <h3>To filter by item type</h3>
       <p>
-        Click the coloured bar above the time histogram. This bar illustrates how your results are
+        The coloured bar above the time histogram illustrates how your results are
         distributed across different <strong>item types</strong>. Often, the bar will have a
         single colour. That means that all of your results are of the same type. E.g. a search for
-        <a href="#">tetradrachm</a> will likely return only object records; a search
-        for <a href="">fortress</a> only returns places.
+        <a href="@controllers.routes.ApplicationController.ui()#q=tetradrachm&filters=true">tetradrachm</a>
+        will likely return only object records <span class="symbol object">&#xf219;</span> while a
+        search for
+        <a href="@controllers.routes.ApplicationController.ui()#q=fortress&filters=true">fortress</a>
+        returns places <span class="symbol place">&#xf041;</span>.
       </p>
 
       <img src="@routes.Assets.versioned("images/tutorial/typefilter.gif")">
 
       <p>
         Other searches will lead to a mix of places, people, objects, etc.
-        Clicking the bar shifts the panel, which now shows detail numbers for how
+        Click the bar. The panel shifts to reveal detail numbers for how
         many of your search results fall into which item type category. Click one of them.
         This narrows down your search to the results of only this type. Again, an indicator
-        in the search box appears in order to remind you of the active filter setting.
+        in the search box to remind you of the active item type filter.
       </p>
 
       <h3>To filter by map viewport</h3>
@@ -186,14 +190,14 @@
         <img class="float right" src="@routes.Assets.versioned("images/tutorial/bboxfilter.png")">
         Click the filter icon located at the top right corner of the screen, right above
         the map zoom buttons. This will toggle the viewport filter. If active, your
-        search is restricted to only those results that intersect the map area you are
-        currently viewing.
+        search is restricted to only those results that <strong>intersect the map area</strong> you
+        are currently viewing.
       </p>
 
       <h2>Datasets at a Glance</h2>
       <p>
-        Instead of through place or object, you can also start your Peripleo journey
-        from a specific data source. Data sources appear in search results just
+        Instead of starting your journey through Peripleo by searching for a place or object, you
+        can search for a specific data source. Data sources appear in search results just
         like any other type of item. However, behavior is just slightly different when you
         select one.
       </p>
@@ -212,9 +216,9 @@
         <li>display their temporal profile in the time histogram</li>
       </ul>
       <p>
-        As usual, the search box will show an indicator to remind you of the dataset filter.
+        As usual, the search box shows an indicator to remind you of the active data source filter.
         You can use all other available filter types to narrow down your search further, or
-        enter a new query to find specific data inside this dataset.
+        enter a new query to find specific data inside this data source.
       </p>
 
       <h2>Navigating Connections</h2>
