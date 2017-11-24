@@ -32,12 +32,12 @@ define([
         record = item.is_conflation_of[0],
 
         renderInfo = function() {
-          var titleHtml = (record.homepage) ?
-                '<a href="' + record.homepage + '" target="_blank">' + item.title + '</a>' :
-                item.title;
+          var url = (record.homepage) ? record.homepage : record.uri,
+              titleHtml = '<a href="' + url + '" target="_blank">' + item.title + '</a>';
 
           self.renderHierarchyPath(inDataset, record.is_in_dataset);
           self.fill(title, titleHtml);
+          self.fill(homepage, url);
           self.fillIfExists(homepage, record.homepage);
           self.fillTemporalBounds(tempBounds, item.temporal_bounds);
           self.fillDescription(description, item);
