@@ -1,12 +1,34 @@
-.sidebar {
+.content .sidebar {
   position:absolute;
   top:220px;
-  left:0;
+  width:100%;
+  z-index:1;
 
-  ul {
+  .inner {
+    padding-left:0;
+    padding-right:770px;
+  }
+
+  ul.help-topics {
     list-style-type:none;
+    padding:0;
     margin:0;
-    padding:0 20px;
+
+    li {
+      padding:3px 0;
+    }
+
+  }
+
+  ul.sub-topics {
+    margin:0;
+    padding:0 0 15px 22px;
+    font-size:15px;
+
+    li {
+      padding:1px 0;
+    }
+
   }
 
 }
