@@ -12,7 +12,7 @@
         <li><a href="@controllers.pages.help.routes.HelpController.fulltextSearch">Fulltext Search</a></li>
         <li><a href="@controllers.pages.help.routes.HelpController.relatedEntities">Exploring Related Entities</a></li>
         <li><a href="@controllers.pages.help.routes.HelpController.linkedDataView">Linked Data View</a></li>
-        <li><a href="@controllers.pages.help.routes.HelpController.embedWidget">Using the Embed Widget</a></li>
+        <li><a href="@controllers.pages.help.routes.HelpController.embedWidget">Embed Widget</a></li>
       </ul>
     </div>
   </div>
@@ -41,14 +41,20 @@
       <p>
         Peripleo uses these links to <strong>connect equivalent records</strong> from different
         sources. Therefore, when you select a place in Peripleo, the information that you see -
-        image, names, description , dates - is not data published by some specific authoritative
-        source. Instead, it is usually an <strong>aggregate of information</strong>, published by
-        different partners of the Pelagios Commons community.
+        image, names, description , dates - is usually not something published by a specific single
+        authority. Instead, it is an <strong>aggregate of information</strong>, published
+        collectively by partners of the Pelagios Commons community.
       </p>
 
       <h2>Looking Underneath the Hood</h2>
       <p>
+        Peripleo's info boxes provide, by intention, just a compact overview. Ready to
+        dive deeper into the actual Linked Data that underpins them? Enter the <strong>Linked data
+        View</strong>.
       </p>
+
+      <img class="rounded" src="@routes.Assets.versioned("images/help/ldview/ld-view.png")">
+
     </div>
   </div>
 }
