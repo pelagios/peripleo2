@@ -19,7 +19,36 @@
 
   <div class="section">
     <div class="inner">
-      <p>Coming Soon...</p>
+      <p>
+        Data in Peripleo comes from many different sources. Very often, these sources publish
+        information about the same real-world thing. A major historical place like
+        <a href="@controllers.routes.ApplicationController.ui()#selected=http%3A%2F%2Fpleiades.stoa.org%2Fplaces%2F423025">Rome</a>
+        for example, does, obviously, not just appear in one or two of our partners' datasets -
+        it appears in many.
+      </p>
+
+      <h2>What is Linked Data</h2>
+      <p>
+        Luckily, our partners publish their data as <strong>Linked Data</strong>. Linked Data
+        is a way of connecting online resources that have some element in common. It uses
+        <strong>typed links</strong> (i.e. links with a meaning attached to them)
+        to declare how different pieces of data relate to one another; or when they correspond
+        to the same real-world thing.
+      </p>
+
+      <img class="rounded" src="@routes.Assets.versioned("images/help/ldview/selection.png")">
+
+      <p>
+        Peripleo uses these links to <strong>connect equivalent records</strong> from different
+        sources. Therefore, when you select a place in Peripleo, the information that you see -
+        image, names, description , dates - is not data published by some specific authoritative
+        source. Instead, it is usually an <strong>aggregate of information</strong>, published by
+        different partners of the Pelagios Commons community.
+      </p>
+
+      <h2>Looking Underneath the Hood</h2>
+      <p>
+      </p>
     </div>
   </div>
 }
