@@ -54,34 +54,35 @@
 
       <img class="rounded" src="@routes.Assets.versioned("images/help/ldview/selection.png")">
 
-      <h2 id="underneath-the-hood">Looking Underneath the Hood</h2>
       <p>
         Peripleo's info boxes provide, by intention, only a compact overview. Ready to
-        dive deeper into the actual Linked Data that underpins them? Enter the <strong>Linked data
-        View</strong>.
+        dive deeper into the actual Linked Data that underpins them? Let's take a closer look.
       </p>
 
+      <h2 id="underneath-the-hood">Looking Underneath the Hood</h2>
       <p>
         Let's start by selecting the place
         <a href="@controllers.routes.ApplicationController.ui()#selected=http%3A%2F%2Fpleiades.stoa.org%2Fplaces%2F344448">Lepcis
-        Magna</a>. The row of coloured codes at the bottom of the info box are a hint to the Linked
-        Data origins of the information you are looking at. Each code is the identifier for
-        Lepcis Magna in one of Pelagios' partners' datasets. Let's take a closer look.
+        Magna</a>. The row of coloured codes you see at the bottom are a hint to the Linked Data
+        origins of our information: each code is the <strong>identifier for Lepcis Magna
+        in one of our partners' datasets</strong>. What looks like a single entry for
+        Lepcis Magna in Peripleo, is actually the <strong>combination</strong> of these individual
+        partner records.
       </p>
 
-      <img class="rounded" src="@routes.Assets.versioned("images/help/ldview/ld-view.png")">
-
       <p>
-        Click the <span class="char stroke7">&#xe616;</span> icon next
-        to the row of coloured IDs. This opens the Linked Data View. The view consists of the
+        Click the <span class="char stroke7">&#xe616;</span> icon next to the coloured identifiers.
+        This opens the Linked Data View. The view consists of the
         <strong>link graph</strong> on the left side, and the <strong>record details</strong> on
         the right side.
       </p>
 
+      <img class="rounded" src="@routes.Assets.versioned("images/help/ldview/ld-view.png")">
+
       <h2 id="link-graph">The Link Graph</h2>
       <p>
-        The link graph shows how different partners' records for <strong>Lepcis Magna</strong>
-        connect to each other. For example the
+        The link graph shows how the records that underpin our Peripleo &quot;Lepcis Magna
+        aggregate&quot; connect to each other. The
         <a href="http://dare.ht.lu.se/places/21127" target="_blank">record in the Digital Atlas of
         the Roman Empire</a>
         <span class="item-identifier dare"><a href="http://dare.ht.lu.se/places/21127" target="_blank">dare:21127</a></span>
@@ -94,7 +95,7 @@
         <span class="item-identifier vici"><a href="http://vici.org/vici/2448" target="_blank">vici:2448</a></span>
         links to to Pleiades as well as
         to <a href="http://www.wikidata.org/entity/Q191504" target="_blank">the equivalent Wikidata
-        record</a>.
+        record</a>, and so on.
       </p>
 
       <h3>Exact vs. Close Match</h3>
@@ -106,7 +107,7 @@
         match</strong> (solid line), meaning the record is conceptually identical - it represents
         the same place in terms of geographical, cultural and temporal scope. The other link
         indicates a <strong>close match</strong> (dashed line), which means the records are pretty
-        close, but do not necessarily the exact same thing. Our partners use this type, among other
+        close, but not necessarily the exact same thing. Our partners use this type, among other
         things, to connect an ancient place in their dataset to its modern successor in another.
       </p>
 
@@ -119,16 +120,22 @@
       </p>
 
       <h2 id="record-details">Record Details</h2>
-      <!-- p>
-        For records that include coordinates, the map shows colour coded markers. Different
-        sources will have varying data about location - as well as other aspects. They may
-        sometimes even contradict each other. For the sake of keeping interaction, Peripleo's
-        main interface conceals much of this variation. Therefore be sure to always dig down
-        into the Linked Data view, in order
+      <p>
+        For records that include coordinates, the map shows colour coded markers. (Use the
+        <span class="char icon">&#xf0c9;</span> button to switch base layers.) Underneath the map
+        you can find the details for earch individual record, as they were originally provided by
+        the partner.
+      </p>
 
-           - and in Linked Data, that's perfectly ok.
-      </p -->
-
+      <p>
+        You will notice that locations and record informatoin will differ, depending which dataset
+        they come from. Our partners will publish different information, for different (and valid)
+        reasons - and the power of Linked Data lies in the fact that variety (and even
+        contradiction) is perfectly fine &amp; possible. Peripleo's main interface needs
+        to conceal much of this diversity for the sake of keeping interaction simple. Therefore,
+        always be sure to dig down into the Linked Data view, and visit the original source
+        Websites, when exploring Pelagios Commons.
+      </p>
     </div>
   </div>
 }
