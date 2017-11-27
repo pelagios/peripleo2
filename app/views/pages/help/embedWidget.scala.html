@@ -1,0 +1,54 @@
+@()(implicit request: RequestHeader, webjars: WebJarAssets)
+
+@views.html.pages.layout(
+  "Using the Peripleo Embed Widget",
+  "Embed code generator and instructions for using the Peripleo widget on your own Web pages",
+  "pages/help/index.css"
+) {
+  <div class="sidebar">
+    <div class="inner">
+      <ul class="help-topics">
+        <li> <a href="@controllers.pages.help.routes.HelpController.introduction">Introductory Tutorial</a></li>
+        <li><a href="@controllers.pages.help.routes.HelpController.fulltextSearch">Fulltext Search</a></li>
+        <li><a href="@controllers.pages.help.routes.HelpController.relatedEntities">Exploring Related Entities</a></li>
+        <li><a href="@controllers.pages.help.routes.HelpController.linkedDataView">Linked Data View</a></li>
+        <li><a href="@controllers.pages.help.routes.HelpController.embedWidget">Using the Embed Widget</a></li>
+      </ul>
+    </div>
+  </div>
+
+  @defining(request.getQueryString("url").getOrElse("http://pleiades.stoa.org/places/344448")) { itemURI =>
+    <div class="inner">
+	  <form class="create-embed">
+	    <label>Paste Place or Object URI:
+		<input type="text">
+		<button class="btn" type="submit">Create embed code</button>
+	  </form>
+
+	  <div class="code-container">
+	    <code><!--
+-->&lt;iframe
+allowfullscreen=&quot;true&quot;
+width=&quot;420&quot;
+height=&quot;280&quot;
+src=&quot;<span class="uri">@controllers.routes.ApplicationController.embed(itemURI).absoluteURL</span>&quot;&gt;
+&lt;/iframe&gt;<!--
+     --></code>
+	  </div>
+	</div>
+
+	<div class="inner preview">
+	  <div class="preview-container">
+	    <iframe
+		  allowfullscreen="true"
+		  src="@controllers.routes.ApplicationController.embed(itemURI).absoluteURL">
+		</iframe>
+	  </div>
+	 </div>
+  }
+  
+  <script src="@routes.WebJarAssets.at(webjars.locate("require.min.js"))" data-main="@routes.Assets.versioned("javascripts/pages/help/embed.js")"></script>
+  @helper.javascriptRouter("jsRoutes")(
+    controllers.routes.javascript.ApplicationController.embed
+  )
+}

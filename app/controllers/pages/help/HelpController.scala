@@ -19,20 +19,25 @@ class HelpController @Inject()(
     logPageView()
     Ok(views.html.pages.help.introduction())
   }
+  
+  def fulltextSearch = Action { implicit request =>
+    logPageView()
+    Ok(views.html.pages.help.fulltextSearch())
+  }
+
+  def relatedEntities = Action { implicit request =>
+    logPageView()
+    Ok(views.html.pages.help.relatedEntities())
+  }
 
   def linkedDataView = Action { implicit request =>
     logPageView()
     Ok(views.html.pages.help.linkedDataView())
   }
 
-  def fulltextSearch = Action { implicit request =>
+  def embedWidget = Action { implicit request =>
     logPageView()
-    Ok(views.html.pages.help.fulltextSearch())
-  }
-    
-  def embed = Action { implicit request =>
-    logPageView()
-    Ok(views.html.pages.help.embed())
+    Ok(views.html.pages.help.embedWidget())
   }
   
 }
