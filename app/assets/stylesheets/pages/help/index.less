@@ -42,17 +42,6 @@ img.no-border {
   border:none;
 }
 
-form.create-embed {
-  padding:20px;
-
-  input {
-    padding-left:5px;
-    height:35px;
-    width:380px;
-  }
-
-}
-
 .char {
   font-family:"Courier New", Courier, monospace;
   display:inline-block;
@@ -201,6 +190,17 @@ form.create-embed {
   background-color:@type-dataset;
 }
 
+form.create-embed {
+  padding-top:10px;
+
+  input {
+    padding-left:5px;
+    height:35px;
+    width:360px;
+  }
+
+}
+
 .code-container {
   background-color:@haze;
   padding:4px 10px;
@@ -227,7 +227,6 @@ form.create-embed {
     .rounded-corners(3px);
     overflow:hidden;
     .box-shadow(0, 0, 8px, 0, rgba(0,0,0,0.25));
-    margin:0 auto;
 
     iframe {
       border:none;
