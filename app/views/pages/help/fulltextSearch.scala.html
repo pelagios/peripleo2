@@ -12,8 +12,9 @@
         <li>
           <a href="@controllers.pages.help.routes.HelpController.fulltextSearch">Fulltext Search</a>
           <ul class="sub-topics">
-            <li><a href="#what-is-entity-aware-search">Entity Aware Search</a></li>
+            <li><a href="#what-is-entity-aware-search">Entity-Aware Search</a></li>
             <li><a href="#snippets">Text Snippets</a></li>
+            <li><a href="#metadata-search">Search by Metadata</a></li>
           </ul>
         </li>
         <!-- li><a href="@controllers.pages.help.routes.HelpController.relatedEntities">Exploring Related Entities</a></li -->
@@ -32,15 +33,16 @@
         Data identifiers</a>). Thanks to the
         <a href="@controllers.pages.help.routes.HelpController.introduction#navigating-connections">
         networked nature of Peripleo's data model</a>, this allows us to introduce an exciting new
-        feature: <strong>Entity-Aware Fulltext Search</strong>.
+        feature: <strong>Entity-aware search</strong>.
       </p>
 
       <p class="note">
-        <strong>Note:</strong> Entity Aware Fulltext Search is currently an experimental feature.
-        We are still working on it. Expect the occasional hickup - and bear with us!
+        <strong>Note:</strong> entity aware search is currently an experimentation stage.
+        We are still working on a full implementation. Expect the occasional hickup - and bear
+        with us!
       </p>
 
-      <h2 id="what-is-entity-aware-search">What is Entity-Aware Fulltext Search?</h2>
+      <h2 id="what-is-entity-aware-search">What is Entity-Aware Search?</h2>
       <p>
         First of all, literature search in Peripleo is <strong>fulltext-capable</strong>. That
         means that you can search inside the actual <strong>text content</strong> of the item, not
@@ -78,13 +80,46 @@
 
       <p>
         What you see on the map, however, isn't all places mentioned in &quot;The Histories&quot;
-        either. It's only a small part of them. Yes, you guessed it: it's only places that
-        appear in the text in the vicinity of the the term <strong>crocodiles</strong>.
+        either. It's only a small part of them. Yes, you guessed it: it's those places that
+        appear in the text in the vicinity of the term <strong>crocodiles</strong>.
       </p>
 
       <h2 id="snippets">Text Snippets</h2>
       <p>
-        Coming soon...
+        Click on of the markers (or regions) on the map. The item details will show one or more
+        text snippets, relevant to the combination of the term <strong>crocodiles</strong> and
+        the place you selected.
+      </p>
+
+      <h3 id="source-links">Source Links</h3>
+      <p>
+        If supported by the datasource, the snippets will include
+        links that lead back to the corresponding section in the source
+        environment. In case of our example above, the source of the text is Pelagios Commons'
+        annotation environment <a href="http://recogito.pelagios.org" target="_blank">Recogito</a>
+        which allows us to jump, for example, right into a
+        <a href="http://recogito.pelagios.org/document/tjrrsqn4dwmgep/part/2/edit#72bbff3f-48f1-48eb-86d7-ec11ff2295e6" target="_blank">section
+        where crocodiles are mentioned in the context of Ionia</a>.
+      </p>
+
+      <h2 id="metadata-search">Search by Metadata</h2>
+      <p>
+        Entity-aware search also covers the case where your match is based on item metadata
+        rather than the content. Try a search for
+        <a href="@controllers.routes.ApplicationController.ui()#q=herodotus">herodotus</a>.
+      </p>
+
+      <img src="@routes.Assets.versioned("images/help/fulltext/herodotus.png")">
+
+      <p>
+        You will notice that the map is now much more densely populated. That's because your
+        results include Herodotus' &quot;The Histories&quot; <strong>as a whole</strong>, with
+        all the places it mentions.
+      </p>
+
+      <p>
+        Click a map marker. Again, Peripleo will show text snippets relevant to the selected place.
+        Just without additional contextualization from a query term.
       </p>
     </div>
   </div>
