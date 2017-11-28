@@ -28,41 +28,41 @@
     <div class="inner">
       <p>
         We are currently testing support for <strong>entity-tagged
-        text</strong> in Peripleo (text where references to places and people are tagged with
+        text</strong> in Peripleo; that is, text where references to places and people are tagged with
         <a href="@controllers.pages.help.routes.HelpController.linkedDataView#linked-data">Linked
-        Data identifiers</a>). Thanks to the
+        Data identifiers</a>. Thanks to the
         <a href="@controllers.pages.help.routes.HelpController.introduction#navigating-connections">
         networked nature of Peripleo's data model</a>, this allows us to introduce an exciting new
-        feature: <strong>Entity-aware search</strong>.
+        feature: <strong>entity-aware search</strong>.
       </p>
 
       <p class="note">
-        <strong>Note:</strong> entity aware search is currently an experimentation stage.
+        <strong>Note:</strong> entity aware search is currently in an experimental stage.
         We are still working on a full implementation. Expect the occasional hickup - and bear
         with us!
       </p>
 
       <h2 id="what-is-entity-aware-search">What is Entity-Aware Search?</h2>
       <p>
-        First of all, literature search in Peripleo is <strong>fulltext-capable</strong>. That
-        means that you can search inside the actual <strong>text content</strong> of the item, not
-        just in the metadata (title, blurb etc.); and that the search results that are returned can
-        include the <strong>text snippets</strong> where your search matched the content.
+        First of all, search in Peripleo is <strong>fulltext-capable</strong>. That
+        means that you can search the actual <strong>text content</strong> of an item, not
+        just the metadata (title, blurb etc.); and that search results that are returned based on a
+        fulltext match will include <strong>preview text snippets</strong>.
         So far for the conventional part.
       </p>
 
       <p>
-        Thanks to the entity tags, however, search results in Peripleo also reflect the
+        Thanks to the entity tags, search results in Peripleo also reflect the
         <strong>places</strong> (and people) that occur <strong>in the vicinity of your
         search</strong>. Since you won't usually find this functionality in other applications,
-        let's look at an example.
+        let's look at a concrete example.
       </p>
 
       <img src="@routes.Assets.versioned("images/help/fulltext/crocodiles.png")">
 
       <p>
         Try a search for
-        <a href="@controllers.routes.ApplicationController.ui()#q=crocodiles">crocodiles</a>.
+        <a href="@controllers.routes.ApplicationController.ui()#q=crocodiles" target="_blank">crocodiles</a>.
         We will also apply an
         <a href="@controllers.pages.help.routes.HelpController.introduction#filter-by-type">item
         type filter</a>, so that we narrow down our results to <strong>objects</strong>
@@ -73,28 +73,28 @@
 
       <p>
         We <a href="@controllers.pages.help.routes.HelpController.introduction#navigating-connections">mentioned
-        before</a> that because of Peripleo's networked data model, a single result does not necesarily
-        correspond to a single place. A literary work like &quot;The Histories&quot; is a prime
+        before</a> that a single result in the list does not necessarily mean a single
+        dot on the map. A literary work like &quot;The Histories&quot; is a prime
         example, as it contains references to hundreds of places.
       </p>
 
       <p>
-        What you see on the map, however, isn't all places mentioned in &quot;The Histories&quot;
+        What you see on the map, however, is not all of the places mentioned in &quot;The Histories&quot;
         either. It's only a small part of them. Yes, you guessed it: it's those places that
-        appear in the text in the vicinity of the term <strong>crocodiles</strong>.
+        appear in the vicinity of the term <strong>crocodiles</strong>.
       </p>
 
       <h2 id="snippets">Text Snippets</h2>
       <p>
-        Click on of the markers (or regions) on the map. The item details will show one or more
-        text snippets, relevant to the combination of the term <strong>crocodiles</strong> and
-        the place you selected.
+        Click one of the map markers (or regions). The item details box shows one or more
+        text snippets, based on the combination of the term <strong>crocodiles</strong> and
+        the <strong>place</strong> you selected.
       </p>
 
       <h3 id="source-links">Source Links</h3>
       <p>
-        If supported by the datasource, the snippets will include
-        links that lead back to the corresponding section in the source
+        If technically supported by the datasource, the snippets include
+        links that lead back directly to the corresponding section in the source
         environment. In case of our example above, the source of the text is Pelagios Commons'
         annotation environment <a href="http://recogito.pelagios.org" target="_blank">Recogito</a>
         which allows us to jump, for example, right into a
@@ -106,20 +106,20 @@
       <p>
         Entity-aware search also covers the case where your match is based on item metadata
         rather than the content. Try a search for
-        <a href="@controllers.routes.ApplicationController.ui()#q=herodotus">herodotus</a>.
+        <a href="@controllers.routes.ApplicationController.ui()#q=herodotus" target="_blank">herodotus</a>.
       </p>
 
       <img src="@routes.Assets.versioned("images/help/fulltext/herodotus.png")">
 
       <p>
-        You will notice that the map is now much more densely populated. That's because your
-        results include Herodotus' &quot;The Histories&quot; <strong>as a whole</strong>, with
+        The map is now much more densely populated. That's because your
+        results include Herodotus' &quot;The Histories&quot; <strong>as a whole</strong> - with
         all the places it mentions.
       </p>
 
       <p>
-        Click a map marker. Again, Peripleo will show text snippets relevant to the selected place.
-        Just without additional contextualization from a query term.
+        Click a marker. Again, Peripleo will show the text snippets relevant to the selected place.
+        However, this time without the additional contextualization from a query term.
       </p>
     </div>
   </div>
