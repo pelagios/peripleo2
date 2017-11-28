@@ -1,7 +1,6 @@
 require([], function() {
 
   jQuery(document).ready(function() {
-
     var form     = jQuery('form.create-embed'),
         input    = form.find('input'),
 

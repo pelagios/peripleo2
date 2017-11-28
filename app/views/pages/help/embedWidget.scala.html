@@ -18,33 +18,52 @@
   </div>
 
   @defining(request.getQueryString("url").getOrElse("http://pleiades.stoa.org/places/344448")) { itemURI =>
-    <div class="inner">
-	  <form class="create-embed">
-	    <label>Paste Identifier:
-		  <input type="text">
-		  <button class="btn" type="submit">Create Embed Code</button>
-	  </form>
+    <div class="section">
+  	  <div class="inner">
+        <p>
+          The <strong>Peripleo Widget</strong> provides an easy way to embed item information
+          on your website or blog.
+        </p>
+      </div>
+    </div>
 
-	  <div class="code-container">
-	    <code><!--
+    <div class="section">
+      <div class="inner preview">
+  	    <div class="preview-container">
+  	      <iframe
+  		      allowfullscreen="true"
+  		      src="@controllers.routes.ApplicationController.embed(itemURI).absoluteURL">
+  		    </iframe>
+  	    </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="inner">
+        <p>
+          Paste an item's <strong>identifier</strong> or <strong>web page URL</strong> into
+          the box below and copy the generated code into your page source.
+        </p>
+
+        <form class="create-embed">
+          <input type="text" /><!--
+          --><button class="btn" type="submit">Create Embed Code</button>
+        </form>
+
+
+
+    	  <div class="code-container">
+    	    <code><!--
 -->&lt;iframe
-allowfullscreen=&quot;true&quot;
-width=&quot;420&quot;
-height=&quot;280&quot;
-src=&quot;<span class="uri">@controllers.routes.ApplicationController.embed(itemURI).absoluteURL</span>&quot;&gt;
+  allowfullscreen=&quot;true&quot;
+  width=&quot;420&quot;
+  height=&quot;280&quot;
+  src=&quot;<span class="uri">@controllers.routes.ApplicationController.embed(itemURI).absoluteURL</span>&quot;&gt;
 &lt;/iframe&gt;<!--
-     --></code>
-	  </div>
-	</div>
-
-	<div class="inner preview">
-	  <div class="preview-container">
-	    <iframe
-		  allowfullscreen="true"
-		  src="@controllers.routes.ApplicationController.embed(itemURI).absoluteURL">
-		</iframe>
-	  </div>
-	 </div>
+       --></code>
+    	  </div>
+    	</div>
+    </div>
   }
 
   <script src="@routes.WebJarAssets.at(webjars.locate("require.min.js"))" data-main="@routes.Assets.versioned("javascripts/pages/help/embed.js")"></script>
