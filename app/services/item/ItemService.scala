@@ -71,7 +71,16 @@ class ItemService @Inject() (
         }
       }
     } map { _.as[(Item, Long)].headOption.map(_._1) }
-
+    
+  def findByHomepageURL(url: String) = 
+    es.client execute {
+      search in ES.PERIPLEO / ES.ITEM query {
+        constantScoreQuery {
+          filter ( termQuery("is_conflation_of.homepage" -> url) )
+        }
+      }
+    } map { _.as[(Item, Long)].headOption.map(_._1) }
+    
   def findByType(
     itemType : ItemType,
     rootOnly : Boolean = true,

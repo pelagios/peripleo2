@@ -8,21 +8,34 @@ require([], function() {
 
         preview  = jQuery('.preview-container'),
 
+        /** Shorthand **/
+        fetchItem = function(url) {
+          return jsRoutes.controllers.api.ItemAPIController.getItem(url).ajax();
+        },
+
         onSubmit = function() {
           var pushState = function(url) {
                 var pageUrl = window.location.protocol + '//' +
                       window.location.host +
-                      window.location.pathname + '?url=' + url;
+                      window.location.pathname + '?url=' + encodeURIComponent(url);
 
                 window.history.pushState({ path: pageUrl }, '', pageUrl);
               },
 
-              itemURI = input.val().replace('https://', 'http://'),
-              url = jsRoutes.controllers.ApplicationController.embed(itemURI).absoluteURL();
+              itemURL = input.val(); // .replace('https://', 'http://');
+              // url =
 
-          embedURI.html(url);
-          renderPreview(url);
-          pushState(itemURI);
+          fetchItem(itemURL).done(function(item) {
+            var id = item.is_conflation_of[0].uri,
+                embedURL = jsRoutes.controllers.ApplicationController.embed(id).absoluteURL();
+
+            embedURI.html(embedURL);
+            renderPreview(embedURL);
+            pushState(itemURL);
+          }).fail(function() {
+            console.log('not found');
+          });
+
           return false;
         },
 

@@ -2,7 +2,7 @@
 
 @views.html.pages.layout(
   "Peripleo Embed Widget",
-  "Instructions and code generator for embedding Peripleo content own Web pages.",
+  "The Peripleo Widget provides an easy way to embed item information on your website or blog.",
   "pages/help/index.css"
 ) {
   <div class="sidebar">
@@ -50,8 +50,6 @@
           --><button class="btn" type="submit">Create Embed Code</button>
         </form>
 
-
-
     	  <div class="code-container">
     	    <code><!--
 -->&lt;iframe
@@ -68,6 +66,7 @@
 
   <script src="@routes.WebJarAssets.at(webjars.locate("require.min.js"))" data-main="@routes.Assets.versioned("javascripts/pages/help/embed.js")"></script>
   @helper.javascriptRouter("jsRoutes")(
+    controllers.api.routes.javascript.ItemAPIController.getItem,
     controllers.routes.javascript.ApplicationController.embed
   )
 }

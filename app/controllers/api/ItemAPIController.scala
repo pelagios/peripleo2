@@ -26,8 +26,20 @@ class ItemAPIController @Inject() (
     (JsPath \ "snippets").write[Seq[String]]
   )(t => (t._1, t._2))
 
-  def getItem(identifier: String) = Action.async { implicit request =>
-    itemService.findByIdentifier(identifier).map {
+  /** For convenience, this method also allows the use of homepage URLs instead of identifiers **/ 
+  def getItem(idOrHomepage: String) = Action.async { implicit request =>
+    // Run first query immediately (val)
+    val fByIdentifier = itemService.findByIdentifier(idOrHomepage)
+    
+    // Only call by-homepage query if needed (def)
+    def fByHomepageURL = itemService.findByHomepageURL(idOrHomepage)
+    
+    val f = for {
+      a <- fByIdentifier
+      b <- if (a.isDefined) Future.successful(a) else fByHomepageURL
+    } yield (b)
+      
+    f.map {
       case Some(item) => jsonOk(Json.toJson(item))
       case None => NotFound
     }
