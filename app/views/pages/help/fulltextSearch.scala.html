@@ -8,8 +8,14 @@
   <div class="sidebar">
     <div class="inner">
       <ul class="help-topics">
-        <li> <a href="@controllers.pages.help.routes.HelpController.introduction">Introductory Tutorial</a></li>
-        <li><a href="@controllers.pages.help.routes.HelpController.fulltextSearch">Fulltext Search</a></li>
+        <li><a href="@controllers.pages.help.routes.HelpController.introduction">Introductory Tutorial</a></li>
+        <li>
+          <a href="@controllers.pages.help.routes.HelpController.fulltextSearch">Fulltext Search</a>
+          <ul class="sub-topics">
+            <li><a href="#what-is-entity-aware-search">Entity Aware Search</a></li>
+            <li><a href="#snippets">Text Snippets</a></li>
+          </ul>
+        </li>
         <!-- li><a href="@controllers.pages.help.routes.HelpController.relatedEntities">Exploring Related Entities</a></li -->
         <li><a href="@controllers.pages.help.routes.HelpController.linkedDataView">Linked Data View</a></li>
         <li><a href="@controllers.pages.help.routes.HelpController.embedWidget">Embed Widget</a></li>
@@ -29,22 +35,59 @@
         feature: <strong>Entity-Aware Fulltext Search</strong>.
       </p>
 
-      <h2>What is Entity-Aware Fulltext Search?</h2>
-      <p>
-        Coming soon... <!--First of all, literature search in Peripleo is <strong>fulltext-capable</strong>. That
-        means that you search inside the actual <strong>text content</strong> of the item, not
-        just in the metadata (title, blurb etc.). -->
+      <p class="note">
+        <strong>Note:</strong> Entity Aware Fulltext Search is currently an experimental feature.
+        We are still working on it. Expect the occasional hickup - and bear with us!
       </p>
 
-      <!--p>
-        So far for the conventional part. But thanks to Linked Data i, search in Peripleo is also what we
-        call <strong>entity-aware</strong>. This means that your search results reflect places
-        (and people) that occur <strong>in the vicinity of your fulltext search</strong>. Since you
-        won't usually find this behavior in other search interfaces, let's look at an example.
-      </p -->
+      <h2 id="what-is-entity-aware-search">What is Entity-Aware Fulltext Search?</h2>
+      <p>
+        First of all, literature search in Peripleo is <strong>fulltext-capable</strong>. That
+        means that you can search inside the actual <strong>text content</strong> of the item, not
+        just in the metadata (title, blurb etc.); and that the search results that are returned can
+        include the <strong>text snippets</strong> where your search matched the content.
+        So far for the conventional part.
+      </p>
+
+      <p>
+        Thanks to the entity tags, however, search results in Peripleo also reflect the
+        <strong>places</strong> (and people) that occur <strong>in the vicinity of your
+        search</strong>. Since you won't usually find this functionality in other applications,
+        let's look at an example.
+      </p>
 
       <img src="@routes.Assets.versioned("images/help/fulltext/crocodiles.png")">
 
+      <p>
+        Try a search for
+        <a href="@controllers.routes.ApplicationController.ui()#q=crocodiles">crocodiles</a>.
+        We will also apply an
+        <a href="@controllers.pages.help.routes.HelpController.introduction#filter-by-type">item
+        type filter</a>, so that we narrow down our results to <strong>objects</strong>
+        <span class="symbol object">&#xf219;</span>. In our example, the search returns a
+        single hit - &quot;The Histories&quot; by Herodotus. The map shows a number
+        of dots and regions.
+      </p>
+
+      <p>
+        We <a href="@controllers.pages.help.routes.HelpController.introduction#navigating-connections">mentioned
+        before</a> that because of Peripleo's networked data model, a single result does not necesarily
+        correspond to a single place. A literary work like &quot;The Histories&quot; is a prime
+        example, as it contains references to hundreds of places.
+      </p>
+
+      <p>
+        What you see on the map, however, isn't all places mentioned in &quot;The Histories&quot;
+        either. It's only a small part of them. Yes, you guessed it: it's only places that
+        appear in the text in the vicinity of the the term <strong>crocodiles</strong>.
+      </p>
+
+      <h2 id="snippets">Text Snippets</h2>
+      <p>
+        Coming soon...
+      </p>
     </div>
   </div>
+
+  <script src="@routes.WebJarAssets.at(webjars.locate("require.min.js"))" data-main="@routes.Assets.versioned("javascripts/pages/help/tutorial.js")"></script>
 }
