@@ -22,8 +22,7 @@ require([], function() {
                 window.history.pushState({ path: pageUrl }, '', pageUrl);
               },
 
-              itemURL = input.val(); // .replace('https://', 'http://');
-              // url =
+              itemURL = input.val();
 
           fetchItem(itemURL).done(function(item) {
             var id = item.is_conflation_of[0].uri,
@@ -31,9 +30,9 @@ require([], function() {
 
             embedURI.html(embedURL);
             renderPreview(embedURL);
-            pushState(itemURL);
+            pushState(id);
           }).fail(function() {
-            console.log('not found');
+            console.log('Not Found: ' + itemURL);
           });
 
           return false;

@@ -17,7 +17,9 @@
     </div>
   </div>
 
-  @defining(request.getQueryString("url").getOrElse("http://pleiades.stoa.org/places/344448")) { itemURI =>
+  @defining(request.getQueryString("url").map { url =>
+    java.net.URLDecoder.decode(url, "UTF-8")
+  }.getOrElse("http://pleiades.stoa.org/places/344448")) { itemURI =>
     <div class="section">
   	  <div class="inner">
         <p>
