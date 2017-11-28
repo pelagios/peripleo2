@@ -1,6 +1,7 @@
 package controllers
 
 import javax.inject.{Inject,Singleton}
+import play.api.http.HeaderNames
 import play.api.mvc.{Action,Controller}
 import scala.concurrent.{Future,ExecutionContext}
 import services.item.{ItemService,ItemType}
@@ -18,6 +19,8 @@ class ApplicationController @Inject() (
 ) extends Controller with HasVisitLogging {
 
   def landing = Action.async { implicit request =>
+    logPageView()
+    
     val fTimerange =
       searchService.getTimerange(SearchArgs(None, 0, 0, SearchFilters.NO_FILTERS, ResponseSettings.DEFAULT))
     val fDatasets =
@@ -39,7 +42,11 @@ class ApplicationController @Inject() (
   def embed(identifier: String) = Action.async { implicit request =>
     itemService.findByIdentifier(identifier).flatMap {
       case Some(item) =>
-        logEmbed(item)
+        // Don't log embeds requests coming from the splash page
+        val referrer = request.headers.get(HeaderNames.REFERER)
+        val splashURL = routes.ApplicationController.landing().absoluteURL()
+        if (referrer != Some(splashURL))
+          logEmbed(item)
         
         item.representativePoint match {
           case Some(geom) =>

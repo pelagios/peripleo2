@@ -5,11 +5,11 @@ import com.sksamuel.elastic4s.ElasticDsl._
 import com.sksamuel.elastic4s.source.Indexable
 import es.ES
 import javax.inject.{ Inject, Singleton }
+import org.joda.time.DateTime
 import play.api.Logger
 import play.api.libs.json.Json
 import scala.concurrent.{ Future, ExecutionContext }
 import services.Aggregation
-import org.joda.time.DateTime
 
 @Singleton
 class VisitService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
