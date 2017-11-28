@@ -10,19 +10,19 @@ class HelpController @Inject()(
   implicit val visitService: VisitService,
   implicit val webjars: WebJarAssets
 ) extends Controller with HasVisitLogging {
-  
+
   def index = Action { implicit request =>
     Redirect(routes.HelpController.introduction)
   }
-  
+
   def introduction = Action { implicit request =>
     logPageView()
     Ok(views.html.pages.help.introduction())
   }
-  
-  def fulltextSearch = Action { implicit request =>
+
+  def entityAwareSearch = Action { implicit request =>
     logPageView()
-    Ok(views.html.pages.help.fulltextSearch())
+    Ok(views.html.pages.help.entityAwareSearch())
   }
 
   def relatedEntities = Action { implicit request =>
@@ -39,5 +39,5 @@ class HelpController @Inject()(
     logPageView()
     Ok(views.html.pages.help.embedWidget())
   }
-  
+
 }

@@ -96,7 +96,7 @@ GET     /about                                       controllers.pages.about.Abo
 GET     /apidocs                                     controllers.pages.apidocs.APIDocsController.index
 
 GET     /help/introduction                           controllers.pages.help.HelpController.introduction
-GET     /help/fulltext-search                        controllers.pages.help.HelpController.fulltextSearch
+GET     /help/entity-aware-search                    controllers.pages.help.HelpController.entityAwareSearch
 GET     /help/related-entities                       controllers.pages.help.HelpController.relatedEntities
 GET     /help/linked-data-view                       controllers.pages.help.HelpController.linkedDataView
 GET     /help/embed                                  controllers.pages.help.HelpController.embedWidget

@@ -1,8 +1,8 @@
 @()(implicit request: RequestHeader, webjars: WebJarAssets)
 
 @views.html.pages.layout(
-  "Fulltext Search",
-  "Coming soon...",
+  "Entity-Aware Search",
+  "Learn how Peripleo's entity aware search enables you to explore geo-tagged literature.",
   "pages/help/index.css"
 ) {
   <div class="sidebar">
@@ -10,9 +10,9 @@
       <ul class="help-topics">
         <li><a href="@controllers.pages.help.routes.HelpController.introduction">Introductory Tutorial</a></li>
         <li>
-          <a href="@controllers.pages.help.routes.HelpController.fulltextSearch">Fulltext Search</a>
+          <a href="@controllers.pages.help.routes.HelpController.entityAwareSearch">Entity-Aware Search</a>
           <ul class="sub-topics">
-            <li><a href="#what-is-entity-aware-search">Entity-Aware Search</a></li>
+            <li><a href="#what-is-entity-aware-search">What is it?</a></li>
             <li><a href="#snippets">Text Snippets</a></li>
             <li><a href="#metadata-search">Search by Metadata</a></li>
           </ul>
