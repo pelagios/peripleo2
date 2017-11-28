@@ -1,7 +1,7 @@
 @()(implicit request: RequestHeader, webjars: WebJarAssets)
 
 @views.html.pages.layout(
-  "Entity-Aware Fulltext Search",
+  "Fulltext Search",
   "Coming soon...",
   "pages/help/index.css"
 ) {
@@ -10,7 +10,7 @@
       <ul class="help-topics">
         <li> <a href="@controllers.pages.help.routes.HelpController.introduction">Introductory Tutorial</a></li>
         <li><a href="@controllers.pages.help.routes.HelpController.fulltextSearch">Fulltext Search</a></li>
-        <li><a href="@controllers.pages.help.routes.HelpController.relatedEntities">Exploring Related Entities</a></li>
+        <!-- li><a href="@controllers.pages.help.routes.HelpController.relatedEntities">Exploring Related Entities</a></li -->
         <li><a href="@controllers.pages.help.routes.HelpController.linkedDataView">Linked Data View</a></li>
         <li><a href="@controllers.pages.help.routes.HelpController.embedWidget">Embed Widget</a></li>
       </ul>
@@ -19,7 +19,32 @@
 
   <div class="section">
     <div class="inner">
-      <p>Coming Soon...</p>
+      <p>
+        We are currently testing support for <strong>entity-tagged
+        text</strong> in Peripleo (text where references to places and people are tagged with
+        <a href="@controllers.pages.help.routes.HelpController.linkedDataView#linked-data">Linked
+        Data identifiers</a>). Thanks to the
+        <a href="@controllers.pages.help.routes.HelpController.introduction#navigating-connections">
+        networked nature of Peripleo's data model</a>, this allows us to introduce an exciting new
+        feature: <strong>Entity-Aware Fulltext Search</strong>.
+      </p>
+
+      <h2>What is Entity-Aware Fulltext Search?</h2>
+      <p>
+        Coming soon... <!--First of all, literature search in Peripleo is <strong>fulltext-capable</strong>. That
+        means that you search inside the actual <strong>text content</strong> of the item, not
+        just in the metadata (title, blurb etc.). -->
+      </p>
+
+      <!--p>
+        So far for the conventional part. But thanks to Linked Data i, search in Peripleo is also what we
+        call <strong>entity-aware</strong>. This means that your search results reflect places
+        (and people) that occur <strong>in the vicinity of your fulltext search</strong>. Since you
+        won't usually find this behavior in other search interfaces, let's look at an example.
+      </p -->
+
+      <img src="@routes.Assets.versioned("images/help/fulltext/crocodiles.png")">
+
     </div>
   </div>
 }
