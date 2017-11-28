@@ -14,7 +14,7 @@
         <li>
           <a href="@controllers.pages.help.routes.HelpController.linkedDataView">Linked Data View</a>
           <ul class="sub-topics">
-            <li><a href="#what-is-linked-data">Linked Data</a></li>
+            <li><a href="#linked-data">Linked Data</a></li>
             <li><a href="#underneath-the-hood">Underneath the Hood</a></li>
             <li><a href="#link-graph">The Link Graph</a></li>
             <li><a href="#record-details">Record Details</a></li>
@@ -30,7 +30,7 @@
       <p>
         Data in Peripleo comes from many sources. Our sources often publish
         information about the same real-world thing. A major historical place like
-        <a href="@controllers.routes.ApplicationController.ui()#selected=http%3A%2F%2Fpleiades.stoa.org%2Fplaces%2F423025">Rome</a>
+        <a href="@controllers.routes.ApplicationController.ui()#selected=http%3A%2F%2Fpleiades.stoa.org%2Fplaces%2F423025">Rome</a>,
         for example, does not just appear in one or two of our partners' datasets -
         it appears in many.
       </p>
@@ -45,9 +45,9 @@
       </p>
 
       <p>
-        Peripleo uses these links to <strong>connect equivalent records</strong>. Therefore, when 
-        you select a place in Peripleo, the information that you see - image, names, description, 
-        dates - is usually not from one specific authority. Instead, it is an <strong>aggregate of 
+        Peripleo uses these links to <strong>connect equivalent records</strong>. Therefore, when
+        you select a place in Peripleo, the information that you see - image, names, description,
+        dates - is usually not from one specific authority. Instead, it is an <strong>aggregate of
         information</strong>, published collectively by members of the Pelagios Commons community.
       </p>
 
@@ -65,21 +65,16 @@
         Magna</a>. The row of coloured codes you see at the bottom are a hint to the Linked Data
         nature of our information: each code is an <strong>identifier for Lepcis Magna
         in one of our partner datasets</strong>. What looks like a single entry for
-        Lepcis Magna in Peripleo, is actually the <strong>combination</strong> of these individual
-        partner records.
-      </p>
-
-      <p>
-        Click the <span class="char stroke7">&#xe616;</span> icon next to the coloured identifiers.
-        This opens the Linked Data View. It consists of the
-        <strong>link graph</strong> (left)  and the <strong>record details</strong> (right).
+        Lepcis Magna in Peripleo, is actually a <strong>combination</strong> of these individual
+        partner records. Click the <span class="char stroke7">&#xe616;</span> icon next to the
+        coloured identifiers to open the Linked Data View.
       </p>
 
       <img class="rounded" src="@routes.Assets.versioned("images/help/ldview/ld-view.png")">
 
       <h2 id="link-graph">The Link Graph</h2>
       <p>
-        The link graph shows how our individual records connect to each other.
+        The link graph (left side) shows how our individual partner records connect to each other:
         <a href="http://dare.ht.lu.se/places/21127" target="_blank">Lepcis Magna in the Digital Atlas of
         the Roman Empire</a>
         <span class="item-identifier dare"><a href="http://dare.ht.lu.se/places/21127" target="_blank">dare:21127</a></span>
@@ -97,28 +92,28 @@
 
       <h3>Exact vs. Close Match</h3>
       <p>
-        To indicate equivalence, Pelagios uses two different types of links: <strong>exact 
-        matches</strong> and <strong>close matches</strong>. (Technically, these types are defined 
+        To indicate equivalence, we use two different types of links: <strong>exact
+        matches</strong> and <strong>close matches</strong>. (Technically, these types are defined
         through a Linked Data vocabulary called
-        <a href="https://en.wikipedia.org/wiki/Simple_Knowledge_Organization_System">SKOS</a> - 
-        the Simple Knowledge Organization System.) An exact match (solid arrow) means that the records 
-        are conceptually identical. They represent the same thing in terms of geographical, cultural 
+        <a href="https://en.wikipedia.org/wiki/Simple_Knowledge_Organization_System">SKOS</a> -
+        the Simple Knowledge Organization System.) An exact match (solid arrow) means that the records
+        are conceptually identical. They represent the same thing in terms of geographical, cultural
         and temporal scope. A close match (dashed arrow) means that the records are pretty
-        close, but not necessarily the exact same thing. (Our partners use this type, among other
-        things, to connect an ancient place in their dataset to its modern successor in another.)
+        close, but not necessarily the exact same thing. Our partners use this link type (among other
+        things) to connect an ancient place in their dataset to its modern successor in another.
       </p>
 
       <h3>Indexed vs. External Records</h3>
       <p>
-        The cloured dots in the graph represent records that Peripleo has indexed.
-        White dots, on the other hand, are links to <strong>external datasets</strong>. Our partners
-        link to them in their records, but Peripleo does not currently harvest any further
-        information from them.
+        The cloured dots in the graph represent records that Peripleo has indexed, i.e. those that
+        are contained in our partner datasets. White dots, on the other hand, are links to
+        <strong>external sources</strong>. Our partners link to them in their records, but
+        Peripleo does not currently harvest any further information from them.
       </p>
 
       <h2 id="record-details">Record Details</h2>
       <p>
-        For records that include coordinates, the map shows colour coded markers. (Use the
+        For records that include coordinates, the map (right) shows colour coded markers. (Use the
         <span class="char icon">&#xf0c9;</span> button to switch base layers.) Underneath the map
         you will find the details for each individual record, as they were originally included in
         the source dataset.
@@ -126,12 +121,13 @@
 
       <p>
         You will notice that locations, as well as other data, will differ, depending which dataset
-        they come from. The power of Linked Data lies in the fact that this variety (and sometimes 
-        even contradiction) is not only possible, but perfectly ok. Peripleo's main interface conceals
-        much of this diversity for the sake of keeping the interaction simple. Therefore, be sure to 
-        always dig down into the Linked Data view - and follow up with he original sources -
+        they come from. The power of Linked Data lies in the fact that this variety (and sometimes
+        even contradiction) is not only possible, but perfectly ok! Peripleo's main interface conceals
+        much of this diversity for the sake of keeping the interaction simple. Therefore, be sure to
+        always dig down into the Linked Data view - and follow up on the original sources -
         when exploring Pelagios Commons.
       </p>
     </div>
   </div>
+  <script src="@routes.WebJarAssets.at(webjars.locate("require.min.js"))" data-main="@routes.Assets.versioned("javascripts/pages/help/tutorial.js")"></script>
 }
