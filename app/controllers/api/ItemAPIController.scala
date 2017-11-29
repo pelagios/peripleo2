@@ -8,7 +8,7 @@ import play.api.mvc.{Action, Controller}
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
 import scala.concurrent.{ExecutionContext, Future}
-import services.item.ItemService
+import services.item.{ItemService, ItemRecord}
 import services.item.reference.Reference
 import services.notification._
 import services.visit.VisitService
@@ -28,16 +28,28 @@ class ItemAPIController @Inject() (
 
   /** For convenience, this method also allows the use of homepage URLs instead of identifiers **/ 
   def getItem(idOrHomepage: String) = Action.async { implicit request =>
-    // Run first query immediately (val)
-    val fByIdentifier = itemService.findByIdentifier(idOrHomepage)
-    
-    // Only call by-homepage query if needed (def)
-    def fByHomepageURL = itemService.findByHomepageURL(idOrHomepage)
-    
+    // Run query by identifier immediately (normalize the id first) 
+    val fByIdentifier = itemService.findByIdentifier(ItemRecord.normalizeURI(idOrHomepage))
+        
+    // Homepage URLs are never normalized in the index - make sure we cover both http/https URLs
+    // We could do this with RegEx, but a second call, on demand, should be slightly faster
+    val modifiedHomepageURL = 
+      if (idOrHomepage.startsWith("http://"))
+        idOrHomepage.replace("http", "https")
+      else if (idOrHomepage.startsWith("https://"))
+        idOrHomepage.replace("https", "http")
+      else
+        idOrHomepage
+
+    def fByHomepageURL(url: String) = itemService.findByHomepageURL(url)
+        
     val f = for {
       a <- fByIdentifier
-      b <- if (a.isDefined) Future.successful(a) else fByHomepageURL
-    } yield (b)
+      b <- if (a.isDefined) Future.successful(a) else fByHomepageURL(idOrHomepage)
+      c <- if (b.isDefined) Future.successful(b) 
+           else if (idOrHomepage == modifiedHomepageURL) Future.successful(b)
+           else fByHomepageURL(modifiedHomepageURL)
+    } yield (c)
       
     f.map {
       case Some(item) => jsonOk(Json.toJson(item))
