@@ -1,0 +1,86 @@
+{
+   "links":{
+      "broad_matches":[
+         "http://www.geonames.org/2220431"
+      ],
+      "close_matches":[
+         "http://gazetteer.dainst.org/place/2124696",
+         "http://www.trismegistos.org/place/3135",
+         "http://pleiades.stoa.org/places/344377",
+         "http://www.livius.org/bn-bz/bu_njem/bu_njem1.html"
+      ]
+   },
+   "title":"Abu Njaym",
+   "geometry":{
+      "type":"MultiPoint",
+      "properties":{
+         "provenances":[
+            "Google Earth",
+            "Kenrick GPS",
+            "Geonames",
+            "Pleiades"
+         ]
+      },
+      "coordinates":[
+         [
+            15.412889,
+            30.578145
+         ],
+         [
+            15.4027724,
+            30.5764395
+         ],
+         [
+            15.39579,
+            30.58165
+         ],
+         [
+            15.406692,
+            30.596161
+         ]
+      ]
+   },
+   "uri":"http://www.slsgazetteer.org/658",
+   "id":658,
+   "names":[
+      {
+         "name":"Ab\u016b Nujaym"
+      },
+      {
+         "name":"Bu Ngem"
+      },
+      {
+         "name":"Bu Njem"
+      },
+      {
+         "name":"B\u016b Nujaym"
+      },
+      {
+         "name":"Bu-Ngem"
+      },
+      {
+         "name":"Chol"
+      },
+      {
+         "name":"Gholaia"
+      },
+      {
+         "name":"Golaia"
+      },
+      {
+         "name":"Golas"
+      },
+      {
+         "name":"Ngem"
+      },
+      {
+         "name":"Qaryat Ab\u016b Nujaym"
+      }
+   ],
+   "type":"Feature",
+   "properties":{
+      "types":[
+         "Settlement"
+      ]
+   }
+}

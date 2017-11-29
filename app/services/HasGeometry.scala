@@ -50,5 +50,9 @@ trait HasGeometry {
         Json.toJson(Seq(c.x, c.y))
       }
     )
+    
+  protected def parseSafe(json: JsValue) =
+    // TODO make this method safe
+    Json.fromJson[Geometry](json)
 
 }
