@@ -9,6 +9,8 @@
     <div class="inner">
       <ul class="help-topics">
         <li><a href="@controllers.pages.help.routes.HelpController.introduction">Introductory Tutorial</a></li>
+        <!-- li><a href="@controllers.pages.help.routes.HelpController.relatedEntities">Exploring Related Entities</a></li -->
+        <li><a href="@controllers.pages.help.routes.HelpController.linkedDataView">Linked Data View</a></li>
         <li>
           <a href="@controllers.pages.help.routes.HelpController.entityAwareSearch">Entity-Aware Search</a>
           <ul class="sub-topics">
@@ -17,8 +19,6 @@
             <li><a href="#metadata-search">Search by Metadata</a></li>
           </ul>
         </li>
-        <!-- li><a href="@controllers.pages.help.routes.HelpController.relatedEntities">Exploring Related Entities</a></li -->
-        <li><a href="@controllers.pages.help.routes.HelpController.linkedDataView">Linked Data View</a></li>
         <li><a href="@controllers.pages.help.routes.HelpController.embedWidget">Embed Widget</a></li>
       </ul>
     </div>
@@ -44,11 +44,11 @@
 
       <h2 id="what-is-entity-aware-search">What is Entity-Aware Search?</h2>
       <p>
-        First of all, search in Peripleo is <strong>fulltext-capable</strong>. That
-        means that you can search the actual <strong>text content</strong> of an item, not
-        just the metadata (title, blurb etc.); and that search results that are returned based on a
-        fulltext match will include <strong>preview text snippets</strong>.
-        So far for the conventional part.
+        First off, search in Peripleo is <strong>fulltext-capable</strong>. That
+        means if the item is a text (e.g. a work of literature), search will cover the
+        <strong>text content</strong> as well, not just the metadata (title, blurb etc.).
+        Search results that are returned based on a fulltext match will
+        include <strong>preview text snippets</strong>. So far for the conventional part.
       </p>
 
       <p>

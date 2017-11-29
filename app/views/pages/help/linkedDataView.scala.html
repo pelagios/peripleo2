@@ -9,7 +9,6 @@
     <div class="inner">
       <ul class="help-topics">
         <li><a href="@controllers.pages.help.routes.HelpController.introduction">Introductory Tutorial</a></li>
-        <li><a href="@controllers.pages.help.routes.HelpController.entityAwareSearch">Entity-Aware Search</a></li>
         <!-- li><a href="@controllers.pages.help.routes.HelpController.relatedEntities">Exploring Related Entities</a></li -->
         <li>
           <a href="@controllers.pages.help.routes.HelpController.linkedDataView">Linked Data View</a>
@@ -20,6 +19,7 @@
             <li><a href="#record-details">Record Details</a></li>
           </ul>
         </li>
+        <li><a href="@controllers.pages.help.routes.HelpController.entityAwareSearch">Entity-Aware Search</a></li>
         <li><a href="@controllers.pages.help.routes.HelpController.embedWidget">Embed Widget</a></li>
       </ul>
     </div>
@@ -62,7 +62,7 @@
       <p>
         Let's start by selecting the place
         <a href="@controllers.routes.ApplicationController.ui()#selected=http%3A%2F%2Fpleiades.stoa.org%2Fplaces%2F344448" target="_blank">Lepcis
-        Magna</a>. The row of coloured codes you see at the bottom are a hint to the Linked Data
+        Magna</a>. The coloured codes you see at the bottom are a hint to the Linked Data
         nature of our information: each code is an <strong>identifier for Lepcis Magna
         in one of our partner datasets</strong>. What looks like a single entry for
         Lepcis Magna in Peripleo, is actually a <strong>combination</strong> of these individual
