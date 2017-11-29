@@ -143,7 +143,6 @@ abstract class BaseImporter(itemService: ItemService) {
 
   /** Conflates a list of M records into N items (with N <= M), depending on how they are connected **/
   private def conflate(normalizedRecords: Seq[ItemRecord], items: Seq[Item] = Seq.empty[Item]): Seq[Item] = {
-
     // Conflates a single record
     def conflateOneRecord(r: ItemRecord, i: Seq[Item]): Seq[Item] = {
       val connectedItems = i.filter(_.isConflationOf.exists(_.isConnectedWith(r)))
@@ -161,6 +160,7 @@ abstract class BaseImporter(itemService: ItemService) {
 
   /** Imports a single item record and connected references **/
   protected def importRecord(tuple: (ItemRecord, Seq[UnboundReference])): Future[Boolean] = tuple match { case (record, references) =>
+    val startTime = System.currentTimeMillis
 
     // Helper to attach references to their matching parent items **/
     def groupReferences(items: Seq[(Item, Option[Long])], unbound: Seq[UnboundReference]): Seq[ItemWithUnboundReferences] =
@@ -173,8 +173,7 @@ abstract class BaseImporter(itemService: ItemService) {
     // Fetches affected items from the index and computes the new conflation
     def reconflateItems(normalizedRecord: ItemRecord, references: Seq[UnboundReference]): Future[(Seq[ItemWithReferences], Seq[ItemWithUnboundReferences])] = {
 
-      // val startTime = System.currentTimeMillis
-      getAffectedItems(normalizedRecord).map(i => {
+      getAffectedItems(normalizedRecord).map { i =>
 
         // Sorted affected items by no. of records
         val affectedItems = i.sortBy(- _.item.isConflationOf.size)
@@ -211,29 +210,30 @@ abstract class BaseImporter(itemService: ItemService) {
 
         val conflatedReferences = affectedItems.flatMap(_.references).map(_.unbind) ++ references
 
-        // Pass back places before and after conflation
+        // Pass back items before and after conflation
         (affectedItems, groupReferences(conflatedItems, conflatedReferences))
-      })
-
+      }
     }
 
     // Deletes items that will be merged into other items from the index
     def deleteMergedItems(itemsBefore: Seq[ItemWithReferences], itemsAfter: Seq[ItemWithUnboundReferences]): Future[Seq[UUID]] = {
       // val startTime = System.currentTimeMillis
+      
+      // List of associations (Record URI -> Parent Item docId) before conflation
+      val recordToParentMappingBefore = itemsBefore.flatMap(i =>
+        i.item.isConflationOf.map(record => (record.uri, i.item.docId)))
+
+      // List of associations (Record URI -> Parent Item docId) after conflation
+      val recordToParentMappingAfter = itemsAfter.flatMap(i =>
+        i.item.isConflationOf.map(record => (record.uri, i.item.docId)))
+
+      // We need to delete all items that appear before, but not after the conflation
+      val docIdsBefore = recordToParentMappingBefore.map(_._2).distinct
+      val docIdsAfter = recordToParentMappingAfter.map(_._2).distinct
+
+      val toDelete = docIdsBefore diff docIdsAfter
+      
       Future.sequence {
-        // List of associations (Record URI -> Parent Item docId) before conflation
-        val recordToParentMappingBefore = itemsBefore.flatMap(i =>
-          i.item.isConflationOf.map(record => (record.uri, i.item.docId)))
-
-        // List of associations (Record URI -> Parent Item docId) after conflation
-        val recordToParentMappingAfter = itemsAfter.flatMap(i =>
-          i.item.isConflationOf.map(record => (record.uri, i.item.docId)))
-
-        // We need to delete all items that appear before, but not after the conflation
-        val docIdsBefore = recordToParentMappingBefore.map(_._2).distinct
-        val docIdsAfter = recordToParentMappingAfter.map(_._2).distinct
-
-        val toDelete = docIdsBefore diff docIdsAfter
         toDelete.map(docId => itemService.deleteById(docId).map(success => (docId, success)))
       } map { failed =>
         // Logger.debug("Deleting merged items took " + (System.currentTimeMillis - startTime))
@@ -242,13 +242,12 @@ abstract class BaseImporter(itemService: ItemService) {
     }
 
     // Stores the newly conflated items in the index
-    def storeUpdatedItems(itemsAfter: Seq[ItemWithUnboundReferences]): Future[Seq[ItemWithUnboundReferences]] = {
+    def storeUpdatedItems(itemsAfter: Seq[ItemWithUnboundReferences]): Future[Seq[ItemWithUnboundReferences]] =
       Future.sequence {
         itemsAfter.map(i => insertOrUpdateItem(i).map((i, _)))
       } map { failed =>
         failed.filter(!_._2).map(_._1)
       }
-    }
 
     val f = for {
       (itemsBefore, itemsAfter) <- reconflateItems(ItemRecord.normalize(record), references.map(_.normalize))
@@ -259,7 +258,16 @@ abstract class BaseImporter(itemService: ItemService) {
       referencesRewritten <- itemService.rewriteReferencesTo(itemsBefore.map(_.item), itemsAfter.map(_.item))
     } yield referencesRewritten
 
-    f.recover { case t: Throwable =>
+    f.map { success =>
+      val took = System.currentTimeMillis - startTime
+      if (took > 1000) {
+        Logger.info(s"Indexing ${tuple._1.uri} took ${took} ms")
+        
+        // Give ElasticSearch a break, or it will... break 
+        Thread.sleep(5000) 
+      }
+      success 
+    }.recover { case t: Throwable =>
       t.printStackTrace()
       false
     }
