@@ -61,8 +61,11 @@ require([], function() {
         },
 
         onStoreJSON = function() {
-          var json = code.html().replace(/<br>/g, ''),
-
+          var json = code.html()
+                .replace(/<br>/g, '')
+                .replace(/<div>/g, '')
+                .replace(/<\/div>/g, ''),
+                
               // Minimal validation
               validationError = (function() {
                 try {
