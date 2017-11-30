@@ -162,7 +162,7 @@ trait ReferenceService { self: ItemService =>
           bool {
             must ( clauses )
           }
-        } highlighting (
+        } size offset limit limit highlighting (
           highlight field "quote.context" fragmentSize 200
         )
       } map { response =>

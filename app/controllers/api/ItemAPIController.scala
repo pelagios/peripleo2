@@ -70,7 +70,7 @@ class ItemAPIController @Inject() (
     * Optionally, filtered by destination URL or query phrase (applied to the reference context)
     */
   def getReferences(identifier: String, to: Option[String], query: Option[String], offset: Int, limit: Int) = Action.async { implicit request =>
-    itemService.getReferences(identifier, to, query).map { refs =>
+    itemService.getReferences(identifier, to, query, offset, limit).map { refs =>
       jsonOk(Json.toJson(refs))
     }
   }
