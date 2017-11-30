@@ -10,7 +10,7 @@ GET     /favicon.ico                                 controllers.Assets.at(path=
 # Admin
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-GET     /admin/datasets/annotations                  controllers.admin.datasets.AnnotationsAdminController.index
+GET     /admin/datasets/annotations                  controllers.admin.datasets.AnnotationsAdminController.index(p: Option[Int])
 POST    /admin/datasets/annotations                  controllers.admin.datasets.AnnotationsAdminController.importData
 DELETE  /admin/datasets/annotations/:id              controllers.admin.datasets.AnnotationsAdminController.deleteDataset(id: String)
 GET     /admin/datasets/geodata                      controllers.admin.datasets.GeodataAdminController.index

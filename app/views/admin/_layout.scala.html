@@ -22,7 +22,7 @@
 
           <ul class="submenu">
             <li>
-              <a @if(activeTab == "annotations") { class="active" } href="@controllers.admin.datasets.routes.AnnotationsAdminController.index">
+              <a @if(activeTab == "annotations") { class="active" } href="@controllers.admin.datasets.routes.AnnotationsAdminController.index(None)">
                 <span class="label">Annotations</span>
               </a>
             </li>

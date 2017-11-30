@@ -17,6 +17,7 @@ import play.api.mvc.MultipartFormData
 import play.api.mvc.MultipartFormData.FilePart
 import play.api.libs.Files
 import scala.concurrent.{ ExecutionContext, Future }
+import services.Sort
 import services.item._
 import services.item.importers.DatasetImporter
 import services.item.search.SearchService
@@ -41,9 +42,19 @@ class AnnotationsAdminController @Inject() (
 ) extends BaseAuthorityAdminController(new DatasetImporter(itemService, ItemType.DATASET.ANNOTATIONS))
   with HasDatasetStats
   with I18nSupport {
+  
+  private val PAGE_SIZE = 20
 
-  def index = AsyncStack(AuthorityKey -> Role.ADMIN) { implicit request =>
-    itemService.findByType(ItemType.DATASET).flatMap { datasets =>
+  def index(page: Option[Int]) = AsyncStack(AuthorityKey -> Role.ADMIN) { implicit request =>
+    val offset = page.map(p => (Math.max(1, p) - 1) * PAGE_SIZE).getOrElse(0)
+    
+    itemService.findByType(
+      ItemType.DATASET,
+      true,
+      offset,
+      PAGE_SIZE,
+      Some(Sort.ALPHABETICAL)
+    ).flatMap { datasets =>
       addStats(datasets)
     } map { page => Ok(views.html.admin.datasets.annotations(page)) }
   }
@@ -87,7 +98,7 @@ class AnnotationsAdminController @Inject() (
 
         }
 
-        Redirect(routes.AnnotationsAdminController.index)
+        Redirect(routes.AnnotationsAdminController.index(None))
 
       case None => BadRequest
     }
@@ -159,7 +170,7 @@ class AnnotationsAdminController @Inject() (
               else 
                 importIntoAuthority(filepart, itemType, pathHierarchy, loggedIn.username)
               
-              Redirect(routes.AnnotationsAdminController.index)
+              Redirect(routes.AnnotationsAdminController.index(None))
               
             case None => NotFound
           }
@@ -222,7 +233,7 @@ class AnnotationsAdminController @Inject() (
             None)
 
           importer.importRecord(record).map { success =>
-            if (success) Redirect(controllers.admin.datasets.routes.AnnotationsAdminController.index())
+            if (success) Redirect(controllers.admin.datasets.routes.AnnotationsAdminController.index(None))
             else InternalServerError
           }
         }
