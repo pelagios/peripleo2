@@ -1,12 +1,28 @@
 define([], function() {
 
-  var STYLE = {
+  var BASE_STYLE = {
         color       : '#a64a40',
-        opacity     : 1,
+        opacity     : 1
+      },
+
+      POLY_STYLE = jQuery.extend({}, BASE_STYLE, {
         fillColor   : '#ff0000',
         fillOpacity : 0.08,
         weight      : 0.7
-      },
+      }),
+
+      POINT_STYLE = jQuery.extend({}, BASE_STYLE, {
+        radius: 4,
+        fillColor   : '#e75444',
+        fillOpacity : 1,
+        weight      : 1.5
+      }),
+
+      STYLE = jQuery.extend({}, POLY_STYLE, {
+        pointToLayer: function(f, latlng) {
+          return L.circleMarker(latlng, POINT_STYLE);
+        }
+      }),
 
       FIT_OPTIONS = {
         paddingTopLeft: [440, 20],
