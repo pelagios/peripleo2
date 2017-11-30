@@ -71,12 +71,7 @@ html, body {
 .inner {
   position:relative;
   margin:0 auto;
-  width:860px;
-}
-
-.phonetic {
-  font-style:normal;
-  font-family:"Times New Roman", Times, serif;
+  width:820px;
 }
 
 .section {
@@ -91,16 +86,44 @@ html, body {
   }
 
   p {
-    padding:10px 0 0 0;
-    font-size:19px;
+    padding:10px 0 25px 0;
+    font-size:21px;
     color:@standard-type;
     margin:10px auto;
     line-height:150%;
-    width:90%;
   }
 
-  a { color:@nightsky; }
+  a {
+    color:@nightsky;
+    text-decoration:none;
+  }
 
+  a:hover {
+    text-decoration:underline;
+  }
+
+}
+
+.section .inner.footnote {
+
+  p {
+    display:inline;
+    font-size:16px;
+    border-top:1px solid @standard-type;
+  }
+
+}
+
+.phonetic {
+  font-style:normal;
+  font-family:"Times New Roman", Times, serif;
+}
+
+img.pelagios-logo-big {
+  width:170px;
+  height:170px;
+  opacity:0.8;
+  padding-top:20px;
 }
 
 .section.top-item {

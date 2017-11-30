@@ -60,28 +60,33 @@
     <div class="section intro">
       <div class="inner">
         <p>
-          Peripleo is a search engine to data maintained by partners of
+          Peripleo<sup>1</sup> is a search engine to data maintained by partners of
           <a href="http://commons.pelagios.org" target="_blank">Pelagios Commons</a>, a Digital
           Humanities initative aiming to foster better linkages between online resources documenting
           the past.
         </p>
+      </div>
 
-        <p class="footnote">
-          <sup>1</sup> <em class="phonetic">[periˈpleo]</em>. Ancient Greek for &laquo;to sail
-          (or swim) around&raquo; in the sense of exploration or discovery.
+      <div class="inner footnote">
+        <p>
+          <sup>1</sup> <em class="phonetic">[periˈpleo]</em>. Ancient Greek for <em>&laquo;to sail
+          (or swim) around&raquo;</em> in the sense of exploration or discovery.
         </p>
       </div>
     </div>
 
-    <!-- div class="section what">
+    <img class="pelagios-logo-big" src="@routes.Assets.versioned("images/pelagios-logo-big.png")">
+
+    <div class="section what">
       <div class="inner">
-        <h2>Places &middot; Objects &middot; Time Periods</h2>
         <p>
-          We are a global community of scholars, projects and institutions who curate a
-          variety datasets
+          Explore data about ancient places and objects published by our global community
+          of scholars, projects and institutions.
+          <a href="@controllers.pages.about.routes.AboutController.index">See who
+          contributes data to Peripleo</a>.
         </p>
       </div>
-    </div-->
+    </div>
 
     @topItemId.map { identifier =>
       <div class="section top-item">
