@@ -8,7 +8,7 @@ import play.api.test.Helpers._
 import play.api.libs.json.Json
 import helpers.TestHelpers
 
-class HasGeometrySpec extends PlaySpec with TestHelpers with HasGeometry {
+class HasGeometrySpec extends PlaySpec with TestHelpers with HasGeometrySafe {
  
   private val factory = 
  
@@ -23,7 +23,7 @@ class HasGeometrySpec extends PlaySpec with TestHelpers with HasGeometry {
       ))
 
       val json = Json.parse(loadTextfile("services/multipoint_geometry.json"))
-      val geom = parseSafe((json \\ "geometry").head)
+      val geom = Json.fromJson[Geometry]((json \\ "geometry").head)
       
       geom.isSuccess mustBe true
       geom.get mustBe expected

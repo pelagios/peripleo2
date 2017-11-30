@@ -7,7 +7,7 @@ import play.api.libs.json._
 
 trait HasGeometry {
 
-  private val DECIMAL_PRECISION = 12
+  protected val DECIMAL_PRECISION = 12
   
   implicit val geometryFormat: Format[Geometry] =
     Format(
@@ -51,8 +51,37 @@ trait HasGeometry {
       }
     )
     
-  protected def parseSafe(json: JsValue) =
-    // TODO make this method safe
-    Json.fromJson[Geometry](json)
+}
+
+trait HasGeometrySafe extends HasGeometry {
+
+  /** Utility method to perform data normalization on the geometry object. 
+    *
+    * It looks as if the GeoTools parser (as well as other Java parsers) 
+    * break when they encounter a geometry object that has more than the 
+    * mandatory 'type' and 'coordinates' fields. (At least I could reproducibly
+    * break parsing with a sample that had a 'properties' field with nested
+    * objects.)
+    * 
+    * This method filters the geometry object, so that only 'type' and 'coordinates'
+    * remain. 
+    */
+  private def safeGeometry(json: JsValue) = 
+    Json.obj(
+      "type" -> (json \ "type").get,
+      "coordinates" -> (json \ "coordinates").get)
+  
+  implicit override val geometryFormat: Format[Geometry] =
+    Format(
+      JsPath.read[JsValue].map { json =>
+        new GeometryJSON(DECIMAL_PRECISION).read(Json.stringify(safeGeometry(json)))
+      },
+      
+      Writes[Geometry] { geom =>
+        val writer = new StringWriter()
+        new GeometryJSON(DECIMAL_PRECISION).write(geom, writer)
+        Json.parse(writer.toString)
+      }
+    )
 
 }

@@ -6,7 +6,7 @@ import org.joda.time.DateTime
 import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
-import services.{ HasGeometry, HasNullableSeq }
+import services.{ HasGeometrySafe, HasNullableSeq }
 import services.item._
 import play.api.Logger
 
@@ -79,7 +79,7 @@ object GeoJSONLinks extends HasNullableSeq {
   
 }
 
-object GazetteerFeature extends HasGeometry with HasNullableSeq {
+object GazetteerFeature extends HasGeometrySafe with HasNullableSeq {
   
   implicit val gazetteerFeatureReads: Reads[GazetteerFeature] = (
     (JsPath \ "uri").read[String] and
