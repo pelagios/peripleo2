@@ -71,6 +71,7 @@ define([
               restore = function() {
                 if (request) {
                   // The state change triggered a search requeset - update UI when complete
+                  resultList.close();
                   return request.then(function(response) {
                     // If there are 'referencing' filters, resolve them from the response
 
@@ -156,6 +157,7 @@ define([
               asFilterSetting = { referencing: [ identifier ]};
 
           searchPanel.setLoading(true);
+          resultList.close();
           searchPanel.updateFilterIndicators({ filter: 'referencing', values: [{
             identifier: identifier,
             label: item.title,
@@ -166,6 +168,7 @@ define([
           // Clear the query phrase - but remember for later
           stashedQuery.set(state.getQueryPhrase());
           state.setQueryPhrase(false, NOOP);
+          state.setSelectedItem(false, false);
           state.updateFilters(asFilterSetting).done(function(response) {
             searchPanel.setLoading(false);
             searchPanel.setSearchResponse(response);
