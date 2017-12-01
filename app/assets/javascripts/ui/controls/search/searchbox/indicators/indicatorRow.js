@@ -75,7 +75,11 @@ define([
                 var toRemove = [];
 
                 filterSetting.values.forEach(function(v) {
-                  var matches = findByFilterType(filter, v.type);
+                  var matches =
+                        findByFilterType(filter, v.type).filter(function(indicator) {
+                          return !indicator.matches(filter, v);
+                        });
+
                   toRemove = toRemove.concat(matches);
                 });
 

@@ -91,10 +91,10 @@ define([
              onSubmit();
          },
 
-         /** Sets the query string WITHOUT FIRING A CHANGE EVENT **/
-         setQuery = function(query) {
-           if (query)
-             searchBoxInput.val(query);
+         /** Sets the search state WITHOUT FIRING A CHANGE EVENT **/
+         setSearch = function(search) {
+           if (search.query)
+             searchBoxInput.val(search.query);
            else
              searchBoxInput.val('');
          },
@@ -113,7 +113,7 @@ define([
     autocomplete.on('selectOption', onSelectOption);
 
     this.setLoading = setLoading;
-    this.setQuery = setQuery;
+    this.setSearch = setSearch;
     this.updateIndicators = updateIndicators;
     this.removeIndicators = removeIndicators;
     this.showTimefilterIndicator = indicatorRow.showTimefilterIndicator;

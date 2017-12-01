@@ -73,24 +73,27 @@ define([
                   // The state change triggered a search requeset - update UI when complete
                   return request.then(function(response) {
                     // If there are 'referencing' filters, resolve them from the response
+
                     if (state.search.filters.referencing && response.top_referenced) {
                       var filterSettings =
                         resolveReferences(state.search.filters.referencing, response.top_referenced);
-
                       filterSettings.forEach(searchPanel.updateFilterIndicators);
+                    } else {
+                      searchPanel.removeFilterIndicators('referencing');
                     }
 
                     updateAll(response);
                   });
                 } else {
                   // State change to an 'empty search' - clear UI
+                  searchPanel.setState(state);
                   resultList.close();
                   map.clear();
                 }
               };
 
           searchPanel.setLoading(true);
-          searchPanel.setState(state);
+          selectionPanel.hide();
           map.setState(state);
 
           // Need to set selection without triggering history recording

@@ -114,7 +114,7 @@ define([], function() {
         },
 
         expand = function(opt_progress) {
-          if (isCollapsed())
+          if (isCollapsed()) {
             element.addClass('open');
             element.removeClass('closed');
 
@@ -124,6 +124,7 @@ define([], function() {
               duration: COLLAPSE_DURATION,
               progress: opt_progress
             });
+          }
         },
 
         destroy = function() {
