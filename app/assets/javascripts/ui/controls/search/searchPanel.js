@@ -70,6 +70,7 @@ define([
          * - the open/closed state of the panel
          */
         setState = function(state) {
+          console.log(state);
           searchBox.setSearch(state.search);
           filterPane.setOpen(state.ui.filterPaneOpen);
         };

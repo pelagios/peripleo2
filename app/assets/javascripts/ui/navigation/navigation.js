@@ -25,9 +25,16 @@ define([
           new SelectActions(map, searchPanel, selectionPanel, resultList, state, stashedQuery),
 
         updateAll = function(response) {
+          var args = response.request_args;
+
+          // Always update search panel and result list
           searchPanel.setSearchResponse(response);
           resultList.setSearchResponse(response);
-          map.setSearchResponse(response);
+
+          // Don't update the map if there are filters - we're in drilldown mode
+          if (!args.filters || jQuery.isEmptyObject(args.filters))
+            map.setSearchResponse(response);
+            
           searchPanel.setLoading(false);
         },
 
@@ -82,15 +89,15 @@ define([
                     } else {
                       searchPanel.removeFilterIndicators('referencing');
                     }
-
                     updateAll(response);
                   });
                 } else {
                   // State change to an 'empty search' - clear UI
-                  searchPanel.setState(state);
                   resultList.close();
                   map.clear();
                 }
+
+                searchPanel.setState(state);
               };
 
           searchPanel.setLoading(true);

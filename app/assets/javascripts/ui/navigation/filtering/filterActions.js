@@ -3,20 +3,23 @@ define([], function() {
   var FilterActions = function(map, searchPanel, selectionPanel, resultList, state, stashedQuery) {
 
     var updateAll = function(response) {
+          var args = response.request_args;
+
+          // Always update search panel and result list
           searchPanel.setSearchResponse(response);
           resultList.setSearchResponse(response);
-          map.setSearchResponse(response);
+
+          // Don't update the map if there are filters - we're in drilldown mode
+          if (!args.filters || jQuery.isEmptyObject(args.filters))
+            map.setSearchResponse(response);
+
           searchPanel.setLoading(false);
         },
 
         /** Opening the filter pane triggers a new search **/
         onOpenFilterPane = function() {
           searchPanel.setLoading(true);
-          state.setFilterPaneOpen(true).done(function(response) {
-            // Neither result list nor map should change.
-            searchPanel.setSearchResponse(response);
-            searchPanel.setLoading(false);
-          });
+          state.setFilterPaneOpen(true).done(updateAll);
         },
 
         /** Closing the filter pane just updates state, but doesn't trigger a search **/
