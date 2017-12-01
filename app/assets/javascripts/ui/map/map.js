@@ -10,7 +10,8 @@ define([
 
         controls = jQuery(
           '<div class="map-controls">' +
-            '<div class="control filter-by-viewport"><span class="icon">&#xf0b0;</span></div>' +
+            '<a href="/" class="control home" title="Learn more"><span class="icon">&#xf015;</span></a>' +
+            '<div class="control filter-by-viewport" title="Filter by viewport"><span class="icon">&#xf0b0;</span></div>' +
             '<div class="control layers icon" title="Change base layer">&#xf0c9;</div>' +
             '<div class="zoom">' +
               '<div class="control zoom-in" title="Zoom in">+</div>' +
