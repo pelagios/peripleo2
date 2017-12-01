@@ -12,7 +12,11 @@ define([], function() {
         /** Opening the filter pane triggers a new search **/
         onOpenFilterPane = function() {
           searchPanel.setLoading(true);
-          state.setFilterPaneOpen(true).done(updateAll);
+          state.setFilterPaneOpen(true).done(function(response) {
+            // Neither result list nor map should change.
+            searchPanel.setSearchResponse(response);
+            searchPanel.setLoading(false);
+          });
         },
 
         /** Closing the filter pane just updates state, but doesn't trigger a search **/
