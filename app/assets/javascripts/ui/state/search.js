@@ -36,6 +36,20 @@ define([], function() {
           else return url;
         },
 
+        /** We require at a least a query phrase or a filter **/
+        isEmptyQuery = function() {
+          return !searchArgs.query && jQuery.isEmptyObject(searchArgs.filters);
+        },
+
+        createEmptyResponse = function() {
+          return {
+            total          : 0,
+            items          : [],
+            top_referenced : {},
+            request_args   : jQuery.extend({}, searchArgs)
+          };
+        },
+
         /** Builds the common parts of all query URLs **/
         buildBaseQuery = function(opt_limit) {
           var limit = (opt_limit) ? opt_limit : PAGE_SIZE,
@@ -122,7 +136,11 @@ define([], function() {
                 }).always(handlePending);
               };
 
-          if (busy) {
+          if (isEmptyQuery()) {
+            // Don't fire a query if it would resolve to an empty 'matchAll',
+            // return an empty placeholder instead
+            deferred.resolve(createEmptyResponse());
+          } else if (busy) {
             pendingRequest = { deferred: deferred, opt_settings: opt_settings };
           } else {
             busy = true;
