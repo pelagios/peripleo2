@@ -8,7 +8,9 @@ define([
 ], function(ItemUtils, LinkedDataView, FilterActions, SelectActions, StashedQuery, API) {
 
   /** Shorthand for a 'transient query' state update **/
-  var NOOP = { pushState: false, makeRequest: false };
+  var NOOP = { pushState: false, makeRequest: false },
+
+      SEPARATOR = '\u0007';
 
   var Navigation = function(map, searchPanel, selectionPanel, resultList, state) {
 
@@ -75,6 +77,21 @@ define([
                 });
               },
 
+              resolveDatasets = function(identifiers, aggregation) {
+                var idsAndLabels = aggregation.buckets.map(function(b) {
+                      return Object.keys(b)[0].split(SEPARATOR);
+                    }),
+
+                    values = identifiers.map(function(id) {
+                      var idAndLabel = idsAndLabels.find(function(arr) {
+                        return arr[0] === id;
+                      });
+                      return { id: idAndLabel[0], label: idAndLabel[1] };
+                    });
+
+                return { filter: 'datasets', values: values };
+              },
+
               /** Updates the remaining filter which don't need resolution, like 'references' **/
               updateSimpleFilters = function(response) {
                 var TYPE_LABELS = {
@@ -105,7 +122,6 @@ define([
                   resultList.close();
                   return request.then(function(response) {
                     // If there are 'referencing' filters, resolve them from the response
-
                     if (state.search.filters.referencing && response.top_referenced) {
                       var filterSettings =
                         resolveReferences(state.search.filters.referencing, response.top_referenced);
@@ -113,6 +129,16 @@ define([
                     } else {
                       searchPanel.removeFilterIndicators('referencing');
                     }
+
+                    // If there are datasets filters, also resolve them from the response
+                    if (state.search.filters.datasets) {
+                      var filterSetting = resolveDatasets(state.search.filters.datasets, response.aggregations.find(function(agg) {
+                        return agg.name === 'by_dataset';
+                      }));
+
+                      searchPanel.updateFilterIndicators(filterSetting);
+                    }
+
                     updateAll(response);
                     updateSimpleFilters(response);
                     searchPanel.setState(state);

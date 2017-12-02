@@ -31,6 +31,7 @@ define([], function() {
 
         addFilterIfDefined('referencing', true);
         addFilterIfDefined('types', false);
+        addFilterIfDefined('datasets', true);
 
         return {
           search: {
@@ -67,6 +68,7 @@ define([], function() {
       setIfDefined(state.search.query, 'q');
       setIfDefined(state.search.filters.referencing, 'referencing');
       setIfDefined(state.search.filters.types, 'types');
+      setIfDefined(state.search.filters.datasets, 'datasets');
       setIfDefined(state.search.timerange.from, 'from');
       setIfDefined(state.search.timerange.to, 'to');
       setIfDefined(state.selection, 'selected');
