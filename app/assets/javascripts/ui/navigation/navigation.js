@@ -34,7 +34,7 @@ define([
           // Don't update the map if there are filters - we're in drilldown mode
           if (!args.filters || jQuery.isEmptyObject(args.filters))
             map.setSearchResponse(response);
-            
+
           searchPanel.setLoading(false);
         },
 
@@ -75,6 +75,30 @@ define([
                 });
               },
 
+              /** Updates the remaining filter which don't need resolution, like 'references' **/
+              updateSimpleFilters = function(response) {
+                var TYPE_LABELS = {
+                      OBJECT  : 'Objects',
+                      PLACE   : 'Places',
+                      PERSON  : 'People',
+                      PERIOD  : 'Periods',
+                      DATASET : 'Datasets'
+                    },
+
+                    filters = response.request_args.filters;
+
+                if (filters) {
+                  // Restore types filter
+                  if (filters.types)
+                    searchPanel.updateFilterIndicators({
+                      filter: 'types',
+                      values: filters.types.map(function(t) {
+                        return { identifier: t, label: TYPE_LABELS[t] };
+                      })
+                    });
+                }
+              },
+
               restore = function() {
                 if (request) {
                   // The state change triggered a search requeset - update UI when complete
@@ -90,6 +114,7 @@ define([
                       searchPanel.removeFilterIndicators('referencing');
                     }
                     updateAll(response);
+                    updateSimpleFilters(response);
                   });
                 } else {
                   // State change to an 'empty search' - clear UI
