@@ -115,14 +115,14 @@ define([
                     }
                     updateAll(response);
                     updateSimpleFilters(response);
+                    searchPanel.setState(state);
                   });
                 } else {
                   // State change to an 'empty search' - clear UI
                   resultList.close();
                   map.clear();
+                  searchPanel.setState(state);
                 }
-
-                searchPanel.setState(state);
               };
 
           searchPanel.setLoading(true);
