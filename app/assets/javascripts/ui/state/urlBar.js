@@ -12,14 +12,8 @@ define([], function() {
             return (arg) ? decodeURIComponent(arg) : undefined;
           },
 
-          parseTimerange = function(opt_from, opt_to) {
-            var parseIfDefined = function(n) {
-                  return (n) ? parseInt(n) : false;
-                };
-
-            return (opt_from || opt_to) ?
-              { from: parseIfDefined(opt_from), to: parseIfDefined(opt_to) } :
-              false;
+          parseNumberIfDefined = function(n) {
+            return (n) ? parseInt(n) : false;
           },
 
           addFilterIfDefined = function(key, decode_arg) {
@@ -47,7 +41,10 @@ define([], function() {
           search: {
             query : segments.q,
             filters : filters,
-            timerange : parseTimerange(segments.from, segments. to),
+            timerange : {
+              from : parseNumberIfDefined(segments.from),
+              to   : parseNumberIfDefined(segments.to)
+            },
             settings : {
               timeHistogram    : segments.filters,
               termAggregations : segments.filters,

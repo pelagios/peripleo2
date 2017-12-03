@@ -66,7 +66,7 @@ define([
         histogramRange = false,
 
         /** Caches the selection range **/
-        selectionRange = false,
+        selectionRange = { from: false, to: false },
 
         /** Conversion function: x offset to year **/
         xToYear = function(x) {
@@ -84,9 +84,13 @@ define([
           return Math.round((year - histogramRange.from.getFullYear()) * pixelsPerYear);
         },
 
+        isSelectionRangeDefined = function() {
+          return selectionRange.from || selectionRange.to;
+        },
+
         /** Returns the currently selected time range **/
         getSelectedRange = function() {
-          if (!selectionRange && histogramRange) {
+          if (!isSelectionRangeDefined() && histogramRange) {
             var xFrom = Math.max(0, selectionBounds.position().left) - canvasOffset,
                 yearFrom = xToYear(xFrom),
 
@@ -108,7 +112,7 @@ define([
               posX = jQuery(e.target).position().left;
 
           // Clear cached range
-          selectionRange = false;
+          selectionRange = { from: false, to: false };
 
           if (e.target === fromHandle[0]) {
             // Left handle
@@ -173,7 +177,7 @@ define([
               toYear = xToYear(offsetX + width);
 
           // Clear cached range
-          selectionRange = false;
+          selectionRange = { from: false, to: false };
 
           fromHandleLabel.html(Formatting.formatYear(fromYear));
           fromHandleLabel.show();
@@ -182,6 +186,7 @@ define([
           toHandleLabel.html(Formatting.formatYear(toYear));
           toHandleLabel.show();
           toHandle.css('left', offsetX + width + canvasOffset);
+
 
           // getSelectedRange returns a ref to the global var - don't hand this outside!
           self.fireEvent('selectionChange', jQuery.extend({}, getSelectedRange()));
@@ -200,8 +205,8 @@ define([
         setSelection = function(from, to) {
           selectionRange = { from: from, to: to };
 
-          selectionNewFromX = Math.max(0, yearToX(from));
-          selectionNewToX = Math.min(yearToX(to + 1), canvasWidth);
+          selectionNewFromX = (from) ? Math.max(0, yearToX(from)) : 0;
+          selectionNewToX = (to) ? Math.min(yearToX(to + 1), canvasWidth) : canvasWidth;
 
           if (selectionNewFromX > selectionNewToX)
             selectionNewFromX = selectionNewToX;
@@ -279,7 +284,6 @@ define([
                   return date;
                 },
 
-                currentSelection = selected,
                 selectionNewFromX, selectionNewToX, // Updated selection bounds
                 maxValue = Math.max.apply(Math, resampled.map(getVal)),
                 minYear = toDate(getKey(resampled[0])),
@@ -291,6 +295,7 @@ define([
                 barWidth = barSpacing - 3;
 
             histogramRange = { from: minYear, to: maxYear };
+            setSelection(selected.from, selected.to);
 
             // Relabel
             histogramFromLabel.html(Formatting.formatYear(minYear));
@@ -318,12 +323,6 @@ define([
               ctx.stroke();
               xOffset += barSpacing;
             });
-
-            // Reset labels & selection
-            // histogramRange.from = minYear;
-            // histogramRange.to = maxYear;
-
-            setSelection(currentSelection.from, currentSelection.to);
 
             // We don't want to handle to many updates - introduce a wait
             // ignoreUpdates = true;

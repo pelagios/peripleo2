@@ -43,7 +43,15 @@ define([
 
         /** Updates all components with a new search response **/
         setSearchResponse = function(searchResponse) {
+          var timerange = searchResponse.request_args.timerange;
+
           filterPane.setSearchResponse(searchResponse);
+
+          // Normally, this will have set before in onTimerangeChange, but
+          // in case of restore from URL, onTimerangeChange doesn't happen
+          // So better make sure this is in sync
+          if (timerange.from || timerange.to)
+            searchBox.showTimefilterIndicator(timerange);
         },
 
         onClearAll = function() {
