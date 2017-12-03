@@ -213,7 +213,7 @@ define([
           toHandle.css('left', selectionNewToX + canvasOffset);
         },
 
-        update = function(buckets) {
+        update = function(buckets, selected) {
           if (buckets.length > 0) {
             var getKey = function(obj) {
                   return Object.keys(obj)[0];
@@ -279,7 +279,7 @@ define([
                   return date;
                 },
 
-                currentSelection = getSelectedRange(),
+                currentSelection = selected,
                 selectionNewFromX, selectionNewToX, // Updated selection bounds
                 maxValue = Math.max.apply(Math, resampled.map(getVal)),
                 minYear = toDate(getKey(resampled[0])),

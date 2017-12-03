@@ -62,10 +62,12 @@ define([
           if (response.aggregations) {
             var byTime = response.aggregations.find(function(agg) {
                   return agg.name === 'by_time';
-                });
+                }),
+
+                timerange = response.request_args.timerange;
 
             facetsPane.update(response.aggregations);
-            if (byTime) timeHistogram.update(byTime.buckets);
+            if (byTime) timeHistogram.update(byTime.buckets, timerange);
           }
 
           // Update footer
