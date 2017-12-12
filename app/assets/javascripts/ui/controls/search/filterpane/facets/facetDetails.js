@@ -1,7 +1,8 @@
 define([
   'ui/common/hasEvents',
-  'ui/common/formatting'
-], function(HasEvents, Formatting) {
+  'ui/common/formatting',
+  'ui/controls/search/filterpane/facets/longList'
+], function(HasEvents, Formatting, LongList) {
 
   var SLIDE_DURATION = 240,
 
@@ -83,13 +84,21 @@ define([
               },
 
               renderHasMore = function() {
-                table.append(
-                  '<tr>' +
-                    '<td></td>' +
-                    '<td class="more">+ ' +
-                      '<span class="label">' + (buckets.length - 3) + ' more</span>' +
-                    '</td>' +
-                  '</tr>');
+                var hasMore = jQuery(
+                      '<tr>' +
+                        '<td></td>' +
+                        '<td class="more">+ ' +
+                          '<span class="label">' + (buckets.length - 3) + ' more</span>' +
+                        '</td>' +
+                      '</tr>'),
+
+                    openLongList = function() {
+                      new LongList(buckets);
+                      return false;
+                    };
+
+                hasMore.find('.label').click(openLongList);
+                table.append(hasMore);
               };
 
           table.empty();
@@ -125,13 +134,14 @@ define([
           var li = jQuery(e.target).closest('tr'),
               path = li.data('path');
 
-          self.fireEvent('setFilter', {
-            filter: FILTER_NAMES[facetDimension],
-            values: [{
-              identifier: path[path.length - 1].id,
-              label: toLabel(path)
-            }]
-          });
+          if (path)
+            self.fireEvent('setFilter', {
+              filter: FILTER_NAMES[facetDimension],
+              values: [{
+                identifier: path[path.length - 1].id,
+                label: toLabel(path)
+              }]
+            });
         };
 
     parentEl.on('click', 'tr', onSetFilter);
