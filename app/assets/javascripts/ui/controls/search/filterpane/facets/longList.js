@@ -50,10 +50,6 @@ define([
               };
 
           modal.draggable({ handle: element.find('.facet-longlist-header') });
-          // modal.css('top', modal.offset().top);
-
-          console.log(modal.offset());
-
           buckets.forEach(renderRow);
           element.find('.close').click(close);
         };
