@@ -11,7 +11,9 @@ define([
 
   var LongList = function(dimension, buckets) {
 
-    var element = jQuery(
+    var self = this,
+
+        element = jQuery(
           '<div class="clicktrap">' +
             '<div class="modal-wrapper facet-longlist-wrapper">' +
               '<div class="modal facet-longlist">' +
@@ -47,7 +49,8 @@ define([
                     pcnt = Math.max(60  * bucket.count / maxCount, 3),
 
                     onClick = function() {
-                      console.log('setting filter');                      
+                      self.fireEvent('setFilter', bucket.path);
+                      close();
                     };
 
                 bar.css('width', pcnt + '%');

@@ -88,7 +88,8 @@ define([
                       '</tr>'),
 
                     openLongList = function() {
-                      new LongList(dimension, buckets);
+                      var longList = new LongList(dimension, buckets);
+                      longList.on('setFilter', onSetFilter);
                       return false;
                     };
 
@@ -125,21 +126,25 @@ define([
             parentEl.velocity('slideDown', { duration: SLIDE_DURATION });
         },
 
-        onSetFilter = function(e) {
+        onSelect = function(e) {
           var li = jQuery(e.target).closest('tr'),
               path = li.data('path');
 
           if (path)
-            self.fireEvent('setFilter', {
-              filter: FILTER_NAMES[facetDimension],
-              values: [{
-                identifier: path[path.length - 1].id,
-                label: Formatting.formatPath(path)
-              }]
-            });
+            onSetFilter(path);
+        },
+
+        onSetFilter = function(path) {
+          self.fireEvent('setFilter', {
+            filter: FILTER_NAMES[facetDimension],
+            values: [{
+              identifier: path[path.length - 1].id,
+              label: Formatting.formatPath(path)
+            }]
+          });
         };
 
-    parentEl.on('click', 'tr', onSetFilter);
+    parentEl.on('click', 'tr', onSelect);
 
     this.toggle = toggle;
     this.update = update;
