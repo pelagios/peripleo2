@@ -12,11 +12,6 @@ define([
       FILTER_NAMES = {
         sources : 'datasets',
         topics  : 'categories'
-      },
-
-      /** Shorthand to fetch labels from a path **/
-      toLabel = function(path) {
-        return path.map(function(segment) { return segment.label; }).join('\u0007');
       };
 
   var FacetDetails = function(parentEl) {
@@ -74,12 +69,12 @@ define([
           percentages.reduce(renderSegment, 25); // Initial offset 25% counter-clockwise = 12 o'clock position
         },
 
-        renderTable = function(buckets) {
+        renderTable = function(dimension, buckets) {
           var renderRow = function(bucket) {
                 var tr = jQuery('<tr><td class="count"></td><td class="label"></td></tr>');
                 tr.data('path', bucket.path);
                 tr.find('.count').html(Formatting.formatNumber(bucket.count));
-                tr.find('.label').html(toLabel(bucket.path).replace('\u0007', '<span class="separator"></span>'));
+                tr.find('.label').html(Formatting.formatPath(bucket.path).replace('\u0007', '<span class="separator"></span>'));
                 table.append(tr);
               },
 
@@ -93,7 +88,7 @@ define([
                       '</tr>'),
 
                     openLongList = function() {
-                      new LongList(buckets);
+                      new LongList(dimension, buckets);
                       return false;
                     };
 
@@ -119,7 +114,7 @@ define([
 
           facetDimension = dimension;
 
-          renderTable(buckets);
+          renderTable(dimension, buckets);
           renderDonut(percentages);
         },
 
@@ -139,7 +134,7 @@ define([
               filter: FILTER_NAMES[facetDimension],
               values: [{
                 identifier: path[path.length - 1].id,
-                label: toLabel(path)
+                label: Formatting.formatPath(path)
               }]
             });
         };

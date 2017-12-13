@@ -43,6 +43,11 @@ define([], function() {
       } else {
         return url;
       }
+    },
+
+    /** Shorthand to fetch labels from a path **/
+    formatPath : function(path) {
+      return path.map(function(segment) { return segment.label; }).join('\u0007');
     }
 
   };

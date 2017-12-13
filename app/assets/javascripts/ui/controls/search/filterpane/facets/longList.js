@@ -3,53 +3,66 @@ define([
   'ui/common/formatting'
 ], function(HasEvents, Formatting) {
 
-  var LongList = function(buckets) {
+  var ROW_TEMPLATE =
+        '<div class="meter">' +
+          '<div class="bar"></div>' +
+          '<div class="label"></div>' +
+        '</div>';
+
+  var LongList = function(dimension, buckets) {
 
     var element = jQuery(
           '<div class="clicktrap">' +
             '<div class="modal-wrapper facet-longlist-wrapper">' +
               '<div class="modal facet-longlist">' +
                 '<div class="modal-header facet-longlist-header">' +
-                  '<h2>...</h2>' + // TODO
+                  '<h2>' + buckets.length +' ' + dimension + '</h2>' +
                   '<button class="icon tonicons close">&#xe897;</button>' +
                 '</div>' +
                 '<div class="modal-body facet-longlist-body">' +
-                  // TODO
+                  '<ul></ul>' +
                 '</div>' +
               '</div>' +
             '</div>' +
           '</div>').appendTo(document.body),
 
-        createMeter = function() {
+        list = element.find('ul'),
 
-        },
+        maxCount = buckets[0].count,
 
         init = function() {
 
-          var modal = element.find('.facet-longlist'),
-
-              close = function() {
+          var close = function() {
                 element.remove();
               },
 
               renderRow = function(bucket) {
-                console.log(bucket);
+                var row = jQuery(ROW_TEMPLATE),
 
-                /*
-                var label = (val.label) ? val.label : val.value,
-                tooltip = Formatting.formatNumber(val.count) + ' Results',
-                percentage = 100 * val.count / maxCount,
-                li = Formatting.createMeter(label, tooltip, percentage);
+                    bar = row.find('.bar'),
 
-                li.addClass('selected');
-                li.attr('data-value', val.value);
-                li.prepend('<span class="icon selection-toggle">&#xf046;</span>');
-                li.click(function() { toggle(li); });
-                list.append(li);
-                */
+                    label = row.find('.label'),
+
+                    // Make sure
+                    pcnt = Math.max(60  * bucket.count / maxCount, 3),
+
+                    onClick = function() {
+                      console.log('setting filter');                      
+                    };
+
+                bar.css('width', pcnt + '%');
+                bar.attr('title', Formatting.formatNumber(bucket.count) + ' results');
+                label.html(Formatting.formatPath(bucket.path));
+
+                row.click(onClick);
+
+                list.append(row);
               };
 
-          modal.draggable({ handle: element.find('.facet-longlist-header') });
+          element.find('.facet-longlist').draggable({
+            handle: element.find('.facet-longlist-header')
+          });
+
           buckets.forEach(renderRow);
           element.find('.close').click(close);
         };
