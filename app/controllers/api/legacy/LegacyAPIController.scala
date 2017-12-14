@@ -55,16 +55,13 @@ class LegacyAPIController @Inject() (
   }
   
   def getPlace(id: String) = Action.async { implicit request =>
-    itemService.findByIdentifier(id).flatMap {
+    itemService.findByIdentifier(id).map {
       case Some(item) =>
-        // TODO
-        Future.successful(Ok)
-        
+        jsonOk(Json.toJson(LegacyPlace(item)))
+
       case None =>
-        Future.successful(NotFound)
+        NotFound
     }
   }
-  
-  
 
 }
