@@ -6,7 +6,6 @@
 
 .facet-longlist {
   width:640px;
-  height:470px;
   position:relative;
 }
 
@@ -16,7 +15,7 @@
     position:relative;
     width:100%;
     margin:0;
-    padding:20px 45px;
+    padding:10px 45px 20px 45px;
     box-sizing:border-box;
   }
 
@@ -26,6 +25,7 @@
     position:relative;
     margin:14px 0;
     cursor:pointer;
+    white-space:nowrap;
 
     * {
       display:inline-block;
@@ -45,6 +45,9 @@
       font-size:12px;
       padding-left:8px;
       line-height:18px;
+      max-width:40%;
+      overflow:hidden;
+      text-overflow:ellipsis;
     }
 
   }
