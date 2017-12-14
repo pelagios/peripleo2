@@ -3,7 +3,9 @@ define([], function() {
   var MONTH_NAMES_SHORT = [
     'Jan', 'Feb', 'Mar', 'Apr',
     'May', 'Jun', 'Jul', 'Aug',
-    'Sept', 'Oct', 'Nov', 'Dec' ];
+    'Sept', 'Oct', 'Nov', 'Dec' ],
+
+     PATH_SEPARATOR = '\u0007';
 
   return {
 
@@ -47,7 +49,8 @@ define([], function() {
 
     /** Shorthand to fetch labels from a path **/
     formatPath : function(path) {
-      return path.map(function(segment) { return segment.label; }).join('\u0007');
+      return path.map(function(segment) { return segment.label; })
+        .join('\u0007').replace('\u0007', '<span class="path-separator"></span>');
     }
 
   };

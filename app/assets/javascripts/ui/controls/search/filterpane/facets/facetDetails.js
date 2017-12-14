@@ -74,7 +74,7 @@ define([
                 var tr = jQuery('<tr><td class="count"></td><td class="label"></td></tr>');
                 tr.data('path', bucket.path);
                 tr.find('.count').html(Formatting.formatNumber(bucket.count));
-                tr.find('.label').html(Formatting.formatPath(bucket.path).replace('\u0007', '<span class="separator"></span>'));
+                tr.find('.label').html(Formatting.formatPath(bucket.path));
                 table.append(tr);
               },
 

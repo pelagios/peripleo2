@@ -53,7 +53,7 @@ define([], function() {
                      '<span class="icon">' + getIcon(filter, value) + '</span>' +
                      '<span class="label">' +
                        '<span class="label-inner">' +
-                         value.label.replace('\u0007', '<span class="separator"></span>') +
+                         value.label.replace('\u0007', '<span class="path-separator"></span>') +
                        '</span>' +
                      '</span>' +
                    '</li>').appendTo(parentEl),
