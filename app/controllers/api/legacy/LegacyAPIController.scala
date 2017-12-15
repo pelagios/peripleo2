@@ -8,8 +8,9 @@ import play.api.libs.json.{Json, JsValue}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 import services.Page
-import services.item.{ItemService, ItemType}
-import services.item.search.SearchService
+import services.item.{ItemService, ItemType, PathHierarchy}
+import services.item.search.{ResponseSettings, SearchArgs, SearchService, SearchFilters}
+import services.item.search.filters.{ReferencedItemFilter, TermFilter}
 import services.visit.VisitService
 
 @Singleton
@@ -55,12 +56,34 @@ class LegacyAPIController @Inject() (
   }
   
   def getPlace(id: String) = Action.async { implicit request =>
-    itemService.findByIdentifier(id).map {
-      case Some(item) =>
-        jsonOk(Json.toJson(LegacyPlace(item)))
+    
+    // Query returns the items that reference the place, plus aggregation by datasets 
+    val args = SearchArgs(
+      None, // query
+      0,    // limit
+      0,    // offset
+      SearchFilters.NO_FILTERS.copy(referencedItemFilter =
+        Some(ReferencedItemFilter(Seq(id), TermFilter.ONLY))),
+      ResponseSettings.DEFAULT.copy(termAggregations = true))
+   
+    val fItem = itemService.findByIdentifier(id)    
+    val fReferencedIn = searchService.query(args)
+    
+    val f = for {
+      item         <- fItem
+      referencedIn <- fReferencedIn
+    } yield (item, referencedIn)
+    
+    f.map { 
+      case (Some(item), referencedIn) =>
+        val topLevelCounts = referencedIn.aggregations
+          .find(_.name == "by_dataset").map(_.buckets)
+          .getOrElse(Seq.empty[(String, Long)])
+          .filter(!_._1.contains(PathHierarchy.OUTER_SEPARATOR))
+          
+        jsonOk(Json.toJson(LegacyPlace(item, topLevelCounts)))
 
-      case None =>
-        NotFound
+      case (None, _) => NotFound
     }
   }
 
