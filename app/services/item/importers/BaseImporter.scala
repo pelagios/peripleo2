@@ -79,7 +79,7 @@ abstract class BaseImporter(itemService: ItemService) {
           case None => index into ES.PERIPLEO / ES.ITEM id item.docId.toString source item
         }
 
-        if (refs.size > 10)
+        if (refs.size > 20)
           Logger.warn("Inserting " + refs.size + " references to index")
 
         es.client execute {
