@@ -4,7 +4,7 @@ import java.io.InputStream
 import java.util.UUID
 import org.joda.time.{ DateTime, DateTimeZone }
 import org.pelagios.Scalagios
-import org.pelagios.api.PeriodOfTime
+import org.pelagios.api.TimeInterval
 import org.pelagios.api.annotation.AnnotatedThing
 import org.pelagios.api.dataset.Dataset
 import play.api.Logger
@@ -17,7 +17,7 @@ object PelagiosAnnotationCrosswalk extends PelagiosCrosswalk {
   // Bit annoying that this is duplication with the Place crosswalk - but would
   // rather have those few lines of duplication than pollute the code with a
   // Pelagios-RDF-specific trait
-  private def convertPeriodOfTime(period: PeriodOfTime): TemporalBounds = {
+  private def convertTimeInterval(period: TimeInterval): TemporalBounds = {
     val startDate = period.start
     val endDate = period.end.getOrElse(startDate)
 
@@ -39,17 +39,22 @@ object PelagiosAnnotationCrosswalk extends PelagiosCrosswalk {
   
   private def convertAnnotatedThing(thing: AnnotatedThing, inDataset: PathHierarchy) = {
     val references = thing.annotations.flatMap { _.places.headOption.map { placeUri =>
-      val uri = ItemRecord.normalizeURI(placeUri)
-
       UnboundReference(
         thing.uri,
-        uri,
+        ItemRecord.normalizeURI(placeUri),
         None, // relation
         None, // homepage
         None, // quote
         None  // depiction
       )
     }}
+    
+    val namedPeriods = thing.namedPeriods.map { uri =>
+      UnboundReference(
+        thing.uri,
+        ItemRecord.normalizeURI(uri),
+        None, None, None, None) 
+    }
     
     val record = ItemRecord(
       thing.uri,
@@ -72,12 +77,12 @@ object PelagiosAnnotationCrosswalk extends PelagiosCrosswalk {
       },
       None, // TODO geometry
       None, // TODO representative point
-      thing.temporal.map(convertPeriodOfTime),
+      thing.timeInterval.map(convertTimeInterval),
       Seq.empty[Name],
       Seq.empty[Link],
       None, None)
       
-    (record, references)
+    (record, references ++ namedPeriods)
   }
 
   def fromRDF(filename: String, inDataset: PathHierarchy): InputStream => Seq[(ItemRecord, Seq[UnboundReference])] = {

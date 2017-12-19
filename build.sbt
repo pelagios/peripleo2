@@ -27,7 +27,7 @@ libraryDependencies ++= Seq(
   "org.webjars" %% "webjars-play" % "2.5.0",
 
   // Scalagios core + transient dependencies
-  "org.pelagios" % "scalagios-core" % "2.0.4" from "https://github.com/pelagios/scalagios/releases/download/v2.0.4/scalagios-core_2.11-2.0.4.jar",
+  "org.pelagios" % "scalagios-core" % "2.0.5" from "https://github.com/pelagios/scalagios/releases/download/v2.0.5/scalagios-core_2.11-2.0.5.jar",
   "org.openrdf.sesame" % "sesame-rio-n3" % "2.7.5",
   "org.openrdf.sesame" % "sesame-rio-rdfxml" % "2.7.5",
 

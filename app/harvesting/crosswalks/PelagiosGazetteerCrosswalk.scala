@@ -4,12 +4,12 @@ import java.io.{ File, FileInputStream, InputStream }
 import services.item.{ Description, Depiction, Language, TemporalBounds }
 import org.joda.time.{ DateTime, DateTimeZone }
 import org.pelagios.Scalagios
-import org.pelagios.api.PeriodOfTime
+import org.pelagios.api.TimeInterval
 import services.item._
 
 object PelagiosGazetteerCrosswalk {
 
-  private def convertPeriodOfTime(period: PeriodOfTime): TemporalBounds = {
+  private def convertTimeInterval(period: TimeInterval): TemporalBounds = {
     val startDate = period.start
     val endDate = period.end.getOrElse(startDate)
 
@@ -39,7 +39,7 @@ object PelagiosGazetteerCrosswalk {
         place.depictions.map(image => Depiction(image.uri, DepictionType.IMAGE, None, image.title, None, None, image.license)),
         place.location.map(_.geometry),
         place.location.map(_.pointLocation),
-        place.temporalCoverage.map(convertPeriodOfTime(_)),
+        place.timeInterval.map(convertTimeInterval(_)),
         place.names.map(l => Name(l.chars, l.lang.flatMap(Language.safeParse))),
         place.closeMatches.map(Link(_, LinkType.CLOSE_MATCH)) ++ place.exactMatches.map(Link(_, LinkType.EXACT_MATCH)), 
         None, None)
