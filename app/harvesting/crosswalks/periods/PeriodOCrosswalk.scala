@@ -9,24 +9,26 @@ import services.item._
 
 object PeriodoCrosswalk {
   
-  private[periods] def parseDefinitionsDump(stream: InputStream): Seq[(String, PeriodoDefinition)] = {
-    val collections = (Json.parse(stream).as[JsObject] \ "periodCollections").as[JsObject]
-    collections.keys.flatMap { collectionId =>
+  private[periods] def parseDefinitionsDump(stream: InputStream): (String, Seq[PeriodoDefinition]) = {
+    val json = Json.parse(stream).as[JsObject]    
+    val base = (json \ "@context" \ "@base").as[JsString].value
+    val collections = (json \ "periodCollections").as[JsObject]
+    
+    val definitions = collections.keys.flatMap { collectionId =>
       val collection = (collections \ collectionId \ "definitions").as[JsObject]
       collection.keys.map { definitionId =>
         val json = (collection \ definitionId).as[JsObject]
         
         // Unfortunately, PeriodO doesn't include the URI, only the definition ID.
         // However, the URI is built from the definition ID as well as the collection ID.
-        val maybeDefinition = Try(Json.fromJson[PeriodoDefinition](json).get).toOption
-        maybeDefinition.map(definition => (collectionId, definition))                
+        Try(Json.fromJson[PeriodoDefinition](json).get).toOption        
       }.flatten
     }.toSeq
+    
+    (base, definitions)
   }
   
-  private def toItemRecord(collectionId: String, p: PeriodoDefinition, dataset: PathHierarchy) = {
-    val uri = "http://n2t.net/ark:/" + collectionId + "/" + p.id
-      
+  private def toItemRecord(uri: String, p: PeriodoDefinition, dataset: PathHierarchy) = {
     ItemRecord(
       uri,
       Seq(uri),
@@ -48,7 +50,8 @@ object PeriodoCrosswalk {
   }
 
   def fromJSON(filename: String, dataset: PathHierarchy): InputStream => Seq[ItemRecord] = { stream =>
-    parseDefinitionsDump(stream).map(t => toItemRecord(t._1, t._2, dataset))
+    val (base, definitions) = parseDefinitionsDump(stream)
+    definitions.map(d => toItemRecord(base + d.id, d, dataset))
   }
   
 }

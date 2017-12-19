@@ -15,7 +15,7 @@ class PeriodODefinitionSpec extends PlaySpec {
     "return a list of definition objects" in {
       val stream = new GZIPInputStream(new FileInputStream(DUMP_FILE))   
       val definitions = PeriodoCrosswalk.parseDefinitionsDump(stream)
-      definitions.size mustBe 4630
+      definitions._2.size mustBe 4630
     }
     
   }
