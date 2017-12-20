@@ -81,7 +81,10 @@ abstract class BaseImporter(itemService: ItemService) {
 
         if (refs.size > 20)
           Logger.warn("Inserting " + refs.size + " references to index")
-
+          
+        // https://stackoverflow.com/questions/35758990/out-of-memory-in-elasticsearch
+        es.client.client.prepareBulk()
+        
         es.client execute {
           // Failures will occasionally happen here due version conflicts (ES optimistic locking!).
           // Note that in this case, the bulk insert will produce orphaned References! We could
