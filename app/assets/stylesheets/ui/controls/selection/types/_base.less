@@ -18,8 +18,9 @@
   }
 
   .item.references {
+    padding:8px 12px;
 
-    .ref {
+    .refs {
 
       a {
         text-decoration:none;
@@ -40,18 +41,28 @@
 
     }
 
-    .ref {
-      margin:0;
+    .refs {
+      margin:6px 0;
+
+      .ref::after {
+        content:' · ';
+      }
+
+      .ref:last-child::after {
+        content:'';
+      }
+
     }
 
-    .ref::before {
+    .refs::before {
       font-family:FontAwesome;
       font-size:14px;
       padding-right:5px;
     }
 
-    .ref.place::before { content:'\f140'; }
-    .ref.person::before { content:'\f007'; }
+    .refs.place::before  { content:'\f140'; }
+    .refs.person::before { content:'\f007'; }
+    .refs.period::before { content:'\f017'; }
 
   }
 

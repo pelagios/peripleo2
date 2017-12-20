@@ -134,7 +134,7 @@ define([
 
         renderList = function(all) {
           if (all && all.length > 0) {
-            var p = jQuery('<p class="ref ' + ItemUtils.getItemType(all[0]).toLowerCase() + '"></p>'),
+            var p = jQuery('<p class="refs ' + ItemUtils.getItemType(all[0]).toLowerCase() + '"></p>'),
 
                 /** Renders the 'N more results' link for a referenced item **/
                 renderResultsAt = function(item) {
@@ -146,11 +146,12 @@ define([
 
                   if (count && count.resultCount > 1) {
                     var more = count.resultCount - 1,
-                        label = (more > 1) ? ' more results' : ' more result',
                         link = jQuery(
-                          '<span class="more"> · ' +
-                            '<a class="filter" href="#">' + Formatting.formatNumber(more) + label + '</a>' +
-                          '<span>');
+                          '<span class="ref">' +
+                            '<span class="more"> (' +
+                              '<a class="filter" href="#">' + Formatting.formatNumber(more) + ' more</a>)' +
+                            '<span>' +
+                          '</span>');
 
                       link.find('a').data('referencing', item);
                       return link;
