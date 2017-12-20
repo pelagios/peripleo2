@@ -34,7 +34,7 @@ define([
           resultList.setSearchResponse(response);
 
           // Don't update the map if there are filters - we're in drilldown mode
-          if (!args.filters || jQuery.isEmptyObject(args.filters))
+          // if (!args.filters || jQuery.isEmptyObject(args.filters))
             map.setSearchResponse(response);
 
           searchPanel.setLoading(false);

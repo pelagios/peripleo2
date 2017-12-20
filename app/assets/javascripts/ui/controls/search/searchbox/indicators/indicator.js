@@ -6,6 +6,7 @@ define([], function() {
         // 'referencing' filter sub-types
         'PLACE'  : '&#xf041;',
         'PERSON' : '&#xf007;',
+        'PERIOD' : '&#xf017;',
 
         // other filters
         'types'   : '&#xf03a;',

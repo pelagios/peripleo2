@@ -61,7 +61,7 @@ define([
 
           if (record.descriptions && record.descriptions.length > 0)
             self.fill(description, record.descriptions[0].description);
-            
+
           self.fillTemporalBounds(tempBounds, temporalBounds);
         },
 

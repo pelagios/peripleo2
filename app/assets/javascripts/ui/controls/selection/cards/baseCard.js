@@ -188,6 +188,10 @@ define([
 
       // TODO show 'and N others' label
       renderList([ selectedVia ]);
+
+      // TODO currently, selected_via only applies to place, but that will change
+      renderList(referenced.PERSON);
+      renderList(referenced.PERIOD);
     } else {
       // No selection via entity - just render the list Places, People, Periods
       renderList(referenced.PLACE);

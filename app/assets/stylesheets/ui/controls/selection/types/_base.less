@@ -18,16 +18,23 @@
   }
 
   .item.references {
-    padding:8px 12px;
+    padding:12px;
 
     .refs {
+      padding-left:18px;
+      margin:0 0 6px 0;
+      line-height:18px;
 
       a {
         text-decoration:none;
       }
 
-      .title a {
-        color:@light-grey-type-hover;
+      .title {
+        white-space:nowrap;
+
+        a {
+          color:@light-grey-type-hover;
+        }
       }
 
       .more {
@@ -39,11 +46,6 @@
         text-decoration:underline;
       }
 
-    }
-
-    .refs {
-      margin:6px 0;
-
       .ref::after {
         content:' · ';
       }
@@ -54,7 +56,13 @@
 
     }
 
+    .refs:last-child {
+      margin:0;
+    }
+
     .refs::before {
+      position:absolute;
+      left:12px;
       font-family:FontAwesome;
       font-size:14px;
       padding-right:5px;
@@ -67,9 +75,6 @@
   }
 
   .references {
-    overflow:hidden;
-    white-space:nowrap;
-    text-overflow:ellipsis;
 
     a {
       text-decoration:none;
