@@ -57,7 +57,15 @@ define([
 
         init = function() {
           var initialState = URLBar.parseHash();
+
           if (initialState) {
+            // Term aggregations may be needed to resolve indicator labels on startup & they
+            // are computationally cheap. So we'll switch them on by default in the inital
+            // request. While this shortcut introduces somewhat of an ugly spaghetti dependency,
+            // it saves us a lot of code later down the line, if the identifiers had to
+            // fire an extra request for label resolution.
+            initialState.search.settings.termAggregations = true;
+            
             setState(initialState);
             pushState();
           }

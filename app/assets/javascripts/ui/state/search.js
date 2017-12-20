@@ -230,6 +230,7 @@ define([], function() {
 
         /** Sets termAggregations and time histogram setting, optionally triggering a new request **/
         setAggregationsEnabled = function(enabled, makeReq) {
+          console.log('foo', enabled);
           jQuery.extend(searchArgs.settings,{
             timeHistogram    : enabled,
             termAggregations : enabled,

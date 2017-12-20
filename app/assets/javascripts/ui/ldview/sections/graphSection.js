@@ -4,8 +4,7 @@ define(['ui/common/itemUtils'], function(ItemUtils) {
 
       KNOWN_NAMESPACES = [
         { pattern: 'http://www.wikidata.org/entity/',    shortcode: 'wikidata' },
-        { pattern: 'http://www.livius.org/place/',       shortcode: 'livius' },
-        { pattern: 'http://www.trismegistos.org/place/', shortcode: 'trismegistos' }
+        { pattern: 'http://www.livius.org/place/',       shortcode: 'livius' }
       ],
 
       formatURI = function(url) {
