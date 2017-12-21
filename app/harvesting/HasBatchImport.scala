@@ -19,14 +19,14 @@ trait HasBatchImport[T] {
         }
       }
     } flatMap { failedRecords =>
-      Logger.info("Imported " + (records.size - failedRecords.size) + " records") 
+      Logger.info(s"Imported ${records.size - failedRecords.size} records") 
       if (failedRecords.size > 0 && retries > 0) {
-        Logger.warn(failedRecords.size + " gazetteer records failed to import - retrying")
+        Logger.warn(s"${failedRecords.size} gazetteer records failed to import - retrying")
         
         // Start first retry immediately and then increases wait time for each subsequent retry 
         val backoff = (MAX_RETRIES - retries) * BACKOFF_MS  
         if (backoff > 0) {
-          Logger.info("Waiting... " + backoff + "ms")
+          Logger.info(s"Waiting... ${backoff}ms")
           Thread.sleep(backoff)
         }
         
@@ -34,7 +34,7 @@ trait HasBatchImport[T] {
         importRecords(failedRecords, retries - 1)
       } else {
         if (failedRecords.size > 0) {
-          Logger.error(failedRecords.size + " gazetteer records failed without recovery")
+          Logger.error(s"${failedRecords.size} gazetteer records failed without recovery")
           failedRecords.foreach(record =>  Logger.error(record.toString))
         } else {
           Logger.info("No failed imports")
