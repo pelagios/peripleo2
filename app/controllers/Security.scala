@@ -13,7 +13,6 @@ import com.mohiva.play.silhouette.impl.authenticators.{CookieAuthenticator, Cook
 import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
 import com.mohiva.play.silhouette.impl.util.{DefaultFingerprintGenerator, SecureRandomIDGenerator}
 import com.mohiva.play.silhouette.password.BCryptPasswordHasher
-import com.mohiva.play.silhouette.persistence.daos.{DelegableAuthInfoDAO, InMemoryAuthInfoDAO}
 import com.mohiva.play.silhouette.persistence.repositories.DelegableAuthInfoRepository
 import services.user.{User, UserService}
 import services.user.Role.Role
