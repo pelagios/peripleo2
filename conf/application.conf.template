@@ -15,29 +15,12 @@ akka {
 # ~~~~~
 # The secret key is used to sign Play's session cookie.
 # This must be changed for production, but we don't recommend you change it in this file.
-play.crypto.secret = "changeme"
+play.http.secret.key = "changeme"
 
 ## Modules
-# https://www.playframework.com/documentation/latest/Modules
-# ~~~~~
-# Control which modules are loaded when Play starts.  Note that modules are
-# the replacement for "GlobalSettings", which are deprecated in 2.5.x.
-# Please see https://www.playframework.com/documentation/latest/GlobalSettings
-# for more information.
-#
-# You can also extend Play functionality by using one of the publically available
-# Play modules: https://playframework.com/documentation/latest/ModuleDirectory
 play.modules {
-  # By default, Play will load any class called Module that is defined
-  # in the root package (the "app" directory), or you can define them
-  # explicitly below.
-  # If there are any built-in modules that you want to disable, you can list them here.
-  #enabled += my.application.Module
-
   enabled += es.ESModule
-
-  # If there are any built-in modules that you want to disable, you can list them here.
-  #disabled += ""
+  enabled += controllers.SilhouetteSecurity
 }
 
 ## IDE

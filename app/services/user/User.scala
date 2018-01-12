@@ -1,5 +1,7 @@
 package services.user
 
+import com.mohiva.play.silhouette.api.{Identity, LoginInfo}
+import controllers.Security
 import org.joda.time.DateTime
 import play.api.libs.json._
 import play.api.libs.json.Reads._
@@ -42,7 +44,11 @@ case class User(
   passwordHash : String,
   salt         : String,
   accessLevel  : AccessLevel,
-  createdAt    : DateTime)
+  createdAt    : DateTime) extends Identity {
+  
+  val loginInfo = LoginInfo(Security.PROVIDER_ID, username) // Required by Silhouette auth framework
+  
+}
   
 object User extends HasDate {
   

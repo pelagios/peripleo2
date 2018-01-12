@@ -1,54 +1,131 @@
 package controllers
 
-import jp.t2v.lab.play2.auth.{ AsyncIdContainer, AuthConfig, CookieTokenAccessor, CookieIdContainer }
-import play.api.Play
-import play.api.cache.CacheApi
-import play.api.mvc.{ Result, Results, RequestHeader }
-import scala.concurrent.{ ExecutionContext, Future }
-import scala.reflect.{ ClassTag, classTag }
-import services.user.Role
+import com.google.inject.name.Named
+import com.google.inject.{AbstractModule, Provides}
+import com.mohiva.play.silhouette.api.crypto.{Crypter, CrypterAuthenticatorEncoder, Signer}
+import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
+import com.mohiva.play.silhouette.api.services.AuthenticatorService
+import com.mohiva.play.silhouette.api.util._
+import com.mohiva.play.silhouette.api.{Authorization, Environment, EventBus, Silhouette, SilhouetteProvider}
+import com.mohiva.play.silhouette.crypto.{JcaSigner, JcaSignerSettings, JcaCrypter, JcaCrypterSettings}
+import com.mohiva.play.silhouette.impl.authenticators.{CookieAuthenticator, CookieAuthenticatorSettings, CookieAuthenticatorService}
+import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
+import com.mohiva.play.silhouette.impl.util.{DefaultFingerprintGenerator, SecureRandomIDGenerator}
+import com.mohiva.play.silhouette.password.BCryptPasswordHasher
+import com.mohiva.play.silhouette.persistence.daos.{DelegableAuthInfoDAO, InMemoryAuthInfoDAO}
+import com.mohiva.play.silhouette.persistence.repositories.DelegableAuthInfoRepository
+import services.user.{User, UserService}
+import services.user.Role.Role
+import net.codingwell.scalaguice.ScalaModule
+import play.api.Configuration
+import play.api.mvc.{CookieHeaderEncoding, Request}
+import scala.concurrent.Future
+import scala.concurrent.duration._
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.language.postfixOps
 
-trait Security extends AuthConfig { self: HasConfig with HasUserService =>
+class SilhouetteSecurity  extends AbstractModule with ScalaModule {
 
-  type Id = String
+  private def getAppSecret(config: Configuration) =
+    config.get[String]("play.http.secret.key")
 
-  type User = services.user.User
-  
-  type Authority = Role.Role
-  
-  val idTag: ClassTag[Id] = classTag[Id]
-
-  val sessionTimeoutInSeconds: Int = 3600
-
-  def resolveUser(id: Id)(implicit ctx: ExecutionContext): Future[Option[User]] =
-    self.users.findByUsername(id)
-
-  def loginSucceeded(request: RequestHeader)(implicit ctx: ExecutionContext): Future[Result] = {
-    val destination = request.session.get("access_uri").getOrElse(controllers.admin.routes.AdminController.index.toString)
-    Future.successful(Results.Redirect(destination).withSession(request.session - "access_uri"))
+  override def configure(): Unit = {
+    bind[Silhouette[Security.Env]].to[SilhouetteProvider[Security.Env]]
+    bind[DelegableAuthInfoDAO[PasswordInfo]].toInstance(new InMemoryAuthInfoDAO[PasswordInfo])
+    bind[PasswordHasher].toInstance(new BCryptPasswordHasher)
+    bind[IDGenerator].toInstance(new SecureRandomIDGenerator())
+    bind[FingerprintGenerator].toInstance(new DefaultFingerprintGenerator(false))
+    bind[EventBus].toInstance(EventBus())
+    bind[Clock].toInstance(Clock())
   }
 
-  def logoutSucceeded(request: RequestHeader)(implicit ctx: ExecutionContext): Future[Result] =
-    Future.successful(Results.Redirect(admin.routes.LoginLogoutController.showLoginForm(None)))
-
-  def authenticationFailed(request: RequestHeader)(implicit ctx: ExecutionContext): Future[Result] =
-    Future.successful(Results.Redirect(admin.routes.LoginLogoutController.showLoginForm(None)).withSession("access_uri" -> request.uri))
-
-  override def authorizationFailed(request: RequestHeader, user: User, authority: Option[Authority])(implicit context: ExecutionContext): Future[Result] =
-    Future.successful(Results.Forbidden("Forbidden"))
-
-  def authorize(user: User, authority: Authority)(implicit ctx: ExecutionContext): Future[Boolean] = Future.successful { 
-    authority match {
-      case Role.ADMIN => user.accessLevel.role == Role.ADMIN
-      case Role.PARTNER => true // Currently the minimal level
-    }
-  }
-
-  override lazy val tokenAccessor = new CookieTokenAccessor(
-    cookieSecureOption = config.getBoolean("auth.cookie.secure").getOrElse(false),
-    cookieMaxAge       = Some(sessionTimeoutInSeconds)
+  @Provides
+  def provideEnvironment(
+    userService: UserService,
+    authenticatorService: AuthenticatorService[CookieAuthenticator],
+    eventBus: EventBus
+  ): Environment[Security.Env] = Environment[Security.Env](
+    userService,
+    authenticatorService,
+    Seq(),
+    eventBus
   )
 
-  override lazy val idContainer: AsyncIdContainer[Id] = AsyncIdContainer(new CookieIdContainer[Id])
+  @Provides
+  def provideAuthenticatorService(
+    @Named("authenticator-signer") signer: Signer,
+    @Named("authenticator-crypter") crypter: Crypter,
+    cookieHeaderEncoding: CookieHeaderEncoding,
+    fingerprintGenerator: FingerprintGenerator,
+    idGenerator: IDGenerator,
+    configuration: Configuration,
+    clock: Clock
+  ): AuthenticatorService[CookieAuthenticator] = {
+    val config = CookieAuthenticatorSettings(
+      cookieName = "id",
+      cookiePath = "/",
+      cookieDomain = None,
+      secureCookie = false, // Send cookie in HTTP and HTTPS modes
+      httpOnlyCookie = true, // Not accessible through JS
+      useFingerprinting = true,
+      cookieMaxAge = None,
+      authenticatorIdleTimeout = None,
+      authenticatorExpiry = 1.hour)
+
+    val enc = new CrypterAuthenticatorEncoder(crypter)
+    new CookieAuthenticatorService(config, None, signer, cookieHeaderEncoding, enc  , fingerprintGenerator, idGenerator, clock)
+  }
+
+  @Provides
+  def provideAuthInfoRepository(passwordDAO: DelegableAuthInfoDAO[PasswordInfo]): AuthInfoRepository =
+    new DelegableAuthInfoRepository(passwordDAO)
+
+  @Provides
+  def providePasswordHasherRegistry(passwordHasher: PasswordHasher): PasswordHasherRegistry =
+    PasswordHasherRegistry(passwordHasher)
+
+  @Provides
+  def provideCredentialsProvider(
+    authInfoRepository: AuthInfoRepository,
+    passwordHasherRegistry: PasswordHasherRegistry
+  ): CredentialsProvider =
+    new CredentialsProvider(authInfoRepository, passwordHasherRegistry)
+
+  @Provides
+  @Named("authenticator-signer")
+  def provideAuthenticatorSigner(configuration: Configuration): Signer = {
+    val settings = JcaSignerSettings(getAppSecret(configuration))
+    new JcaSigner(settings)
+  }
+
+  @Provides
+  @Named("authenticator-crypter")
+  def provideAuthenticatorCrypter(configuration: Configuration): Crypter = {
+    val settings = JcaCrypterSettings(getAppSecret(configuration))
+    new JcaCrypter(settings)
+  }
+
+}
+
+
+object Security {
+
+  val PROVIDER_ID = "peripleo.pelagios.org"
+
+  trait Env extends com.mohiva.play.silhouette.api.Env {
+
+    type I = User
+
+    type A = CookieAuthenticator
+
+  }
+
+  case class WithRole(role: Role) extends Authorization[User, CookieAuthenticator] {
+
+    def isAuthorized[B](user: User, authenticator: CookieAuthenticator)(implicit request: Request[B]) = {
+      Future.successful(user.accessLevel.role == role)
+    }
+
+  }
 
 }

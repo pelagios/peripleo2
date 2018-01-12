@@ -3,7 +3,7 @@ package controllers.api.legacy
 import controllers.api.legacy.response._
 import controllers.{HasPrettyPrintJSON, HasVisitLogging}
 import javax.inject.{Inject, Singleton}
-import play.api.mvc.{Action, AnyContent, Controller, Request}
+import play.api.mvc.{AnyContent, AbstractController, ControllerComponents, Request}
 import play.api.libs.json.{Json, JsValue}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
@@ -15,11 +15,12 @@ import services.visit.VisitService
 
 @Singleton
 class LegacyAPIController @Inject() (
+  val components: ControllerComponents,
   implicit val itemService: ItemService,
   implicit val searchService: SearchService,
   implicit val visitService: VisitService,
   implicit val ctx: ExecutionContext
-) extends Controller with HasVisitLogging {
+) extends AbstractController(components) with HasVisitLogging {
   
   private def jsonOk(obj: JsValue)(implicit request: Request[AnyContent]) = {
     val pretty = Try(request.queryString.get("prettyprint").map(_.head.toBoolean).getOrElse(false)).getOrElse(false)

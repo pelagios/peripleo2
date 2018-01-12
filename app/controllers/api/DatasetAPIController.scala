@@ -1,21 +1,22 @@
 package controllers.api
 
-import controllers.{ HasPrettyPrintJSON, HasDatasetStats }
-import javax.inject.{ Inject, Singleton }
-import play.api.mvc.{ Action, Controller }
+import controllers.{HasPrettyPrintJSON, HasDatasetStats}
+import javax.inject.{Inject, Singleton}
+import play.api.mvc.{AbstractController, ControllerComponents}
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
 import scala.concurrent.ExecutionContext
-import services.item.{ Item, ItemService, ItemType }
-import services.item.search.{ ResponseSettings, SearchArgs, SearchFilters, SearchService }
+import services.item.{Item, ItemService, ItemType}
+import services.item.search.{ResponseSettings, SearchArgs, SearchFilters, SearchService}
 import services.item.search.filters.TermFilter
 
 @Singleton
 class DatasetAPIController @Inject() (
+  val components: ControllerComponents,
   implicit val itemService: ItemService,
   implicit val searchService: SearchService,
   implicit val ctx: ExecutionContext
-) extends Controller with HasPrettyPrintJSON with HasDatasetStats {
+) extends AbstractController(components) with HasPrettyPrintJSON with HasDatasetStats {
   
   def list(offset: Int, limit: Int, rootOnly: Boolean) = Action.async { implicit request =>
     val fListDatasets = itemService.findByType(ItemType.DATASET, rootOnly, offset, limit)

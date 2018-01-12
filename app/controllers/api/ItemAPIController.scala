@@ -4,7 +4,7 @@ import controllers.{HasPrettyPrintJSON, HasVisitLogging}
 import javax.inject.{Inject, Singleton}
 import org.joda.time.DateTime
 import play.api.libs.json.Json
-import play.api.mvc.{Action, Controller}
+import play.api.mvc.{AbstractController, ControllerComponents}
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
 import scala.concurrent.{ExecutionContext, Future}
@@ -16,10 +16,11 @@ import services.visit.VisitService
 @Singleton
 class ItemAPIController @Inject() (
   notificationService: NotificationService,
+  val components: ControllerComponents,
   implicit val itemService: ItemService,
   implicit val visitService: VisitService,
   implicit val ctx: ExecutionContext
-) extends Controller with HasPrettyPrintJSON with HasVisitLogging {
+) extends AbstractController(components) with HasPrettyPrintJSON with HasVisitLogging {
 
   implicit val snippetWrites: Writes[(Reference, Seq[String])] = (
     (JsPath).write[Reference] and

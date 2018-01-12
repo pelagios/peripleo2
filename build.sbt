@@ -19,6 +19,13 @@ libraryDependencies ++= Seq(
   filters,
   guice,
 
+  "com.mohiva" %% "play-silhouette" % "5.0.0",
+  "com.mohiva" %% "play-silhouette-password-bcrypt" % "5.0.0",
+  "com.mohiva" %% "play-silhouette-crypto-jca" % "5.0.0",
+  "com.mohiva" %% "play-silhouette-persistence" % "5.0.0",
+  "com.mohiva" %% "play-silhouette-testkit" % "5.0.0" % Test,
+  "com.mohiva" %% "play-silhouette-cas" % "5.0.0",
+
   "com.nrinaudo" %% "kantan.csv" % "0.2.1",
   "com.nrinaudo" %% "kantan.csv-commons" % "0.2.1",
 
@@ -26,9 +33,9 @@ libraryDependencies ++= Seq(
 
   "com.vividsolutions" % "jts-core" % "1.14.0",
 
-  "jp.t2v" %% "play2-auth" % "0.14.1",
-
   "eu.bitwalker" % "UserAgentUtils" % "1.20",
+
+  "net.codingwell" %% "scala-guice" % "4.1.1",
 
   "org.geotools" % "gt-geojson" % "18.1",
 

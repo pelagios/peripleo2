@@ -1,20 +1,21 @@
 package controllers.api
 
-import controllers.{ HasPrettyPrintJSON, HasVisitLogging }
-import javax.inject.{ Inject, Singleton }
-import play.api.mvc.{ Action, Controller }
+import controllers.{HasPrettyPrintJSON, HasVisitLogging}
+import javax.inject.{Inject, Singleton}
+import play.api.mvc.{AbstractController, ControllerComponents}
 import play.api.libs.json.Json
 import scala.concurrent.ExecutionContext
-import services.item.search.{ SearchArgs, SearchService, SuggestService }
+import services.item.search.{SearchArgs, SearchService, SuggestService}
 import services.visit.VisitService
 
 @Singleton
 class SearchAPIController @Inject() (
+  val components: ControllerComponents,
   val searchService: SearchService,
   val suggestService: SuggestService,
   implicit val visitService: VisitService,
   implicit val ctx: ExecutionContext
-) extends Controller with HasPrettyPrintJSON with HasVisitLogging {
+) extends AbstractController(components) with HasPrettyPrintJSON with HasVisitLogging {
   
   def search() = Action.async { implicit request =>
     val args = SearchArgs.fromQueryString(request.queryString)

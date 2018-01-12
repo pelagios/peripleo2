@@ -4,11 +4,12 @@ import org.joda.time.DateTime
 import services.item._
 import services.item.importers.DatasetImporter
 import controllers.BaseAuthController
-import jp.t2v.lab.play2.auth.AuthElement
+import play.api.mvc.ControllerComponents
 
 abstract class BaseAuthorityAdminController(
+  components: ControllerComponents,
   importer : DatasetImporter
-) extends BaseAuthController with AuthElement {
+) extends BaseAuthController(components) {
   
   protected def upsertDatasetRecord(
     uri           : String,

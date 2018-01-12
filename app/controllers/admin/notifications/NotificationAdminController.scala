@@ -1,21 +1,23 @@
 package controllers.admin.notifications
 
-import controllers.{ BaseAuthController, WebJarAssets }
-import javax.inject.{ Inject, Singleton }
-import jp.t2v.lab.play2.auth.AuthElement
+import com.mohiva.play.silhouette.api.Silhouette
+import controllers.{BaseAuthController, Security}
+import javax.inject.{Inject, Singleton}
 import org.webjars.play.WebJarsUtil
 import play.api.Configuration
-import play.api.mvc.Action
-import services.user.{ Role, UserService }
+import play.api.mvc.ControllerComponents
+import services.user.{Role, UserService}
 
 @Singleton
 class NotificationAdminController @Inject() (
+  val components: ControllerComponents,
   val config: Configuration,
   val users: UserService,
+  val silhouette: Silhouette[Security.Env],
   implicit val webjars: WebJarsUtil
-) extends BaseAuthController with AuthElement {
+) extends BaseAuthController(components) {
 
-  def index = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>
+  def index = silhouette.SecuredAction(Security.WithRole(Role.ADMIN)) { implicit request =>
     Ok(views.html.admin.notifications.index())
   }
 

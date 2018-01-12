@@ -1,18 +1,19 @@
 package controllers.api
 
 import controllers.HasPrettyPrintJSON
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 import play.api.libs.json.Json
-import play.api.mvc.{ Action, Controller }
+import play.api.mvc.{AbstractController, ControllerComponents}
 import scala.concurrent.ExecutionContext
 import services.item.search.{ SearchArgs, SearchService, SearchFilters, ResponseSettings }
 import services.item.search.filters.TermFilter
 
 @Singleton
 class GazetteerAPIController @Inject() (
+  val components: ControllerComponents,
   searchService: SearchService,
   implicit val ctx: ExecutionContext
-) extends Controller with HasPrettyPrintJSON {
+) extends AbstractController(components) with HasPrettyPrintJSON {
 
   def list() = Action.async { implicit request =>
 

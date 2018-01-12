@@ -1,28 +1,31 @@
 package controllers.admin
 
-import controllers.{ HasConfig, HasUserService, Security }
+import com.mohiva.play.silhouette.api.{LoginInfo, Silhouette}
+import controllers.{HasConfig, HasUserService, Security}
 import javax.inject.Inject
-import jp.t2v.lab.play2.auth.{ AuthElement, LoginLogout }
 import play.api.Configuration
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.i18n.{ I18nSupport, MessagesApi }
-import play.api.mvc.{ Action, Controller }
-import scala.concurrent.{ ExecutionContext, Future }
+import play.api.i18n.I18nSupport
+import play.api.mvc.{AbstractController, ControllerComponents}
+import scala.concurrent.{ExecutionContext, Future}
 import services.user.UserService
 
 case class LoginData(usernameOrPassword: String, password: String)
 
-class LoginLogoutController @Inject() (    
-    val config: Configuration,
-    val users: UserService,
-    val messagesApi: MessagesApi,
-    implicit val ctx: ExecutionContext
-  ) extends Controller with AuthElement with HasConfig with HasUserService with Security with LoginLogout with I18nSupport {
+class LoginLogoutController @Inject() (
+  val components: ControllerComponents,
+  val config: Configuration,
+  val users: UserService,
+  val silhouette: Silhouette[Security.Env],
+  implicit val ctx: ExecutionContext
+) extends AbstractController(components) with HasConfig with HasUserService with I18nSupport {
 
   private val MESSAGE = "message"
 
   private val INVALID_LOGIN = "Invalid Username or Password"
+  
+  private val auth = silhouette.env.authenticatorService
 
   val loginForm = Form(
     mapping(
@@ -45,14 +48,18 @@ class LoginLogoutController @Inject() (
 
       loginData =>
         users.validateUser(loginData.usernameOrPassword, loginData.password).flatMap {
-          case Some(validUser) => gotoLoginSucceeded(validUser.username)
+          case Some(validUser) => 
+            auth.create(LoginInfo(Security.PROVIDER_ID, validUser.username))
+              .flatMap(auth.init(_))
+              .flatMap(auth.embed(_,  Redirect(routes.AdminController.index)))
+            
           case None => Future(Redirect(routes.LoginLogoutController.showLoginForm()).flashing(MESSAGE -> INVALID_LOGIN))
         }
     )
   }
 
-  def logout = Action.async { implicit request =>
-    gotoLogoutSucceeded
+  def logout = silhouette.SecuredAction.async { implicit request =>
+    auth.discard(request.authenticator, Redirect(controllers.routes.ApplicationController.landing))
   }
 
 }

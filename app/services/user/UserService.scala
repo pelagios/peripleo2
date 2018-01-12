@@ -1,5 +1,7 @@
 package services.user
 
+import com.mohiva.play.silhouette.api.LoginInfo
+import com.mohiva.play.silhouette.api.services.IdentityService
 import com.sksamuel.elastic4s.{ HitAs, RichSearchHit }
 import com.sksamuel.elastic4s.ElasticDsl._
 import com.sksamuel.elastic4s.source.Indexable
@@ -8,15 +10,20 @@ import java.math.BigInteger
 import java.security.MessageDigest
 import javax.inject.{ Inject, Singleton }
 import org.apache.commons.codec.binary.Base64
+import org.joda.time.DateTime
 import play.api.Logger
 import play.api.libs.json.Json
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.language.{ postfixOps, reflectiveCalls }
 import sun.security.provider.SecureRandom
-import org.joda.time.DateTime
 
 @Singleton
-class UserService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
+class UserService @Inject() (val es: ES, implicit val ctx: ExecutionContext) 
+  extends IdentityService[User] {
+  
+  // Required by Silhouette auth framework
+  override def retrieve(loginInfo: LoginInfo): Future[Option[User]] =
+    findByUsername(loginInfo.providerKey)
 
   countUsers.map { count =>
     if (count == 0) {

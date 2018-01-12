@@ -1,16 +1,17 @@
 package controllers.pages.partners
 
-import controllers.{HasVisitLogging, WebJarAssets}
+import controllers.HasVisitLogging
 import javax.inject.{Inject, Singleton}
 import org.webjars.play.WebJarsUtil
-import play.api.mvc.{Action, Controller}
+import play.api.mvc.{AbstractController, ControllerComponents}
 import services.visit.VisitService
 
 @Singleton
 class PartnersController @Inject()(
+  val components: ControllerComponents,
   implicit val visitService: VisitService,
   implicit val webjars: WebJarsUtil
-) extends Controller with HasVisitLogging {
+) extends AbstractController(components) with HasVisitLogging {
 
   def index = Action { implicit request =>
     logPageView()

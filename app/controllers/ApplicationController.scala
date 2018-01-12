@@ -2,7 +2,7 @@ package controllers
 
 import javax.inject.{Inject,Singleton}
 import play.api.http.HeaderNames
-import play.api.mvc.{Action,Controller}
+import play.api.mvc.{AbstractController, ControllerComponents}
 import org.joda.time.Period
 import org.webjars.play.WebJarsUtil
 import scala.concurrent.{Future,ExecutionContext}
@@ -12,12 +12,13 @@ import services.visit.{VisitService,TimeInterval}
 
 @Singleton
 class ApplicationController @Inject() (
+  val components: ControllerComponents,
   val searchService: SearchService,
   implicit val itemService: ItemService,
   implicit val visitService: VisitService,
   implicit val ctx: ExecutionContext,
   implicit val webjars: WebJarsUtil
-) extends Controller with HasVisitLogging {
+) extends AbstractController(components) with HasVisitLogging {
 
   def landing = Action.async { implicit request =>
     logPageView()

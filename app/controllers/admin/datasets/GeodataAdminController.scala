@@ -1,21 +1,23 @@
 package controllers.admin.datasets
 
-import controllers.{BaseAuthController, WebJarAssets}
+import com.mohiva.play.silhouette.api.Silhouette
+import controllers.{BaseAuthController, Security}
 import javax.inject.{Inject, Singleton}
-import jp.t2v.lab.play2.auth.AuthElement
 import org.webjars.play.WebJarsUtil
 import play.api.Configuration
-import play.api.mvc.Action
+import play.api.mvc.ControllerComponents
 import services.user.{Role, UserService}
 
 @Singleton
 class GeodataAdminController @Inject() (
+  val components: ControllerComponents,
   val config: Configuration,
   val users: UserService,
+  val silhouette: Silhouette[Security.Env],
   implicit val webjars: WebJarsUtil
-) extends BaseAuthController with AuthElement {
+) extends BaseAuthController(components) {
 
-  def index = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>
+  def index = silhouette.SecuredAction(Security.WithRole(Role.ADMIN)) { implicit request =>
     Ok(views.html.admin.datasets.geodata())
   }
 
