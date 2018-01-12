@@ -3,13 +3,13 @@ package harvesting
 import akka.stream.Materializer
 import akka.stream.scaladsl.Sink
 import akka.util.ByteString
-import java.io.{ File, FileOutputStream }
-import java.nio.file.Files
+import java.io.{File, FileOutputStream}
+import java.nio.file.{Files, Paths}
 import java.util.UUID
 import play.api.Logger
 import play.api.libs.ws.WSClient
-import play.api.libs.Files.TemporaryFile
-import scala.concurrent.{ ExecutionContext, Future }
+import play.api.libs.Files.{TemporaryFile, TemporaryFileCreator}
+import scala.concurrent.{ExecutionContext, Future}
 
 trait HasFileDownload { self: { val ws: WSClient } =>
 
@@ -52,27 +52,28 @@ trait HasFileDownload { self: { val ws: WSClient } =>
         throw new UnknownFormatError(url, "Unknown file format (no content type)")
     }
 
-  protected def download(url: String, retries: Int = MAX_RETRIES)(implicit ctx: ExecutionContext, mat: Materializer) : Future[TemporaryFile] = {
+  protected def download(
+    url: String, retries: Int = MAX_RETRIES
+  )(implicit ctx: ExecutionContext, mat: Materializer, tmpCreator: TemporaryFileCreator) : Future[TemporaryFile] = {
     Logger.info("Downloading from " + url)
     val filename = UUID.randomUUID.toString
-    val tempFile = new TemporaryFile(new File(TMP_DIR, filename + ".download"))
+    val tempFile = tmpCreator.create(Paths.get(TMP_DIR, s"${filename}.download"))
     val fStream = ws.url(url).withFollowRedirects(true).stream()
 
     fStream.flatMap { response =>
       val outputStream = new FileOutputStream(tempFile.file)
       val sink = Sink.foreach[ByteString](bytes => outputStream.write(bytes.toArray))
 
-      response.body.runWith(sink).andThen {
+      response.bodyAsSource.runWith(sink).andThen {
         case result =>
           outputStream.close()
           result.get
       } map {_ =>
         Logger.info("Download complete")
-        val contentType = response.headers.headers.get("Content-Type").flatMap(_.headOption)
+        val contentType = response.headers.get("Content-Type").flatMap(_.headOption)
         val extension = getExtension(url, contentType)
-        val renamedTempFile = new TemporaryFile(new File(TMP_DIR, filename + "." + extension))
-        Files.copy(tempFile.file.toPath, renamedTempFile.file.toPath)
-        tempFile.finalize()
+        val renamedTempFile = tmpCreator.create(Paths.get(TMP_DIR, s"${filename}.${extension}"))
+        Files.copy(tempFile.path, renamedTempFile.path)
         renamedTempFile
       }
     } recoverWith {

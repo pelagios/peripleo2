@@ -3,15 +3,16 @@ package controllers.admin.authorities
 import akka.actor.ActorSystem
 import akka.stream.Materializer
 import controllers.WebJarAssets
-import harvesting.loaders.{ DumpLoader, StreamLoader }
+import harvesting.loaders.{DumpLoader, StreamLoader}
 import harvesting.crosswalks._
-import javax.inject.{ Inject, Singleton }
-import play.api.{ Configuration, Logger }
+import javax.inject.{Inject, Singleton}
+import org.webjars.play.WebJarsUtil
+import play.api.{Configuration, Logger}
 import scala.concurrent.ExecutionContext
-import services.task.{ TaskService, TaskType }
-import services.user.{ Role, UserService }
-import services.item.{ ItemService, ItemType, PathHierarchy }
-import services.item.importers.{ DatasetImporter, EntityImporter }
+import services.task.{TaskService, TaskType}
+import services.user.{Role, UserService}
+import services.item.{ItemService, ItemType, PathHierarchy}
+import services.item.importers.{DatasetImporter, EntityImporter}
 
 @Singleton
 class GazetteerAdminController @Inject() (
@@ -22,7 +23,7 @@ class GazetteerAdminController @Inject() (
   val materializer: Materializer,
   implicit val ctx: ExecutionContext,
   implicit val system: ActorSystem,
-  implicit val webjars: WebJarAssets
+  implicit val webjars: WebJarsUtil
 ) extends BaseAuthorityAdminController(new DatasetImporter(itemService, ItemType.DATASET.AUTHORITY.GAZETTEER)) {
   
   private val taskType = TaskType("GAZETTEER_IMPORT")

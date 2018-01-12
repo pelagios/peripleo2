@@ -1,28 +1,29 @@
 package controllers.admin.datasets
 
 import akka.actor.ActorSystem
-import controllers.{ WebJarAssets, HasDatasetStats }
+import controllers.{WebJarAssets, HasDatasetStats}
 import controllers.admin.authorities.BaseAuthorityAdminController
 import harvesting.VoIDHarvester
 import harvesting.loaders.DumpLoader
 import harvesting.crosswalks._
 import harvesting.crosswalks.tei.TeiCrosswalk
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 import org.joda.time.DateTime
-import play.api.{ Configuration, Logger }
+import org.webjars.play.WebJarsUtil
+import play.api.{Configuration, Logger}
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.i18n.{ I18nSupport, MessagesApi }
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.MultipartFormData
 import play.api.mvc.MultipartFormData.FilePart
 import play.api.libs.Files
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 import services.Sort
 import services.item._
 import services.item.importers.DatasetImporter
 import services.item.search.SearchService
-import services.task.{ TaskService, TaskType }
-import services.user.{ Role, UserService }
+import services.task.{TaskService, TaskType}
+import services.user.{Role, UserService}
 import services.item.ItemService
 import services.item.importers.ItemImporter
 import services.item.importers.EntityImporter
@@ -38,7 +39,7 @@ class AnnotationsAdminController @Inject() (
   implicit val searchService: SearchService,
   implicit val ctx: ExecutionContext,
   implicit val system: ActorSystem,
-  implicit val webjars: WebJarAssets
+  implicit val webjars: WebJarsUtil
 ) extends BaseAuthorityAdminController(new DatasetImporter(itemService, ItemType.DATASET.ANNOTATIONS))
   with HasDatasetStats
   with I18nSupport {

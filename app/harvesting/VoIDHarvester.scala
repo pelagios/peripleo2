@@ -11,16 +11,17 @@ import org.pelagios.api.dataset.Dataset
 import play.api.Logger
 import play.api.libs.ws.WSClient
 import play.api.libs.Files
-import play.api.libs.Files.TemporaryFile
-import scala.concurrent.{ Future, ExecutionContext }
-import services.item.{ ItemService, ItemType, PathHierarchy }
-import services.item.importers.{ DatasetImporter, ItemImporter }
-import services.task.{ TaskService, TaskType }
+import play.api.libs.Files.{TemporaryFile, TemporaryFileCreator}
+import scala.concurrent.{Future, ExecutionContext}
+import services.item.{ItemService, ItemType, PathHierarchy}
+import services.item.importers.{DatasetImporter, ItemImporter}
+import services.task.{TaskService, TaskType}
 
 class VoIDHarvester @Inject() (
   val itemService: ItemService,
   val taskService: TaskService,
   val ws: WSClient,
+  implicit val tmpCreator: TemporaryFileCreator,
   implicit val materializer: Materializer, 
   implicit val system: ActorSystem,
   implicit val ctx: ExecutionContext

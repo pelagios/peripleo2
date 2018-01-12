@@ -3,6 +3,7 @@ package controllers.pages.about
 import controllers.{HasVisitLogging, WebJarAssets}
 import es.ES
 import javax.inject.{Inject, Singleton}
+import org.webjars.play.WebJarsUtil
 import play.api.mvc.{Action, Controller}
 import scala.concurrent.ExecutionContext
 import services.Sort
@@ -14,7 +15,7 @@ class AboutController @Inject()(
   implicit val itemService: ItemService,
   implicit val visitService: VisitService,
   implicit val ctx: ExecutionContext,
-  implicit val webjars: WebJarAssets
+  implicit val webjars: WebJarsUtil
 ) extends Controller with HasVisitLogging {
   
   def index = Action.async { implicit request =>

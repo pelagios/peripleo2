@@ -1,10 +1,10 @@
-@()(implicit request: RequestHeader, webjars: WebJarAssets, flash: Flash)
+@()(implicit request: RequestHeader, webjars: org.webjars.play.WebJarsUtil, flash: Flash)
 <html xmlns:xlink="http://www.w3.org/1999/xlink">
   <head>
     <title>Peripleo | Gazetteer Validator</title>
     <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/validator/index.css")"/>
-    <script src="@routes.WebJarAssets.at(webjars.locate("1.12.0/jquery.min.js"))"></script>
-    <script src="@routes.WebJarAssets.at(webjars.locate("require.min.js"))" data-main="@routes.Assets.versioned("javascripts/validator/app.js")"></script>
+    @Html(webjars.script("1.12.0/jquery.min.js"))
+    @Html(webjars.requireJs(routes.Assets.versioned("javascripts/validator/app.js")))
   </head>
   <body>
     @flash.get("error").map   { msg => <div class="step error">@msg</div> }

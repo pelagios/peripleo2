@@ -2,18 +2,19 @@ package controllers.admin.datasets
 
 import akka.actor.ActorSystem
 import akka.stream.Materializer
-import controllers.{ BaseAuthController, WebJarAssets }
+import controllers.{BaseAuthController, WebJarAssets}
 import harvesting.loaders.StreamLoader
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 import jp.t2v.lab.play2.auth.AuthElement
 import org.joda.time.DateTime
+import org.webjars.play.WebJarsUtil
 import play.api.Configuration
 import play.api.mvc.Action
 import scala.concurrent.ExecutionContext
 import services.item._
-import services.item.importers.{ DatasetImporter, ItemImporter }
-import services.user.{ Role, UserService }
-import services.task.{ TaskService, TaskType }
+import services.item.importers.{DatasetImporter, ItemImporter}
+import services.user.{Role, UserService}
+import services.task.{TaskService, TaskType}
 import harvesting.crosswalks.CSVCrosswalk
 
 @Singleton
@@ -25,7 +26,7 @@ class CSVAdminController @Inject() (
   val materializer: Materializer,
   implicit val ctx: ExecutionContext,
   implicit val system: ActorSystem,
-  implicit val webjars: WebJarAssets
+  implicit val webjars: WebJarsUtil
 ) extends BaseAuthController with AuthElement {
   
   private def upsertDatasetRecord(title: String) = {

@@ -1,10 +1,10 @@
 name := """peripleo2"""
 
-version := "1.0-SNAPSHOT"
+version := "2.0"
+
+scalaVersion := "2.11.11"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
-
-scalaVersion := "2.11.8"
 
 scalacOptions ++= Seq("-feature")
 
@@ -15,16 +15,24 @@ resolvers ++= Seq(
 
 libraryDependencies ++= Seq(
   ws,
-  cache,
+  ehcache,
   filters,
+  guice,
 
-  "com.nrinaudo" %% "kantan.csv" % "0.1.15",
+  "com.nrinaudo" %% "kantan.csv" % "0.2.1",
+  "com.nrinaudo" %% "kantan.csv-commons" % "0.2.1",
+
   "com.sksamuel.elastic4s" %% "elastic4s-streams" % "2.4.0",
+
   "com.vividsolutions" % "jts-core" % "1.14.0",
+
   "jp.t2v" %% "play2-auth" % "0.14.1",
+
   "eu.bitwalker" % "UserAgentUtils" % "1.20",
+
   "org.geotools" % "gt-geojson" % "18.1",
-  "org.webjars" %% "webjars-play" % "2.5.0",
+
+  "org.webjars" %% "webjars-play" % "2.6.2",
 
   // Scalagios core + transient dependencies
   "org.pelagios" % "scalagios-core" % "2.0.5" from "https://github.com/pelagios/scalagios/releases/download/v2.0.5/scalagios-core_2.11-2.0.5.jar",

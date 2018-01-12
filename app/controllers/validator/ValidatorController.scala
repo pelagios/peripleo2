@@ -1,22 +1,19 @@
 package controllers.validator
 
 import controllers.WebJarAssets
-import javax.inject.{ Inject, Singleton }
-import play.api.mvc.{ Action, Controller }
-import scala.concurrent.Future
-import harvesting.crosswalks.FeatureCollectionCrosswalk
-import java.io.FileInputStream
+import harvesting.crosswalks.{FeatureCollectionCrosswalk, PelagiosAnnotationCrosswalk, PelagiosGazetteerCrosswalk}
+import java.io.{File, FileInputStream}
+import javax.inject.{Inject, Singleton}
+import java.util.zip.GZIPInputStream
+import org.webjars.play.WebJarsUtil
+import play.api.mvc.{Action, Controller}
 import scala.concurrent.{ ExecutionContext, Future }
 import services.item.PathHierarchy
-import harvesting.crosswalks.PelagiosGazetteerCrosswalk
-import java.util.zip.GZIPInputStream
-import java.io.File
-import harvesting.crosswalks.PelagiosAnnotationCrosswalk
 
 @Singleton
 class ValidatorController @Inject() (
   implicit val ctx: ExecutionContext,
-  implicit val webjars: WebJarAssets
+  implicit val webjars: WebJarsUtil
 ) extends Controller {
   
   private val DUMMY_DATASET = PathHierarchy("http://www.example.com", "Example Dataset")

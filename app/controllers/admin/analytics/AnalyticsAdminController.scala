@@ -1,13 +1,14 @@
 package controllers.admin.analytics
 
-import controllers.{ BaseAuthController, WebJarAssets }
-import javax.inject.{ Inject, Singleton }
+import controllers.{BaseAuthController, WebJarAssets}
+import javax.inject.{Inject, Singleton}
 import jp.t2v.lab.play2.auth.AuthElement
+import org.webjars.play.WebJarsUtil
 import play.api.Configuration
 import play.api.mvc.Action
-import services.user.{ Role, UserService }
+import services.user.{Role, UserService}
 import scala.concurrent.ExecutionContext
-import services.visit.{ VisitService, TimeInterval }
+import services.visit.{VisitService, TimeInterval}
 import services.profiling.ProfilingService
 
 @Singleton
@@ -17,7 +18,7 @@ class AnalyticsAdminController @Inject() (
   val users:  UserService,
   val visits: VisitService,
   implicit val ctx: ExecutionContext,
-  implicit val webjars: WebJarAssets
+  implicit val webjars: WebJarsUtil
 ) extends BaseAuthController with AuthElement {
 
   def index = AsyncStack(AuthorityKey -> Role.ADMIN) { implicit request =>

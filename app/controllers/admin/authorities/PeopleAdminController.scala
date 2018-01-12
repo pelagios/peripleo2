@@ -4,14 +4,15 @@ import akka.actor.ActorSystem
 import akka.stream.Materializer
 import controllers.WebJarAssets
 import harvesting.loaders.StreamLoader
+import harvesting.crosswalks.people.SimplePeopleCrosswalk
 import javax.inject.{ Inject, Singleton }
+import org.webjars.play.WebJarsUtil
 import play.api.Configuration
 import scala.concurrent.ExecutionContext
 import services.user.{ Role, UserService }
 import services.item.{ ItemService, ItemType, PathHierarchy }
 import services.item.importers.{ DatasetImporter, EntityImporter }
 import services.task.{ TaskService, TaskType }
-import harvesting.crosswalks.people.SimplePeopleCrosswalk
 
 @Singleton
 class PeopleAdminController @Inject() (
@@ -22,7 +23,7 @@ class PeopleAdminController @Inject() (
   val materializer: Materializer,
   implicit val ctx: ExecutionContext,
   implicit val system: ActorSystem,
-  implicit val webjars: WebJarAssets
+  implicit val webjars: WebJarsUtil
 ) extends BaseAuthorityAdminController(new DatasetImporter(itemService, ItemType.DATASET.AUTHORITY.PEOPLE)) {
 
   def index = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>

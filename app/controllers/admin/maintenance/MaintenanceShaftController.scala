@@ -1,15 +1,16 @@
 package controllers.admin.maintenance
 
-import controllers.{ BaseAuthController, WebJarAssets }
-import javax.inject.{ Inject, Singleton }
+import controllers.{BaseAuthController, WebJarAssets}
+import javax.inject.{Inject, Singleton}
 import jp.t2v.lab.play2.auth.AuthElement
+import org.webjars.play.WebJarsUtil
 import play.api.Configuration
 import play.api.mvc.Action
 import play.api.libs.json.Json
-import scala.concurrent.{ ExecutionContext, Future }
-import scala.util.{ Try, Success, Failure }
-import services.user.{ Role, UserService }
-import services.item.{ Item, ItemService }
+import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Try, Success, Failure}
+import services.user.{Role, UserService}
+import services.item.{Item, ItemService}
 
 @Singleton
 class MaintenanceShaftController @Inject() (
@@ -17,7 +18,7 @@ class MaintenanceShaftController @Inject() (
   val users: UserService,
   val itemService: ItemService,
   implicit val ctx: ExecutionContext,
-  implicit val webjars: WebJarAssets
+  implicit val webjars: WebJarsUtil
 ) extends BaseAuthController with AuthElement {
   
   def index = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>

@@ -1,4 +1,4 @@
-@(form: Form[controllers.admin.datasets.DatasetMeta])(implicit request: RequestHeader, webjars: WebJarAssets, messages: Messages)
+@(form: Form[controllers.admin.datasets.DatasetMeta])(implicit request: RequestHeader, webjars: org.webjars.play.WebJarsUtil, messages: Messages)
 
 @views.html.admin._layout("Dataset Administration | New Dataset ", "new", "stylesheets/admin/datasets/index.css") {
   <div class="row">

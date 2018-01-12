@@ -2,15 +2,15 @@
   title: String,
   activeTab: String,
   stylesheet: String
-)(content: Html)(implicit request: RequestHeader, webjars: WebJarAssets)
+)(content: Html)(implicit request: RequestHeader, webjars: org.webjars.play.WebJarsUtil)
 <!DOCTYPE html>
 <html>
   <head>
     <title>@title | Peripleo</title>
     <link rel="stylesheet" href="@routes.Assets.versioned(stylesheet)"/>
-    <script src="@routes.WebJarAssets.at(webjars.locate("1.12.0/jquery.min.js"))"></script>
-    <script src="@routes.WebJarAssets.at(webjars.locate("jquery.timeago.js"))"></script>
-    <script src="@routes.WebJarAssets.at(webjars.locate("numeral.min.js"))"></script>
+    @Html(webjars.script("1.12.0/jquery.min.js"))
+    @Html(webjars.script("jquery.timeago.js"))
+    @Html(webjars.script("numeral.min.js"))
   </head>
   <body>
     <div class="sidebar">

@@ -2,15 +2,16 @@ package controllers.admin.authorities
 
 import akka.actor.ActorSystem
 import controllers.WebJarAssets
+import harvesting.loaders.DumpLoader
+import harvesting.crosswalks.periods.PeriodoCrosswalk
 import javax.inject.{ Inject, Singleton }
+import org.webjars.play.WebJarsUtil
 import play.api.Configuration
+import scala.concurrent.ExecutionContext
 import services.user.{ Role, UserService }
 import services.task.{ TaskService, TaskType }
 import services.item.{ ItemService, ItemType, PathHierarchy }
 import services.item.importers.{ DatasetImporter, EntityImporter }
-import scala.concurrent.ExecutionContext
-import harvesting.loaders.DumpLoader
-import harvesting.crosswalks.periods.PeriodoCrosswalk
 
 @Singleton
 class PeriodAdminController @Inject() (
@@ -20,7 +21,7 @@ class PeriodAdminController @Inject() (
   val taskService: TaskService,
   implicit val ctx: ExecutionContext,
   implicit val system: ActorSystem,
-  implicit val webjars: WebJarAssets
+  implicit val webjars: WebJarsUtil
 ) extends BaseAuthorityAdminController(new DatasetImporter(itemService, ItemType.DATASET.AUTHORITY.PERIODS)) {
 
   def index = StackAction(AuthorityKey -> Role.ADMIN) { implicit request =>
