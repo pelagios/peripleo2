@@ -1,7 +1,10 @@
 package harvesting.crosswalks
 
 import java.io.File
+import kantan.csv.CsvConfiguration
+import kantan.csv.CsvConfiguration._
 import kantan.csv.ops._
+import kantan.csv.engine.commons._
 import org.joda.time.{ DateTime, DateTimeZone }
 import org.joda.time.format.DateTimeFormat
 import services.item._
@@ -37,7 +40,8 @@ object CSVCrosswalk {
     
     // TODO currently a hard-wired hack for the million musical tweets dataset
     def parseRow(row: String): Option [(ItemRecord, Seq[UnboundReference])] = {
-      val fields = row.asCsvReader[Seq[String]](delimiter, header = false).toIterator.next.get
+      val parserConfig = CsvConfiguration(delimiter, '"', QuotePolicy.WhenNeeded, Header.None)
+      val fields = row.asCsvReader[Seq[String]](parserConfig).toIterator.next.get
       
       val id = fields(0)
       val geonamesId = fields(1)
