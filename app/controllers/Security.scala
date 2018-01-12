@@ -2,6 +2,7 @@ package controllers
 
 import com.google.inject.name.Named
 import com.google.inject.{AbstractModule, Provides}
+import com.mohiva.play.silhouette.api.{AuthInfo, LoginInfo}
 import com.mohiva.play.silhouette.api.crypto.{Crypter, CrypterAuthenticatorEncoder, Signer}
 import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
 import com.mohiva.play.silhouette.api.services.AuthenticatorService
@@ -23,6 +24,7 @@ import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.language.postfixOps
+import scala.reflect.ClassTag
 
 class SilhouetteSecurity  extends AbstractModule with ScalaModule {
 
@@ -31,7 +33,6 @@ class SilhouetteSecurity  extends AbstractModule with ScalaModule {
 
   override def configure(): Unit = {
     bind[Silhouette[Security.Env]].to[SilhouetteProvider[Security.Env]]
-    bind[DelegableAuthInfoDAO[PasswordInfo]].toInstance(new InMemoryAuthInfoDAO[PasswordInfo])
     bind[PasswordHasher].toInstance(new BCryptPasswordHasher)
     bind[IDGenerator].toInstance(new SecureRandomIDGenerator())
     bind[FingerprintGenerator].toInstance(new DefaultFingerprintGenerator(false))
@@ -77,8 +78,8 @@ class SilhouetteSecurity  extends AbstractModule with ScalaModule {
   }
 
   @Provides
-  def provideAuthInfoRepository(passwordDAO: DelegableAuthInfoDAO[PasswordInfo]): AuthInfoRepository =
-    new DelegableAuthInfoRepository(passwordDAO)
+  def provideAuthInfoRepository(): AuthInfoRepository =
+    new AuthInfoRepositoryImpl()
 
   @Provides
   def providePasswordHasherRegistry(passwordHasher: PasswordHasher): PasswordHasherRegistry =
@@ -126,6 +127,34 @@ object Security {
       Future.successful(user.accessLevel.role == role)
     }
 
+  }
+
+}
+
+/** https://github.com/Ciantic/play-silhouette-seed-minimal/blob/master/app/models/daos/AuthInfoDAO.scala **/
+class AuthInfoRepositoryImpl[C <: AuthInfo](implicit tag: ClassTag[C]) extends AuthInfoRepository {
+
+  def find[T <: AuthInfo](loginInfo: LoginInfo)(implicit tag: scala.reflect.ClassTag[T]): Future[Option[T]] = {
+    Future.successful(None)
+  }
+  
+  def add[T <: AuthInfo](loginInfo: LoginInfo, authInfo: T): Future[T] = {
+    Future.successful(authInfo)
+  }
+
+  def update[T <: AuthInfo](loginInfo: LoginInfo, authInfo: T): Future[T] = {
+    Future.successful(authInfo)
+  }
+
+  def save[T <: AuthInfo](loginInfo: LoginInfo, authInfo: T): Future[T] = {
+    find(loginInfo).flatMap {
+      case Some(_) => update(loginInfo, authInfo)
+      case None => add(loginInfo, authInfo)
+    }
+  }
+
+  def remove[T <: AuthInfo](loginInfo: LoginInfo)(implicit tag: scala.reflect.ClassTag[T]): Future[Unit] = {
+    Future.successful(())
   }
 
 }
