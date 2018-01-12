@@ -37,11 +37,11 @@ class VoIDHarvester @Inject() (
   
   private val taskType = TaskType("DATASET_IMPORT")
   
-  private def parseVoID(file: TemporaryFile) = Future {
+  private def parseVoID(tmp: TemporaryFile) = Future {
     scala.concurrent.blocking {
-      Logger.info("Parsing VoID file " + file.file.getName)
-      val in = new FileInputStream(file.file)
-      val datasets = Scalagios.readVoID(in, file.file.getName)
+      Logger.info("Parsing VoID file " + tmp.path.getFileName)
+      val in = new FileInputStream(tmp.path.toFile)
+      val datasets = Scalagios.readVoID(in, tmp.path.getFileName.toString)
       in.close()
       datasets
     }
@@ -102,10 +102,10 @@ class VoIDHarvester @Inject() (
           
         val loader = new DumpLoader(taskService, taskType)
         loader.importDump(
-          "Importing Pelagios annotations from " + tmp.file.getName,
-          tmp.file,
-          tmp.file.getName,
-          PelagiosAnnotationCrosswalk.fromRDF(tmp.file.getName, parents),
+          s"Importing Pelagios annotations from ${tmp.path.getFileName}",
+          tmp.path.toFile,
+          tmp.path.getFileName.toString,
+          PelagiosAnnotationCrosswalk.fromRDF(tmp.path.getFileName.toString, parents),
           importer,
           username
           /* TODO job_id */)

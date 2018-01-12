@@ -46,7 +46,7 @@ class PeopleAdminController @Inject() (
         upsertDatasetRecord(name, name).map { success =>
           new StreamLoader(taskService, TaskType("AUTHORITY_IMPORT_PEOPLE"), materializer).importRecords(
             formdata.filename,
-            formdata.ref.file,
+            formdata.ref.path.toFile,
             formdata.filename,
             SimplePeopleCrosswalk.fromJson(dataset),
             importer,

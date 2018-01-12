@@ -56,7 +56,7 @@ class ES @Inject() (
   lifecycle.addStopHook { () => Future.successful(stop()) }
 
   lazy val client = {
-    val home = config.getString("peripleo.index.dir") match {
+    val home = config.getOptional[String]("peripleo.index.dir") match {
       case Some(dir) => new File(dir)
       case None => new File("index")
     }

@@ -88,7 +88,7 @@ class AnnotationsAdminController @Inject() (
             val importer = new ItemImporter(itemService, ItemType.OBJECT)
             new DumpLoader(taskService, TaskType("TEI_IMPORT")).importDump(
               filepart.filename,
-              filepart.ref.file,
+              filepart.ref.path.toFile,
               filepart.filename,
               TeiCrosswalk.fromSingleFile(filepart.filename, PathHierarchy("TEI", "TEI")),
               importer,
@@ -116,7 +116,7 @@ class AnnotationsAdminController @Inject() (
     val importer = new EntityImporter(itemService, itemType)
     new DumpLoader(taskService, TaskType("AUTHORITY_IMPORT")).importDump(
       "Importing authority data",
-      f.ref.file,
+      f.ref.path.toFile,
       f.filename,
       crosswalk,
       importer,
@@ -133,7 +133,7 @@ class AnnotationsAdminController @Inject() (
     val importer = new ItemImporter(itemService, ItemType.OBJECT)
     new DumpLoader(taskService, TaskType("ANNOTATION_IMPORT")).importDump(
       "Importing into dataset",
-      f.ref.file,
+      f.ref.path.toFile,
       f.filename,
       crosswalk,
       importer,

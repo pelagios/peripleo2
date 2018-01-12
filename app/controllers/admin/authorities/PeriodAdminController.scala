@@ -44,7 +44,7 @@ class PeriodAdminController @Inject() (
         upsertDatasetRecord(name, name).map { success =>
           new DumpLoader(taskService, TaskType("AUTHORITY_IMPORT_PERIODS")).importDump(
             formdata.filename,
-            formdata.ref.file,
+            formdata.ref.path.toFile,
             formdata.filename,
             PeriodoCrosswalk.fromJSON(formdata.filename, dataset),
             importer,

@@ -55,7 +55,7 @@ class GazetteerAdminController @Inject() (
 
               new DumpLoader(taskService, taskType).importDump(
                 formData.filename + " (Pelagios Gazetteer RDF)",
-                formData.ref.file,
+                formData.ref.path.toFile,
                 formData.filename,
                 PelagiosGazetteerCrosswalk.fromRDF(formData.filename),
                 importer,
@@ -66,7 +66,7 @@ class GazetteerAdminController @Inject() (
 
               new StreamLoader(taskService, taskType, materializer).importRecords(
                 formData.filename + " (Pleiades GeoJSON)",
-                formData.ref.file,
+                formData.ref.path.toFile,
                 formData.filename,
                 PleiadesCrosswalk.fromJson,
                 importer,
@@ -77,7 +77,7 @@ class GazetteerAdminController @Inject() (
 
               new StreamLoader(taskService, taskType, materializer).importRecords(
                 formData.filename + " (GeoNames GeoJSON)",
-                formData.ref.file,
+                formData.ref.path.toFile,
                 formData.filename,
                 GeoNamesCrosswalk.fromJson(PathHierarchy(name, name)),
                 importer,
@@ -87,7 +87,7 @@ class GazetteerAdminController @Inject() (
 
               new StreamLoader(taskService, taskType, materializer).importRecords(
                 formData.filename + " (Europeana GeoJSON)",
-                formData.ref.file,
+                formData.ref.path.toFile,
                 formData.filename,
                 EuropeanaPlacesCrosswalk.fromJson,
                 importer,
@@ -97,7 +97,7 @@ class GazetteerAdminController @Inject() (
 
               new DumpLoader(taskService, taskType).importDump(
                 formData.filename + " (GeoJSON Gazetteer)",
-                formData.ref.file,
+                formData.ref.path.toFile,
                 formData.filename,
                 FeatureCollectionCrosswalk.fromGeoJSON(PathHierarchy(name, name)),
                 importer,

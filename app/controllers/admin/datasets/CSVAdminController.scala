@@ -71,9 +71,9 @@ class CSVAdminController @Inject() (
         upsertDatasetRecord(name).map { success =>
           new StreamLoader(taskService, TaskType("CSV_IMPORT"), materializer).importRecords(
             formdata.filename,
-            formdata.ref.file,
+            formdata.ref.path.toFile,
             formdata.filename,
-            CSVCrosswalk.fromCSV(formdata.ref.file, dataset),
+            CSVCrosswalk.fromCSV(formdata.ref.path.toFile, dataset),
             importer,
             request.identity.username)
         }

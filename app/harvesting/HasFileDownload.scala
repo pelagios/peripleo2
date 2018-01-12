@@ -61,7 +61,7 @@ trait HasFileDownload { self: { val ws: WSClient } =>
     val fStream = ws.url(url).withFollowRedirects(true).stream()
 
     fStream.flatMap { response =>
-      val outputStream = new FileOutputStream(tempFile.file)
+      val outputStream = new FileOutputStream(tempFile.path.toFile)
       val sink = Sink.foreach[ByteString](bytes => outputStream.write(bytes.toArray))
 
       response.bodyAsSource.runWith(sink).andThen {
