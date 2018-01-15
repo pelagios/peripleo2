@@ -21,7 +21,7 @@ class NotificationService @Inject() (val es: ES, implicit val ctx: ExecutionCont
 
   def insertNotification(notification: Notification): Future[Boolean] =
     es.client execute {
-      index into ES.PERIPLEO / ES.NOTIFICATION source notification
+      indexInto(ES.PERIPLEO / ES.NOTIFICATION) source notification
     } map { 
       _ => true
     } recover { 

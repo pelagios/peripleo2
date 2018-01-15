@@ -55,9 +55,9 @@ class SearchService @Inject() (
   }
 
   private def buildTopRelatedQuery(args: SearchArgs, filter: QueryDefinition) =
-    search in ES.PERIPLEO / ES.REFERENCE query {
+    search(ES.PERIPLEO / ES.REFERENCE) query {
       constantScoreQuery {
-        bool {
+        boolQuery
           must (
             should (
               {
@@ -68,26 +68,25 @@ class SearchService @Inject() (
           ) filter (
             hasParentQuery("item") query filter scoreMode false
           )
-        }
       }
     } start 0 limit 0 aggregations (
       // Aggregate by reference type (PLACE | PERSON | PERIOD)
-      aggregation terms "by_related" field "reference_to.item_type" size 10 subaggs (
+      termsAggregation("by_related") field "reference_to.item_type" size 10 subaggs (
         // Sub-aggregate by docId
-        aggregation terms "by_doc_id" field "reference_to.doc_id" size ES.MAX_SIZE subaggs (
+        termsAggregation("by_doc_id") field "reference_to.doc_id" size ES.MAX_SIZE subaggs (
           // Sub-sub-aggregate by relation
-          aggregation terms "by_relation" field "relation" size 10
+          termsAggregation("by_relation") field "relation" size 10
         )
       ),
 
       // Aggregate by relation at top level
-      aggregation terms "by_relation" field "relation" size 10
+      termsAggregation("by_relation") field "relation" size 10
     )
 
   /** Common query components used to build item result and time histogram **/
   private[search] def itemBaseQuery(args: SearchArgs, filter: QueryDefinition) =
-    search in ES.PERIPLEO / ES.ITEM query {
-      bool {
+    search(ES.PERIPLEO / ES.ITEM) query {
+      boolQuery
         must (
           should (
             phraseQuery(args.query) ++
@@ -98,16 +97,15 @@ class SearchService @Inject() (
               .getOrElse(Seq.empty[QueryDefinition])
           )
         ) filter (filter)
-      }
     }
 
   private def buildItemQuery(args: SearchArgs, filter: QueryDefinition) = {
     val aggregations =
       if (args.settings.termAggregations)
         Seq(
-          aggregation terms "by_type" field "item_type" size 20,
-          aggregation terms "by_dataset" field "is_conflation_of.is_in_dataset.paths" size 20,
-          aggregation terms "by_language" field "is_conflation_of.languages" size 20)
+          termsAggregation("by_type") field "item_type" size 20,
+          termsAggregation("by_dataset") field "is_conflation_of.is_in_dataset.paths" size 20,
+          termsAggregation("by_language") field "is_conflation_of.languages" size 20)
       else
         Seq()
 
@@ -116,8 +114,8 @@ class SearchService @Inject() (
 
   private def buildTimeHistogramQuery(args: SearchArgs, filter: QueryDefinition) =
     itemBaseQuery(args, filter) limit 0 aggregations Seq(
-      aggregation histogram "by_decade"  script { script("by_time") params(Map("interval" -> 10))  scriptType ScriptType.FILE lang "groovy" } interval 10,
-      aggregation histogram "by_century" script { script("by_time") params(Map("interval" -> 100)) scriptType ScriptType.FILE lang "groovy" } interval 100)
+      dateHistogramAggregation("by_decade") script { script("by_time") params(Map("interval" -> 10))  scriptType ScriptType.FILE lang "groovy" } interval 10,
+      dateHistogramAggregation("by_century") script { script("by_time") params(Map("interval" -> 100)) scriptType ScriptType.FILE lang "groovy" } interval 100)
   
   def query(args: SearchArgs): Future[RichResultPage] = {
 

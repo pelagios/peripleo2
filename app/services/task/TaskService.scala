@@ -27,23 +27,23 @@ class TaskService @Inject() (val es: ES, implicit val ctx: ExecutionContext) ext
 
   def listAll(offset: Int = 0, limit: Int = 20): Future[Page[Task]] =
     es.client execute {
-      search in ES.PERIPLEO / ES.TASK start offset limit limit
+      search(ES.PERIPLEO / ES.TASK) start offset limit limit
     } map { response =>
       Page(response.tookInMillis, response.totalHits, offset, limit, response.to[Task])
     }
 
   def findByType(taskType: TaskType, offset: Int = 0, limit: Int = 20): Future[Page[Task]] =
     es.client execute {
-      search in ES.PERIPLEO / ES.TASK query filter { termQuery("task_type" -> taskType.toString) }
+      search(ES.PERIPLEO / ES.TASK) query termQuery("task_type" -> taskType.toString)
     } map { response =>
       Page(response.tookInMillis, response.totalHits, offset, limit, response.to[Task])
     }
 
   def findById(uuid: UUID): Future[Option[Task]] =
     es.client execute {
-      get id uuid.toString from ES.PERIPLEO / ES.TASK
+      get(uuid.toString) from ES.PERIPLEO / ES.TASK
     } map { response =>
-      if (response.isExists) {
+      if (response.exists) {
         val source = Json.parse(response.sourceAsString)
         Some(Json.fromJson[Task](source).get)
       } else {
@@ -53,7 +53,7 @@ class TaskService @Inject() (val es: ES, implicit val ctx: ExecutionContext) ext
 
   private def updateFields(uuid: UUID, fields: (String, Any)*): Future[Boolean] =
     es.client execute {
-      update id uuid.toString in ES.PERIPLEO / ES.TASK docAsUpsert fields
+      update(uuid.toString) in ES.PERIPLEO / ES.TASK docAsUpsert fields
     } map { _ => true
     } recover { case t: Throwable => false }
 
@@ -101,7 +101,7 @@ class TaskService @Inject() (val es: ES, implicit val ctx: ExecutionContext) ext
 
   def deleteById(uuid: UUID): Future[Boolean] =
     es.client execute {
-      delete id uuid.toString from ES.PERIPLEO / ES.TASK
+      delete(uuid.toString) from ES.PERIPLEO / ES.TASK
     } map { _ => true
     } recover { case t: Throwable => false }
 
@@ -120,7 +120,7 @@ class TaskService @Inject() (val es: ES, implicit val ctx: ExecutionContext) ext
       0)
 
     es.client execute {
-      update id task.id in ES.PERIPLEO / ES.TASK docAsUpsert task 
+      update(task.id) in ES.PERIPLEO / ES.TASK docAsUpsert task 
     } map { _ =>
       task.id
     }

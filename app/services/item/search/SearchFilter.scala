@@ -31,9 +31,9 @@ class SearchFilter(args: SearchArgs, placeFilterDefinition: Option[QueryDefiniti
     ).flatten 
 
     if (notClauses.size > 0)
-      bool { must(filterClauses) not (notClauses) }
+      boolQuery must(filterClauses) not (notClauses)
     else
-      bool { must(filterClauses) }
+      boolQuery must(filterClauses)
   }
 	
 	lazy val withDateRangeFilter = build(true)

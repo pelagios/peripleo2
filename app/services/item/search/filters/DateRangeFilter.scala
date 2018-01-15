@@ -15,8 +15,8 @@ case class DateRangeFilter(from: Option[DateTime], to: Option[DateTime], setting
   def filterDefinition() = (from, to) match {
     case (Some(from), Some(to)) =>
       Seq(
-        rangeQuery("temporal_bounds.from").to(formatDate(to)),
-        rangeQuery("temporal_bounds.to").from(formatDate(from))
+        rangeQuery("temporal_bounds.from").lte(formatDate(to)),
+        rangeQuery("temporal_bounds.to").gte(formatDate(from))
       )
       
       // TODO support open intervals

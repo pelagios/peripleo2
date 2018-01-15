@@ -49,15 +49,14 @@ trait ReferenceService { self: ItemService =>
       Future.successful(Seq.empty[Reference])
     else
       es.client execute {
-        search in ES.PERIPLEO / ES.ITEM query {
-          bool {
+        search(ES.PERIPLEO / ES.ITEM) query {
+          boolQuery
             // TODO this fetches all referenced items on a single item in one go
             // TODO we may need to limit this in some cases (literature!)
             // TODO current max-size is 10.000 unique (!) references
             should (
               unbound.map(_.uri).distinct.map(termQuery("is_conflation_of.identifiers", _))
             )
-          }
         } start 0 limit ES.MAX_SIZE
       } map { response =>
         val items = response.to[(Item, Long)].map(_._1)
@@ -75,7 +74,7 @@ trait ReferenceService { self: ItemService =>
 
     def fetchNextBatch(scrollId: String): Future[RichSearchResponse] =
       es.client execute {
-        search scroll scrollId keepAlive "5m"
+        searchScroll(scrollId) keepAlive "5m"
       }
 
     def rewriteOne(ref: Reference, id: String, parent: String) =
@@ -87,8 +86,8 @@ trait ReferenceService { self: ItemService =>
             val updatedReference = ref.rebind(newDestination)
             es.client execute {
               bulk (
-                delete id id from ES.PERIPLEO / ES.REFERENCE parent parent,
-                index into ES.PERIPLEO / ES.REFERENCE source updatedReference parent parent
+                delete(id) from ES.PERIPLEO / ES.REFERENCE parent parent,
+                indexInto(ES.PERIPLEO / ES.REFERENCE) source updatedReference parent parent
               )
             } map { !_.hasFailures
             } recover { case t: Throwable => false }
@@ -101,7 +100,7 @@ trait ReferenceService { self: ItemService =>
           Logger.warn("Cleaning up orphaned reference")
 
           es.client execute {
-            delete id id from ES.PERIPLEO / ES.REFERENCE parent parent
+            delete(id) from ES.PERIPLEO / ES.REFERENCE parent parent
           } map { _ => true } recover { case t: Throwable => false }
       }
 
@@ -128,12 +127,10 @@ trait ReferenceService { self: ItemService =>
 
     if (itemsBeforeUpdate.size > 0) {
       es.client execute {
-        search in ES.PERIPLEO / ES.REFERENCE query {
-          constantScoreQuery {
-            filter (
-              should (
-                itemsBeforeUpdate.map(item => termQuery("reference_to.doc_id", item.docId.toString))
-              )
+        search(ES.PERIPLEO / ES.REFERENCE) query {
+          constantScoreQuery { 
+            should (
+              itemsBeforeUpdate.map(item => termQuery("reference_to.doc_id", item.docId.toString))
             )
           }
         } limit 50 scroll "5m"
@@ -155,12 +152,10 @@ trait ReferenceService { self: ItemService =>
           query.map(q => queryStringQuery(q).field("quote.context"))).flatten
 
       es.client execute {
-        search in ES.PERIPLEO / ES.REFERENCE query {
-          bool {
-            must ( clauses )
-          }
+        search(ES.PERIPLEO / ES.REFERENCE) query {
+          boolQuery.must(clauses)
         } size offset limit limit highlighting (
-          highlight field "quote.context" fragmentSize 200
+          highlight("quote.context") fragmentSize 200
         )
       } map { response =>
         Page(response.tookInMillis, response.totalHits, offset, limit, toRefAndHighlight(response))
@@ -205,12 +200,12 @@ trait ReferenceService { self: ItemService =>
    */
   def countReferences(parentUri: String): Future[(Long, Int)] =
     es.client execute {
-      search in ES.PERIPLEO / ES.REFERENCE query {
+      search(ES.PERIPLEO / ES.REFERENCE) query {
         constantScoreQuery {
-          filter ( termQuery("parent_uri" -> parentUri) )
+          termQuery("parent_uri" -> parentUri)
         }
       } aggs (
-        aggregation cardinality "distinct" field "reference_to.doc_id"
+        cardinalityAggregation("distinct") field "reference_to.doc_id"
       ) size 0
     } map { response =>
       val c = response.aggregations.cardinalityResult("distinct")
@@ -220,19 +215,15 @@ trait ReferenceService { self: ItemService =>
   /** Like above, but restricted to a specific destination item type  **/
   def countReferencesToType(parentUri: String, itemType: ItemType): Future[(Long, Int)] =
     es.client execute {
-      search in ES.PERIPLEO / ES.REFERENCE query {
+      search(ES.PERIPLEO / ES.REFERENCE) query {
         constantScoreQuery {
-          filter ( 
-            bool {
-              must (
-                termQuery("parent_uri" -> parentUri),
-                termQuery("reference_to.item_type" -> itemType.toString)
-              )
-            }
+          boolQuery.must(
+            termQuery("parent_uri" -> parentUri),
+            termQuery("reference_to.item_type" -> itemType.toString)
           )
         }
       } aggs (
-        aggregation cardinality "distinct" field "reference_to.doc_id"
+        cardinalityAggregation("distinct") field "reference_to.doc_id"
       ) size 0
     } map { response =>
       val c = response.aggregations.cardinalityResult("distinct")
@@ -243,17 +234,17 @@ trait ReferenceService { self: ItemService =>
 
     val fRelatedQuery =
       es.client execute {
-        search in ES.PERIPLEO / ES.REFERENCE query {
+        search(ES.PERIPLEO / ES.REFERENCE) query {
           constantScoreQuery {
-            filter ( hasParentQuery(ES.ITEM) query(termQuery("is_conflation_of.identifiers", identifier)) scoreMode false )
+            hasParentQuery(ES.ITEM) query(termQuery("is_conflation_of.identifiers", identifier)) scoreMode false
           }
         } start 0 limit 0 aggregations (
           // Aggregate by reference type (PLACE | PERSON | PERIOD)
-          aggregation terms "by_related" field "reference_to.item_type" subaggs (
+          termsAggregation("by_related") field "reference_to.item_type" subaggs (
             // Sub-aggregate by docId
-            aggregation terms "by_doc_id" field "reference_to.doc_id" size ES.MAX_SIZE subaggs (
+            termsAggregation("by_doc_id") field "reference_to.doc_id" size ES.MAX_SIZE subaggs (
               // Sub-sub-aggregate by relation
-              aggregation terms "by_relation" field "relation" size 10
+              termsAggregation("by_relation") field "relation" size 10
             )
           )
         )

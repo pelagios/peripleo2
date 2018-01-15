@@ -13,7 +13,7 @@ trait HasDeleteByQuery { self: ES =>
   
   def fetchNextBatch(scrollId: String): Future[RichSearchResponse] =
     client execute {
-      search scroll scrollId keepAlive "1m"
+      searchScroll(scrollId) keepAlive "1m"
     }
   
   def deleteOneBatch(ids: Seq[String], index: String, parent: Option[String])(implicit ctx: ExecutionContext): Future[Boolean] =
@@ -21,10 +21,10 @@ trait HasDeleteByQuery { self: ES =>
       bulk (
         parent match {
           case Some(parentId) =>
-            ids.map { id => delete id id from ES.PERIPLEO / index parent parentId }
+            ids.map { id => delete(id) from ES.PERIPLEO / index parent parentId }
 
           case None =>
-            ids.map { id => delete id id from ES.PERIPLEO / index }
+            ids.map { id => delete(id) from ES.PERIPLEO / index }
         }
       )
     } map { result =>
@@ -55,7 +55,7 @@ trait HasDeleteByQuery { self: ES =>
     }
 
     client execute {
-      search in ES.PERIPLEO / index query q limit 50 scroll "1m"
+      search(ES.PERIPLEO / index) query q limit 50 scroll "1m"
     } flatMap {
       deleteBatch(_)
     }
@@ -92,7 +92,7 @@ trait HasDeleteByQuery { self: ES =>
     }
     
     client execute {
-      search in ES.PERIPLEO / index query q limit 20 scroll "1m"
+      search(ES.PERIPLEO / index) query q limit 20 scroll "1m"
     } flatMap {
       deleteBatch(_)
     }
@@ -104,7 +104,7 @@ trait HasDeleteByQuery { self: ES =>
       hits.foldLeft(Future.successful(true)) { case (fSuccess, hit) =>
         fSuccess.flatMap { success =>
           client execute {
-            delete id hit.id from ES.PERIPLEO / index parent hit.java.getField("_parent").getValue[String]
+            delete(hit.id) from ES.PERIPLEO / index parent hit.java.getField("_parent").getValue[String]
           } map { _ => success
           } recover { case t: Throwable => false }
         }
@@ -125,7 +125,7 @@ trait HasDeleteByQuery { self: ES =>
     }
     
     client execute {
-      search in ES.PERIPLEO / index query q limit 50 scroll "1m"
+      search(ES.PERIPLEO / index) query q limit 50 scroll "1m"
     } flatMap {
       deleteBatch(_)
     }    

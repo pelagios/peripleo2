@@ -6,6 +6,7 @@ import com.sksamuel.elastic4s.{ElasticsearchClientUri, TcpClient}
 import java.io.File
 import javax.inject.{ Inject, Singleton }
 import org.elasticsearch.common.settings.Settings
+import org.elasticsearch.common.xcontent.XContentType
 import play.api.{ Configuration, Logger }
 import play.api.inject.ApplicationLifecycle
 import scala.io.Source
@@ -68,9 +69,9 @@ class ES @Inject() (config: Configuration, lifecycle: ApplicationLifecycle) exte
     }
   }
   
-  def refreshIndex()(implicit ctx: ExecutionContext): Future[Boolean] = 
+  def refresh()(implicit ctx: ExecutionContext): Future[Boolean] = 
     client execute {
-      refresh index ES.PERIPLEO
+      refreshIndex(ES.PERIPLEO) 
     } map { _ => true } recover { case t: Throwable => false }
 
   private def start() = {
@@ -85,7 +86,7 @@ class ES @Inject() (config: Configuration, lifecycle: ApplicationLifecycle) exte
         Logger.info("Creating mapping " + name)
         val putMapping = client.java.admin.indices().preparePutMapping(ES.PERIPLEO)
         putMapping.setType(name)
-        putMapping.setSource(json)
+        putMapping.setSource(json, XContentType.JSON)
         putMapping.execute().actionGet()
       }
     } else {
@@ -93,11 +94,11 @@ class ES @Inject() (config: Configuration, lifecycle: ApplicationLifecycle) exte
       Logger.info("No ES index - initializing...")
 
       val create = client.java.admin.indices().prepareCreate(ES.PERIPLEO)
-      create.setSettings(loadSettings())
+      create.setSettings(loadSettings(), XContentType.JSON)
 
       loadMappings().foreach { case (name, json) =>  {
         Logger.info("Create mapping - " + name)
-        create.addMapping(name, json)
+        create.addMapping(name, json, XContentType.JSON)
       }}
 
       create.execute().actionGet()

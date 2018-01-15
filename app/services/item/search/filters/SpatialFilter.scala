@@ -36,12 +36,10 @@ case class SpatialFilter(bbox: Option[BoundingBox], center: Option[Coordinate], 
     new GeoShapeQueryDefinition(QueryBuilders.geoShapeQuery(field, shape).relation(ShapeRelation.WITHIN))
   
   lazy val filterDefinition = 
-    bool { 
-      should (
-        buildQueryDefinition("bbox"),
-        hasChildQuery(ES.REFERENCE) query { buildQueryDefinition("reference_to.bbox") } scoreMode ScoreMode.Avg
-      )
-    }
+    boolQuery should (
+      buildQueryDefinition("bbox"),
+      hasChildQuery(ES.REFERENCE) query { buildQueryDefinition("reference_to.bbox") } scoreMode ScoreMode.Avg
+    )
 
 }
 

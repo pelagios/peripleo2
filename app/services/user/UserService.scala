@@ -45,13 +45,13 @@ class UserService @Inject() (val es: ES, implicit val ctx: ExecutionContext)
 
   def countUsers(): Future[Long] =
     es.client execute {
-      search in ES.PERIPLEO/ ES.USER size 0
+      search(ES.PERIPLEO/ ES.USER) size 0
     } map { _.totalHits }
 
   /** Inserts or updates a user **/
   def insertOrUpdateUser(user: User): Future[Boolean] =
     es.client execute {
-      update id user.username in ES.PERIPLEO / ES.USER docAsUpsert user 
+      update(user.username) in ES.PERIPLEO / ES.USER docAsUpsert user 
     } map { _ =>
       true
     } recover { case t: Throwable =>
@@ -73,9 +73,9 @@ class UserService @Inject() (val es: ES, implicit val ctx: ExecutionContext)
   /** Retrieves a user by username (case-sensitive!) **/
   def findByUsername(username: String): Future[Option[User]] =
     es.client execute {
-      get id username from ES.PERIPLEO / ES.USER
+      get(username) from ES.PERIPLEO / ES.USER
     } map { response =>
-      if (response.isExists) {
+      if (response.exists) {
         val source = Json.parse(response.sourceAsString)
         Some(Json.fromJson[User](source).get)
       } else {
@@ -86,7 +86,7 @@ class UserService @Inject() (val es: ES, implicit val ctx: ExecutionContext)
   /** Retrieves a user by E-Mail address **/
   def findByEmail(email: String): Future[Option[User]] =
     es.client execute {
-      search in ES.PERIPLEO / ES.USER query {
+      search(ES.PERIPLEO / ES.USER) query {
         termQuery("email" -> email)
       }
     } map { _.to[User].headOption }
@@ -94,10 +94,9 @@ class UserService @Inject() (val es: ES, implicit val ctx: ExecutionContext)
   /** Checks if a user exists, by conducting a case-insensitive search **/
   def existsIgnoreCase(username: String): Future[Boolean] =
     es.client execute {
-      search in ES.PERIPLEO / ES.USER query {
-        bool {
+      search(ES.PERIPLEO / ES.USER) query {
+        boolQuery
           should (
-
             // Case-sensitive search
             termQuery("username", username),
 
@@ -106,7 +105,6 @@ class UserService @Inject() (val es: ES, implicit val ctx: ExecutionContext)
               termQuery("username.lowercase", username.toLowerCase)
             }
           )
-        }
       }
     } map { !_.to[User].isEmpty }
 

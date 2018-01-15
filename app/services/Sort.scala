@@ -9,7 +9,7 @@ object Sort extends Enumeration {
   val ALPHABETICAL = Value("ALPHABETICAL")
   
   private[services] implicit def asES(v: Sort.Value) = v match {
-    case ALPHABETICAL => field sort "title.raw" 
+    case ALPHABETICAL => fieldSort("title.raw") 
   }
   
 }

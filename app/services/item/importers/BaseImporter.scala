@@ -75,8 +75,8 @@ abstract class BaseImporter(itemService: ItemService) {
         Future.successful(true)
       } else {
         val upsertItem = maybeVersion match {
-          case Some(version) => update id item.docId.toString in ES.PERIPLEO / ES.ITEM source item version version
-          case None => index into ES.PERIPLEO / ES.ITEM id item.docId.toString source item
+          case Some(version) => update(item.docId.toString) in ES.PERIPLEO / ES.ITEM source item version version
+          case None => indexInto(ES.PERIPLEO / ES.ITEM) id item.docId.toString source item
         }
 
         if (refs.size > 20)
@@ -92,7 +92,7 @@ abstract class BaseImporter(itemService: ItemService) {
           // was successful. But we'd sacrifice some performance because of two insert requests instead of
           // one. Therefore, we accept the orphaned References at this point, and clean them up later
           // in the Reference-rewrite stage (cf. ReferenceService).
-          bulk ( upsertItem +: refs.map(ref => index into ES.PERIPLEO / ES.REFERENCE source ref parent item.docId.toString) )
+          bulk ( upsertItem +: refs.map(ref => indexInto(ES.PERIPLEO / ES.REFERENCE) source ref parent item.docId.toString) )
         } map { result =>
           // Note: it seems we cannot reliably roll back Reference inserts following a version conflict. Immediately
           // after insert, they are not necessarily indexed, so a delete request will just fail.

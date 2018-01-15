@@ -24,7 +24,7 @@ class VisitService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
   
   def insertVisit(visit: Visit): Future[Unit] =
     es.client execute {
-      index into ES.PERIPLEO / ES.VISIT source visit
+      indexInto(ES.PERIPLEO / ES.VISIT) source visit
     } map { _ => 
     } recover { case t: Throwable =>
       Logger.error("Error logging visit event")
@@ -33,7 +33,7 @@ class VisitService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
     
   def countTotal(): Future[Long] =
     es.client execute {
-      search in ES.PERIPLEO / ES.VISIT limit 0
+      search(ES.PERIPLEO / ES.VISIT) limit 0
     } map { _.totalHits }
     
   def getStatsSince(since: TimeInterval) = {
@@ -59,14 +59,14 @@ class VisitService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
     }
     
     es.client execute {
-      search in ES.PERIPLEO / ES.VISIT query {
+      search(ES.PERIPLEO / ES.VISIT) query {
         constantScoreQuery {
-          filter ( rangeQuery("visited_at") from expression )
+          rangeQuery("visited_at") gt expression
         }
       } size 0 aggregations (
-        aggregation terms "top_items"    field "selection.identifier_title" size 10,
-        aggregation terms "top_datasets" field "selection.is_in_dataset.paths" size 10,
-        aggregation terms "top_searches" field "search.query.raw" size 10 
+        termsAggregation("top_items")    field "selection.identifier_title" size 10,
+        termsAggregation("top_datasets") field "selection.is_in_dataset.paths" size 10,
+        termsAggregation("top_searches") field "search.query.raw" size 10 
       )
     } map { response =>
       val topItems = Aggregation.parseTerms(response.aggregations.termsResult("top_items")).buckets

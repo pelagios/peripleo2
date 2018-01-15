@@ -11,6 +11,7 @@ import scala.collection.JavaConverters._
 import scala.concurrent.{ ExecutionContext, Future }
 import es.ES
 import services.item.ItemType
+import services.item.Item
 
 case class Suggestion(text: String, 
   itemId: Option[String] = None,
@@ -33,16 +34,13 @@ class SuggestService @Inject() (val es: ES, implicit val ctx: ExecutionContext) 
   
   def suggest(query: String): Future[Seq[Suggestion]] =
     es.client execute {
-      search in ES.PERIPLEO / ES.ITEM suggestions (
+      search(ES.PERIPLEO / ES.ITEM) suggestions (
         phraseSuggestion("from_titles").on("title") text(query) gramSize 3 size 3,
         phraseSuggestion("from_descriptions").on("is_conflation_of.descriptions.description") text(query)  gramSize 3 size 3,
         phraseSuggestion("from_context").on("quote.context") text(query)  gramSize 3 size 3,
         completionSuggestion("entities").on("suggest") fuzzyPrefixLength(3) text(query) size 5
       ) size 0
     } map { response =>
-      
-      play.api.Logger.info(response.toString)
-      
       val phrases =
         Seq(
           response.suggestion("from_titles").entries,
@@ -54,23 +52,21 @@ class SuggestService @Inject() (val es: ES, implicit val ctx: ExecutionContext) 
          .map(option => Suggestion(option.text))
          .distinct
          .take(3)
-
-
-      /* Completion response carry payload - need to go through Java API to get that      
-      val entities = response.getSuggest.getSuggestion("entities").asInstanceOf[CompletionSuggestion]
+      
+      val entities = response.original.getSuggest.getSuggestion("entities").asInstanceOf[CompletionSuggestion]
         .getEntries.asScala
         .flatMap(_.getOptions.asScala)
         .map { option =>
-          val payload = option.payload.getPayloadAsMap
+          val item = Json.fromJson[Item](Json.parse(option.getHit.getSourceAsString)).get
           Suggestion(
-            option.getText.string,
-            Option(payload.get("identifier")).map(_.toString),
-            Option(payload.get("type")).map(t => ItemType.parse(t.asInstanceOf[ArrayList[String]].asScala)),
-            Option(payload.get("description")).map(_.toString))
-        }.toSeq
-        */
+            item.title,
+            item.identifiers.headOption,
+            Some(item.itemType),
+            None
+          )
+        }
               
-      phrases // ++ entities
+      phrases ++ entities
     }
       
 }

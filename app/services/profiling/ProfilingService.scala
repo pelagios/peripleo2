@@ -10,9 +10,9 @@ class ProfilingService @Inject() (val es: ES, implicit val ctx: ExecutionContext
   
   def getCollectionProfile() =
     es.client execute {
-      search in ES.PERIPLEO / ES.ITEM query {
+      search(ES.PERIPLEO / ES.ITEM) query {
         constantScoreQuery {
-          filter ( termQuery("is_conflation_of.depictions.depiction_type" -> "IIIF") )
+          termQuery("is_conflation_of.depictions.depiction_type" -> "IIIF")
         }
       } size 0
     } map { response =>

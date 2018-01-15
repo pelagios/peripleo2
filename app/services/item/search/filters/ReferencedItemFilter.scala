@@ -15,10 +15,8 @@ case class ReferencedItemFilter(uris: Seq[String], setting: TermFilter.Setting) 
     
     // In a first step, we need to get from URIs to DocIDs
     def resolve: Future[Seq[UUID]] = es.client execute {
-      search in ES.PERIPLEO / ES.ITEM query {
-        bool {
-          should ( uris.map(termQuery("is_conflation_of.uri", _)) )
-        }
+      search(ES.PERIPLEO / ES.ITEM) query {
+        boolQuery should (uris.map(termQuery("is_conflation_of.uri", _)))
       }
     } map { _.hits.map(hit => UUID.fromString(hit.id)).toSeq }
     

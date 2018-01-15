@@ -45,7 +45,7 @@ object ItemService {
       Future.successful(Seq.empty[Item])
     else
       es.client execute {
-        multiget ( ids.map(id => get id id.toString from ES.PERIPLEO / ES.ITEM ) )
+        multiget ( ids.map(id => get(id.toString) from ES.PERIPLEO / ES.ITEM ) )
       } map {_.original.getResponses.flatMap { response =>
         Option(response.getResponse.getSourceAsString).flatMap(json =>
           Json.fromJson[Item](Json.parse(json)).asOpt)
@@ -65,22 +65,22 @@ class ItemService @Inject() (
 
   def findByIdentifier(identifier: String) =
     es.client execute {
-      search in ES.PERIPLEO / ES.ITEM query {
+      search(ES.PERIPLEO / ES.ITEM) query {
         constantScoreQuery {
-          filter ( termQuery("is_conflation_of.identifiers" -> identifier) )
+          termQuery("is_conflation_of.identifiers" -> identifier)
         }
       }
     } map { _.to[(Item, Long)].headOption.map(_._1) }
-    
-  def findByHomepageURL(url: String) = 
+
+  def findByHomepageURL(url: String) =
     es.client execute {
-      search in ES.PERIPLEO / ES.ITEM query {
+      search(ES.PERIPLEO / ES.ITEM) query {
         constantScoreQuery {
-          filter ( termQuery("is_conflation_of.homepage" -> url) )
+          termQuery("is_conflation_of.homepage" -> url)
         }
       }
     } map { _.to[(Item, Long)].headOption.map(_._1) }
-    
+
   def findByType(
     itemType : ItemType,
     rootOnly : Boolean = true,
@@ -90,26 +90,24 @@ class ItemService @Inject() (
   ) = {
     val f =
       if (rootOnly)
-        bool {
-          must (
-            termQuery("item_type" -> itemType.toString)
-          ) not (
-            existsQuery("is_conflation_of.is_part_of")
-          )
-        }
+        boolQuery.must(
+          termQuery("item_type" -> itemType.toString)
+        ).not(
+          existsQuery("is_conflation_of.is_part_of")
+        )
       else
         termQuery("item_type" -> itemType.toString)
-        
-    val query = 
+
+    val query =
       sort match {
         case Some(sorting) =>
-          search in ES.PERIPLEO / ES.ITEM query {
-            constantScoreQuery { filter ( f ) }
-          } start offset limit limit sort ( sorting )
-          
+          search(ES.PERIPLEO / ES.ITEM) query {
+            constantScoreQuery(f)
+          } start offset limit limit sortBy ( sorting )
+
         case None =>
-          search in ES.PERIPLEO / ES.ITEM query {
-            constantScoreQuery { filter ( f ) }
+          search(ES.PERIPLEO / ES.ITEM) query {
+            constantScoreQuery(f)
           } start offset limit limit
         }
 
@@ -123,23 +121,21 @@ class ItemService @Inject() (
   def findByIsPartOf(parent: ItemRecord, directChildrenOnly: Boolean = true, offset: Int = 0, limit: Int = 20) = {
     val parentId = parent.uri
     val ancestry = parent.isPartOf.map(_.ids).getOrElse(Seq.empty[String]) :+ parentId
-    val query = 
+    val query =
       if (directChildrenOnly)
         // Will return children directly below the parent only, but not nested sub-levels
-        bool { must (
+        boolQuery must (
           // Cf. https://www.elastic.co/guide/en/elasticsearch/guide/current/_finding_multiple_exact_values.html#_contains_but_does_not_equal
           termsQuery("is_conflation_of.is_part_of.ids", ancestry),
-          scriptQuery(script ("parent_count") params(Map("parents" -> ancestry.size)) scriptType (ScriptType.FILE) lang "groovy") 
-        )}
-      else 
+          scriptQuery(script ("parent_count") params(Map("parents" -> ancestry.size)) scriptType (ScriptType.FILE) lang "groovy")
+        )
+      else
         // Will return children at any level and sublevel
         termQuery("is_conflation_of.is_part_of.ids" -> parentId)
-        
+
     es.client execute {
-      search in ES.PERIPLEO / ES.ITEM query { 
-        constantScoreQuery {
-          filter ( query )
-        }
+      search(ES.PERIPLEO / ES.ITEM) query {
+        constantScoreQuery { query }
       } start offset limit limit
     } map { response =>
       Page(response.tookInMillis, response.totalHits, offset, limit, response.to[(Item, Long)].map(_._1))
@@ -161,29 +157,27 @@ class ItemService @Inject() (
   def findConnected(uris: Seq[String]): Future[Seq[ItemWithReferences]] = {
     val queryClause =
       constantScoreQuery {
-        filter (
-          should {
-            uris.map(uri => termQuery("is_conflation_of.identifiers" -> uri)) ++
-            uris.map(uri => termQuery("is_conflation_of.close_matches" -> uri)) ++
-            uris.map(uri => termQuery("is_conflation_of.exact_matches" -> uri))
-          }
-        )
+        should {
+          uris.map(uri => termQuery("is_conflation_of.identifiers" -> uri)) ++
+          uris.map(uri => termQuery("is_conflation_of.close_matches" -> uri)) ++
+          uris.map(uri => termQuery("is_conflation_of.exact_matches" -> uri))
+        }
       }
 
     val fItems: Future[Seq[(Item, Long)]] =
       es.client execute {
-        search in ES.PERIPLEO / ES.ITEM query queryClause version true limit ES.MAX_SIZE
+        search(ES.PERIPLEO / ES.ITEM) query queryClause version true limit ES.MAX_SIZE
       } map { _.to[(Item, Long)].toSeq }
 
     // It seems Elastic4s doesn't support inner hits on hasParentQueries at v2.4 :-(
     val fReferences: Future[Seq[(Reference, UUID)]] =
       es.client execute {
-        search in ES.PERIPLEO / ES.REFERENCE query {
+        search(ES.PERIPLEO / ES.REFERENCE) query {
           hasParentQuery(ES.ITEM) query queryClause scoreMode false
         } limit ES.MAX_SIZE
       } map { _.hits.toSeq.map { hit =>
         val reference = Json.fromJson[Reference](Json.parse(hit.sourceAsString)).get
-        val parentId = UUID.fromString(hit.java.field("_parent").value[String])
+        val parentId = UUID.fromString(hit.java.getField("_parent").getValue[String])
         (reference, parentId)
       }}
 
@@ -201,7 +195,7 @@ class ItemService @Inject() (
 
   def updateItem(item: Item): Future[Boolean] = {
     es.client execute {
-      update id item.docId.toString in ES.PERIPLEO / ES.ITEM source item
+      update(item.docId.toString) in ES.PERIPLEO / ES.ITEM source item
     } map { _ =>
       true
     } recover {
@@ -216,13 +210,13 @@ class ItemService @Inject() (
     // Should start after delete is done (using 'def')
     def fDeleteItem() =
       es.client execute {
-        delete id docId.toString from ES.PERIPLEO / ES.ITEM
-      } map { _ => true 
+        delete(docId.toString) from ES.PERIPLEO / ES.ITEM
+      } map { _ => true
       } recover { case t: Throwable =>
         t.printStackTrace
-        false 
+        false
       }
-      
+
     val f = for {
       deleteRefsSuccess <- fDeleteReferences
       if (deleteRefsSuccess)
@@ -244,7 +238,7 @@ class ItemService @Inject() (
     */
   def fastDeleteByDataset(identifier: String) = {
 
-    def deleteReferences(): Future[Boolean] = 
+    def deleteReferences(): Future[Boolean] =
       es.deleteChildrenByQuery(ES.REFERENCE, hasParentQuery(ES.ITEM) query {
         termQuery("is_conflation_of.is_in_dataset" -> identifier)
       } scoreMode false)
@@ -253,12 +247,11 @@ class ItemService @Inject() (
       es.deleteByQuery(ES.ITEM, termQuery("is_conflation_of.is_in_dataset" -> identifier))
 
     def deleteDatasets(): Future[Boolean] =
-      es.deleteByQuery(ES.ITEM, bool {
+      es.deleteByQuery(ES.ITEM, boolQuery
         should(
           termQuery("identifiers" -> identifier),
           termQuery("is_conflation_of.is_part_of" -> identifier)
-        )
-      })
+        ))
 
     for {
       s1 <- deleteReferences
@@ -269,7 +262,7 @@ class ItemService @Inject() (
   }
 
   def safeDeleteByDataset(identifier: String) = {
-    
+
     play.api.Logger.info("Deleting dataset: " + identifier)
 
     // Refs pointing outwards from items in this dataset - can safely delete
@@ -288,13 +281,13 @@ class ItemService @Inject() (
     // this item referenced by others (condition -> false) or not (condition -> true)
     def isOkToDelete(hit: Hit): Future[Boolean] =
       es.client execute {
-        search in ES.PERIPLEO / ES.REFERENCE query {
+        search(ES.PERIPLEO / ES.REFERENCE) query {
           constantScoreQuery {
-            filter ( termQuery("reference_to.doc_id" -> hit.id) )
+            termQuery("reference_to.doc_id" -> hit.id)
           }
         } start 0 limit 0
       } map { _.totalHits == 0 }
-      
+
     def deleteObjects(): Future[Boolean] =
       es.deleteConditional(ES.ITEM, termQuery("is_conflation_of.is_in_dataset.ids" -> identifier), isOkToDelete)
         .map { success =>
@@ -304,15 +297,15 @@ class ItemService @Inject() (
           t.printStackTrace()
           false
         }
-        
+
     def hasItemsLeft(): Future[Boolean] =
       // Refresh index first, otherwise we'll still see items that were deleted in the meantime
-      es.refreshIndex().flatMap { success =>
+      es.refresh().flatMap { success =>
         if (success) {
           es.client execute {
-            search in ES.PERIPLEO / ES.ITEM query {
+            search(ES.PERIPLEO / ES.ITEM) query {
               constantScoreQuery {
-                filter ( termQuery("is_conflation_of.is_in_dataset.ids" -> identifier) )
+                termQuery("is_conflation_of.is_in_dataset.ids" -> identifier)
               }
             }
           } map { _.totalHits > 0 }
@@ -323,12 +316,12 @@ class ItemService @Inject() (
 
     // Datasets and subsets
     def deleteDatasets(): Future[Boolean] =
-      es.deleteByQuery(ES.ITEM, bool {
+      es.deleteByQuery(ES.ITEM, boolQuery
         should(
           termQuery("is_conflation_of.identifiers" -> identifier),
           termQuery("is_conflation_of.is_part_of" -> identifier)
         )
-      }) map { success =>
+      ) map { success =>
         play.api.Logger.info("Dataset items deleted: " + success)
         success
       } recover { case t: Throwable =>
@@ -339,11 +332,11 @@ class ItemService @Inject() (
     for {
       s1 <- deleteReferences
       s2 <- deleteObjects
-      
-      // Check if the dataset was removed completely, or whether some 
+
+      // Check if the dataset was removed completely, or whether some
       // items remained because they were referenced by others
       hasItemsLeft <- hasItemsLeft
-      
+
       s3 <- if (hasItemsLeft) Future.successful(true) else deleteDatasets
     } yield s1 && s2
 
