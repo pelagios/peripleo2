@@ -1,16 +1,16 @@
 {
   "task": {
     "properties": {
-      "id": { "type": "string", "index": "not_analyzed" },
-      "job": { "type": "string", "index": "not_analyzed" },
-      "task_type": { "type": "string", "index": "not_analyzed" },
-      "classname": { "type": "string", "index": "not_analyzed" },
-      "caption": { "type": "string", "index": "not_analyzed" },
-      "spawned_by": { "type": "string", "index": "not_analyzed" },
+      "id": { "type": "keyword" },
+      "job": { "type": "keyword" },
+      "task_type": { "type": "keyword" },
+      "classname": { "type": "keyword" },
+      "caption": { "type": "keyword" },
+      "spawned_by": { "type": "keyword" },
       "spawned_at": { "type": "date", "format": "yyyy-MM-dd'T'HH:mm:ssZ" },
       "stopped_at": { "type": "date", "format": "yyyy-MM-dd'T'HH:mm:ssZ" },
-      "stopped_with": { "type": "string", "index": "not_analyzed" },
-      "status": { "type": "string", "index": "not_analyzed" },
+      "stopped_with": { "type": "keyword" },
+      "status": { "type": "keyword" },
       "progress": { "type": "integer" }
     }
   }

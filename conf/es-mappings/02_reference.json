@@ -2,35 +2,35 @@
   "reference": {
     "_parent": { "type": "item" },
     "properties": {
-      "parent_uri": { "type": "string", "index": "not_analyzed" },
+      "parent_uri": { "type": "keyword" },
       "reference_to": {
         "properties": {
-          "doc_id": { "type": "string", "index": "not_analyzed" },
-          "uri": { "type": "string", "index": "not_analyzed" },
-          "item_type": { "type": "string", "index": "not_analyzed" },
+          "doc_id": { "type": "keyword" },
+          "uri": { "type": "keyword" },
+          "item_type": { "type": "keyword" },
           "is_part_of": {
             "properties": {
-              "root": { "type": "string", "index": "not_analyzed" },
-              "paths": { "type": "string", "index": "not_analyzed" },
-              "ids": { "type": "string", "index": "not_analyzed" }
+              "root": { "type": "keyword" },
+              "paths": { "type": "keyword" },
+              "ids": { "type": "keyword" }
             }
           },
           "bbox": { "type": "geo_shape", "tree": "quadtree", "distance_error_pct": 0.001 }
         }
       },
-      "relation": { "type": "string", "index": "not_analyzed" },
-      "homepage": { "type": "string", "index": "not_analyzed" },
+      "relation": { "type": "keyword" },
+      "homepage": { "type": "keyword" },
       "quote" : {
         "properties": {
-          "chars": { "type": "string" },
-          "context": { "type": "string" },
+          "chars": { "type": "text" },
+          "context": { "type": "text" },
           "offset": { "type": "integer" }
         }
       },
       "depiction": {
         "properties": {
-          "url": { "type": "string", "index": "not_analyzed" },
-          "thumbnail": { "type": "string", "index": "not_analyzed" }
+          "url": { "type": "keyword" },
+          "thumbnail": { "type": "keyword" }
         }
       }
     }

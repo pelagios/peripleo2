@@ -25,12 +25,14 @@ case class Item private[item] (
     case None => representativeGeometry.map(_.getEnvelopeInternal)
   }
 
+  /*
   private[item] lazy val autocomplete = AutocompleteData(
     isConflationOf.map(_.title) ++ isConflationOf.flatMap(_.names.map(_.name)),
     identifiers.head,
     itemType,
     title,
     isConflationOf.flatMap(_.descriptions.map(_.description)).headOption)
+  */
 
 }
 
@@ -127,8 +129,8 @@ object Item extends HasGeometry {
     (JsPath \ "representative_point").writeNullable[Coordinate] and
     (JsPath \ "bbox").writeNullable[Envelope] and
     (JsPath \ "temporal_bounds").writeNullable[TemporalBounds] and
-    (JsPath \ "is_conflation_of").write[Seq[ItemRecord]] and
-    (JsPath \ "suggest").write[AutocompleteData]
+    (JsPath \ "is_conflation_of").write[Seq[ItemRecord]]
+    // (JsPath \ "suggest").write[AutocompleteData]
   )(item => (
       item.docId,
       item.itemType,
@@ -137,12 +139,13 @@ object Item extends HasGeometry {
       item.representativePoint,
       item.bbox,
       item.temporalBounds,
-      item.isConflationOf,
-      item.autocomplete
+      item.isConflationOf
+      // item.autocomplete
   ))
 
 }
 
+/*
 private[item] case class AutocompleteData private(input: Seq[String], output: String, payload: AutocompleteData.Payload)
 
 private[item] object AutocompleteData {
@@ -167,3 +170,4 @@ private[item] object AutocompleteData {
   )(unlift(AutocompleteData.unapply))
 
 }
+*/

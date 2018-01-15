@@ -2,12 +2,12 @@
   "item": {
     "dynamic": "false",
     "properties": {
-      "doc_id": { "type": "string", "index": "not_analyzed" },
-      "item_type": { "type": "string", "index": "not_analyzed" },
+      "doc_id": { "type": "keyword" },
+      "item_type": { "type": "keyword" },
       "title": {
-        "type": "string",
+        "type": "text",
         "fields": {
-           "raw": { "type": "string", "analyzer":"lowercase_keyword" }
+           "raw": { "type": "keyword", "normalizer":"lowercase_normalizer" }
         }
       },
       "representative_geometry": { "enabled": false },
@@ -22,54 +22,54 @@
       "is_conflation_of": {
         "dynamic": "false",
         "properties": {
-          "uri": { "type": "string", "index": "not_analyzed" },
-          "identifiers": { "type": "string", "index": "not_analyzed" },
+          "uri": { "type": "keyword" },
+          "identifiers": { "type": "keyword" },
           "last_synced_at": { "type": "date", "format": "yyyy-MM-dd'T'HH:mm:ssZ" },
           "last_changed_at": { "type": "date", "format": "yyyy-MM-dd'T'HH:mm:ssZ" },
           "title": {
-            "type": "string",
+            "type": "text",
             "fields": {
-               "raw": { "type": "string", "analyzer":"lowercase_keyword" }
+               "raw": { "type": "keyword", "normalizer":"lowercase_normalizer" }
             }
           },
           "is_in_dataset": {
             "properties": {
-              "root": { "type": "string", "index": "not_analyzed" },
-              "paths": { "type": "string", "index": "not_analyzed" },
-              "ids": { "type": "string", "index": "not_analyzed" }
+              "root": { "type": "keyword" },
+              "paths": { "type": "keyword" },
+              "ids": { "type": "keyword" }
             }
           },
           "is_part_of": {
             "properties": {
-              "root": { "type": "string", "index": "not_analyzed" },
-              "paths": { "type": "string", "index": "not_analyzed" },
-              "ids": { "type": "string", "index": "not_analyzed" }
+              "root": { "type": "keyword" },
+              "paths": { "type": "keyword" },
+              "ids": { "type": "keyword" }
             }
           },
           "categories": {
             "properties": {
-              "label": { "type": "string", "index": "not_analyzed" },
-              "uri": { "type": "string", "index": "not_analyzed" }
+              "label": { "type": "keyword" },
+              "uri": { "type": "keyword" }
             }
           },
           "descriptions": {
             "properties": {
-              "description": { "type": "string" },
-              "language": { "type": "string", "index": "not_analyzed" }
+              "description": { "type": "text" },
+              "language": { "type": "keyword" }
             }
           },
-          "homepage": { "type": "string", "index": "not_analyzed" },
-          "license": { "type": "string", "index": "not_analyzed" },
-          "languages": { "type": "string", "index": "not_analyzed" },
+          "homepage": { "type": "keyword" },
+          "license": { "type": "keyword" },
+          "languages": { "type": "keyword" },
           "depictions": {
             "properties": {
-              "url": { "type": "string", "index": "not_analyzed" },
-              "depiction_type": { "type": "string", "index": "not_analyzed" },
-              "thumbnail": { "type": "string", "index": "no" },
-              "caption": { "type": "string" },
-              "creator": { "type": "string" },
+              "url": { "type": "keyword" },
+              "depiction_type": { "type": "keyword" },
+              "thumbnail": { "type": "keyword", "index": false },
+              "caption": { "type": "text" },
+              "creator": { "type": "text" },
               "created_at": { "type": "date", "format": "yyyy-MM-dd" },
-              "license": { "type": "string", "index": "not_analyzed" }
+              "license": { "type": "keyword" }
             }
           },
           "geometry": { "enabled": false },
@@ -84,29 +84,25 @@
             "dynamic": "false",
             "properties": {
               "name": {
-                "type": "string",
+                "type": "text",
                 "fields": {
-                  "raw": { "type": "string", "analyzer":"lowercase_keyword" }
+                  "raw": { "type": "keyword", "normalizer":"lowercase_normalizer" }
                 }
               },
-              "language": { "type": "string", "index": "not_analyzed" },
+              "language": { "type": "keyword" },
               "is_romanized": { "type": "boolean" }
             }
           },
           "links": {
             "properties": {
-              "uri":  { "type": "string", "index": "not_analyzed" },
-              "link_type": { "type": "string", "index": "not_analyzed" }
+              "uri":  { "type": "keyword" },
+              "link_type": { "type": "keyword" }
             }
           },
-          "publisher": { "type": "string" },
-          "harvest_via": { "type": "string", "index": "not_analyzed" }
+          "publisher": { "type": "text" },
+          "harvest_via": { "type": "keyword" }
         }
-      },
-      "suggest" : { "type" : "completion",
-                    "preserve_separators": false,
-                    "preserve_position_increments": false,
-                    "payloads" : true }
+      }
     }
   }
 }

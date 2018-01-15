@@ -1,26 +1,26 @@
 {
   "visit": {
     "properties": {
-      "url": { "type": "string", "index": "not_analyzed" },
-      "referer": { "type": "string", "index": "not_analyzed" },
+      "url": { "type": "keyword" },
+      "referer": { "type": "keyword" },
       "visited_at": { "type": "date", "format": "yyyy-MM-dd'T'HH:mm:ssZ" },
-      "visit_type": { "type": "string", "index": "not_analyzed" },
+      "visit_type": { "type": "keyword" },
       "client": {
         "properties": {
-          "ip": { "type": "string", "index": "not_analyzed" },
-          "user_agent": { "type": "string", "index": "not_analyzed" },
-          "browser": { "type": "string", "index": "not_analyzed" },
-          "os": { "type": "string", "index": "not_analyzed" },
-          "device_type": { "type": "string", "index": "not_analyzed" }
+          "ip": { "type": "keyword" },
+          "user_agent": { "type": "keyword" },
+          "browser": { "type": "keyword" },
+          "os": { "type": "keyword" },
+          "device_type": { "type": "keyword" }
         }
       },
       "response_time": { "type": "integer" },
       "search": {
         "properties": {
           "query": {
-            "type": "string",
+            "type": "text",
             "fields": {
-               "raw": { "type": "string", "index": "not_analyzed" }
+               "raw": { "type": "keyword" }
             }
           },
           "returned": {
@@ -35,20 +35,20 @@
       },
       "selection": {
         "properties": {
-          "identifier": { "type": "string", "index": "not_analyzed" },
+          "identifier": { "type": "keyword" },
           "title": {
-            "type": "string",
+            "type": "text",
             "fields": {
-               "raw": { "type": "string", "analyzer":"lowercase_keyword" }
+               "raw": { "type": "keyword", "normalizer":"lowercase_normalizer" }
             }
           },
           "is_in_dataset": {
             "properties": {
-              "paths": { "type": "string", "index": "not_analyzed" },
-              "ids": { "type": "string", "index": "not_analyzed" }
+              "paths": { "type": "keyword" },
+              "ids": { "type": "keyword" }
             }
           },
-          "identifier_title": { "type": "string", "index": "not_analyzed" }
+          "identifier_title": { "type": "keyword" }
         }
       }
     }

@@ -129,7 +129,7 @@ class ItemService @Inject() (
         bool { must (
           // Cf. https://www.elastic.co/guide/en/elasticsearch/guide/current/_finding_multiple_exact_values.html#_contains_but_does_not_equal
           termsQuery("is_conflation_of.is_part_of.ids", ancestry),
-          scriptQuery(script ("parent_count") params(Map("parents" -> ancestry.size)) scriptType ScriptType.FILE) 
+          scriptQuery(script ("parent_count") params(Map("parents" -> ancestry.size)) scriptType (ScriptType.FILE) lang "groovy") 
         )}
       else 
         // Will return children at any level and sublevel

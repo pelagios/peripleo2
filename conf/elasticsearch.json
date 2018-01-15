@@ -1,9 +1,9 @@
 {
   "analysis" :{
-    "analyzer": {
-      "lowercase_keyword" : {
+    "normalizer": {
+      "lowercase_normalizer" : {
         "type" : "custom",
-        "tokenizer" : "keyword",
+        "char_filter": [],
         "filter" : [ "lowercase" ]
       }
     }
