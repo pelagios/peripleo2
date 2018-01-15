@@ -102,7 +102,10 @@
           "publisher": { "type": "text" },
           "harvest_via": { "type": "keyword" }
         }
-      }
+      },
+      "suggest" : { "type" : "completion",
+                    "preserve_separators": false,
+                    "preserve_position_increments": false }
     }
   }
 }
