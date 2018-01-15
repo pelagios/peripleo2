@@ -1,7 +1,7 @@
 package services.item.search.filters
 
 import com.sksamuel.elastic4s.ElasticDsl._
-import com.sksamuel.elastic4s.RangeQueryDefinition
+import com.sksamuel.elastic4s.searches.queries.RangeQueryDefinition
 import org.joda.time.{ DateTime, DateTimeZone }
 import org.joda.time.format.DateTimeFormat
 

@@ -2,9 +2,8 @@ package services.user
 
 import com.mohiva.play.silhouette.api.LoginInfo
 import com.mohiva.play.silhouette.api.services.IdentityService
-import com.sksamuel.elastic4s.{ HitAs, RichSearchHit }
+import com.sksamuel.elastic4s.{Hit, HitReader, Indexable}
 import com.sksamuel.elastic4s.ElasticDsl._
-import com.sksamuel.elastic4s.source.Indexable
 import es.ES
 import java.math.BigInteger
 import java.security.MessageDigest
@@ -39,9 +38,9 @@ class UserService @Inject() (val es: ES, implicit val ctx: ExecutionContext)
     override def json(u: User): String = Json.stringify(Json.toJson(u))
   }
 
-  implicit object AnnotationHitAs extends HitAs[User] {
-    override def as(hit: RichSearchHit): User =
-      Json.fromJson[User](Json.parse(hit.sourceAsString)).get
+  implicit object AnnotationHitAs extends HitReader[User] {
+    override def read(hit: Hit): Either[Throwable, User] =
+      Right(Json.fromJson[User](Json.parse(hit.sourceAsString)).get)
   }
 
   def countUsers(): Future[Long] =
@@ -52,7 +51,7 @@ class UserService @Inject() (val es: ES, implicit val ctx: ExecutionContext)
   /** Inserts or updates a user **/
   def insertOrUpdateUser(user: User): Future[Boolean] =
     es.client execute {
-      update id user.username in ES.PERIPLEO / ES.USER source user docAsUpsert
+      update id user.username in ES.PERIPLEO / ES.USER docAsUpsert user 
     } map { _ =>
       true
     } recover { case t: Throwable =>
@@ -90,7 +89,7 @@ class UserService @Inject() (val es: ES, implicit val ctx: ExecutionContext)
       search in ES.PERIPLEO / ES.USER query {
         termQuery("email" -> email)
       }
-    } map { _.as[User].headOption }
+    } map { _.to[User].headOption }
 
   /** Checks if a user exists, by conducting a case-insensitive search **/
   def existsIgnoreCase(username: String): Future[Boolean] =
@@ -109,7 +108,7 @@ class UserService @Inject() (val es: ES, implicit val ctx: ExecutionContext)
           )
         }
       }
-    } map { !_.as[User].isEmpty }
+    } map { !_.to[User].isEmpty }
 
   /** Validates a user login **/
   def validateUser(username: String, password: String): Future[Option[User]] = {

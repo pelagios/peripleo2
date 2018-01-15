@@ -37,9 +37,12 @@ class SuggestService @Inject() (val es: ES, implicit val ctx: ExecutionContext) 
         phraseSuggestion("from_titles") field("title") text(query) gramSize 3 size 3,
         phraseSuggestion("from_descriptions") field("is_conflation_of.descriptions.description") text(query)  gramSize 3 size 3,
         phraseSuggestion("from_context") field("quote.context") text(query)  gramSize 3 size 3,
-        fuzzyCompletionSuggestion("entities").fuzzyPrefixLength(3) field("suggest") text(query) size 5
+        completionSuggestion("entities") field("suggest") fuzzyPrefixLength(3) text(query) size 5
       ) size 0
     } map { response =>
+      
+      play.api.Logger.info(response.toString)
+      
       val phrases =
         Seq(
           response.suggestion("from_titles").entries,
@@ -53,20 +56,21 @@ class SuggestService @Inject() (val es: ES, implicit val ctx: ExecutionContext) 
          .take(3)
 
 
-      // Completion response carry payload - need to go through Java API to get that      
+      /* Completion response carry payload - need to go through Java API to get that      
       val entities = response.getSuggest.getSuggestion("entities").asInstanceOf[CompletionSuggestion]
         .getEntries.asScala
         .flatMap(_.getOptions.asScala)
         .map { option =>
-          val payload = option.getPayloadAsMap
+          val payload = option.payload.getPayloadAsMap
           Suggestion(
             option.getText.string,
             Option(payload.get("identifier")).map(_.toString),
             Option(payload.get("type")).map(t => ItemType.parse(t.asInstanceOf[ArrayList[String]].asScala)),
             Option(payload.get("description")).map(_.toString))
         }.toSeq
+        */
               
-      phrases ++ entities
+      phrases // ++ entities
     }
       
 }

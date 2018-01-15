@@ -1,14 +1,12 @@
 package services.item
 
-import com.sksamuel.elastic4s._
+import com.sksamuel.elastic4s.{Hit, HitReader, Indexable}
 import com.sksamuel.elastic4s.ElasticDsl._
-import com.sksamuel.elastic4s.{HitAs, RichSearchHit, RichSearchResponse, QueryDefinition}
-import com.sksamuel.elastic4s.source.Indexable
 import es.ES
 import java.util.UUID
 import javax.inject.{Inject, Singleton}
+import org.apache.lucene.search.join.ScoreMode
 import org.joda.time.DateTime
-import org.elasticsearch.script.ScriptService.ScriptType
 import play.api.Logger
 import play.api.libs.json.{Json, JsSuccess, JsError}
 import scala.concurrent.{ExecutionContext, Future}
@@ -16,6 +14,8 @@ import services.{Sort, Page}
 import services.item.reference.{Reference, ReferenceService, UnboundReference}
 import services.notification.NotificationService
 import services.task.TaskType
+import org.elasticsearch.script.ScriptType
+import com.sksamuel.elastic4s.searches.RichSearchHit
 
 object ItemService {
 
@@ -29,10 +29,10 @@ object ItemService {
     override def json(i: Item): String = Json.stringify(Json.toJson(i))
   }
 
-  implicit object ItemHitAs extends HitAs[(Item, Long)] {
-    override def as(hit: RichSearchHit): (Item, Long) = {
+  implicit object ItemHitReader extends HitReader[(Item, Long)] {
+    override def read(hit: Hit): Either[Throwable, (Item, Long)] = {
       val item = Json.fromJson[Item](Json.parse(hit.sourceAsString)).get
-      (item, hit.version)
+      Right(item, hit.version)
     }
   }
 
@@ -46,10 +46,10 @@ object ItemService {
     else
       es.client execute {
         multiget ( ids.map(id => get id id.toString from ES.PERIPLEO / ES.ITEM ) )
-      } map {_.responses.flatMap { _.response.flatMap { response =>
-        Option(response.getSourceAsString).flatMap(json =>
+      } map {_.original.getResponses.flatMap { response =>
+        Option(response.getResponse.getSourceAsString).flatMap(json =>
           Json.fromJson[Item](Json.parse(json)).asOpt)
-      }}}
+      }}
 
 }
 
@@ -70,7 +70,7 @@ class ItemService @Inject() (
           filter ( termQuery("is_conflation_of.identifiers" -> identifier) )
         }
       }
-    } map { _.as[(Item, Long)].headOption.map(_._1) }
+    } map { _.to[(Item, Long)].headOption.map(_._1) }
     
   def findByHomepageURL(url: String) = 
     es.client execute {
@@ -79,7 +79,7 @@ class ItemService @Inject() (
           filter ( termQuery("is_conflation_of.homepage" -> url) )
         }
       }
-    } map { _.as[(Item, Long)].headOption.map(_._1) }
+    } map { _.to[(Item, Long)].headOption.map(_._1) }
     
   def findByType(
     itemType : ItemType,
@@ -116,7 +116,7 @@ class ItemService @Inject() (
     es.client execute {
       query
     } map { response =>
-      Page(response.tookInMillis, response.totalHits, offset, limit, response.as[(Item, Long)].map(_._1))
+      Page(response.tookInMillis, response.totalHits, offset, limit, response.to[(Item, Long)].map(_._1))
     }
   }
 
@@ -128,8 +128,8 @@ class ItemService @Inject() (
         // Will return children directly below the parent only, but not nested sub-levels
         bool { must (
           // Cf. https://www.elastic.co/guide/en/elasticsearch/guide/current/_finding_multiple_exact_values.html#_contains_but_does_not_equal
-          termsQuery("is_conflation_of.is_part_of.ids", ancestry:_*),
-          ScriptQueryDefinition(script("parent_count") params(Map("parents" -> ancestry.size))  scriptType ScriptType.FILE) 
+          termsQuery("is_conflation_of.is_part_of.ids", ancestry),
+          scriptQuery(script ("parent_count") params(Map("parents" -> ancestry.size)) scriptType ScriptType.FILE) 
         )}
       else 
         // Will return children at any level and sublevel
@@ -142,7 +142,7 @@ class ItemService @Inject() (
         }
       } start offset limit limit
     } map { response =>
-      Page(response.tookInMillis, response.totalHits, offset, limit, response.as[(Item, Long)].map(_._1))
+      Page(response.tookInMillis, response.totalHits, offset, limit, response.to[(Item, Long)].map(_._1))
     }
   }
 
@@ -173,17 +173,17 @@ class ItemService @Inject() (
     val fItems: Future[Seq[(Item, Long)]] =
       es.client execute {
         search in ES.PERIPLEO / ES.ITEM query queryClause version true limit ES.MAX_SIZE
-      } map { _.as[(Item, Long)].toSeq }
+      } map { _.to[(Item, Long)].toSeq }
 
     // It seems Elastic4s doesn't support inner hits on hasParentQueries at v2.4 :-(
     val fReferences: Future[Seq[(Reference, UUID)]] =
       es.client execute {
         search in ES.PERIPLEO / ES.REFERENCE query {
-          hasParentQuery(ES.ITEM) query queryClause
+          hasParentQuery(ES.ITEM) query queryClause scoreMode false
         } limit ES.MAX_SIZE
       } map { _.hits.toSeq.map { hit =>
         val reference = Json.fromJson[Reference](Json.parse(hit.sourceAsString)).get
-        val parentId = UUID.fromString(hit.field("_parent").value[String])
+        val parentId = UUID.fromString(hit.java.field("_parent").value[String])
         (reference, parentId)
       }}
 
@@ -217,8 +217,12 @@ class ItemService @Inject() (
     def fDeleteItem() =
       es.client execute {
         delete id docId.toString from ES.PERIPLEO / ES.ITEM
-      } map { _.isFound }
-
+      } map { _ => true 
+      } recover { case t: Throwable =>
+        t.printStackTrace
+        false 
+      }
+      
     val f = for {
       deleteRefsSuccess <- fDeleteReferences
       if (deleteRefsSuccess)
@@ -243,7 +247,7 @@ class ItemService @Inject() (
     def deleteReferences(): Future[Boolean] = 
       es.deleteChildrenByQuery(ES.REFERENCE, hasParentQuery(ES.ITEM) query {
         termQuery("is_conflation_of.is_in_dataset" -> identifier)
-      })
+      } scoreMode false)
 
     def deleteObjects(): Future[Boolean] =
       es.deleteByQuery(ES.ITEM, termQuery("is_conflation_of.is_in_dataset" -> identifier))
@@ -272,7 +276,7 @@ class ItemService @Inject() (
     def deleteReferences(): Future[Boolean] =
       es.deleteChildrenByQuery(ES.REFERENCE, hasParentQuery(ES.ITEM) query {
         termQuery("reference_to.is_in_dataset", identifier)
-      }) map { success =>
+      } scoreMode false) map { success =>
         play.api.Logger.info("References deleted: " + success)
         success
       } recover { case t: Throwable =>
@@ -282,7 +286,7 @@ class ItemService @Inject() (
 
     // The condition we'll use to check if delete is safe: is
     // this item referenced by others (condition -> false) or not (condition -> true)
-    def isOkToDelete(hit: RichSearchHit): Future[Boolean] =
+    def isOkToDelete(hit: Hit): Future[Boolean] =
       es.client execute {
         search in ES.PERIPLEO / ES.REFERENCE query {
           constantScoreQuery {

@@ -29,7 +29,8 @@ libraryDependencies ++= Seq(
   "com.nrinaudo" %% "kantan.csv" % "0.2.1",
   "com.nrinaudo" %% "kantan.csv-commons" % "0.2.1",
 
-  "com.sksamuel.elastic4s" %% "elastic4s-streams" % "2.4.0",
+  "com.sksamuel.elastic4s" %% "elastic4s-core" % "5.6.1",
+  "com.sksamuel.elastic4s" %% "elastic4s-tcp" % "5.6.1",
 
   "com.vividsolutions" % "jts-core" % "1.14.0",
 

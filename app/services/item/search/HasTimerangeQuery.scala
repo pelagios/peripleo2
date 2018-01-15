@@ -3,11 +3,8 @@ package services.item.search
 import com.sksamuel.elastic4s._
 import com.sksamuel.elastic4s.ElasticDsl._
 import org.joda.time.DateTime
-import org.elasticsearch.search.aggregations.metrics.min.InternalMin
-import org.elasticsearch.search.aggregations.metrics.max.InternalMax
-import services.HasDate
-import org.joda.time.format.DateTimeFormatter
 import org.joda.time.format.ISODateTimeFormat
+import services.HasDate
 
 case class TimerangeResponse(from: DateTime, to: DateTime, totalHits: Long)
 
@@ -23,9 +20,9 @@ trait HasTimerangeQuery extends HasDate { self: SearchService =>
         )
       } map { response =>
         val from = 
-          response.aggregations.get("from").asInstanceOf[InternalMin].getValueAsString
+          response.aggregations.minResult("from").getValueAsString
         val to =
-          response.aggregations.get("to").asInstanceOf[InternalMax].getValueAsString
+          response.aggregations.maxResult("to").getValueAsString
              
         val p = ISODateTimeFormat.dateParser()
         TimerangeResponse(p.parseDateTime(from), p.parseDateTime(to), response.totalHits) 

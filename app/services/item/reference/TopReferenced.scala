@@ -13,6 +13,7 @@ import scala.concurrent.{ ExecutionContext, Future }
 import services.item.{ Item, ItemService, ItemType }
 import services.notification._
 import services.HasNullableSeq
+import com.sksamuel.elastic4s.searches.aggs.RichAggregations
 
 case class TopReferenced private (resolved: Seq[(ItemType, Seq[(Item, Long, Seq[(Relation.Value, Long)])])]) {
   
@@ -79,22 +80,24 @@ object TopReferenced extends HasNullableSeq {
       Json.toJson(asMap)
     }
 
-  def parseAggregation(aggregations: Aggregations): UnresolvedTopReferenced = {
+  def parseAggregation(aggregations: RichAggregations): UnresolvedTopReferenced = {
 
     // Shorthand
-    def getBuckets(aggs: Aggregations, key: String) = aggs.get[Terms](key).getBuckets.asScala.toSeq
+    // TODO quick hack for ES2-to-5 migration clean up
+    def getBucketsA(aggs: RichAggregations, key: String) = aggs.termsResult(key).getBuckets.asScala.toSeq
+    def getBucketsB(aggs: Aggregations, key: String) = aggs.get[Terms](key).getBuckets.asScala.toSeq
 
     // First aggregation level by reference type (PLACE, PERSON, etc.)
-    val parsed = getBuckets(aggregations, "by_related").map { typeBucket =>
+    val parsed = getBucketsA(aggregations, "by_related").map { typeBucket =>
       val itemType = ItemType.withName(typeBucket.getKeyAsString)
 
       // Second aggregation level by item docID
-      val byDocId = getBuckets(typeBucket.getAggregations, "by_doc_id").map { docIdBucket =>
+      val byDocId = getBucketsB(typeBucket.getAggregations, "by_doc_id").map { docIdBucket =>
         val docId = UUID.fromString(docIdBucket.getKeyAsString)
         val countByDocId = docIdBucket.getDocCount
 
         // Third aggregation level by relation
-        val byRelation = getBuckets(docIdBucket.getAggregations, "by_relation").map { relationBucket =>
+        val byRelation = getBucketsB(docIdBucket.getAggregations, "by_relation").map { relationBucket =>
           val relation = Relation.withName(relationBucket.getKeyAsString)
           val countByRelation = relationBucket.getDocCount
           (relation, countByRelation)

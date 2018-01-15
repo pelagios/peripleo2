@@ -1,8 +1,8 @@
 package services.item.reference
 
+import com.sksamuel.elastic4s.{Hit, HitReader}
 import com.sksamuel.elastic4s.ElasticDsl._
-import com.sksamuel.elastic4s.{ HitAs, RichSearchHit, RichSearchResponse }
-import com.sksamuel.elastic4s.source.Indexable
+import com.sksamuel.elastic4s.searches.RichSearchResponse
 import es.ES
 import java.util.UUID
 import org.elasticsearch.search.aggregations.bucket.terms.Terms
@@ -17,23 +17,21 @@ import services.item.ItemType
 
 trait ReferenceService { self: ItemService =>
 
-  private implicit object RefHitAs extends HitAs[Reference] {
-    override def as(hit: RichSearchHit): Reference = {
-      Json.fromJson[Reference](Json.parse(hit.sourceAsString)).get
-    }
+  private implicit object RefHitReader extends HitReader[Reference] {
+    override def read(hit: Hit): Either[Throwable, Reference] =
+      Right(Json.fromJson[Reference](Json.parse(hit.sourceAsString)).get)
   }
-
-  private implicit object RefAndIdsHitAs extends HitAs[(Reference, String, String)] {
-    override def as(hit: RichSearchHit): (Reference, String, String) = {
+  
+  protected def toRefAndIds(response: RichSearchResponse): Seq[(Reference, String, String)] =
+    response.hits.map { hit =>
       val id = hit.id
-      val parent = hit.field("_parent").value[String]
+      val parent = hit.java.getField("_parent").getValue[String]
       val ref = Json.fromJson[Reference](Json.parse(hit.sourceAsString)).get
       (ref, id, parent)
     }
-  }
 
-  private implicit object RefAndHighlightHitAs extends HitAs[(Reference, Seq[String])] {
-    override def as(hit: RichSearchHit): (Reference, Seq[String]) = {
+  protected def toRefAndHighlight(response: RichSearchResponse): Seq[(Reference, Seq[String])] =
+    response.hits.map { hit =>
       val reference = Json.fromJson[Reference](Json.parse(hit.sourceAsString)).get
       val snippets = hit.highlightFields.headOption
         .map(_._2.fragments.map(_.string.trim).toSeq.distinct)
@@ -41,7 +39,6 @@ trait ReferenceService { self: ItemService =>
 
       (reference, snippets)
     }
-  }
 
   /** Turns unbound references into bound ones, filtering those that are unresolvable **/
   private[item] def resolveReferences(unbound: Seq[UnboundReference]): Future[Seq[Reference]] = {
@@ -63,7 +60,7 @@ trait ReferenceService { self: ItemService =>
           }
         } start 0 limit ES.MAX_SIZE
       } map { response =>
-        val items = response.as[(Item, Long)].map(_._1)
+        val items = response.to[(Item, Long)].map(_._1)
         unbound.flatMap { reference =>
           items.find(_.identifiers.contains(reference.uri)).map { case item =>
             reference.toReference(item)
@@ -110,7 +107,7 @@ trait ReferenceService { self: ItemService =>
 
     def rewriteBatch(response: RichSearchResponse, cursor: Long = 0l): Future[Boolean] = {
        val total = response.totalHits
-       val refs = response.as[(Reference, String, String)].toSeq
+       val refs = toRefAndIds(response)
 
        if (refs.isEmpty) {
          Future.successful(true)
@@ -166,7 +163,7 @@ trait ReferenceService { self: ItemService =>
           highlight field "quote.context" fragmentSize 200
         )
       } map { response =>
-        Page(response.tookInMillis, response.totalHits, offset, limit, response.as[(Reference, Seq[String])])
+        Page(response.tookInMillis, response.totalHits, offset, limit, toRefAndHighlight(response))
       }
 
     }
@@ -216,7 +213,7 @@ trait ReferenceService { self: ItemService =>
         aggregation cardinality "distinct" field "reference_to.doc_id"
       ) size 0
     } map { response =>
-      val c = response.aggregations.get("distinct").asInstanceOf[InternalCardinality]
+      val c = response.aggregations.cardinalityResult("distinct")
       (response.totalHits, c.getValue.toInt)
     }
     
@@ -238,7 +235,7 @@ trait ReferenceService { self: ItemService =>
         aggregation cardinality "distinct" field "reference_to.doc_id"
       ) size 0
     } map { response =>
-      val c = response.aggregations.get("distinct").asInstanceOf[InternalCardinality]
+      val c = response.aggregations.cardinalityResult("distinct")
       (response.totalHits, c.getValue.toInt)
     }
 
@@ -248,13 +245,13 @@ trait ReferenceService { self: ItemService =>
       es.client execute {
         search in ES.PERIPLEO / ES.REFERENCE query {
           constantScoreQuery {
-            filter ( hasParentQuery(ES.ITEM) query(termQuery("is_conflation_of.identifiers", identifier)) )
+            filter ( hasParentQuery(ES.ITEM) query(termQuery("is_conflation_of.identifiers", identifier)) scoreMode false )
           }
         } start 0 limit 0 aggregations (
           // Aggregate by reference type (PLACE | PERSON | PERIOD)
-          aggregation terms "by_related" field "reference_to.item_type" aggregations (
+          aggregation terms "by_related" field "reference_to.item_type" subaggs (
             // Sub-aggregate by docId
-            aggregation terms "by_doc_id" field "reference_to.doc_id" size ES.MAX_SIZE aggregations (
+            aggregation terms "by_doc_id" field "reference_to.doc_id" size ES.MAX_SIZE subaggs (
               // Sub-sub-aggregate by relation
               aggregation terms "by_relation" field "relation" size 10
             )

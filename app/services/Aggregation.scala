@@ -1,11 +1,11 @@
 package services
 
 import org.elasticsearch.search.aggregations.bucket.terms.Terms
+import org.elasticsearch.search.aggregations.bucket.histogram.Histogram
 import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
 import scala.collection.JavaConverters._
-import org.elasticsearch.search.aggregations.bucket.histogram.InternalHistogram
 
 case class Aggregation(name: String, buckets: Seq[(String, Long)])
 
@@ -26,7 +26,7 @@ object Aggregation {
     Aggregation(name, buckets)
   }
 
-  def parseHistogram(histogram: InternalHistogram[InternalHistogram.Bucket], name: String) = {
+  def parseHistogram(histogram: Histogram, name: String) = {
     val buckets = histogram.getBuckets.asScala.toSeq.map(bucket =>
       (bucket.getKey.toString, bucket.getDocCount))
     Aggregation(name, buckets)

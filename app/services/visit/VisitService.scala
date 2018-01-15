@@ -1,8 +1,7 @@
 package services.visit
 
-import com.sksamuel.elastic4s.{ HitAs, RichSearchHit }
+import com.sksamuel.elastic4s.{Hit, HitReader, Indexable}
 import com.sksamuel.elastic4s.ElasticDsl._
-import com.sksamuel.elastic4s.source.Indexable
 import es.ES
 import javax.inject.{ Inject, Singleton }
 import org.joda.time.DateTime
@@ -18,9 +17,9 @@ class VisitService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
     override def json(v: Visit): String = Json.stringify(Json.toJson(v))
   }
 
-  implicit object VisitHitAs extends HitAs[Visit] {
-    override def as(hit: RichSearchHit): Visit =
-      Json.fromJson[Visit](Json.parse(hit.sourceAsString)).get
+  implicit object VisitHitReader extends HitReader[Visit] {
+    override def read(hit: Hit): Either[Throwable, Visit] =
+      Right(Json.fromJson[Visit](Json.parse(hit.sourceAsString)).get)
   }
   
   def insertVisit(visit: Visit): Future[Unit] =
@@ -70,11 +69,11 @@ class VisitService @Inject() (val es: ES, implicit val ctx: ExecutionContext) {
         aggregation terms "top_searches" field "search.query.raw" size 10 
       )
     } map { response =>
-      val topItems = Aggregation.parseTerms(response.aggregations.get("top_items")).buckets
+      val topItems = Aggregation.parseTerms(response.aggregations.termsResult("top_items")).buckets
         .map { case (str, count) => (VisitStats.TopSelected(str), count) }
-      val topDatasets = Aggregation.parseTerms(response.aggregations.get("top_datasets")).buckets
+      val topDatasets = Aggregation.parseTerms(response.aggregations.termsResult("top_datasets")).buckets
         .map { case (str, count) => (VisitStats.TopSelected(str), count) }
-      val topSearches = Aggregation.parseTerms(response.aggregations.get("top_searches")).buckets
+      val topSearches = Aggregation.parseTerms(response.aggregations.termsResult("top_searches")).buckets
       
       VisitStats(response.totalHits, topItems, topDatasets, topSearches)
     }

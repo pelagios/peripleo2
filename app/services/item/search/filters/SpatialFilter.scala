@@ -1,13 +1,14 @@
 package services.item.search.filters
 
-import com.sksamuel.elastic4s.QueryDefinition
 import com.sksamuel.elastic4s.ElasticDsl._
+import com.sksamuel.elastic4s.searches.queries.QueryDefinition
 import com.vividsolutions.jts.geom.Coordinate
 import org.elasticsearch.common.geo.ShapeRelation
-import org.elasticsearch.common.geo.builders.ShapeBuilder
 import org.elasticsearch.common.unit.DistanceUnit
 import org.elasticsearch.index.query.{ QueryBuilders, GeoShapeQueryBuilder }
 import es.ES
+import org.apache.lucene.search.join.ScoreMode
+import org.elasticsearch.common.geo.builders.ShapeBuilders
 
 case class GeoShapeQueryDefinition(builder: GeoShapeQueryBuilder) extends QueryDefinition
 
@@ -17,12 +18,12 @@ case class SpatialFilter(bbox: Option[BoundingBox], center: Option[Coordinate], 
   
   private lazy val shape = (bbox, center) match {
     case (Some(b), _) =>
-      ShapeBuilder.newEnvelope()
-        .topLeft(b.minLon, b.maxLat)
-        .bottomRight(b.maxLon, b.minLat)
+      ShapeBuilders.newEnvelope(
+        new Coordinate(b.minLon, b.maxLat),
+        new Coordinate(b.maxLon, b.minLat))
       
     case (_, Some(c)) =>
-      ShapeBuilder.newCircleBuilder()
+      ShapeBuilders.newCircleBuilder()
         .center(c)
         .radius(radius.getOrElse(1.0), DistanceUnit.KILOMETERS)
         
@@ -38,7 +39,7 @@ case class SpatialFilter(bbox: Option[BoundingBox], center: Option[Coordinate], 
     bool { 
       should (
         buildQueryDefinition("bbox"),
-        hasChildQuery(ES.REFERENCE) query { buildQueryDefinition("reference_to.bbox") }
+        hasChildQuery(ES.REFERENCE) query { buildQueryDefinition("reference_to.bbox") } scoreMode ScoreMode.Avg
       )
     }
 

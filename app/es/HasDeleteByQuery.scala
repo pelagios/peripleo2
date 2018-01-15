@@ -1,10 +1,13 @@
 package es
 
-import com.sksamuel.elastic4s.{ QueryDefinition, RichSearchResponse, RichSearchHit }
+import com.sksamuel.elastic4s.Hit
 import com.sksamuel.elastic4s.ElasticDsl._
+import com.sksamuel.elastic4s.searches.RichSearchResponse
+import com.sksamuel.elastic4s.searches.queries.QueryDefinition
 import java.util.UUID
 import play.api.Logger
 import scala.concurrent.{ ExecutionContext, Future }
+import com.sksamuel.elastic4s.searches.RichSearchHit
 
 trait HasDeleteByQuery { self: ES =>
   
@@ -58,7 +61,7 @@ trait HasDeleteByQuery { self: ES =>
     }
   }
   
-  def deleteConditional(index: String, q: QueryDefinition, condition: RichSearchHit => Future[Boolean])(implicit ctx: ExecutionContext): Future[Boolean] = {
+  def deleteConditional(index: String, q: QueryDefinition, condition: Hit => Future[Boolean])(implicit ctx: ExecutionContext): Future[Boolean] = {
     
     def deleteBatch(response: RichSearchResponse, cursor: Long = 0l): Future[Boolean] = {
       val total = response.totalHits
@@ -101,7 +104,7 @@ trait HasDeleteByQuery { self: ES =>
       hits.foldLeft(Future.successful(true)) { case (fSuccess, hit) =>
         fSuccess.flatMap { success =>
           client execute {
-            delete id hit.id from ES.PERIPLEO / index parent hit.field("_parent").getValue[String]
+            delete id hit.id from ES.PERIPLEO / index parent hit.java.getField("_parent").getValue[String]
           } map { _ => success
           } recover { case t: Throwable => false }
         }

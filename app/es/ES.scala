@@ -2,7 +2,7 @@ package es
 
 import com.google.inject.AbstractModule
 import com.sksamuel.elastic4s.ElasticDsl._
-import com.sksamuel.elastic4s.{ ElasticClient, ElasticsearchClientUri }
+import com.sksamuel.elastic4s.{ElasticsearchClientUri, TcpClient}
 import java.io.File
 import javax.inject.{ Inject, Singleton }
 import org.elasticsearch.common.settings.Settings
@@ -47,50 +47,24 @@ object ES extends ESQuerySanitizer {
 
 /** ElasticSearch client + start & stop helpers **/
 @Singleton
-class ES @Inject() (
-    config: Configuration, lifecycle: ApplicationLifecycle
-) extends HasDeleteByQuery {
+class ES @Inject() (config: Configuration, lifecycle: ApplicationLifecycle) extends HasDeleteByQuery {
 
   start()
 
   lifecycle.addStopHook { () => Future.successful(stop()) }
 
   lazy val client = {
-    val home = config.getOptional[String]("peripleo.index.dir") match {
-      case Some(dir) => new File(dir)
-      case None => new File("index")
-    }
-
-    val remoteClient = ElasticClient.transport(ElasticsearchClientUri("localhost", 9300))
+    
+    val remoteClient = TcpClient.transport(ElasticsearchClientUri("localhost", 9300))
 
     // Just fetch cluster stats to see if there's a cluster at all
-    Try(
-      Await.result(remoteClient execute {
-        get cluster stats
-      }, 3.seconds)
-    ) match {
-      case Success(_) => {
-        // Yes, there's a cluster! Let's use that one, shall we?
+    Try(Await.result(remoteClient execute { clusterStats }, 3.seconds)) match {
+      case Success(_) =>
         Logger.info("Joining ElasticSearch cluster")
         remoteClient
-      }
 
-      case Failure(_) => {
-        // No ES cluster available? I'll have my own local node!
-        val settings =
-          Settings.settingsBuilder()
-            .put("http.enabled", true)
-            .put("path.home", home.getAbsolutePath)
-
-        Logger.info("Local index - using " + home.getAbsolutePath + " as location")
-        val client = ElasticClient.local(settings.build)
-
-        // Introduce wait time, otherwise local index init is so slow that subsequent
-        // .isExists request returns false despite an existing index (note: this is only
-        // relevant in dev mode, anyway)
-        Thread.sleep(1000)
-        client
-      }
+      case Failure(_) =>
+        throw new RuntimeException("Local fallback no longer supported. Please ensure you have a working ElasticSearch installation.")
     }
   }
   
@@ -105,11 +79,11 @@ class ES @Inject() (
 
     if (response.isExists()) {
       // Index exists - create missing mappings if needed
-      val list = client.admin.indices().prepareGetMappings()
+      val list = client.java.admin.indices().prepareGetMappings()
       val existingMappings = list.execute().actionGet().getMappings().get(ES.PERIPLEO).keys.toArray.map(_.toString)
       loadMappings(existingMappings).foreach { case (name, json) =>
         Logger.info("Creating mapping " + name)
-        val putMapping = client.admin.indices().preparePutMapping(ES.PERIPLEO)
+        val putMapping = client.java.admin.indices().preparePutMapping(ES.PERIPLEO)
         putMapping.setType(name)
         putMapping.setSource(json)
         putMapping.execute().actionGet()
@@ -118,7 +92,7 @@ class ES @Inject() (
       // Peripleo index doesn't exist - create
       Logger.info("No ES index - initializing...")
 
-      val create = client.admin.indices().prepareCreate(ES.PERIPLEO)
+      val create = client.java.admin.indices().prepareCreate(ES.PERIPLEO)
       create.setSettings(loadSettings())
 
       loadMappings().foreach { case (name, json) =>  {

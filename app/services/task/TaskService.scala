@@ -1,8 +1,7 @@
 package services.task
 
-import com.sksamuel.elastic4s.{ HitAs, RichSearchHit }
+import com.sksamuel.elastic4s.{Hit, HitReader, Indexable}
 import com.sksamuel.elastic4s.ElasticDsl._
-import com.sksamuel.elastic4s.source.Indexable
 import es.ES
 import javax.inject.{ Inject, Singleton }
 import java.sql.Timestamp
@@ -21,23 +20,23 @@ class TaskService @Inject() (val es: ES, implicit val ctx: ExecutionContext) ext
     override def json(t: Task): String = Json.stringify(Json.toJson(t))
   }
 
-  implicit object TaskHitAs extends HitAs[Task] {
-    override def as(hit: RichSearchHit): Task =
-      Json.fromJson[Task](Json.parse(hit.sourceAsString)).get
+  implicit object TaskHitAs extends HitReader[Task] {
+    override def read(hit: Hit): Either[Throwable, Task] =
+      Right(Json.fromJson[Task](Json.parse(hit.sourceAsString)).get)
   }
 
   def listAll(offset: Int = 0, limit: Int = 20): Future[Page[Task]] =
     es.client execute {
       search in ES.PERIPLEO / ES.TASK start offset limit limit
     } map { response =>
-      Page(response.tookInMillis, response.totalHits, offset, limit, response.as[Task])
+      Page(response.tookInMillis, response.totalHits, offset, limit, response.to[Task])
     }
 
   def findByType(taskType: TaskType, offset: Int = 0, limit: Int = 20): Future[Page[Task]] =
     es.client execute {
       search in ES.PERIPLEO / ES.TASK query filter { termQuery("task_type" -> taskType.toString) }
     } map { response =>
-      Page(response.tookInMillis, response.totalHits, offset, limit, response.as[Task])
+      Page(response.tookInMillis, response.totalHits, offset, limit, response.to[Task])
     }
 
   def findById(uuid: UUID): Future[Option[Task]] =
@@ -103,7 +102,7 @@ class TaskService @Inject() (val es: ES, implicit val ctx: ExecutionContext) ext
   def deleteById(uuid: UUID): Future[Boolean] =
     es.client execute {
       delete id uuid.toString from ES.PERIPLEO / ES.TASK
-    } map { _.isFound
+    } map { _ => true
     } recover { case t: Throwable => false }
 
   def insertTask(taskType: TaskType, classname: String, caption: String, spawnedBy: String, jobId: Option[UUID] = None): Future[UUID] = {
@@ -121,7 +120,7 @@ class TaskService @Inject() (val es: ES, implicit val ctx: ExecutionContext) ext
       0)
 
     es.client execute {
-      update id task.id in ES.PERIPLEO / ES.TASK source task docAsUpsert
+      update id task.id in ES.PERIPLEO / ES.TASK docAsUpsert task 
     } map { _ =>
       task.id
     }
