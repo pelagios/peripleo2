@@ -6,15 +6,15 @@ import com.mohiva.play.silhouette.api.Silhouette
 import controllers.Security
 import harvesting.loaders.StreamLoader
 import harvesting.crosswalks.people.SimplePeopleCrosswalk
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 import org.webjars.play.WebJarsUtil
 import play.api.Configuration
 import play.api.mvc.ControllerComponents
 import scala.concurrent.ExecutionContext
-import services.user.{ Role, UserService }
-import services.item.{ ItemService, ItemType, PathHierarchy }
-import services.item.importers.{ DatasetImporter, EntityImporter }
-import services.task.{ TaskService, TaskType }
+import services.user.{Role, UserService}
+import services.item.{ItemService, ItemType, PathHierarchy}
+import services.item.importers.{DatasetImporter, EntityImporter}
+import services.task.{TaskService, TaskType}
 
 @Singleton
 class PeopleAdminController @Inject() (

@@ -2,21 +2,20 @@ package services.item.search
 
 import com.sksamuel.elastic4s.{Hit, HitReader}
 import com.sksamuel.elastic4s.ElasticDsl._
+import com.sksamuel.elastic4s.searches.RichSearchResponse
 import com.sksamuel.elastic4s.searches.queries.QueryDefinition
 import es.ES
-import javax.inject.{ Inject, Singleton }
-import org.elasticsearch.search.aggregations.bucket.terms.Terms
-import play.api.libs.json.Json
-import scala.concurrent.{ Future, ExecutionContext }
-import scala.language.reflectiveCalls
-import services.{ Aggregation, Page }
-import services.item.{ Item, ItemService }
-import services.item.reference.TopReferenced
-import services.notification.NotificationService
+import javax.inject.{Inject, Singleton}
 import org.apache.lucene.search.join.ScoreMode
 import org.elasticsearch.script.ScriptType
-import com.sksamuel.elastic4s.searches.RichSearchResponse
+import play.api.libs.json.Json
+import scala.concurrent.{Future, ExecutionContext}
+import scala.language.reflectiveCalls
 import scala.util.Try
+import services.{Aggregation, Page}
+import services.item.{Item, ItemService}
+import services.item.reference.TopReferenced
+import services.notification.NotificationService
 
 @Singleton
 class SearchService @Inject() (

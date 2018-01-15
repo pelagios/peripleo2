@@ -5,7 +5,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.libs.json.Json
 import play.api.mvc.{AbstractController, ControllerComponents}
 import scala.concurrent.ExecutionContext
-import services.item.search.{ SearchArgs, SearchService, SearchFilters, ResponseSettings }
+import services.item.search.{SearchArgs, SearchService, SearchFilters, ResponseSettings}
 import services.item.search.filters.TermFilter
 
 @Singleton

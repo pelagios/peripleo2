@@ -5,15 +5,15 @@ import com.mohiva.play.silhouette.api.Silhouette
 import controllers.Security
 import harvesting.loaders.DumpLoader
 import harvesting.crosswalks.periods.PeriodoCrosswalk
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 import org.webjars.play.WebJarsUtil
 import play.api.Configuration
 import play.api.mvc.ControllerComponents
 import scala.concurrent.ExecutionContext
-import services.user.{ Role, UserService }
-import services.task.{ TaskService, TaskType }
-import services.item.{ ItemService, ItemType, PathHierarchy }
-import services.item.importers.{ DatasetImporter, EntityImporter }
+import services.user.{Role, UserService}
+import services.task.{TaskService, TaskType}
+import services.item.{ItemService, ItemType, PathHierarchy}
+import services.item.importers.{DatasetImporter, EntityImporter}
 
 @Singleton
 class PeriodAdminController @Inject() (

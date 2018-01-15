@@ -4,6 +4,7 @@ import akka.actor.ActorSystem
 import akka.stream.Materializer
 import com.mohiva.play.silhouette.api.Silhouette
 import controllers.{BaseAuthController, Security}
+import harvesting.crosswalks.CSVCrosswalk
 import harvesting.loaders.StreamLoader
 import javax.inject.{Inject, Singleton}
 import org.joda.time.DateTime
@@ -15,7 +16,6 @@ import services.item._
 import services.item.importers.{DatasetImporter, ItemImporter}
 import services.user.{Role, UserService}
 import services.task.{TaskService, TaskType}
-import harvesting.crosswalks.CSVCrosswalk
 
 @Singleton
 class CSVAdminController @Inject() (

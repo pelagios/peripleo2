@@ -2,10 +2,12 @@ package services.item
 
 import com.sksamuel.elastic4s.{Hit, HitReader, Indexable}
 import com.sksamuel.elastic4s.ElasticDsl._
+import com.sksamuel.elastic4s.searches.RichSearchHit
 import es.ES
 import java.util.UUID
 import javax.inject.{Inject, Singleton}
 import org.apache.lucene.search.join.ScoreMode
+import org.elasticsearch.script.ScriptType
 import org.joda.time.DateTime
 import play.api.Logger
 import play.api.libs.json.{Json, JsSuccess, JsError}
@@ -14,8 +16,6 @@ import services.{Sort, Page}
 import services.item.reference.{Reference, ReferenceService, UnboundReference}
 import services.notification.NotificationService
 import services.task.TaskType
-import org.elasticsearch.script.ScriptType
-import com.sksamuel.elastic4s.searches.RichSearchHit
 
 object ItemService {
 

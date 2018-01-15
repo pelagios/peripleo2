@@ -5,9 +5,9 @@ import com.sksamuel.elastic4s.ElasticDsl._
 import com.sksamuel.elastic4s.searches.queries.QueryDefinition
 import es.ES
 import java.util.UUID
+import org.apache.lucene.search.join.ScoreMode
 import scala.concurrent.{ ExecutionContext, Future }
 import services.item.search.RichResultItem
-import org.apache.lucene.search.join.ScoreMode
 
 case class ReferencedItemFilter(uris: Seq[String], setting: TermFilter.Setting) {
   

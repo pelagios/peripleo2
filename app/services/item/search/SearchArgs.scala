@@ -1,9 +1,8 @@
 package services.item.search
 
-import org.joda.time.format.{ DateTimeFormat, DateTimeFormatterBuilder }
-import services.item.search.filters._
-import org.joda.time.format.DateTimePrinter
 import com.vividsolutions.jts.geom.Coordinate
+import org.joda.time.format.{DateTimeFormat, DateTimeFormatterBuilder}
+import services.item.search.filters._
 
 case class SearchArgs(
     

@@ -5,15 +5,12 @@ import com.sksamuel.elastic4s.ElasticDsl._
 import com.sksamuel.elastic4s.searches.RichSearchResponse
 import es.ES
 import java.util.UUID
-import org.elasticsearch.search.aggregations.bucket.terms.Terms
-import org.elasticsearch.search.aggregations.metrics.cardinality.InternalCardinality
 import play.api.Logger
 import play.api.libs.json.Json
 import scala.concurrent.Future
 import scala.util.Try
-import services.{ Page }
-import services.item.{ Item, ItemService }
-import services.item.ItemType
+import services.Page
+import services.item.{Item, ItemService, ItemType}
 
 trait ReferenceService { self: ItemService =>
 

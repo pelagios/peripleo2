@@ -1,12 +1,12 @@
 package services.item.search
 
-import com.vividsolutions.jts.geom.{ Coordinate, Envelope, Geometry }
+import com.vividsolutions.jts.geom.{Coordinate, Envelope, Geometry}
 import java.util.UUID
 import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
-import services.{ Aggregation, HasGeometry, HasNullableSeq, HasNullableBoolean }
-import services.item.{ Item, ItemType, ItemRecord, TemporalBounds }
+import services.{Aggregation, HasGeometry, HasNullableSeq, HasNullableBoolean}
+import services.item.{Item, ItemType, ItemRecord, TemporalBounds}
 import services.item.reference.TopReferenced
 
 case class RichResultPage(

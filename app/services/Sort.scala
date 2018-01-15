@@ -1,6 +1,5 @@
 package services
 
-import com.sksamuel.elastic4s._
 import com.sksamuel.elastic4s.ElasticDsl._
 import scala.language.implicitConversions
 

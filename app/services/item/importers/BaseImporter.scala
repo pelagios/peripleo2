@@ -7,9 +7,9 @@ import play.api.Logger
 import scala.concurrent.Future
 import scala.language.postfixOps
 import services.item._
+import services.item.ItemService.ItemWithUnboundReferences
 import services.item.reference.{ Reference, UnboundReference }
 import services.task.TaskType
-import services.item.ItemService.ItemWithUnboundReferences
 
 abstract class BaseImporter(itemService: ItemService) {
 

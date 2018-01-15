@@ -1,8 +1,8 @@
 package controllers
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 import services.Page
-import services.item.{ Item, ItemService }
+import services.item.{Item, ItemService}
 import services.item.search._
 import services.item.search.filters.TermFilter
 

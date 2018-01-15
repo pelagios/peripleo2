@@ -3,11 +3,11 @@ package services.visit
 import com.sksamuel.elastic4s.{Hit, HitReader, Indexable}
 import com.sksamuel.elastic4s.ElasticDsl._
 import es.ES
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 import org.joda.time.DateTime
 import play.api.Logger
 import play.api.libs.json.Json
-import scala.concurrent.{ Future, ExecutionContext }
+import scala.concurrent.{Future, ExecutionContext}
 import services.Aggregation
 
 @Singleton

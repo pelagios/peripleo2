@@ -3,15 +3,15 @@ package services.task
 import com.sksamuel.elastic4s.{Hit, HitReader, Indexable}
 import com.sksamuel.elastic4s.ElasticDsl._
 import es.ES
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 import java.sql.Timestamp
 import java.util.UUID
 import org.joda.time.DateTime
 import play.api.Logger
 import play.api.libs.json.Json
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
-import services.{ HasDate, Page }
+import services.{HasDate, Page}
 
 @Singleton
 class TaskService @Inject() (val es: ES, implicit val ctx: ExecutionContext) extends HasDate {

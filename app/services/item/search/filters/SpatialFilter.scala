@@ -3,12 +3,12 @@ package services.item.search.filters
 import com.sksamuel.elastic4s.ElasticDsl._
 import com.sksamuel.elastic4s.searches.queries.QueryDefinition
 import com.vividsolutions.jts.geom.Coordinate
-import org.elasticsearch.common.geo.ShapeRelation
-import org.elasticsearch.common.unit.DistanceUnit
-import org.elasticsearch.index.query.{ QueryBuilders, GeoShapeQueryBuilder }
 import es.ES
 import org.apache.lucene.search.join.ScoreMode
+import org.elasticsearch.common.geo.ShapeRelation
 import org.elasticsearch.common.geo.builders.ShapeBuilders
+import org.elasticsearch.common.unit.DistanceUnit
+import org.elasticsearch.index.query.{QueryBuilders, GeoShapeQueryBuilder}
 
 case class GeoShapeQueryDefinition(builder: GeoShapeQueryBuilder) extends QueryDefinition
 

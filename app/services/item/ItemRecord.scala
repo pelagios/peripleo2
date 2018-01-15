@@ -1,10 +1,10 @@
 package services.item
 
-import com.vividsolutions.jts.geom.{ Coordinate, Geometry }
+import com.vividsolutions.jts.geom.{Coordinate, Geometry}
 import org.joda.time.DateTime
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
-import services.{ HasDate, HasGeometry, HasNullableSeq }
+import services.{HasDate, HasGeometry, HasNullableSeq}
 
 case class ItemRecord(
   uri                 : String,

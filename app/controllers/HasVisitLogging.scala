@@ -5,11 +5,11 @@ import org.joda.time.DateTime
 import play.api.Logger
 import play.api.mvc.RequestHeader
 import play.api.http.HeaderNames
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 import services.visit._
 import services.visit.info._
-import services.item.search.{ SearchArgs, RichResultPage }
-import services.item.{ Item, ItemType, ItemService }
+import services.item.search.{SearchArgs, RichResultPage}
+import services.item.{Item, ItemType, ItemService}
 
 trait HasVisitLogging {
     

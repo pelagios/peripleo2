@@ -5,8 +5,8 @@ import java.util.UUID
 import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
-import services.{ HasGeometry, HasNullableSeq }
-import services.item.{ Item, ItemType, PathHierarchy }
+import services.{HasGeometry, HasNullableSeq}
+import services.item.{Item, ItemType, PathHierarchy}
 
 case class Reference(
   parentUri     : String,

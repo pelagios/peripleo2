@@ -1,8 +1,8 @@
 package controllers
 
 import play.api.Configuration
-import services.user.UserService
 import play.api.mvc.{AbstractController, ControllerComponents}
+import services.user.UserService
 
 trait HasConfig { def config: Configuration }
 

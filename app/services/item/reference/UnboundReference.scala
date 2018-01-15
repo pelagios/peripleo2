@@ -1,8 +1,7 @@
 package services.item.reference
 
 import java.util.UUID
-import services.item.{ Item, ItemRecord }
-import com.vividsolutions.jts.geom.Envelope
+import services.item.{Item, ItemRecord}
 
 /** A helper to handle references during ingest, where there's no known reference UUID yet **/
 case class UnboundReference(

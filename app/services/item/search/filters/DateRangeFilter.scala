@@ -2,7 +2,7 @@ package services.item.search.filters
 
 import com.sksamuel.elastic4s.ElasticDsl._
 import com.sksamuel.elastic4s.searches.queries.RangeQueryDefinition
-import org.joda.time.{ DateTime, DateTimeZone }
+import org.joda.time.{DateTime, DateTimeZone}
 import org.joda.time.format.DateTimeFormat
 
 case class DateRangeFilter(from: Option[DateTime], to: Option[DateTime], setting: DateRangeFilter.Setting) {

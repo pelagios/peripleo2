@@ -1,5 +1,6 @@
 package services.item.reference
 
+import com.sksamuel.elastic4s.searches.aggs.RichAggregations
 import java.util.UUID
 import es.ES
 import org.elasticsearch.search.aggregations.Aggregations
@@ -9,11 +10,10 @@ import play.api.Logger
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
 import scala.collection.JavaConverters._
-import scala.concurrent.{ ExecutionContext, Future }
-import services.item.{ Item, ItemService, ItemType }
+import scala.concurrent.{ExecutionContext, Future}
+import services.item.{Item, ItemService, ItemType}
 import services.notification._
 import services.HasNullableSeq
-import com.sksamuel.elastic4s.searches.aggs.RichAggregations
 
 case class TopReferenced private (resolved: Seq[(ItemType, Seq[(Item, Long, Seq[(Relation.Value, Long)])])]) {
   

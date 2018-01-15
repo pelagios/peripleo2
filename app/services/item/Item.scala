@@ -1,11 +1,11 @@
 package services.item
 
-import com.vividsolutions.jts.geom.{ Coordinate, Envelope, Geometry, GeometryFactory }
+import com.vividsolutions.jts.geom.{Coordinate, Envelope, Geometry, GeometryFactory}
 import java.util.UUID
 import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
-import services.{ HasDate, HasGeometry, HasNullableSeq }
+import services.{HasDate, HasGeometry, HasNullableSeq}
 
 case class Item private[item] (
   docId                     : UUID,

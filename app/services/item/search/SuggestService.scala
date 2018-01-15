@@ -1,17 +1,16 @@
 package services.item.search
 
 import com.sksamuel.elastic4s.ElasticDsl._
+import es.ES
 import java.util.ArrayList
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 import org.elasticsearch.common.unit.Fuzziness
 import org.elasticsearch.search.suggest.completion.CompletionSuggestion
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
 import scala.collection.JavaConverters._
-import scala.concurrent.{ ExecutionContext, Future }
-import es.ES
-import services.item.ItemType
-import services.item.Item
+import scala.concurrent.{ExecutionContext, Future}
+import services.item.{Item, ItemType}
 
 case class Suggestion(text: String, 
   itemId: Option[String] = None,
