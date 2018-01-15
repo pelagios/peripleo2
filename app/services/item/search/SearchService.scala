@@ -16,6 +16,7 @@ import services.notification.NotificationService
 import org.apache.lucene.search.join.ScoreMode
 import org.elasticsearch.script.ScriptType
 import com.sksamuel.elastic4s.searches.RichSearchResponse
+import scala.util.Try
 
 @Singleton
 class SearchService @Inject() (
@@ -118,7 +119,6 @@ class SearchService @Inject() (
       dateHistogramAggregation("by_century") script { script("by_time") params(Map("interval" -> 100)) scriptType ScriptType.FILE lang "groovy" } interval 100)
   
   def query(args: SearchArgs): Future[RichResultPage] = {
-
     val startTime = System.currentTimeMillis
 
     // Building filters is an async process as some may require expansion
@@ -132,15 +132,15 @@ class SearchService @Inject() (
 
       val fItemQuery = es.client execute {
         buildItemQuery(args, filter.withDateRangeFilter)
-      } map { response =>
+      } map { response =>        
         val items = toRichResultItem(response)
         val aggregations =
           Option(response.aggregations) match {
             case Some(aggs) =>
               Seq(
-                Option(response.aggregations.termsResult("by_type")).map(Aggregation.parseTerms),
-                Option(response.aggregations.termsResult("by_dataset")).map(Aggregation.parseTerms),
-                Option(response.aggregations.termsResult("by_language")).map(Aggregation.parseTerms)
+                Try(response.aggregations.termsResult("by_type")).toOption.map(Aggregation.parseTerms),
+                Try(response.aggregations.termsResult("by_dataset")).toOption.map(Aggregation.parseTerms),
+                Try(response.aggregations.termsResult("by_language")).toOption.map(Aggregation.parseTerms)
               ).flatten
 
             case None => Seq.empty[Aggregation]
