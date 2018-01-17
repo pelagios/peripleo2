@@ -6,7 +6,7 @@ import play.api.libs.functional.syntax._
 import services.{ HasNullableSeq, HasGeometry }
 import services.item.{Item, PathHierarchy}
 
-case class LegacyPlace(item: Item, referencedIn: Seq[(String, Long)]) {
+case class LegacyPlace(item: Item, referencedIn: Seq[(String, Long)], peripleoBaseUrl: String) {
   
   /** Shorthands **/
   
@@ -20,7 +20,7 @@ case class LegacyPlace(item: Item, referencedIn: Seq[(String, Long)]) {
   
   val matches = item.identifiers diff Seq(identifier)
   
-  val references = referencedIn.map(ReferencedIn(_))
+  val references = referencedIn.map(ReferencedIn(_, identifier, peripleoBaseUrl))
   
 }
 
@@ -52,7 +52,7 @@ object LegacyPlace extends HasNullableSeq with HasGeometry {
 
 }
 
-case class ReferencedIn(private val t: (String, Long)) {
+case class ReferencedIn(private val t: (String, Long), placeURI: String, peripleoBaseUrl: String) {
   
   val (identifier, title) = {
     val idAndTitle = t._1.split(PathHierarchy.INNER_SEPARATOR)
@@ -68,11 +68,13 @@ object ReferencedIn {
   implicit val referencedInWrites: Writes[ReferencedIn] = (
     (JsPath \ "title").write[String] and
     (JsPath \ "identifier").write[String] and
-    (JsPath \ "count").write[Long]
+    (JsPath \ "count").write[Long] and
+    (JsPath \ "peripleo_url").write[String]
   )(r => (
       r.title,
       r.identifier,
-      r.count
+      r.count,
+      s"${r.peripleoBaseUrl}#referencing=${r.placeURI}&datasets=${r.identifier}&filters=true"
   ))
   
 }

@@ -82,7 +82,9 @@ class LegacyAPIController @Inject() (
           .getOrElse(Seq.empty[(String, Long)])
           .filter(!_._1.contains(PathHierarchy.OUTER_SEPARATOR))
           
-        jsonOk(Json.toJson(LegacyPlace(item, topLevelCounts)))
+        // Base URL to use for the 'peripleo_url' response field
+        val base = controllers.routes.ApplicationController.ui.absoluteURL()
+        jsonOk(Json.toJson(LegacyPlace(item, topLevelCounts, base)))
 
       case (None, _) => NotFound
     }
