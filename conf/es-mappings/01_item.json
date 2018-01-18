@@ -20,7 +20,6 @@
         }
       },
       "is_conflation_of": {
-        "dynamic": "false",
         "properties": {
           "uri": { "type": "keyword" },
           "identifiers": { "type": "keyword" },
@@ -81,7 +80,6 @@
             }
           },
           "names": {
-            "dynamic": "false",
             "properties": {
               "name": {
                 "type": "text",
