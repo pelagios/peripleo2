@@ -159,8 +159,7 @@ class ItemService @Inject() (
       constantScoreQuery {
         should {
           uris.map(uri => termQuery("is_conflation_of.identifiers" -> uri)) ++
-          uris.map(uri => termQuery("is_conflation_of.close_matches" -> uri)) ++
-          uris.map(uri => termQuery("is_conflation_of.exact_matches" -> uri))
+          uris.map(uri => termQuery("is_conflation_of.links.uri" -> uri))
         }
       }
 
