@@ -38,6 +38,8 @@ libraryDependencies ++= Seq(
 
   "net.codingwell" %% "scala-guice" % "4.1.1",
 
+  "org.apache.logging.log4j" % "log4j-to-slf4j" % "2.8.2",
+
   "org.geotools" % "gt-geojson" % "18.1",
 
   "org.webjars" %% "webjars-play" % "2.6.2",
