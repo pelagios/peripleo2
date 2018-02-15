@@ -21,6 +21,8 @@ play.http.secret.key = "changeme"
 play.modules {
   enabled += es.ESModule
   enabled += controllers.SilhouetteSecurity
+  
+  disabled += com.mohiva.play.silhouette.api.actions.SecuredErrorHandlerModule
 }
 
 ## IDE
