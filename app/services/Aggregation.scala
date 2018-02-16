@@ -28,7 +28,7 @@ object Aggregation {
 
   def parseHistogram(histogram: Histogram, name: String) = {
     val buckets = histogram.getBuckets.asScala.toSeq.map(bucket =>
-      (bucket.getKey.toString, bucket.getDocCount))
+      (bucket.getKeyAsString.toDouble.toInt.toString, bucket.getDocCount))
     Aggregation(name, buckets)
   }
 

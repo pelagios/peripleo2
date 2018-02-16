@@ -114,8 +114,8 @@ class SearchService @Inject() (
 
   private def buildTimeHistogramQuery(args: SearchArgs, filter: QueryDefinition) =
     itemBaseQuery(args, filter) limit 0 aggregations Seq(
-      dateHistogramAggregation("by_decade") script { script("by_time") params(Map("interval" -> 10))  scriptType ScriptType.FILE lang "groovy" } interval 10,
-      dateHistogramAggregation("by_century") script { script("by_time") params(Map("interval" -> 100)) scriptType ScriptType.FILE lang "groovy" } interval 100)
+      histogramAggregation("by_decade") script { script("by_time") params(Map("interval" -> 10))  scriptType ScriptType.FILE lang "groovy" } interval 10,
+      histogramAggregation("by_century") script { script("by_time") params(Map("interval" -> 100)) scriptType ScriptType.FILE lang "groovy" } interval 100)
   
   def query(args: SearchArgs): Future[RichResultPage] = {
     val startTime = System.currentTimeMillis
