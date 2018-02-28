@@ -33,7 +33,7 @@ case class SpatialFilter(bbox: Option[BoundingBox], center: Option[Coordinate], 
   }
   
   private def buildQueryDefinition(field: String) =
-    new GeoShapeQueryDefinition(QueryBuilders.geoShapeQuery(field, shape).relation(ShapeRelation.WITHIN))
+    geoShapeQuery(field, shape).relation(ShapeRelation.WITHIN)
   
   lazy val filterDefinition = 
     boolQuery should (
