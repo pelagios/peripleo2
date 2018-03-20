@@ -170,15 +170,18 @@ class ItemService @Inject() (
 
     // It seems Elastic4s doesn't support inner hits on hasParentQueries at v2.4 :-(
     val fReferences: Future[Seq[(Reference, UUID)]] =
-      es.client execute {
-        search(ES.PERIPLEO / ES.REFERENCE) query {
-          hasParentQuery(ES.ITEM) query queryClause scoreMode false
-        } limit ES.MAX_SIZE
-      } map { _.hits.toSeq.map { hit =>
-        val reference = Json.fromJson[Reference](Json.parse(hit.sourceAsString)).get
-        val parentId = UUID.fromString(hit.java.getField("_parent").getValue[String])
-        (reference, parentId)
-      }}
+      if (uris.isEmpty) 
+        Future.successful(Seq.empty[(Reference, UUID)])
+      else
+        es.client execute {
+          search(ES.PERIPLEO / ES.REFERENCE) query {
+            hasParentQuery(ES.ITEM) query queryClause scoreMode false
+          } limit ES.MAX_SIZE
+        } map { _.hits.toSeq.map { hit =>
+          val reference = Json.fromJson[Reference](Json.parse(hit.sourceAsString)).get
+          val parentId = UUID.fromString(hit.java.getField("_parent").getValue[String])
+          (reference, parentId)
+        }}
 
     def group(items: Seq[(Item, Long)], references: Seq[(Reference, UUID)]): Seq[ItemWithReferences] = {
       val byParentId = references.groupBy(_._2).mapValues(_.map(_._1))

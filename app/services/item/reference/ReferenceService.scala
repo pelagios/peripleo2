@@ -41,12 +41,12 @@ trait ReferenceService { self: ItemService =>
   private[item] def resolveReferences(unbound: Seq[UnboundReference]): Future[Seq[Reference]] = {
 
     import ItemService._
+    
+    val uris = unbound.map(_.uri).distinct
 
-    if (unbound.isEmpty) {
+    if (uris.isEmpty)
       Future.successful(Seq.empty[Reference])
-    } else {
-      val uris = unbound.map(_.uri).distinct
-      
+    else      
       es.client execute {
         search(ES.PERIPLEO / ES.ITEM) query {
           boolQuery
@@ -66,7 +66,6 @@ trait ReferenceService { self: ItemService =>
           }
         }
       }
-    }
   }
 
   def rewriteReferencesTo(itemsBeforeUpdate: Seq[Item], itemsAfterUpdate: Seq[Item]): Future[Boolean] = {
