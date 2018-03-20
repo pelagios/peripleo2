@@ -42,9 +42,11 @@ trait ReferenceService { self: ItemService =>
 
     import ItemService._
 
-    if (unbound.isEmpty)
+    if (unbound.isEmpty) {
       Future.successful(Seq.empty[Reference])
-    else
+    } else {
+      val uris = unbound.map(_.uri).distinct
+      
       es.client execute {
         search(ES.PERIPLEO / ES.ITEM) query {
           boolQuery
@@ -52,7 +54,8 @@ trait ReferenceService { self: ItemService =>
             // TODO we may need to limit this in some cases (literature!)
             // TODO current max-size is 10.000 unique (!) references
             should (
-              unbound.map(_.uri).distinct.map(termQuery("is_conflation_of.identifiers", _))
+              uris.map(termQuery("is_conflation_of.identifiers", _)) ++
+              uris.map(termQuery("is_conflation_of.links.uri", _))
             )
         } start 0 limit ES.MAX_SIZE
       } map { response =>
@@ -63,6 +66,7 @@ trait ReferenceService { self: ItemService =>
           }
         }
       }
+    }
   }
 
   def rewriteReferencesTo(itemsBeforeUpdate: Seq[Item], itemsAfterUpdate: Seq[Item]): Future[Boolean] = {
