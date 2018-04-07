@@ -29,7 +29,7 @@ object GeoNamesCrosswalk extends BaseGeoJSONCrosswalk {
       geonames.representativePoint,
       None, // temporalBounds
       geonames.names,
-      Seq.empty[Link],
+      geonames.closeMatches.map(_.map(uri => Link(uri, LinkType.EXACT_MATCH))).getOrElse(Seq.empty[Link]), // They are actually exactMatches rather than closeMatches
       None, None)
   })
 
@@ -43,7 +43,8 @@ case class GeoNamesRecord(
   features            : Seq[Feature],
   representativePoint : Option[Coordinate],
   countryCode         : Option[String],
-  population          : Option[Long])
+  population          : Option[Long],
+  closeMatches        : Option[Seq[String]])
 
 object GeoNamesRecord extends HasGeometry {
 
@@ -55,7 +56,8 @@ object GeoNamesRecord extends HasGeometry {
     (JsPath \ "features").readNullable[Seq[Feature]].map(_.getOrElse(Seq.empty[Feature])) and
     (JsPath \ "reprPoint").readNullable[Coordinate] and
     (JsPath \ "country_code").readNullable[String] and
-    (JsPath \ "population").readNullable[Long]
+    (JsPath \ "population").readNullable[Long] and
+    (JsPath \ "close_matches").readNullable[Seq[String]]
   )(GeoNamesRecord.apply _)
 
 }
