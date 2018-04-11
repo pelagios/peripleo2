@@ -3,8 +3,11 @@ define(['ui/common/itemUtils'], function(ItemUtils) {
   var NODE_RADIUS = 7,
 
       KNOWN_NAMESPACES = [
+        { pattern: 'http://dbpedia.org/resource/',       shortcode: 'dbpedia' },
+        { pattern: 'http://www.livius.org/place/',       shortcode: 'livius' },
+        { pattern: 'http://www.trismegistos.org/place/', shortcode: 'trismegistos' },
         { pattern: 'http://www.wikidata.org/entity/',    shortcode: 'wikidata' },
-        { pattern: 'http://www.livius.org/place/',       shortcode: 'livius' }
+        { pattern: 'http://viaf.org/viaf/',              shortcode: 'viaf' }
       ],
 
       formatURI = function(url) {

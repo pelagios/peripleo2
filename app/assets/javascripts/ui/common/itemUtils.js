@@ -3,23 +3,21 @@ define(function() {
   // TODO fetch this information from the server, so we can feed it from the DB
   var KNOWN_AUTHORITIES = [
         // Places
-        { shortcode: 'pleiades',    initial: 'P', color: '#5b9ec4', url_patterns: [ 'http://pleiades.stoa.org/places/' ] },
+        { shortcode: 'beta',        initial: 'B', color: '#843c39', url_patterns: [ 'http://betamasaheft.eu/places/' ] },
+        { shortcode: 'chgis',       initial: 'C', color: '#9467bd', url_patterns: [ 'http://maps.cga.harvard.edu/tgaz/placename/hvd_' ] },
         { shortcode: 'dare',        initial: 'D', color: '#9e9ac8', url_patterns: [ 'http://dare.ht.lu.se/places/' ] },
-        { shortcode: 'vici',        initial: 'V', color: '#d6616b', url_patterns: [ 'http://vici.org/vici/' ] },
+        { shortcode: 'defc',        initial: 'D', color: '#7f7f7f', url_patterns: [ 'http://defc.acdh.oeaw.ac.at/publicrecords/site/detail/' ] },
         { shortcode: 'geonames',    initial: 'G', color: '#74c476', url_patterns: [ 'http://sws.geonames.org/' ] },
-        { shortcode: 'opencontext', initial: 'O', color: '#8c6d31', url_patterns: [ 'http://opencontext.org/subjects/' ] },
         { shortcode: 'hgc',         initial: 'C', color: '#17becf', url_patterns: [ 'http://www.cyprusgazetteer.org/' ] },
         { shortcode: 'hgl',         initial: 'L', color: '#bcbd22', url_patterns: [ 'http://www.slsgazetteer.org/' ] },
-        { shortcode: 'defc',        initial: 'D', color: '#7f7f7f', url_patterns: [ 'http://defc.acdh.oeaw.ac.at/publicrecords/site/detail/' ] },
-        { shortcode: 'europeana',   initial: 'e', color: '#1676aa', url_patterns: [ 'http://data.europeana.eu/place/base/' ] },
+        { shortcode: 'moeml',       initial: 'M', color: '#6b6ecf', url_patterns: [ 'http://mapoflondon.uvic.ca/' ] },
         { shortcode: 'nomisma',     initial: 'N', color: '#ff7f0e', url_patterns: [ 'http://nomisma.org/id/' ] },
-        { shortcode: 'chgis',       initial: 'C', color: '#9467bd', url_patterns: [ 'http://maps.cga.harvard.edu/tgaz/placename/hvd_' ] },
-        { shortcode: 'b',           initial: 'B', color: '#843c39', url_patterns: [ 'http://betamasaheft.eu/places/' ] },
-        { shortcode: 'tt',          initial: 't', color: '#e7ba52', url_patterns: [ 'http://topostext.org/place.php?id=' ] },
-        { shortcode: 'tm',          initial: 'T', color: '#ff9896', url_patterns: ['http://www.trismegistos.org/place/' ] },
-
-        // People
-        { shortcode: 'europeana',   initial: 'e', color: '#1676aa', url_patterns: [ 'http://data.europeana.eu/agent/base/' ] }
+        { shortcode: 'opencontext', initial: 'O', color: '#8c6d31', url_patterns: [ 'http://opencontext.org/subjects/' ] },
+        { shortcode: 'pleiades',    initial: 'P', color: '#5b9ec4', url_patterns: [ 'http://pleiades.stoa.org/places/' ] },
+        { shortcode: 'syriaca',     initial: 'S', color: '#8ca252', url_patterns: [ 'http://syriaca.org/place/' ] },
+        { shortcode: 'tt',          initial: 't', color: '#e7ba52', url_patterns: [ 'http://topostext.org/place/' ] },
+        { shortcode: 'rs',          initial: 'R', color: '#843c39', url_patterns: [ 'http://www.rusafricum.org/en/' ] },
+        { shortcode: 'vici',        initial: 'V', color: '#d6616b', url_patterns: [ 'http://vici.org/vici/' ] },
       ],
 
       /**
