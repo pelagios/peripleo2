@@ -51,7 +51,7 @@ define([
           render(identifiers);
         } else {
           render(identifiers.slice(1, 8));
-          el.append('<span class="item-more-ids">and ' + (identifiers.length - 8) + ' more...</span>');
+          el.append('<span class="item-more-ids">and ' + (identifiers.length - 7) + ' more...</span>');
         }
       },
 
