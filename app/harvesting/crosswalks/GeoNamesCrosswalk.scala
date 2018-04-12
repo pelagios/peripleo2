@@ -3,7 +3,6 @@ package harvesting.crosswalks
 import com.vividsolutions.jts.geom.Coordinate
 import org.joda.time.DateTime
 import play.api.libs.json._
-import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
 import services.HasGeometry
 import services.item._

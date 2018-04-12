@@ -71,6 +71,17 @@ class GazetteerAdminController @Inject() (
                 PleiadesCrosswalk.fromJson,
                 importer,
                 request.identity.username)
+                
+            } else if (formData.filename.toLowerCase.contains("idai")) {
+              Logger.info("Using iDAI gazetteer crosswalk")
+              
+              new StreamLoader(taskService, taskType, materializer).importRecords(
+                formData.filename + " (iDAI JSON)",
+                formData.ref.path.toFile,
+                formData.filename,
+                IDAICrosswalk.fromJson(PathHierarchy(name, name)),
+                importer,
+                request.identity.username)
 
             } else if (formData.filename.toLowerCase.contains("geonames")) {
               Logger.info("Using GeoNames crosswalk")
