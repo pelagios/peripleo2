@@ -10,6 +10,7 @@ define(function() {
         { shortcode: 'geonames',    initial: 'G', color: '#74c476', url_patterns: [ 'http://sws.geonames.org/' ] },
         { shortcode: 'hgc',         initial: 'C', color: '#17becf', url_patterns: [ 'http://www.cyprusgazetteer.org/' ] },
         { shortcode: 'hgl',         initial: 'L', color: '#bcbd22', url_patterns: [ 'http://www.slsgazetteer.org/' ] },
+        { shortcode: 'idai',        initial: 'i', color: '#ad494a', url_patterns: [ 'http://gazetteer.dainst.org/place/' ] },
         { shortcode: 'moeml',       initial: 'M', color: '#6b6ecf', url_patterns: [ 'http://mapoflondon.uvic.ca/' ] },
         { shortcode: 'nomisma',     initial: 'N', color: '#ff7f0e', url_patterns: [ 'http://nomisma.org/id/' ] },
         { shortcode: 'opencontext', initial: 'O', color: '#8c6d31', url_patterns: [ 'http://opencontext.org/subjects/' ] },

@@ -7,7 +7,7 @@ define([
           '<div>' +
             '<div class="ldview-table-header">' +
               '<h3>' + item.title + '</h3>' +
-              '<p>' + item.is_conflation_of.length + ' conflated records</p>' +
+              '<p>' + item.is_conflation_of.length + ' records</p>' +
             '</div>' +
             '<ul class="ldview-table-body"></ul>' +
           '</div>').appendTo(containerDiv),
