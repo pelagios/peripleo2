@@ -110,4 +110,5 @@ GET     /partners                                    controllers.pages.partners.
 
 GET     /embed/:id                                   controllers.ApplicationController.embed(id: String)
 GET     /ui                                          controllers.ApplicationController.ui
+GET     /peripleo/map                                controllers.ApplicationController.landing
 GET     /                                            controllers.ApplicationController.landing
