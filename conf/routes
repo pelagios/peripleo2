@@ -108,7 +108,8 @@ GET     /partners                                    controllers.pages.partners.
 # Legacy redirect
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-GET     /peripleo/map                                controllers.ApplicationController.legacyRedirect
+GET     /peripleo                                    controllers.ApplicationController.legacyRedirect
+GET     /peripleo/*path                              controllers.ApplicationController.legacyRedirectAnyPath(path: String)
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Other public views

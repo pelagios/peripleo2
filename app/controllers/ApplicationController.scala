@@ -74,4 +74,6 @@ class ApplicationController @Inject() (
     Ok(views.html.legacy_redirect())
   }
 
+  def legacyRedirectAnyPath(path: String) = legacyRedirect
+
 }
