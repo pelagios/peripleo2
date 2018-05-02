@@ -13,7 +13,7 @@ object LegacyGeoBounds {
       e.getMinX,
       e.getMaxX,
       e.getMinY,
-      e.getMaxX)
+      e.getMaxY)
   
   implicit val legacyGeoBoundsWrites: Writes[LegacyGeoBounds] = (
     (JsPath \ "min_lon").write[Double] and
