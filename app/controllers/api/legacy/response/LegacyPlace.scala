@@ -18,8 +18,8 @@ case class LegacyPlace(item: Item, referencedIn: Seq[(String, Long)], peripleoBa
   
   val bounds = item.representativeGeometry.map(geom => LegacyGeoBounds.fromEnvelope(geom.getEnvelopeInternal))
   
-  val matches = item.identifiers diff Seq(identifier)
-  
+  val matches = (item.identifiers ++ item.isConflationOf.flatMap(_.directMatches)) diff Seq(identifier)
+    
   val references = referencedIn.map(ReferencedIn(_, identifier, peripleoBaseUrl))
   
 }
