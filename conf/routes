@@ -38,6 +38,9 @@ POST    /admin/maintenance/item                      controllers.admin.maintenan
 
 GET     /admin/datasets                              controllers.admin.AdminController.datasets
 GET     /admin/authorities                           controllers.admin.AdminController.authorities
+
+GET     /admin/_dumpAll                              controllers.admin.AdminController.dumpAll
+
 GET     /admin                                       controllers.admin.AdminController.index
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
