@@ -36,10 +36,10 @@ case class ExportRecord(item: Item) {
       Seq(
         item.title,
         geom.map(toWKT(_)).getOrElse(""),
-        // item.temporalBounds.map(toDateTime(_)).getOrElse(""),
-        item.itemType.name) //,
-        // datasetId,
-        // item.isConflationOf.size.toString)
+        item.temporalBounds.map(toDateTime(_)).getOrElse(""),
+        item.itemType.name,
+        datasetId,
+        item.isConflationOf.size.toString)
     }
   }
   
