@@ -12,12 +12,13 @@ import kantan.csv.ops._
 import play.api.libs.json.Json
 import play.api.libs.Files.{TemporaryFile, TemporaryFileCreator}
 import scala.concurrent.{ExecutionContext, Future}
-import services.item.Item
+import services.item.{Item, ItemService}
 import java.io.File
 
 @Singleton
 class DumpExporter @Inject() (
   implicit val ctx: ExecutionContext,
+  implicit val itemService: ItemService,
   implicit val tmpFile: TemporaryFileCreator
 ) {
   
@@ -52,10 +53,13 @@ class DumpExporter @Inject() (
     }
   
   def exportBatch(writer: CsvWriter[Seq[String]]): RichSearchResponse => Future[Boolean] = { response: RichSearchResponse =>
-    Future {
-      val records = response.to[Item].map(ExportRecord(_))
-      records.foreach { rec => writer.write(rec.tupled) }
-      true
+    val records = response.to[Item].toSeq.map(ExportRecord(_))
+    val fRows = Future.sequence(records.map(_.tupled()))    
+    fRows.map { rows =>
+      rows.foreach { row => 
+        if (!row(1).isEmpty) writer.write(row)
+      }
+      true  
     } recover { case t: Throwable =>
       t.printStackTrace
       throw t

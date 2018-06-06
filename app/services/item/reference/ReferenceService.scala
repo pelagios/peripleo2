@@ -142,6 +142,7 @@ trait ReferenceService { self: ItemService =>
     }
   }
 
+  /** Returns the references carried by the item with the given URI **/
   def getReferences(parentUri: String, destinationUri: Option[String], query: Option[String], offset: Int = 0, limit: Int = 20) = {
 
     def executeQuery(docId: Option[UUID]) = {
