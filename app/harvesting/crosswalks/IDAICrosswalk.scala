@@ -36,7 +36,7 @@ object IDAICrosswalk {
       coord,
       None, // temporalBounds
       r.names.map(n => Name(n.title, n.language.flatMap(Language.safeParse(_)))),
-      r.links.map { link =>
+      r.links.take(30).map { link =>
         val linkType = link.predicate match {
           case "owl:sameAs" => LinkType.EXACT_MATCH
           case _ => LinkType.CLOSE_MATCH // just default to closeMatch
