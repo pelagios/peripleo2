@@ -22,9 +22,16 @@ class LegacyAPIController @Inject() (
   implicit val ctx: ExecutionContext
 ) extends AbstractController(components) with HasVisitLogging {
   
+  private val CORS_ENABLED = true // TODO make configurable
+  
   private def jsonOk(obj: JsValue)(implicit request: Request[AnyContent]) = {
+    val headers = if (CORS_ENABLED) Seq(("Access-Control-Allow-Origin" -> "*")) else Seq.empty[(String, String)]
+      
     val pretty = Try(request.queryString.get("prettyprint").map(_.head.toBoolean).getOrElse(false)).getOrElse(false)
-    if (pretty) Ok(Json.prettyPrint(obj)).as("application/json") else Ok(obj)
+    if (pretty) 
+      Ok(Json.prettyPrint(obj)).as("application/json").withHeaders(headers:_*)
+    else 
+      Ok(obj).withHeaders(headers:_*)
   }
     
   def search() = Action.async { implicit request =>
