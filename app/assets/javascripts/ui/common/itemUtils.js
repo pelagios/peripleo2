@@ -19,7 +19,8 @@ define(function() {
         { shortcode: 'tt',          initial: 't', color: '#e7ba52', url_patterns: [ 'http://topostext.org/place/' ] },
         { shortcode: 'rs',          initial: 'R', color: '#843c39', url_patterns: [ 'http://www.rusafricum.org/en/' ] },
         { shortcode: 'vici',        initial: 'V', color: '#d6616b', url_patterns: [ 'http://vici.org/vici/' ] },
-        { shortcode: 'rrg',         initial: 'R', color: '#e7ba52', url_patterns: [ 'http://romeresearchgroup.org/items/' ] }
+        { shortcode: 'rrg',         initial: 'R', color: '#e7ba52', url_patterns: [ 'http://romeresearchgroup.org/items/' ] },
+        { shortcode: 'courtauld',   initial: 'C', color: '#9037f0', url_patterns: [ 'http://sites.courtauld.ac.uk/crossingfrontiers/crossing-frontiers/'] }
       ],
 
       /**
