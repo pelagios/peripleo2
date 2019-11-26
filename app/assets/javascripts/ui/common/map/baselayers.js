@@ -18,8 +18,8 @@ define([], function(HasEvents) {
     title       : 'Ancient Places',
     description : 'Roman Empire base map by the <a href="http://dare.ht.lu.se/" target="_blank">Digital ' +
       'Atlas of the Roman Empire</a>, Lund University, Sweden.',
-    thumb_url   : 'http://pelagios.org/tilesets/imperium/7/68/47.png',
-    tile_url    : 'http://pelagios.org/tilesets/imperium/{z}/{x}/{y}.png',
+    thumb_url   : 'http://dare.ht.lu.se/tiles/imperium/7/68/47.png',
+    tile_url    : 'http://dare.ht.lu.se/tiles/imperium/{z}/{x}/{y}.png',
     attribution : 'Tiles: <a href="http://imperium.ahlfeldt.se/">DARE 2014</a>',
     min_zoom    :3,
     max_zoom    :11
