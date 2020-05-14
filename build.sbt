@@ -11,8 +11,15 @@ scalacOptions ++= Seq("-feature")
 updateOptions := updateOptions.value.withGigahorse(false)
 
 resolvers ++= Seq(
-  "Open Source Geospatial Foundation Repository" at "http://download.osgeo.org/webdav/geotools/",
-  "http://maven.geotoolkit.org/" at "http://maven.geotoolkit.org/"
+  "Typesafe" at "http://repo.typesafe.com/typesafe/releases/",
+  "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",
+  "Geotools" at "https://repo.osgeo.org/repository/geotools-releases/",
+  "Geotoolkit" at "http://maven.geotoolkit.org",
+  "Boundless" at "https://repo.osgeo.org/repository/Geoserver-releases/",
+  "Atlassian Releases" at "https://maven.atlassian.com/public/",
+  "Atlassian Maven" at "https://maven.atlassian.com/content/repositories/atlassian-public/",
+  "mvnrepository" at "http://mvnrepository.com/artifact",
+  Resolver.jcenterRepo 
 )
 
 libraryDependencies ++= Seq(
@@ -21,12 +28,12 @@ libraryDependencies ++= Seq(
   filters,
   guice,
 
-  "com.mohiva" %% "play-silhouette" % "5.0.0",
-  "com.mohiva" %% "play-silhouette-password-bcrypt" % "5.0.0",
-  "com.mohiva" %% "play-silhouette-crypto-jca" % "5.0.0",
-  "com.mohiva" %% "play-silhouette-persistence" % "5.0.0",
-  "com.mohiva" %% "play-silhouette-testkit" % "5.0.0" % Test,
-  "com.mohiva" %% "play-silhouette-cas" % "5.0.0",
+  "com.mohiva" %% "play-silhouette" % "5.0.7",
+  "com.mohiva" %% "play-silhouette-password-bcrypt" % "5.0.7",
+  "com.mohiva" %% "play-silhouette-crypto-jca" % "5.0.7",
+  "com.mohiva" %% "play-silhouette-persistence" % "5.0.7",
+  "com.mohiva" %% "play-silhouette-testkit" % "5.0.7" % Test,
+  "com.mohiva" %% "play-silhouette-cas" % "5.0.7",
 
   "com.nrinaudo" %% "kantan.csv" % "0.2.1",
   "com.nrinaudo" %% "kantan.csv-commons" % "0.2.1",
