@@ -9,4 +9,6 @@ target
 /.classpath
 /.project
 /.settings
+/.metals
+/.vscode
 /RUNNING_PID
