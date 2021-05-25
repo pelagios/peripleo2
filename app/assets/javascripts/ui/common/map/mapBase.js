@@ -21,7 +21,7 @@ define([
           return layers;
         })(),
 
-        currentBaseLayer = LAYERS.AWMC,
+        currentBaseLayer = LAYERS.DARE,
 
         map = L.map(containerDiv, {
           center: [ 48, 16 ],
